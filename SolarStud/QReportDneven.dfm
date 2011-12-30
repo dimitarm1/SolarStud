@@ -1,9 +1,9 @@
 object Form3: TForm3
   Left = 291
   Top = 233
+  Width = 823
+  Height = 489
   Caption = 'Form3'
-  ClientHeight = 455
-  ClientWidth = 815
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -130,7 +130,7 @@ object Form3: TForm3
       end
       object QRLabel3: TQRLabel
         Left = 56
-        Top = 50
+        Top = 48
         Width = 145
         Height = 17
         Frame.Color = clBlack
@@ -141,7 +141,7 @@ object Form3: TForm3
         Size.Values = (
           44.979166666666670000
           148.166666666666700000
-          132.291666666666700000
+          127.000000000000000000
           383.645833333333300000)
         Alignment = taLeftJustify
         AlignToBand = False
@@ -149,20 +149,14 @@ object Form3: TForm3
         AutoStretch = False
         Caption = #1057#1086#1083#1072#1088#1080#1091#1084'/'#1057#1090#1086#1082#1072
         Color = clWhite
-        Font.Charset = RUSSIAN_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
         Transparent = False
         WordWrap = True
-        FontSize = 8
+        FontSize = 10
       end
       object QRLabel4: TQRLabel
         Left = 208
-        Top = 50
-        Width = 57
+        Top = 48
+        Width = 73
         Height = 17
         Frame.Color = clBlack
         Frame.DrawTop = False
@@ -172,28 +166,22 @@ object Form3: TForm3
         Size.Values = (
           44.979166666666670000
           550.333333333333300000
-          132.291666666666700000
-          150.812500000000000000)
+          127.000000000000000000
+          193.145833333333300000)
         Alignment = taCenter
         AlignToBand = False
         AutoSize = False
         AutoStretch = False
         Caption = #1063#1072#1089
         Color = clWhite
-        Font.Charset = RUSSIAN_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
         Transparent = False
         WordWrap = True
-        FontSize = 8
+        FontSize = 10
       end
       object QRLabel5: TQRLabel
-        Left = 335
-        Top = 50
-        Width = 25
+        Left = 293
+        Top = 48
+        Width = 29
         Height = 17
         Frame.Color = clBlack
         Frame.DrawTop = False
@@ -202,28 +190,22 @@ object Form3: TForm3
         Frame.DrawRight = False
         Size.Values = (
           44.979166666666670000
-          886.354166666666700000
-          132.291666666666700000
-          66.145833333333330000)
+          775.229166666666700000
+          127.000000000000000000
+          76.729166666666670000)
         Alignment = taRightJustify
         AlignToBand = False
         AutoSize = True
         AutoStretch = False
         Caption = #1073#1088#1086#1081
         Color = clWhite
-        Font.Charset = RUSSIAN_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
         Transparent = False
         WordWrap = True
-        FontSize = 8
+        FontSize = 10
       end
       object QRLabel6: TQRLabel
-        Left = 363
-        Top = 50
+        Left = 328
+        Top = 48
         Width = 49
         Height = 17
         Frame.Color = clBlack
@@ -233,8 +215,8 @@ object Form3: TForm3
         Frame.DrawRight = False
         Size.Values = (
           44.979166666666670000
-          960.437500000000000000
-          132.291666666666700000
+          867.833333333333300000
+          127.000000000000000000
           129.645833333333300000)
         Alignment = taRightJustify
         AlignToBand = False
@@ -242,19 +224,13 @@ object Form3: TForm3
         AutoStretch = False
         Caption = #1057#1091#1084#1072'  '
         Color = clWhite
-        Font.Charset = RUSSIAN_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
         Transparent = False
         WordWrap = True
-        FontSize = 8
+        FontSize = 10
       end
       object QRLabel7: TQRLabel
-        Left = 417
-        Top = 50
+        Left = 384
+        Top = 48
         Width = 52
         Height = 17
         Frame.Color = clBlack
@@ -264,8 +240,8 @@ object Form3: TForm3
         Frame.DrawRight = False
         Size.Values = (
           44.979166666666670000
-          1103.312500000000000000
-          132.291666666666700000
+          1016.000000000000000000
+          127.000000000000000000
           137.583333333333300000)
         Alignment = taRightJustify
         AlignToBand = False
@@ -273,20 +249,14 @@ object Form3: TForm3
         AutoStretch = False
         Caption = #1054#1090' '#1082#1072#1088#1090#1072
         Color = clWhite
-        Font.Charset = RUSSIAN_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
         Transparent = False
         WordWrap = True
-        FontSize = 8
+        FontSize = 10
       end
       object QRLabel8: TQRLabel
-        Left = 476
-        Top = 50
-        Width = 38
+        Left = 440
+        Top = 48
+        Width = 71
         Height = 17
         Frame.Color = clBlack
         Frame.DrawTop = False
@@ -295,24 +265,18 @@ object Form3: TForm3
         Frame.DrawRight = False
         Size.Values = (
           44.979166666666670000
-          1259.416666666667000000
-          132.291666666666700000
-          100.541666666666700000)
+          1164.166666666667000000
+          127.000000000000000000
+          187.854166666666700000)
         Alignment = taRightJustify
         AlignToBand = False
         AutoSize = True
         AutoStretch = False
-        Caption = #1055#1086#1089#1077#1097'.'
+        Caption = #1055#1086#1089#1077#1097#1077#1085#1080#1103
         Color = clWhite
-        Font.Charset = RUSSIAN_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
         Transparent = False
         WordWrap = True
-        FontSize = 8
+        FontSize = 10
       end
       object QRSysData3: TQRSysData
         Left = 640
@@ -364,8 +328,8 @@ object Form3: TForm3
       end
       object QRLabel10: TQRLabel
         Left = 8
-        Top = 50
-        Width = 31
+        Top = 48
+        Width = 38
         Height = 17
         Frame.Color = clBlack
         Frame.DrawTop = False
@@ -375,28 +339,22 @@ object Form3: TForm3
         Size.Values = (
           44.979166666666670000
           21.166666666666670000
-          132.291666666666700000
-          82.020833333333330000)
+          127.000000000000000000
+          100.541666666666700000)
         Alignment = taLeftJustify
         AlignToBand = False
         AutoSize = True
         AutoStretch = False
         Caption = #1085#1086#1084#1077#1088
         Color = clWhite
-        Font.Charset = RUSSIAN_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
         Transparent = False
         WordWrap = True
-        FontSize = 8
+        FontSize = 10
       end
       object QRLabel13: TQRLabel
         Left = 520
-        Top = 50
-        Width = 53
+        Top = 48
+        Width = 60
         Height = 17
         Frame.Color = clBlack
         Frame.DrawTop = False
@@ -406,28 +364,22 @@ object Form3: TForm3
         Size.Values = (
           44.979166666666670000
           1375.833333333333000000
-          132.291666666666700000
-          140.229166666666700000)
+          127.000000000000000000
+          158.750000000000000000)
         Alignment = taRightJustify
         AlignToBand = False
         AutoSize = True
         AutoStretch = False
         Caption = #1063#1080#1087' '#1082#1072#1088#1090#1072
         Color = clWhite
-        Font.Charset = RUSSIAN_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
         Transparent = False
         WordWrap = True
-        FontSize = 8
+        FontSize = 10
       end
       object QRLabel14: TQRLabel
-        Left = 576
-        Top = 50
-        Width = 38
+        Left = 584
+        Top = 48
+        Width = 58
         Height = 17
         Frame.Color = clBlack
         Frame.DrawTop = False
@@ -436,29 +388,23 @@ object Form3: TForm3
         Frame.DrawRight = False
         Size.Values = (
           44.979166666666670000
-          1524.000000000000000000
-          132.291666666666700000
-          100.541666666666700000)
+          1545.166666666667000000
+          127.000000000000000000
+          153.458333333333300000)
         Alignment = taRightJustify
         AlignToBand = False
         AutoSize = True
         AutoStretch = False
-        Caption = #1063'. '#1089#1091#1084#1072
+        Caption = #1063#1080#1087' '#1089#1091#1084#1072
         Color = clWhite
-        Font.Charset = RUSSIAN_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
         Transparent = False
         WordWrap = True
-        FontSize = 8
+        FontSize = 10
       end
       object QRLabel15: TQRLabel
-        Left = 656
-        Top = 50
-        Width = 38
+        Left = 648
+        Top = 48
+        Width = 44
         Height = 17
         Frame.Color = clBlack
         Frame.DrawTop = False
@@ -467,24 +413,18 @@ object Form3: TForm3
         Frame.DrawRight = False
         Size.Values = (
           44.979166666666670000
-          1735.666666666667000000
-          132.291666666666700000
-          100.541666666666700000)
+          1714.500000000000000000
+          127.000000000000000000
+          116.416666666666700000)
         Alignment = taLeftJustify
         AlignToBand = False
         AutoSize = True
         AutoStretch = False
         Caption = #1057#1090#1091#1076#1080#1086
         Color = clWhite
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Arial'
-        Font.Style = []
-        ParentFont = False
         Transparent = False
         WordWrap = True
-        FontSize = 8
+        FontSize = 10
       end
       object QRLabel16: TQRLabel
         Left = 287
@@ -510,99 +450,6 @@ object Form3: TForm3
         Transparent = False
         WordWrap = True
         FontSize = 10
-      end
-      object QRLabel17: TQRLabel
-        Left = 315
-        Top = 50
-        Width = 12
-        Height = 17
-        Frame.Color = clBlack
-        Frame.DrawTop = False
-        Frame.DrawBottom = False
-        Frame.DrawLeft = False
-        Frame.DrawRight = False
-        Size.Values = (
-          44.979166666666670000
-          833.437500000000000000
-          132.291666666666700000
-          31.750000000000000000)
-        Alignment = taRightJustify
-        AlignToBand = False
-        AutoSize = True
-        AutoStretch = False
-        Caption = '%'
-        Color = clWhite
-        Font.Charset = RUSSIAN_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-        Transparent = False
-        WordWrap = True
-        FontSize = 8
-      end
-      object QRLabel18: TQRLabel
-        Left = 270
-        Top = 50
-        Width = 35
-        Height = 17
-        Frame.Color = clBlack
-        Frame.DrawTop = False
-        Frame.DrawBottom = False
-        Frame.DrawLeft = False
-        Frame.DrawRight = False
-        Size.Values = (
-          44.979166666666670000
-          714.375000000000000000
-          132.291666666666700000
-          92.604166666666670000)
-        Alignment = taRightJustify
-        AlignToBand = False
-        AutoSize = False
-        AutoStretch = False
-        Caption = #1062#1077#1085#1072
-        Color = clWhite
-        Font.Charset = RUSSIAN_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-        Transparent = False
-        WordWrap = True
-        FontSize = 8
-      end
-      object QRLabel19: TQRLabel
-        Left = 625
-        Top = 50
-        Width = 31
-        Height = 17
-        Frame.Color = clBlack
-        Frame.DrawTop = False
-        Frame.DrawBottom = False
-        Frame.DrawLeft = False
-        Frame.DrawRight = False
-        Size.Values = (
-          44.979166666666670000
-          1653.645833333333000000
-          132.291666666666700000
-          82.020833333333330000)
-        Alignment = taRightJustify
-        AlignToBand = False
-        AutoSize = True
-        AutoStretch = False
-        Caption = #1057#1083'.'#8470
-        Color = clWhite
-        Font.Charset = RUSSIAN_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-        Transparent = False
-        WordWrap = True
-        FontSize = 8
       end
     end
     object DetailBand1: TQRBand
@@ -660,8 +507,8 @@ object Form3: TForm3
         FontSize = 8
       end
       object QRDBText2: TQRDBText
-        Left = 336
-        Top = 1
+        Left = 296
+        Top = 2
         Width = 25
         Height = 15
         Frame.Color = clBlack
@@ -671,8 +518,8 @@ object Form3: TForm3
         Frame.DrawRight = False
         Size.Values = (
           39.687500000000000000
-          889.000000000000000000
-          2.645833333333333000
+          783.166666666666700000
+          5.291666666666667000
           66.145833333333330000)
         Alignment = taLeftJustify
         AlignToBand = False
@@ -694,7 +541,7 @@ object Form3: TForm3
       object QRDBText3: TQRDBText
         Left = 208
         Top = 2
-        Width = 57
+        Width = 73
         Height = 15
         Frame.Color = clBlack
         Frame.DrawTop = False
@@ -705,7 +552,7 @@ object Form3: TForm3
           39.687500000000000000
           550.333333333333300000
           5.291666666666667000
-          150.812500000000000000)
+          193.145833333333300000)
         Alignment = taLeftJustify
         AlignToBand = False
         AutoSize = False
@@ -724,8 +571,8 @@ object Form3: TForm3
         FontSize = 8
       end
       object QRDBText4: TQRDBText
-        Left = 366
-        Top = 1
+        Left = 328
+        Top = 2
         Width = 49
         Height = 15
         Frame.Color = clBlack
@@ -735,10 +582,10 @@ object Form3: TForm3
         Frame.DrawRight = False
         Size.Values = (
           39.687500000000000000
-          968.375000000000000000
-          2.645833333333333000
+          867.833333333333300000
+          5.291666666666667000
           129.645833333333300000)
-        Alignment = taRightJustify
+        Alignment = taLeftJustify
         AlignToBand = False
         AutoSize = False
         AutoStretch = False
@@ -757,8 +604,8 @@ object Form3: TForm3
         FontSize = 8
       end
       object QRDBText5: TQRDBText
-        Left = 418
-        Top = 0
+        Left = 384
+        Top = 2
         Width = 49
         Height = 15
         Frame.Color = clBlack
@@ -768,10 +615,10 @@ object Form3: TForm3
         Frame.DrawRight = False
         Size.Values = (
           39.687500000000000000
-          1105.958333333333000000
-          0.000000000000000000
+          1016.000000000000000000
+          5.291666666666667000
           129.645833333333300000)
-        Alignment = taRightJustify
+        Alignment = taLeftJustify
         AlignToBand = False
         AutoSize = False
         AutoStretch = False
@@ -789,9 +636,9 @@ object Form3: TForm3
         FontSize = 8
       end
       object QRDBText6: TQRDBText
-        Left = 471
+        Left = 440
         Top = 2
-        Width = 46
+        Width = 73
         Height = 15
         Frame.Color = clBlack
         Frame.DrawTop = False
@@ -800,10 +647,10 @@ object Form3: TForm3
         Frame.DrawRight = False
         Size.Values = (
           39.687500000000000000
-          1246.187500000000000000
+          1164.166666666667000000
           5.291666666666667000
-          121.708333333333300000)
-        Alignment = taRightJustify
+          193.145833333333300000)
+        Alignment = taLeftJustify
         AlignToBand = False
         AutoSize = False
         AutoStretch = False
@@ -919,7 +766,7 @@ object Form3: TForm3
       object QRDBText11: TQRDBText
         Left = 520
         Top = 2
-        Width = 53
+        Width = 65
         Height = 15
         Frame.Color = clBlack
         Frame.DrawTop = False
@@ -930,8 +777,8 @@ object Form3: TForm3
           39.687500000000000000
           1375.833333333333000000
           5.291666666666667000
-          140.229166666666700000)
-        Alignment = taRightJustify
+          171.979166666666700000)
+        Alignment = taLeftJustify
         AlignToBand = False
         AutoSize = False
         AutoStretch = False
@@ -949,8 +796,8 @@ object Form3: TForm3
         FontSize = 8
       end
       object QRDBText12: TQRDBText
-        Left = 625
-        Top = 0
+        Left = 592
+        Top = 2
         Width = 41
         Height = 15
         Frame.Color = clBlack
@@ -960,8 +807,8 @@ object Form3: TForm3
         Frame.DrawRight = False
         Size.Values = (
           39.687500000000000000
-          1653.645833333333000000
-          0.000000000000000000
+          1566.333333333333000000
+          5.291666666666667000
           108.479166666666700000)
         Alignment = taLeftJustify
         AlignToBand = False
@@ -969,7 +816,7 @@ object Form3: TForm3
         AutoStretch = False
         Color = clWhite
         DataSet = MainForm.DayTotal
-        DataField = 'KLIENTNOMER'
+        DataField = 'KARTASUMA'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
@@ -981,9 +828,9 @@ object Form3: TForm3
         FontSize = 8
       end
       object QRDBText13: TQRDBText
-        Left = 672
-        Top = 0
-        Width = 49
+        Left = 640
+        Top = 2
+        Width = 57
         Height = 15
         Frame.Color = clBlack
         Frame.DrawTop = False
@@ -992,9 +839,9 @@ object Form3: TForm3
         Frame.DrawRight = False
         Size.Values = (
           39.687500000000000000
-          1778.000000000000000000
-          0.000000000000000000
-          129.645833333333300000)
+          1693.333333333333000000
+          5.291666666666667000
+          150.812500000000000000)
         Alignment = taLeftJustify
         AlignToBand = False
         AutoSize = False
@@ -1002,103 +849,6 @@ object Form3: TForm3
         Color = clWhite
         DataSet = MainForm.DayTotal
         DataField = 'STUDIOCODE'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Arial'
-        Font.Style = []
-        ParentFont = False
-        Transparent = False
-        WordWrap = True
-        FontSize = 8
-      end
-      object QRDBText10: TQRDBText
-        Left = 313
-        Top = 1
-        Width = 20
-        Height = 15
-        Frame.Color = clBlack
-        Frame.DrawTop = False
-        Frame.DrawBottom = False
-        Frame.DrawLeft = False
-        Frame.DrawRight = False
-        Size.Values = (
-          39.687500000000000000
-          828.145833333333300000
-          2.645833333333333000
-          52.916666666666670000)
-        Alignment = taLeftJustify
-        AlignToBand = False
-        AutoSize = False
-        AutoStretch = False
-        Color = clWhite
-        DataSet = MainForm.DayTotal
-        DataField = 'DISCOUNT'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Arial'
-        Font.Style = []
-        ParentFont = False
-        Transparent = False
-        WordWrap = True
-        FontSize = 8
-      end
-      object QRDBText14: TQRDBText
-        Left = 270
-        Top = 1
-        Width = 41
-        Height = 15
-        Frame.Color = clBlack
-        Frame.DrawTop = False
-        Frame.DrawBottom = False
-        Frame.DrawLeft = False
-        Frame.DrawRight = False
-        Size.Values = (
-          39.687500000000000000
-          714.375000000000000000
-          2.645833333333333000
-          108.479166666666700000)
-        Alignment = taLeftJustify
-        AlignToBand = False
-        AutoSize = False
-        AutoStretch = False
-        Color = clWhite
-        DataSet = MainForm.DayTotal
-        DataField = 'CENA'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Arial'
-        Font.Style = []
-        Mask = '####.00'
-        ParentFont = False
-        Transparent = False
-        WordWrap = True
-        FontSize = 8
-      end
-      object QRDBText15: TQRDBText
-        Left = 579
-        Top = 0
-        Width = 40
-        Height = 15
-        Frame.Color = clBlack
-        Frame.DrawTop = False
-        Frame.DrawBottom = False
-        Frame.DrawLeft = False
-        Frame.DrawRight = False
-        Size.Values = (
-          39.687500000000000000
-          1531.937500000000000000
-          0.000000000000000000
-          105.833333333333300000)
-        Alignment = taRightJustify
-        AlignToBand = False
-        AutoSize = False
-        AutoStretch = False
-        Color = clWhite
-        DataSet = MainForm.DayTotal
-        DataField = 'KARTASUMA'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
@@ -1202,9 +952,9 @@ object Form3: TForm3
       KeepOnOnePage = False
       BandType = rbSummary
       object QRExpr1: TQRExpr
-        Left = 366
-        Top = 15
-        Width = 79
+        Left = 328
+        Top = 16
+        Width = 49
         Height = 19
         Frame.Color = clBlack
         Frame.DrawTop = False
@@ -1213,9 +963,9 @@ object Form3: TForm3
         Frame.DrawRight = False
         Size.Values = (
           50.270833333333330000
-          968.375000000000000000
-          39.687500000000000000
-          209.020833333333300000)
+          867.833333333333300000
+          42.333333333333330000
+          129.645833333333300000)
         Alignment = taLeftJustify
         AlignToBand = False
         AutoSize = False
@@ -1235,8 +985,8 @@ object Form3: TForm3
         FontSize = 12
       end
       object QRLabel9: TQRLabel
-        Left = 248
-        Top = 15
+        Left = 208
+        Top = 16
         Width = 115
         Height = 20
         Frame.Color = clBlack
@@ -1246,8 +996,8 @@ object Form3: TForm3
         Frame.DrawRight = False
         Size.Values = (
           52.916666666666670000
-          656.166666666666700000
-          39.687500000000000000
+          550.333333333333300000
+          42.333333333333330000
           304.270833333333300000)
         Alignment = taRightJustify
         AlignToBand = False
@@ -1266,8 +1016,8 @@ object Form3: TForm3
         FontSize = 12
       end
       object QRLabel11: TQRLabel
-        Left = 447
-        Top = 14
+        Left = 384
+        Top = 16
         Width = 49
         Height = 20
         Frame.Color = clBlack
@@ -1277,8 +1027,8 @@ object Form3: TForm3
         Frame.DrawRight = False
         Size.Values = (
           52.916666666666670000
-          1182.687500000000000000
-          37.041666666666670000
+          1016.000000000000000000
+          42.333333333333330000
           129.645833333333300000)
         Alignment = taLeftJustify
         AlignToBand = False

@@ -2,16 +2,18 @@ object ViewForm: TViewForm
   Left = 211
   Top = 121
   AutoScroll = False
-  AutoScroll = False
   Caption = 'View Form'
   ClientHeight = 287
   ClientWidth = 495
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -13
   Font.Name = 'System'
   Font.Style = []
-  PixelsPerInch = 96
+  OldCreateOrder = True
   Position = poDefault
+  PixelsPerInch = 96
   TextHeight = 16
   object Image1: TImage
     Left = 0

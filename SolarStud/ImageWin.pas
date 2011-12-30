@@ -8,24 +8,24 @@ uses Windows, Classes, Graphics, Forms, Controls,
 type
   TImageForm = class(TForm)
     DirectoryListBox1: TDirectoryListBox;
-    DriveComboBox1   : TDriveComboBox;
-    FileEdit         : TEdit;
-    Panel1           : TPanel;
-    Image1           : TImage;
-    FileListBox1     : TFileListBox;
-    Bevel1           : TBevel;
-    FilterComboBox1  : TFilterComboBox;
-    Button1          : TButton;
-    Button2          : TButton;
-    Label1           : TLabel;
+    DriveComboBox1: TDriveComboBox;
+    FileEdit: TEdit;
+    Panel1: TPanel;
+    Image1: TImage;
+    FileListBox1: TFileListBox;
+    Bevel1: TBevel;
+    FilterComboBox1: TFilterComboBox;
+    Button1: TButton;
+    Button2: TButton;
+    Label1: TLabel;
     procedure FileListBox1Click(Sender: TObject);
-    procedure ViewBtnClick     (Sender: TObject);
-    procedure ViewAsGlyph      (const FileExt: string);
-    procedure GlyphCheckClick  (Sender: TObject);
+    procedure ViewBtnClick(Sender: TObject);
+    procedure ViewAsGlyph(const FileExt: string);
+    procedure GlyphCheckClick(Sender: TObject);
     procedure StretchCheckClick(Sender: TObject);
-    procedure FileEditKeyPress (Sender: TObject; var Key: Char);
-    procedure UpDownEditChange (Sender: TObject);
-    procedure FormCreate       (Sender: TObject);
+    procedure FileEditKeyPress(Sender: TObject; var Key: Char);
+    procedure UpDownEditChange(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     FormCaption: string;    
   end;
@@ -36,7 +36,7 @@ var
 
 implementation
 
-uses  SysUtils, MAIN;   //ViewWin,
+uses ViewWin, SysUtils, MAIN;
 
 {$R *.dfm}
 
@@ -49,7 +49,7 @@ begin
   begin
     Image1.Picture.LoadFromFile(FileListBox1.Filename);
     ImageName:= FileListBox1.Filename;
-    Caption  := FormCaption + ExtractFilename(FileListBox1.Filename);
+    Caption := FormCaption + ExtractFilename(FileListBox1.Filename);
     if (FileExt = '.BMP') or (FileExt = '.JPG')then
      begin
       Caption := Caption +

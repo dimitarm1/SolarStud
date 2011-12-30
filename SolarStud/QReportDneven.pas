@@ -44,12 +44,6 @@ type
     QRDBText12: TQRDBText;
     QRDBText13: TQRDBText;
     QRLabel16: TQRLabel;
-    QRLabel17: TQRLabel;
-    QRDBText10: TQRDBText;
-    QRLabel18: TQRLabel;
-    QRDBText14: TQRDBText;
-    QRDBText15: TQRDBText;
-    QRLabel19: TQRLabel;
     procedure QuickRep3AfterPreview(Sender: TObject);
     procedure QuickRep3StartPage(Sender: TCustomQuickRep);
     procedure DetailBand1BeforePrint(Sender: TQRCustomBand;

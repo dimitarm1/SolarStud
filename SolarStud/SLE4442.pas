@@ -1,8 +1,8 @@
 unit SLE4442;
 
 interface
-uses main, Password, Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ACSModule, StdCtrls, ExtCtrls, ComCtrls, StrUtils, ABSMain;
+uses main,  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, ACSModule, StdCtrls, ExtCtrls, ComCtrls, StrUtils;
   Const MAX_BUFFER_LEN    = 256;
   Const INVALID_SW1SW2    = -450;
 
@@ -15,20 +15,19 @@ uses main, Password, Windows, Messages, SysUtils, Variants, Classes, Graphics, C
   dwActProtocol, BufferLen    : DWORD;
   SendBuff, RecvBuff          : array [0..262] of Byte;
   SendLen, RecvLen, nBytesRet : DWORD;
-  Buffer              : array [0..MAX_BUFFER_LEN] of char;
-  ConnActive          : Boolean;
-  Address             : String;
-  Length1             : String;
-  Data                : String;
-   dwState            : DWORD;
- bATR                 : Byte;
- TimerTime            : Integer;
- dwState1             : DWORD;
- bATR1                : Byte;
- cBAtrLen1            : DWORD;
- dwActProtocol1       : DWORD;
- cBAtrLen             : DWORD;
- abc1,abc2, abc3, abc4:integer;
+  Buffer      : array [0..MAX_BUFFER_LEN] of char;
+  ConnActive  : Boolean;
+  Address: String;
+  Length1: String;
+  Data: String;
+   dwState:DWORD;
+ bATR: Byte;
+ TimerTime: Integer;
+ dwState1:DWORD;
+ bATR1: Byte;
+ cBAtrLen1: DWORD;
+ dwActProtocol1: DWORD;
+ cBAtrLen: DWORD;
 
 procedure ClearBuffers();
 //procedure InitMenu();
@@ -36,55 +35,49 @@ procedure ClearBuffers();
 //procedure ClearFields();
 procedure GetATR();
 procedure displayOut(errType: Integer; retVal: Integer; PrintText: String);
-function  SendAPDUandDisplay(SendType: integer; ApduIn: string): integer;
-function  CallCardControl(): integer;
-function  InputOK(checkType: integer): boolean;
-function  TrimInput(InString: String): String;
-procedure SLE4442ShowCardInPaiment();
+function SendAPDUandDisplay(SendType: integer; ApduIn: string): integer;
+function CallCardControl(): integer;
+function InputOK(checkType: integer): boolean;
+function TrimInput(InString: String): String;
 procedure SLE4442Timer3();
 procedure SLE4442ReadCardInfo();
 procedure SLE4442WriteCardInfo();
 procedure SLE4442ShowCardInfo();
-function  SLE4442Submit(): Boolean;
+function SLE4442Submit(): Boolean;
 procedure ClearCard();
 procedure SLE4442Init();  procedure SLE4442Reset();
 procedure SLE4442ChangePIN();
 
 implementation
-   uses SetLang;
+
 procedure ClearBuffers();
 var indx: integer;
 begin
+
   for indx := 0 to 262 do
     begin
       SendBuff[indx] := $00;
       RecvBuff[indx] := $00;
     end;
+
 end;
 
 procedure displayOut(errType: Integer; retVal: Integer; PrintText: String);
 begin
 
   case errType of
-    0: begin
-       MainForm.mMsg.SelAttributes.Color := clTeal;   // Notifications
-       IsReader:=true;
-       end;
+    0: MainForm.mMsg.SelAttributes.Color := clTeal;   // Notifications
     1: begin                                                  // Error Messages
          MainForm.mMsg.SelAttributes.Color := clRed;
-         MainForm.mMsg.Lines.Clear;
-         PrintText := 'Connect reader!'; //GetScardErrMsg(retVal);
-         IsReader:=False;
+         PrintText := GetScardErrMsg(retVal);
        end;
     2: begin
          MainForm.mMsg.SelAttributes.Color := clBlack;
          PrintText := '< ' + PrintText;                      // Input data
-         IsReader:=true;
        end;
     3: begin
          MainForm.mMsg.SelAttributes.Color := clBlack;
          PrintText := '> ' + PrintText;                      // Output data
-         IsReader:=true;
        end;
   end;
   if MainForm.mMsg.Lines.Count>10 then MainForm.mMsg.Lines.Clear;
@@ -121,7 +114,7 @@ begin
   tmpStr := '';
   for indx := 0 to SendLen-1 do
     tmpStr := tmpStr + Format('%.02X ',[SendBuff[indx]]);
-  retCode  := SendAPDUandDisplay(1, tmpStr);
+  retCode := SendAPDUandDisplay(1, tmpStr);
   if retCode <> SCARD_S_SUCCESS then
     Exit;
 
@@ -243,8 +236,7 @@ begin
     end
   else
     MainForm.mMsg.Clear;
-
-    DisplayOut(0, 0, GetMessage('M82'));
+    DisplayOut(0, 0, 'Поставете Карта!.');
 
 
 
@@ -521,7 +513,7 @@ Address:='80';
 Length1:='0f';
 SLE4442Write; // Запис на име на студиото на адрес 80-8f
 
-Data:=char(Card.StudioNomer);
+Data:=IntToStr(Card.StudioNomer);
 Address:='f9';
 Length1:='01'; // Запис на номер на студиото
 SLE4442Write;
@@ -589,11 +581,7 @@ var
   Buff: Real;
   Temp: Integer;
   AResult: Pointer ;
-  Result2: integer;
-  StudioNomer: integer;
 begin
- if IsChipCard then
- begin
 
  Address:='80';
  Length1:='0f';
@@ -604,7 +592,7 @@ begin
  Address:='f9';
  Length1:='01'; // Четене на номер на студиото
  SLE4442Read;
- Card.StudioNomer:=ord(Data[1]);
+ if not tryStrToInt(Data,Card.StudioNomer) then Card.StudioNomer:=0;
 
  Address:='90';
  Length1:='1f'; // Четене на име на клиента
@@ -637,6 +625,7 @@ begin
  if not TryStrToInt(Data,Temp) then Temp:=0;
  if Temp>65535 then Temp:=-1;
 Card.CardNomer:= Temp;
+
  Address:='f6';
  Length1:='03'; // Четене на номер на клиент
  SLE4442Read;
@@ -647,46 +636,43 @@ Card.CardNomer:= Temp;
  if Temp>65535 then Temp:=-1;
  Card.ClientNomer:= Temp;
  if Card.ClientNomer<0 then Card.ClientNomer:=0;
- CardNomer:=Card.ClientNomer;
+
  //if not TryStrToInt(Data,Card.CardNomer) then Card.CardNomer:=0;
  if SLE4442ReadCounter then
    begin
     Card.ErrCounter:= RecvBuff[0];
-    Card.ConStatus:= RecvBuff[1];
+    Card.ConStatus:= RecvBuff[1]
    end
-  else
+   else
    begin
     Card.ErrCounter:=-99; Card.ConStatus:= -99;
    end;
- end;
+
 end;
 
 procedure SLE4442ShowCardInfo();
 var
   PrintText: string;
-  Result2  : Integer;
-  vBalans  : Real;
 begin
-
  MainForm.mMsg.Clear;
  MainForm.mMsg.SelAttributes.Color := clBlue;
  if (Card.PIN='FFFFFF') or (Card.PIN='ffffff') then  MainForm.mMsg.Lines.Add('--ПРАЗНА КАРТА--')
  else
   begin
-   PrintText :=GetMessage('M37')+' ' + IntToStr(Card.ClientNomer);// 'Клиент номер:> '
+   PrintText := 'Клиент номер:> ' + IntToStr(Card.ClientNomer);
    MainForm.mMsg.Lines.Add(PrintText);
    MainForm.mMsg.SelAttributes.Color := clBlack;
-   PrintText :=GetMessage('M38')+' '  + Card.ClientName;  //'Клиент:> '
+   PrintText := 'Клиент:> ' + Card.ClientName;
    MainForm.mMsg.Lines.Add(PrintText);
    MainForm.mMsg.SelAttributes.Color := clRed;
-   PrintText := GetMessage('M39')+' '; // 'Сума в карта:> '
+   PrintText := 'Сума в карта:> ';
     if not (Card.Balans<0)then PrintText:= PrintText + FloatToStr(Card.Balans,LocalFormat)+'лв.';
    MainForm.mMsg.Lines.Add(PrintText);
    MainForm.mMsg.SelAttributes.Color := clPurple;
-   PrintText :=  GetMessage('M40')+' '+ Card.StudioName;    //'Студио:> '
+   PrintText := 'Студио:> ' + Card.StudioName;
    MainForm.mMsg.Lines.Add(PrintText);
    MainForm.mMsg.SelAttributes.Color := clBlack;
-   PrintText :=GetMessage('M41')+' ' + IntToStr(Card.StudioNomer);  //'Студио №:> '
+   PrintText := 'Студио №:> ' + IntToStr(Card.StudioNomer);
    MainForm.mMsg.Lines.Add(PrintText);
    MainForm.mMsg.SelAttributes.Color := clBlack;
   end;
@@ -705,102 +691,25 @@ begin
    MainForm.mMsg.Lines.Add('Status: BAD');
   end;
 end;
-procedure SLE4442ShowCardInPaiment();
- var q: TABSQuery;
- begin
- if not ((MainForm.AdvPageControl1.ActivePage = MainForm.AdvTabSheet16) and (MainForm.SDELKA.RecordCount>0)) then
-  begin
-      q:=TABSQuery.Create(MainForm);
-      q.Databasename:='sol1';
-      q.ReadOnly:=False;
-      q.RequestLive:=TRUE;
-      q.SQL.SetText(PChar('SELECT * FROM kartichip WHERE KLIENTNOMER = '+IntToStr(CardNomer)));
-      q.open;
-       if q.IsEmpty and  (CardNomer>0) then
-          begin
-           VipDiscount:=0;
-           MainForm.KARTICHIP.Append;
-           MainForm.KARTICHIP.FieldValues['KLIENTNOMER']:= CardNomer;
-           MainForm.KARTICHIP.FieldValues['COUNTER']:= 0;
-           MainForm.KARTICHIP.FieldValues['DISCOUNT']:= 0;
-           MainForm.KARTICHIP.FieldValues['SUMA']:= 0;
-           MainForm.KARTICHIP.Post;
-          end;
-      MainForm.QKlienti.Active:=False;
-      MainForm.QKlienti.SQL.Clear;
-      MainForm.QKlienti.SQL.Add('SELECT * FROM klienti WHERE NOMER = '+IntToStr(CardNomer));
-      MainForm.QKlienti.Active:=True;
-      if MainForm.Qklienti.RecordCount>0 then
-       begin
-       ShowKlInfo;
-        if not IsChipCard then
-          begin
-           Card.Balans:=MainForm.KARTICHIP.FieldValues['SUMA'];
-           Card.ClientNomer:=CardNomer;
-           Card.CardNomer:= CardNomer;
-           DiscountPrize:=0;
-           VipDiscount:=0;
-          end;
-        abc3:= (q.FieldValues['COUNTER']+1);
-        abc4:=MainForm.Internet.FieldValues['DISCOUNT_COUNT'];
-        abc2:= q.FieldValues['KLIENTNOMER'];
-        abc1:=  abc3 mod abc4;
-        if abc1=0 then DiscountPrize:= MainForm.Internet.FieldValues['DISCOUNT_PERCENT'];
-        VipDiscount:= q.FieldValues['DISCOUNT']; if VipDiscount>0.1 then DiscountPrize:=0;
 
-       end
-      else
-      if not IsChipCard then
-       begin
-        Card.Balans:=0;
-        MainForm.Table3.Append;
-        MainForm.Table3.FieldValues['NOMER']:=CardNomer;
-        MainForm.Table3.FieldValues['FIRMA']:=0;
-        MainForm.Table3.FieldValues['IME']:=GetMessage('M66')+IntTostr(CardNomer);     //'Нов клиент №'
-        MainForm.Table3.Post;
-        MainForm.Table3.Last;
-        Application.MessageBox(PChar('Клиент №'+IntTostr(CardNomer)+' беше добавен към списъка'),PChar('Нов клиент'), MB_OK);
-        MainForm.QKlienti.Active:=False;
-        MainForm.QKlienti.Active:=True;
-        MainForm.Qklienti.Locate('NOMER',CardNomer,[]);
-        if  MainForm.KARTICHIP.RecordCount=0 then
-           MainForm.KARTICHIP.Append
-          else
-           MainForm.KARTICHIP.Edit;
-        MainForm.KARTICHIP.FieldValues['DISCOUNT']:=0;
-        MainForm.KARTICHIP.FieldValues['COUNTER']:=0;
-        MainForm.KARTICHIP.post;
-        MainForm.Timer3.enabled:=True;
-       end;
-      Mainform.BonusLabel.Caption:=FloatToStr(DiscountPrize);
-      q.Free;
- end;
-end;
 
 procedure SLE4442Timer3();
 var
- dwState        :DWORD;
- bATR           :Byte;
- cBAtrLen       :DWORD;
- Result         :String;
- Ostatak,vBalans:Real;
- Result2        :Integer;
- _Q             :TABSQuery;
+ dwState:DWORD;
+ bATR: Byte;
+ cBAtrLen: DWORD;
+ Result: String;
+ Ostatak: Real;
 begin
-
- _Q:=TABSQuery.Create(nil);
- _Q.Databasename:='sol1';
- _Q.ReadOnly:=False;
- _Q.RequestLive:=True;
- If (TimerTime>4) and (MainForm.Label137.Font.Color = clRed) then TimerTime:=0;
- TimerTime:= TimerTime+1;
- If TimerTime=2 then
-  begin
+If (TimerTime>4) and (MainForm.Label137.Font.Color = clRed) then TimerTime:=0;
+TimerTime:= TimerTime+1;
+If TimerTime=2 then
+ begin
      retCode := SCardEstablishContext(SCARD_SCOPE_USER,
                                    nil,
                                    nil,
                                    @hContext);
-   if retCode <> SCARD_S_SUCCESS then
+  if retCode <> SCARD_S_SUCCESS then
     begin
       DisplayOut(1, retCode, 'Con1');
       TimerTime:=0;
@@ -821,128 +730,101 @@ begin
 //  LoadListToControl(SLE4432_4442Main.cbReader,@buffer,bufferLen);
 //  SLE4432_4442Main.cbReader.ItemIndex := 0;
      // 1. Direct Connection
-   retCode := SCardConnectA(hContext,
+  retCode := SCardConnectA(hContext,
                            PChar('ACS ACR38U 0'),
                            SCARD_SHARE_DIRECT,
                            0,
                            @hCard,
                            @dwActProtocol);
-   if retCode <> SCARD_S_SUCCESS then
-     begin
-       DisplayOut(1, retCode, ' Con2');
-       ConnActive := False;
-       Exit;
-     end;
+  if retCode <> SCARD_S_SUCCESS then
+    begin
+      DisplayOut(1, retCode, ' Con2');
+      ConnActive := False;
+      Exit;
+    end;
 
   // 2. Select Card Type
-   ClearBuffers();
-   SendLen := 4;
-   SendBuff[0] := $12;     // Card Type for SLE4442
-   retCode := CallCardControl();
-   if retCode <> SCARD_S_SUCCESS then
-     Exit;
+  ClearBuffers();
+  SendLen := 4;
+  SendBuff[0] := $12;     // Card Type for SLE4442
+  retCode := CallCardControl();
+  if retCode <> SCARD_S_SUCCESS then
+    Exit;
 
   // 3. Reconnect using SCARD_SHARE_SHARED and
   //    SCARD_PROTOCOL_T0 parameters
-   retCode := SCardDisconnect(hCard, SCARD_UNPOWER_CARD);
-   if retCode <> SCARD_S_SUCCESS then
-     begin
-       DisplayOut(1, retCode, 'Con3');
-       ConnActive := False;
-       Exit;
-     end;
-   retCode := SCardConnectA(hContext,
+  retCode := SCardDisconnect(hCard, SCARD_UNPOWER_CARD);
+  if retCode <> SCARD_S_SUCCESS then
+    begin
+      DisplayOut(1, retCode, 'Con3');
+      ConnActive := False;
+      Exit;
+    end;
+  retCode := SCardConnectA(hContext,
                            PChar('ACS ACR38U 0'),
                            SCARD_SHARE_SHARED,
                            SCARD_PROTOCOL_T0 or SCARD_PROTOCOL_T1,
                            @hCard,
                            @dwActProtocol);
-   if retCode <> SCARD_S_SUCCESS then
-     begin
-    //  DisplayOut(1, retCode, '');
-       ConnActive := False;
-       IsChipCard:=FALSE;
-       MainForm.NovKlientButton.Visible:=False;
-//       MainForm.NuliraneChipCartaButton.Visible:=False;
-       SLE4442Init();
-       Exit;
-     end
-   else
+  if retCode <> SCARD_S_SUCCESS then
     begin
-     ConnActive := True;
-     IsChipCard:=True;
-     MainForm.NovKlientButton.Visible:=TRUE;
-//     MainForm.NuliraneChipCartaButton.Visible:=TRUE;
-    end;
-  end;
+    //  DisplayOut(1, retCode, '');
+      ConnActive := False;
+      SLE4442Init();
+      Exit;
+    end
+  else
+  ConnActive := True;
+      //****************
 
- //Само ако има връзка с карта
-  if hCard<>0 then
-  begin
+
+ end;
+ if hCard<>0 then
+ begin
  // retCode:=SCardState(hCard,@dwState1,@dwActProtocol1,@bATR1,@cBAtrLen1);
-  retCode:=SCardState(hCard,@dwState,@dwActProtocol1,@bATR1,@cBAtrLen1);
-   if dwState=6 {ConnActive} then
-   begin
-    if  not(MainForm.Label137.Font.Color=clGreen) then
+ retCode:=SCardState(hCard,@dwState,@dwActProtocol1,@bATR1,@cBAtrLen1);
+  if dwState=6 {ConnActive} then
+  begin
+   MainForm.Edit8.Visible:=False;
+   if  not(MainForm.Label137.Font.Color=clGreen) then
+    begin
+     MainForm.Label137.Caption:='Има Карта!';
+     MainForm.Label137.Font.Color:=clGreen;
+     SLE4442ReadCardInfo();
+     SLE4442ShowCardInfo();
+     if (card.StudioNomer= MainForm.Internet.FieldValues['StudioNomer']) OR (card.StudioName= MainForm.Internet.FieldValues['StudioName']) then
      begin
-      MainForm.Label137.Caption:=GetMessage('M84');//'Има Карта!';
-      MainForm.Label137.Font.Color:=clGreen;
-      SLE4442ReadCardInfo();
-      SLE4442ShowCardInfo();
-      if (card.StudioNomer = MainForm.Internet.FieldValues['StudioNomer']) then
-      begin
-       MainForm.QKlienti.Active:=False;
-  //     MainForm.QKlienti.SQL.SetText(PChar('SELECT * FROM klienti ORDER BY IME'));
-       MainForm.QKlienti.SQL.SetText(PChar('SELECT * FROM klienti WHERE NOMER = '+IntToStr(Card.ClientNomer)));
-       MainForm.QKlienti.Active:=True;
-       if MainForm.Qklienti.Locate('NOMER',Card.ClientNomer,[]) then
-        begin
-        ShowKlInfo;
-         if not (card.ClientName=MainForm.Qklienti.FieldValues['ime']) then
-          begin
-            MainForm.Qklienti.Edit;
-            MainForm.Qklienti.FieldValues['ime']:= card.ClientName;
-            MainForm.Qklienti.Post;
-          end;
-
-        end;
+      MainForm.QKlienti.Active:=False;
+ //     MainForm.QKlienti.SQL.SetText(PChar('SELECT * FROM klienti ORDER BY IME'));
+      MainForm.QKlienti.SQL.SetText(PChar('SELECT * FROM klienti WHERE NOMER = '+IntToStr(Card.ClientNomer)));
+      MainForm.QKlienti.Active:=True;
+      if MainForm.Qklienti.Locate('NOMER',Card.ClientNomer,[]) then
+       begin
+        MainForm.Label130.Visible:=True;
+        MainForm.DBText7.Visible:=True;
+        MainForm.DBText4.Visible:=True;
+        if not (card.ClientName=MainForm.Qklienti.FieldValues['ime']) then
+         begin
+           MainForm.Qklienti.Edit;
+           MainForm.Qklienti.FieldValues['ime']:= card.ClientName;
+           MainForm.Qklienti.Post;
+         end;
        end;
-      MainForm.Label71.Visible:=True;
-      MainForm.Label72.Visible:=True;
-      if (Card.StudioNomer = MainForm.Internet.FieldValues['STUDIONOMER']) and (Card.PIN = MainForm.Internet.FieldValues['PIN']) then begin
-       _Q.SQL.SetText(PChar('select * from KARTICHIP where KLIENTNOMER = '+IntToStr(Card.ClientNomer)));
-       _Q.Open;
-       if _Q.RecordCount>0 then begin
-        if varType(MainForm.KARTICHIP.FieldValues['DISCOUNT']) <> varNull then
-
-        VipDiscount:=MainForm.KARTICHIP.FieldValues['DISCOUNT']
-        else VipDiscount:= 0;
-       end
-         else
-          if Card.ClientNomer>0 then
-          begin
-           VipDiscount:=0;
-           _Q.Append;
-           _Q.FieldValues['KLIENTNOMER']:= Card.ClientNomer;
-           _Q.FieldValues['COUNTER']:= 0;
-           _Q.FieldValues['DISCOUNT']:= 0;
-           _Q.FieldValues['SUMA']:= 0;
-           _Q.Post;
-          end;
-      end;
-     Ostatak:= (Card.Balans)/MainForm.SOLARIUMI.FieldValues['CENA'];
+     end;
+     MainForm.Label71.Visible:=True;
+     MainForm.Label72.Visible:=True;
+     Ostatak:= (Card.Balans)/MainForm.Table1.FieldValues['CENA'];
      FmtStr(Result,'%4.2f',[Ostatak]);
-     MainForm.Label72.Caption:=''+ Result+GetMessage('M85');//'минути / ';
+     MainForm.Label72.Caption:=''+ Result+'минути / ';
      FmtStr(Result,'%4.2f',[Card.Balans]);
-     MainForm.Label72.Caption:=MainForm.Label72.Caption + ''+ Result+GetMessage('29');//'лв.';
+     MainForm.Label72.Caption:=MainForm.Label72.Caption + ''+ Result+'лв.';
     end;
     Exit;
   end
   else
    begin
-    MainForm.Label137.Caption:=GetMessage('M83');//'Няма Карта!';
+    MainForm.Label137.Caption:='Няма Карта!';
     MainForm.Label137.Font.Color:=clRed;
-    VipDiscount:=0; DiscountPrize:=0;
     if PaidChipCard>0 then
      begin
       PaidChipCard:=0;
@@ -950,13 +832,18 @@ begin
      end;
     if MainForm.Label119.Visible=False then
      begin
-       HideKlInfo;
-      end;
+        MainForm.Label130.Visible:=False;
+        MainForm.DBText7.Visible:=False;
+        MainForm.DBText4.Visible:=False;
+        MainForm.Label71.visible:=False;
+        MainForm.Label72.visible:=False;
+        MainForm.Edit8.Visible:=False;
+     end;
     MainForm.mMsg.Clear;
     Card.ClientNomer:=-1;
    end;
  end;
- _Q.Free;
+
 end;
 
 procedure ClearCard();

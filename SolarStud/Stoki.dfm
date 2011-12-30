@@ -1,9 +1,10 @@
 object Form4: TForm4
   Left = 192
   Top = 107
+  Width = 696
+  Height = 480
+  HorzScrollBar.Position = 74
   Caption = 'Form4'
-  ClientHeight = 442
-  ClientWidth = 680
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -15,7 +16,7 @@ object Form4: TForm4
   PixelsPerInch = 96
   TextHeight = 13
   object QuickRep1: TQuickRep
-    Left = 0
+    Left = -74
     Top = 0
     Width = 794
     Height = 1123

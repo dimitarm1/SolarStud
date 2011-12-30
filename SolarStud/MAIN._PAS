@@ -1,0 +1,3096 @@
+unit MAIN;
+
+interface
+
+uses Windows, SysUtils, Classes, Graphics, Forms, Controls, Menus,
+  StdCtrls, Dialogs, Buttons, Messages, ExtCtrls, ComCtrls, StdActns,
+  ActnList, ToolWin, ImgList, jpeg, Gauges, DB, DBTables, DBCtrls, Grids,
+  DBGrids, ValEdit, Mask, DBClient,ImageWin, MXDB, Mxstore,
+  Series, ppCtrls, ppPrnabl,setformdata,
+  ppClass, ppDB, ppDBPipe, ppBands, ppCache, ppComm, ppRelatv, ppProd,
+  ppReport, QuickRpt, QRCtrls, TeeProcs, TeEngine, Chart,StrUtils,
+  StatChar, DBChart, RzBorder, wwSpeedButton, wwDBNavigator, wwclearpanel,
+  Wwdbigrd, Wwdbgrid, LMDControl, LMDBaseControl, LMDBaseGraphicControl,
+  LMDGraphicControl, LMDLEDCustomLabel, LMDLEDLabel, ABSMain,
+  AdvPageControl, LMDCustomControl, LMDCustomPanel, LMDButtonControl,
+  LMDCustomCheckBox, LMDDBCheckBox, LMDWebBase, LMDMapi, wwdbedit,
+  wwdblook, Wwdbdlg, acAST, acSQL92SynProvider, acQBEventMetaProvider,
+  acQBBase, AdvCombo, Lucombo, dblucomb, LMDCustomBevelPanel,
+  LMDCustomParentPanel, LMDCustomPanelFill, LMDPanelShape, LMDCustomButton,
+  LMDButton, LMDBaseLabel, LMDCustomSimpleLabel, LMDSimpleLabel,
+  LMDBackPanel, LMDBaseGraphicButton, LMDCustomShapeButton, LMDShapeButton,
+  wwclearbuttongroup, wwradiogroup, datelbl, AdvDBLookupComboBox, AdvEdit,
+  AdvMEdBtn, PlannerMaskDatePicker, wwdbdatetimepicker, RzDTP, RzDBDTP,
+  LMDBaseEdit, LMDCustomEdit, LMDCustomMaskEdit, LMDCustomExtCombo,
+  LMDCalendarComboBox, LMDDBCalendarComboBox, wwcheckbox, LMDCheckBox,
+  RzButton, RzRadChk, TeeSurfa, RzDBCmbo, LMDCustomMemo, LMDMemo,
+  LMDCustomComponent, LMDBaseController, LMDCustomContainer,
+  LMDCustomImageList, LMDImageList, LMDCustomMMButton, LMDMMButton,
+  AdvToolBtn, RzBmpBtn, LMDCustom3DButton, LMD3DEffectButton, DBAdvEd;
+
+type TSLE4442Card = packed record
+  StudioName: String;
+  ClientName: String;
+  ClientNomer: Integer;
+  Balans: Real;
+  StudioNomer: Integer;
+  PIN: string;
+  CardNomer: Integer;
+  ErrCounter: Integer;
+  ConStatus: Integer;
+end;
+type
+  TMainForm = class(TForm)
+    OpenDialog: TOpenDialog;
+    Image2: TImage;
+    Timer1: TTimer;
+    Image4: TImage;
+    Image5: TImage;
+    Label4: TLabel;
+    Label5: TLabel;
+    Label7: TLabel;
+    Image6: TImage;
+    Image7: TImage;
+    Image8: TImage;
+    Image9: TImage;
+    Label10: TLabel;
+    Label11: TLabel;
+    Image10: TImage;
+    Image11: TImage;
+    Label12: TLabel;
+    Label13: TLabel;
+    Label14: TLabel;
+    Label15: TLabel;
+    Label16: TLabel;
+    Label17: TLabel;
+    Label18: TLabel;
+    Label19: TLabel;
+    Label20: TLabel;
+    Label21: TLabel;
+    Label22: TLabel;
+    Label23: TLabel;
+    Label24: TLabel;
+    Label25: TLabel;
+    Label26: TLabel;
+    Label27: TLabel;
+    Label28: TLabel;
+    Label29: TLabel;
+    Imagepress1: TImage;
+    Imagepress2: TImage;
+    imagepress3: TImage;
+    DataSource1: TDataSource;
+    Image16: TImage;
+    DBEdit1: TDBEdit;
+    Label31: TLabel;
+    Image15: TImage;
+    Label32: TLabel;
+    Label33: TLabel;
+    Label34: TLabel;
+    Label35: TLabel;
+    Label36: TLabel;
+    Label37: TLabel;
+    Label38: TLabel;
+    Label39: TLabel;
+    Label41: TLabel;
+    Label42: TLabel;
+    Label43: TLabel;
+    Label44: TLabel;
+    Label45: TLabel;
+    DBComboBox1: TDBComboBox;
+    DBComboBox2: TDBComboBox;
+    DBComboBox3: TDBComboBox;
+    DBComboBox4: TDBComboBox;
+    DBComboBox5: TDBComboBox;
+    Image17: TImage;
+    Label40: TLabel;
+    Label46: TLabel;
+    Label47: TLabel;
+    Label48: TLabel;
+    Label49: TLabel;
+    Label50: TLabel;
+    DBEdit9: TDBEdit;
+    DBEdit10: TDBEdit;
+    DBEdit11: TDBEdit;
+    DBEdit12: TDBEdit;
+    Image18: TImage;
+    Label53: TLabel;
+    Image19: TImage;
+    LKabine1: TLabel;
+    LKabine2: TLabel;
+    LKabine3: TLabel;
+    LKabine4: TLabel;
+    LKabine5: TLabel;
+    LKabine6: TLabel;
+    LKabine7: TLabel;
+    LKabine8: TLabel;
+    LKabine9: TLabel;
+    LKabine10: TLabel;
+    LKabine11: TLabel;
+    LKabine12: TLabel;
+    LKabine13: TLabel;
+    LKabine14: TLabel;
+    LKabine15: TLabel;
+    LKabine16: TLabel;
+    Image20: TImage;
+    Imagesol1: TImage;
+    Imagesol3: TImage;
+    Imagesol2: TImage;
+    Label51: TLabel;
+    DBEdit2: TDBEdit;
+    Image24: TImage;
+    Label54: TLabel;
+    Image25: TImage;
+    Label55: TLabel;
+    Image26: TImage;
+    Image27: TImage;
+    Image28: TImage;
+    Image29: TImage;
+    Image30: TImage;
+    Image31: TImage;
+    Image32: TImage;
+    Kabina11: TLabel;
+    Kabina21: TLabel;
+    Kabina31: TLabel;
+    Gauge1: TGauge;
+    BitBtn1: TBitBtn;
+    Edit3: TEdit;
+    BitBtn2: TBitBtn;
+    BitBtn4: TBitBtn;
+    Edit2: TEdit;
+    BitBtn5: TBitBtn;
+    BitBtn3: TBitBtn;
+    Edit4: TEdit;
+    BitBtn6: TBitBtn;
+    RadioButton1: TRadioButton;
+    Label57: TLabel;
+    Label2: TLabel;
+    Label1: TLabel;
+    Label3: TLabel;
+    DBText1: TDBText;
+    Label61: TLabel;
+    DBComboBox8: TDBComboBox;
+    DBEdit3: TDBEdit;
+    DBText2: TDBText;
+    DBText3: TDBText;
+    DBText5: TDBText;
+    DBText6: TDBText;
+    Label65: TLabel;
+    Label66: TLabel;
+    Label67: TLabel;
+    Label68: TLabel;
+    Kabina1minuti: TLabel;
+    Kabina1cena: TLabel;
+    Kabina2minuti: TLabel;
+    Kabina2cena: TLabel;
+    Kabina3minuti: TLabel;
+    Kabina3cena: TLabel;
+    Image34: TImage;
+    Image35: TImage;
+    Image36: TImage;
+    Image37: TImage;
+    Image38: TImage;
+    Image39: TImage;
+    Image40: TImage;
+    Image41: TImage;
+    Image42: TImage;
+    Image43: TImage;
+    Image44: TImage;
+    Image45: TImage;
+    Image46: TImage;
+    Image47: TImage;
+    Image48: TImage;
+    Image49: TImage;
+    Label75: TLabel;
+    Label76: TLabel;
+    Label77: TLabel;
+    Label78: TLabel;
+    Label79: TLabel;
+    Label80: TLabel;
+    Label81: TLabel;
+    Label82: TLabel;
+    Label83: TLabel;
+    Label84: TLabel;
+    Label85: TLabel;
+    Label86: TLabel;
+    Label87: TLabel;
+    Label88: TLabel;
+    Label89: TLabel;
+    Label90: TLabel;
+    Label91: TLabel;
+    Label92: TLabel;
+    Image50: TImage;
+    Image51: TImage;
+    Label95: TLabel;
+    DataSource2: TDataSource;
+    DBChart1: TDBChart;
+    Label8: TLMDLEDLabel;
+    Label9: TLMDLEDLabel;
+    sol1: TABSDatabase;
+    Table1: TABSTable;
+    Table3: TABSTable;
+    AdvPageControl1: TAdvPageControl;
+    AdvTabSheet1: TAdvTabSheet;
+    AdvTabSheet2: TAdvTabSheet;
+    AdvTabSheet3: TAdvTabSheet;
+    AdvTabSheet4: TAdvTabSheet;
+    AdvTabSheet5: TAdvTabSheet;
+    AdvTabSheet6: TAdvTabSheet;
+    AdvTabSheet7: TAdvTabSheet;
+    AdvTabSheet8: TAdvTabSheet;
+    AdvTabSheet9: TAdvTabSheet;
+    AdvTabSheet10: TAdvTabSheet;
+    AdvTabSheet11: TAdvTabSheet;
+    AdvTabSheet12: TAdvTabSheet;
+    AdvTabSheet13: TAdvTabSheet;
+    AdvTabSheet14: TAdvTabSheet;
+    AdvTabSheet15: TAdvTabSheet;
+    AdvTabSheet16: TAdvTabSheet;
+    AdvTabSheet17: TAdvTabSheet;
+    Image1: TImage;
+    Label96: TLabel;
+    LMDDBCheckBox1: TLMDDBCheckBox;
+    Label30: TLabel;
+    DBEdit5: TDBEdit;
+    Button1: TButton;
+    Label56: TLabel;
+    Label97: TLabel;
+    Image52: TImage;
+    Label98: TLabel;
+    LMDMapiSendMail1: TLMDMapiSendMail;
+    Internet: TABSTable;
+    Label52: TLabel;
+    wwDBEdit1: TwwDBEdit;
+    DataSource3: TDataSource;
+    Label99: TLabel;
+    Label100: TLabel;
+    wwDBEdit2: TwwDBEdit;
+    wwDBEdit3: TwwDBEdit;
+    Label101: TLabel;
+    Label102: TLabel;
+    DBCheckBox1: TDBCheckBox;
+    DayTotal: TABSQuery;
+    Label62: TLMDLEDLabel;
+    Label103: TLabel;
+    Label104: TLabel;
+    Label105: TLabel;
+    DataSource5: TDataSource;
+    wwDBGrid2: TwwDBGrid;
+    Label106: TLabel;
+    Label107: TLabel;
+    Label108: TLabel;
+    Label109: TLabel;
+    Spravka1: TABSQuery;
+    Label110: TLabel;
+    StatusShape1: TLMDPanelShape;
+    StatusShape2: TLMDPanelShape;
+    StatusShape3: TLMDPanelShape;
+    Image53: TImage;
+    Image54: TImage;
+    STOKI: TABSTable;
+    KARTI: TABSQuery;
+    DataSource6: TDataSource;
+    Image56: TImage;
+    Label121: TLabel;
+    Label123: TLabel;
+    Label124: TLabel;
+    wwDBGrid3: TwwDBGrid;
+    DataSource7: TDataSource;
+    STOKITE: TABSQuery;
+    wwDBGrid4: TwwDBGrid;
+    LMDSimpleLabel1: TLMDSimpleLabel;
+    LMDSimpleLabel2: TLMDSimpleLabel;
+    LMDButton2: TLMDButton;
+    DataSource8: TDataSource;
+    LMDButton3: TLMDButton;
+    LMDButton4: TLMDButton;
+    Label122: TLabel;
+    KARTIALL1: TABSTable;
+    DataSource10: TDataSource;
+    Image57: TImage;
+    AdvTabSheet18: TAdvTabSheet;
+    Image58: TImage;
+    wwDBGrid6: TwwDBGrid;
+    wwDBGrid7: TwwDBGrid;
+    Label125: TLabel;
+    Label126: TLabel;
+    Label128: TLabel;
+    Label129: TLabel;
+    Label130: TLabel;
+    AdvComboBox1: TAdvComboBox;
+    Image55: TImage;
+    Label6: TLabel;
+    wwDBGrid8: TwwDBGrid;
+    Sdelka: TABSQuery;
+    Plashtania: TABSTable;
+    DataSource9: TDataSource;
+    wwDBGrid9: TwwDBGrid;
+    MinMax: TABSQuery;
+    DataSource11: TDataSource;
+    LMDSimpleLabel3: TLMDSimpleLabel;
+    LMDSimpleLabel4: TLMDSimpleLabel;
+    LMDSimpleLabel5: TLMDSimpleLabel;
+    KasseLabel: TLMDLEDLabel;
+    Label111: TLabel;
+    Label112: TLabel;
+    DataSource12: TDataSource;
+    Image59: TImage;
+    Label113: TLabel;
+    Edit1: TEdit;
+    KARTIALL: TABSTable;
+    Image60: TImage;
+    Label114: TLabel;
+    Label115: TLabel;
+    Label116: TLabel;
+    Label117: TLabel;
+    Label119: TLabel;
+    Label127: TLabel;
+    Bevel3: TBevel;
+    Bevel1: TBevel;
+    wwDBGrid6IButton: TwwIButton;
+    LMDButton5: TLMDButton;
+    LMDButton6: TLMDButton;
+    LMDButton7: TLMDButton;
+    Label120: TLabel;
+    LMDButton8: TLMDButton;
+    Image62: TImage;
+    Label94: TLabel;
+    solariumspr: TABSTable;
+    stokispr: TABSTable;
+    DataSource13: TDataSource;
+    Label133: TLabel;
+    Imagesol4: TImage;
+    StatusShape4: TLMDPanelShape;
+    Kabina41: TLabel;
+    Kabina51: TLabel;
+    Imagesol5: TImage;
+    StatusShape5: TLMDPanelShape;
+    Kabina5minuti: TLabel;
+    Kabina5cena: TLabel;
+    Kabina4minuti: TLabel;
+    Kabina4cena: TLabel;
+    Kabina6cena: TLabel;
+    Kabina6minuti: TLabel;
+    StatusShape6: TLMDPanelShape;
+    Imagesol6: TImage;
+    Kabina61: TLabel;
+    Imagepress4: TImage;
+    Imagepress5: TImage;
+    Imagepress6: TImage;
+    Qklienti: TABSQuery;
+    Qkarti: TABSQuery;
+    Edit6: TEdit;
+    Label143: TLabel;
+    Label144: TLabel;
+    DBLUCombo1: TPlannerMaskDatePicker;
+    Edit5: TEdit;
+    Kabina42: TLabel;
+    Kabina52: TLabel;
+    Kabina62: TLabel;
+    Kabina12: TLabel;
+    Kabina22: TLabel;
+    Kabina32: TLabel;
+    Image61: TImage;
+    Image63: TImage;
+    Image22: TImage;
+    Image23: TImage;
+    Image33: TImage;
+    Image66: TImage;
+    QStatistika: TABSQuery;
+    PlannerMaskDatePicker1: TPlannerMaskDatePicker;
+    PlannerMaskDatePicker2: TPlannerMaskDatePicker;
+    Label147: TLabel;
+    Label148: TLabel;
+    RzCheckBox1: TRzCheckBox;
+    RzCheckBox2: TRzCheckBox;
+    RzCheckBox3: TRzCheckBox;
+    RzCheckBox4: TRzCheckBox;
+    RzCheckBox5: TRzCheckBox;
+    RzCheckBox6: TRzCheckBox;
+    Label149: TLabel;
+    Series1: TTowerSeries;
+    Label58: TLabel;
+    Label59: TLabel;
+    Label60: TLabel;
+    DataSource14: TDataSource;
+    AdvComboBox2: TAdvComboBox;
+    Label69: TLabel;
+    Label70: TLabel;
+    Bevel2: TBevel;
+    Label71: TLabel;
+    Label72: TLabel;
+    Edit8: TEdit;
+    Label73: TLabel;
+    DBEdit4: TDBEdit;
+    Label93: TLabel;
+    Label118: TLabel;
+    DBEdit7: TDBEdit;
+    DBEdit6: TDBEdit;
+    DBText4: TDBText;
+    DBText7: TDBText;
+    Label131: TLabel;
+    DBComboBox6: TDBComboBox;
+    Label132: TLabel;
+    QKartiPaid: TABSQuery;
+    DBText8: TDBText;
+    DBText9: TDBText;
+    LMDImageList1: TLMDImageList;
+    RzBmpButton1: TRzBmpButton;
+    RzBmpButton2: TRzBmpButton;
+    RzBmpButton3: TRzBmpButton;
+    RzBmpButton4: TRzBmpButton;
+    wwDBEdit6: TwwDBEdit;
+    Label74: TLabel;
+    Label134: TLabel;
+    Label135: TLabel;
+    AdvTabSheet19: TAdvTabSheet;
+    wwDBGrid5: TwwDBGrid;
+    wwIButton1: TwwIButton;
+    LMDButton11: TLMDButton;
+    Label136: TLabel;
+    Label137: TLabel;
+    Label138: TLabel;
+    Label139: TLabel;
+    Label140: TLabel;
+    Label141: TLabel;
+    Image3: TImage;
+    Image12: TImage;
+    Edit10: TEdit;
+    QChipKarti: TABSQuery;
+    DataSource4: TDataSource;
+    wwDBEdit5: TwwDBEdit;
+    wwDBEdit7: TwwDBEdit;
+    Image13: TImage;
+    wwDBGrid7IButton: TwwIButton;
+    Edit7: TEdit;
+    LMDMemo1: TMemo;
+    PopupMenu1: TPopupMenu;
+    N1: TMenuItem;
+    N2: TMenuItem;
+    mMsg: TRichEdit;
+    LMDButton9: TLMDButton;
+    LMDButton10: TLMDButton;
+    LMDButton12: TLMDButton;
+    LMDButton13: TLMDButton;
+    LMDButton14: TLMDButton;
+    CHIPKARTI: TABSTable;
+    PopupMenu2: TPopupMenu;
+    LMDButton1: TLMDButton;
+    N3: TMenuItem;
+    N4: TMenuItem;
+    N5: TMenuItem;
+    procedure Label1Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure Timer1Timer(Sender: TObject);
+    procedure BitBtn4Click(Sender: TObject);
+    procedure BitBtn1Click(Sender: TObject);
+    procedure BitBtn2Click(Sender: TObject);
+    procedure BitBtn5Click(Sender: TObject);
+    procedure BitBtn3Click(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
+    procedure Image6Click(Sender: TObject);
+    procedure Image7Click(Sender: TObject);
+    procedure Image8Click(Sender: TObject);
+    procedure Image9Click(Sender: TObject);
+    procedure SpeedButton1Click(Sender: TObject);
+    procedure Table1AfterScroll(DataSet: TDataSet);
+    procedure Label13Click(Sender: TObject);
+    procedure Label31Click(Sender: TObject);
+    procedure Label33Click(Sender: TObject);
+    procedure Label40Click(Sender: TObject);
+    procedure Label47Click(Sender: TObject);
+    procedure Label48Click(Sender: TObject);
+    procedure Label49Click(Sender: TObject);
+    procedure Label22Click(Sender: TObject);
+    procedure Label10Click(Sender: TObject);
+    procedure Label11Click(Sender: TObject);
+    procedure BitBtn6Click(Sender: TObject);
+    procedure Imagepress1MouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure Label54Click(Sender: TObject);
+    procedure Label55Click(Sender: TObject);
+    procedure Image27Click(Sender: TObject);
+    procedure Image26Click(Sender: TObject);
+    procedure RTFLabel1Click(Sender: TObject);
+    procedure Edit4Change(Sender: TObject);
+    procedure Label28Click(Sender: TObject);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure Label14Click(Sender: TObject);
+    procedure Label68Click(Sender: TObject);
+    procedure Label91Click(Sender: TObject);
+    procedure Label92Click(Sender: TObject);
+    procedure Label94Click(Sender: TObject);
+    procedure Label95Click(Sender: TObject);
+    procedure AdvPageControl1Change(Sender: TObject);
+    procedure Label30Click(Sender: TObject);
+    procedure ButtonScanNewClick(Sender: TObject);
+    procedure Label23Click(Sender: TObject);
+    procedure DBLUCombo11Change(Sender: TObject);
+    procedure Label107Click(Sender: TObject);
+    procedure Label108Click(Sender: TObject);
+    procedure Label110Click(Sender: TObject);
+    procedure StaticText1Click(Sender: TObject);
+    procedure b2Click(Sender: TObject);
+    procedure Label120Click(Sender: TObject);
+    procedure LMDButton2Click(Sender: TObject);
+    procedure LMDButton3Click(Sender: TObject);
+    procedure LMDButton4Click(Sender: TObject);
+    procedure wwDBGrid3FieldChanged(Sender: TObject; Field: TField);
+    procedure Label123Click(Sender: TObject);
+    procedure LMDButton6Click(Sender: TObject);
+    procedure Image57Click(Sender: TObject);
+    procedure LMDShapeButton1Click(Sender: TObject);
+    procedure Label112Click(Sender: TObject);
+    procedure Label111Click(Sender: TObject);
+    procedure Image59Click(Sender: TObject);
+    procedure AdvComboBox1Change(Sender: TObject);
+    procedure Label16Click(Sender: TObject);
+    procedure LMDButton7Click(Sender: TObject);
+    procedure AdvTabSheet2Show(Sender: TObject);
+    procedure AdvTabSheet7Show(Sender: TObject);
+    procedure LMDButton5Click(Sender: TObject);
+    procedure AdvTabSheet18Show(Sender: TObject);
+    procedure wwDBGrid6Exit(Sender: TObject);
+    procedure AdvTabSheet16Show(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure wwDBGrid6TitleButtonClick(Sender: TObject;
+      AFieldName: String);
+    procedure Edit6Change(Sender: TObject);
+    procedure wwDBGrid6RowChanged(Sender: TObject);
+    procedure Edit7Change(Sender: TObject);
+    procedure wwDBGrid7TitleButtonClick(Sender: TObject;
+      AFieldName: String);
+    procedure wwDBGrid7RowChanged(Sender: TObject);
+    procedure Edit5Change(Sender: TObject);
+    procedure AdvTabSheet4Show(Sender: TObject);
+    procedure PlannerMaskDatePicker2Change(Sender: TObject);
+    procedure Label17Click(Sender: TObject);
+    procedure AdvComboBox2Change(Sender: TObject);
+    procedure Label128DblClick(Sender: TObject);
+    procedure RzBmpButton1MouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure RzBmpButton1MouseUp(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure RzBmpButton2MouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure RzBmpButton2MouseUp(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure RzBmpButton3MouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure RzBmpButton3MouseUp(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure RzBmpButton4MouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure RzBmpButton4MouseUp(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure AdvTabSheet5Show(Sender: TObject);
+    procedure Label104Click(Sender: TObject);
+    procedure wwDBEdit7KeyPress(Sender: TObject; var Key: Char);
+    procedure Label139Click(Sender: TObject);
+    procedure Edit7KeyPress(Sender: TObject; var Key: Char);
+    procedure AdvComboBox2KeyPress(Sender: TObject; var Key: Char);
+    procedure Edit7KeyUp(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure N2Click(Sender: TObject);
+    procedure N1Click(Sender: TObject);
+    procedure Label92MouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure DBCheckBox1Exit(Sender: TObject);
+    procedure LMDButton10Click(Sender: TObject);
+    procedure LMDButton12Click(Sender: TObject);
+    procedure LMDButton13Click(Sender: TObject);
+    procedure LMDButton14Click(Sender: TObject);
+    procedure LMDButton9Click(Sender: TObject);
+    procedure Label141Click(Sender: TObject);
+    procedure AdvTabSheet17Show(Sender: TObject);
+    procedure N3Click(Sender: TObject);
+    procedure LMDButton1MouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure N4Click(Sender: TObject);
+    procedure N5Click(Sender: TObject);
+    procedure Edit8KeyPress(Sender: TObject; var Key: Char);
+    procedure Edit8Change(Sender: TObject);
+    procedure AdvTabSheet19Show(Sender: TObject);
+    procedure Label109Click(Sender: TObject);
+
+ //   procedure config_uart(Const n1: short);
+ //   procedure init_uart(Const n1: short);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  //   procedure ChangeImageName();
+  end;
+      Procedure CalcPaid;
+type _RS232DCB = packed record // dcb
+     DCBlength: DWORD;           // sizeof(DCB)
+     BaudRate: DWORD;            // current baud rate
+     fBinary: DWORD;          // binary mode, no EOF check
+     fParity: DWORD;          // enable parity checking
+     fOutxCtsFlow: DWORD;      // CTS output flow control
+     fOutxDsrFlow: DWORD;      // DSR output flow control
+     fDtrControl: DWORD;       // DTR flow control type
+     fDsrSensitivity: DWORD;   // DSR sensitivity
+
+     fTXContinueOnXoff: DWORD; // XOFF continues Tx
+     fOutX: DWORD;            // XON/XOFF out flow control
+     fInX: DWORD;             // XON/XOFF in flow control
+     fErrorChar: DWORD;       // enable error replacement
+     fNull: DWORD;            // enable null stripping
+     fRtsControl: DWORD;       // RTS flow control
+     fAbortOnError: DWORD;     // abort reads/writes on error
+     fDummy2: DWORD;          // reserved
+     wReserved: WORD;            // not currently used
+
+     XonLim: WORD;               // transmit XON threshold
+     XoffLim: WORD;              // transmit XOFF threshold
+     ByteSize: BYTE;             // number of bits/byte, 4-8
+     Parity: BYTE;               // 0-4=no,odd,even,mark,space
+     StopBits: BYTE;             // 0,1,2 = 1, 1.5, 2
+     XonChar: char;              // Tx and Rx XON character
+     XoffChar: char;             // Tx and Rx XOFF character
+     ErrorChar: char;            // error replacement character
+
+     EofChar: char;              // end of input character
+     EvtChar: char;              // received event character
+     wReserved1: WORD;           // reserved; do not use
+end;
+ var
+  StatusChar: array[0..1] of String;
+  IndexSol: Byte;
+  Card: TSLE4442Card;
+  CabineStatus: array[0..16] of Byte;
+  CabineOldStatus: array[0..16] of Byte;
+  CabineTime: array[0..16] of Byte;
+  CabinePreTime: array[0..16] of Byte;
+  LastTime: array[0..16] of Byte;
+  CabineChanel: array[0..16] of Byte;
+  CabineRecord: array[0..16] of Longint;
+  IOResult: Boolean;
+  IOCount: DWORD;
+  IOByte: BYTE;
+  ImageName: String;
+  LocalFormat: TFormatSettings;
+  MainForm: TMainForm;
+  OtchetFileName: String;
+  ComFlags: byte;
+  ComList: LPSTR;
+  CB_RS232: _DCB;
+  CB_RS232_NEW: _RS232DCB;
+  RS_232_Timeouts: _COMMTIMEOUTS;
+  Price: Real;
+  PaidCash: Real;
+  PaidCard: Real;
+  PaidChipCard: Real;
+  Pos1: Byte;
+  Backuped: Boolean;
+  Solariums: Byte;
+  ViewByKlient: Boolean;
+  StatistikaSQL: String;
+  PoseshteniaPaid: array[0..20] of Byte;
+  PosPaid: Byte;
+  BroiKartiPaid: Byte;
+//  WOverlaped: POverlaped;
+implementation
+
+uses CHILDWIN, about, Password, Notshalter, Scan, QReportKlienti,
+  QReportSolariumiNastroiki, QReportDneven, Refill, Stoki, SLE4442;
+
+{$R *.dfm}
+var
+
+  TimerTime1: DWORD;
+  Mess1 : string;
+  Mess2 : pointer;
+  Suma: Real;
+
+const
+
+  UART_BASEADDR=$3E8; //  the base address of the UART
+  UART_BAUDRATE=9600; //   the divisor value (e.g. 12 for 9600 baud)
+  UART_LCRVAL=$03;    // the value to be written to the LCR (e.g. 0x1b for 8N1)
+  UART_FCRVAL=$00;    // the value to be written to the FCR. Bit 0, 1 and 2 set,
+                  // bits 6 & 7 according to wished trigger level (see above)
+
+
+var
+
+   hDevice : HWND;
+   TimeSet: Byte;
+   KeyBuff: ShortString;
+   KeyCount: Byte;
+   DATA_COMBO_SELECTED: ShortString;
+   SDELKANOMER: Integer;
+
+
+
+procedure TMainForm.Label1Click(Sender: TObject);
+begin
+ Label1.Caption:='TEST';
+end;
+procedure OpenTables;
+begin
+ with MainForm do
+  begin
+     sol1.Open;
+     Table1.Active:=True;
+     KARTIALL.Active:=True;
+     plashtania.active:=true;
+     STOKI.Active:=True;
+     internet.Active:=True;
+     Table3.Active:=False;
+     KARTIALL1.Active:=False;
+     Table3.IndexName:='';
+     Table3.MasterFields:='';
+     Table3.MasterSource:=nil;
+//     KARTIALL1.IndexName:='KlientDet';
+//     KARTIALL1.MasterFields:='NOMER';
+//     KARTIALL1.MasterSource:=DataSource2;
+     Table3.Active:=True;
+     KARTIALL1.Active:=True;
+     STOKITE.Active:=True;
+     SDELKA.Active:=True;
+     KARTI.Active:=True;
+     stokispr.Active:=True;
+     solariumspr.Active:=True;
+     QKlienti.Active:=True;
+  end;
+end;
+
+
+
+procedure config_uart(const n1: short);
+begin
+ SetCommState(hDevice, CB_RS232) ;
+ EscapeCommFunction(hDevice, CLRDTR);
+end;
+
+
+procedure mode_set();
+var
+  Macro: string;
+  Cmd: array[0..255] of Char;
+begin
+  // Macro := 'mode com2: baud=9600 data=8 parity=n to=on';
+   Macro := 'set_com2.bat';
+   StrPCopy (Cmd, Macro);
+   WinExec(Cmd, SW_RESTORE);
+   WinExec(PChar('Delotch.bat'),SW_RESTORE);
+end;
+procedure init_uart(const n1: short);
+
+begin
+    
+    hDevice := CreateFile(
+        'COM2',                 // pointer to name of the file
+        GENERIC_READ or GENERIC_WRITE,       // access (read-write) mode
+        FILE_SHARE_READ or FILE_SHARE_WRITE, // share mode
+        NIL,                               // pointer to security attributes
+        OPEN_EXISTING,                      // how to create
+        0,                                  // file attributes
+        0);                              // handle to file with attributes to copy
+    if (hDevice = INVALID_HANDLE_VALUE) then    // did we succeed?
+    begin
+        Application.MessageBox('Програмата няма достъп до серийния порт!', 'error', MB_OK);
+        Application.Terminate;
+        // possibly call GetLastError() to get a hint what failed
+        // and terminate (it is useless to continue if we can’t connect to Direct I/O)
+    end;
+
+    // some more processing...
+
+    CB_RS232.DCBlength:= SizeOf (CB_RS232);           // sizeof(DCB)
+    CB_RS232.BaudRate:=9600;            // current baud rate
+    CB_RS232.Flags:= $31 ;//$31;
+    CB_RS232.wReserved:=0;            // not currently used
+    CB_RS232.XonLim:=1;               // transmit XON threshold
+    CB_RS232.XoffLim:=1;              // transmit XOFF threshold
+    CB_RS232.ByteSize:=8;             // number of bits/byte, 4-8
+    CB_RS232.Parity:=0;               // 0-4=no,odd,even,mark,space
+    CB_RS232.StopBits:=1;             // 0,1,2 = 1, 1.5, 2
+    CB_RS232.XonChar:='x';              // Tx and Rx XON character
+    CB_RS232.XoffChar:='X';             // Tx and Rx XOFF character
+    CB_RS232.ErrorChar:='E';            // error replacement character
+
+    CB_RS232.EofChar:='T';              // end of input character
+    CB_RS232.EvtChar:='R';              // received event character
+    CB_RS232.wReserved1:=0;           // reserved; do not use
+
+    RS_232_Timeouts.ReadIntervalTimeout:=100;
+    RS_232_Timeouts.ReadIntervalTimeout:=100;
+    RS_232_Timeouts.ReadTotalTimeoutMultiplier:=100;
+    config_uart(1);
+    SetCommTimeouts(hDevice,RS_232_Timeouts);
+
+end;
+
+procedure UpdatePageControl();
+begin
+  with MainForm do
+  begin
+     if   (AdvPageControl1.ActivePageIndex=6) then
+     begin
+      ImageName:=Table1.FieldByName('PICTURE').AsString;
+      if FileExists(ImageName) then Image18.Picture.LoadFromFile(ImageName)
+      else Image18.Picture:=Imagepress1.Picture;
+     end;
+   if   (AdvPageControl1.ActivePageIndex=12) then
+    begin
+//   DATA_COMBO_SELECTED:=Date;
+   DBLUCombo1.Text:=DateToStr(Date);
+   DayTotal.ParamByName('DATA_COMBO_SELECTED').AsDate:=Date;
+   DayTotal.Active:=False;
+   DayTotal.Active:=True;
+   end;
+
+   if   (AdvPageControl1.ActivePageIndex=1) then
+    begin
+     Table1.Edit;
+     Table1.Post;
+     Table1.Refresh;
+       Table1.RecNo:=1;
+     ImageName:=Table1.FieldByName('PICTURE').AsString;
+      if FileExists(ImageName) then Imagesol1.Picture.LoadFromFile(ImageName)
+       else Imagesol1.Picture:=Imagepress1.Picture;
+    // Image21.Picture.LoadFromFile(ImageName);
+     Kabina11.Caption:=Table1.FieldByName('OPISANIE1').AsString;
+     Kabina12.Caption:=Table1.FieldByName('OPISANIE2').AsString;
+     if not(CabineStatus[0] in [1..3]) then
+     begin
+      Kabina1minuti.Caption:=Table1.FieldByName('MIVREME').AsString + ' минути';
+      Kabina1cena.Caption:=CurrToStr(Table1.FieldByName('CENA').AsVariant * Table1.FieldByName('MIVREME').AsVariant)+' лева';
+      CabineChanel[0]:=Table1.FieldByName('ADDRESS').AsInteger;
+     end;
+     Table1.RecNo:=2;
+     ImageName:=Table1.FieldByName('PICTURE').AsString;
+     if FileExists(ImageName) then Imagesol2.Picture.LoadFromFile(ImageName)
+       else Imagesol2.Picture:=Imagepress1.Picture;
+     Kabina21.Caption:=Table1.FieldByName('OPISANIE1').AsString;
+     Kabina22.Caption:=Table1.FieldByName('OPISANIE2').AsString;
+     if not(CabineStatus[1] in [1..3]) then
+     begin
+      Kabina2minuti.Caption:=Table1.FieldByName('MIVREME').AsString + ' минути';
+      Kabina2cena.Caption:=CurrToStr(Table1.FieldByName('CENA').AsVariant * Table1.FieldByName('MIVREME').AsVariant)+' лева';
+      CabineChanel[1]:=Table1.FieldByName('ADDRESS').AsInteger;
+     end;
+     Table1.RecNo:=3;
+     ImageName:=Table1.FieldByName('PICTURE').AsString;
+     if FileExists(ImageName) then Imagesol3.Picture.LoadFromFile(ImageName)
+       else Imagesol3.Picture:=Imagepress1.Picture;
+     Kabina31.Caption:=Table1.FieldByName('OPISANIE1').AsString;
+     Kabina32.Caption:=Table1.FieldByName('OPISANIE2').AsString;
+     if not(CabineStatus[2] in [1..3])  then
+     begin
+      Kabina3minuti.Caption:=Table1.FieldByName('MIVREME').AsString + ' минути';
+      Kabina3cena.Caption:=CurrToStr(Table1.FieldByName('CENA').AsVariant * Table1.FieldByName('MIVREME').AsVariant)+' лева';
+      CabineChanel[2]:=Table1.FieldByName('ADDRESS').AsInteger;
+     end;
+
+     Table1.RecNo:=4;
+     ImageName:=Table1.FieldByName('PICTURE').AsString;
+     if FileExists(ImageName) then Imagesol4.Picture.LoadFromFile(ImageName)
+       else Imagesol4.Picture:=Imagepress1.Picture;
+     Kabina41.Caption:=Table1.FieldByName('OPISANIE1').AsString;
+     Kabina42.Caption:=Table1.FieldByName('OPISANIE2').AsString;
+     if not(CabineStatus[3] in [1..3])  then
+     begin
+      Kabina4minuti.Caption:=Table1.FieldByName('MIVREME').AsString + ' минути';
+      Kabina4cena.Caption:=CurrToStr(Table1.FieldByName('CENA').AsVariant * Table1.FieldByName('MIVREME').AsVariant)+' лева';
+      CabineChanel[3]:=Table1.FieldByName('ADDRESS').AsInteger;
+     end;
+     Table1.RecNo:=5;
+     ImageName:=Table1.FieldByName('PICTURE').AsString;
+     if FileExists(ImageName) then Imagesol5.Picture.LoadFromFile(ImageName)
+       else Imagesol5.Picture:=Imagepress1.Picture;
+     Kabina51.Caption:=Table1.FieldByName('OPISANIE1').AsString;
+     Kabina52.Caption:=Table1.FieldByName('OPISANIE2').AsString;
+     if not(CabineStatus[4] in [1..3])  then
+     begin
+      Kabina5minuti.Caption:=Table1.FieldByName('MIVREME').AsString + ' минути';
+      Kabina5cena.Caption:=CurrToStr(Table1.FieldByName('CENA').AsVariant * Table1.FieldByName('MIVREME').AsVariant)+' лева';
+      CabineChanel[4]:=Table1.FieldByName('ADDRESS').AsInteger;
+     end;
+     Table1.RecNo:=6;
+     ImageName:=Table1.FieldByName('PICTURE').AsString;
+     if FileExists(ImageName) then Imagesol6.Picture.LoadFromFile(ImageName)
+       else Imagesol6.Picture:=Imagepress1.Picture;
+     Kabina61.Caption:=Table1.FieldByName('OPISANIE1').AsString;
+     Kabina62.Caption:=Table1.FieldByName('OPISANIE2').AsString;
+     if not(CabineStatus[5] in [1..3])  then
+     begin
+      Kabina6minuti.Caption:=Table1.FieldByName('MIVREME').AsString + ' минути';
+      Kabina6cena.Caption:=CurrToStr(Table1.FieldByName('CENA').AsVariant * Table1.FieldByName('MIVREME').AsVariant)+' лева';
+      CabineChanel[5]:=Table1.FieldByName('ADDRESS').AsInteger;
+     end;
+    end;
+  end;
+end;
+
+procedure SendData(DataSent: Byte;Index: Integer);
+var IOResult: LongBool;
+    Data1:Byte;
+    Chanel: Byte;
+    PreTime: Byte;
+    CoolTime: Byte;
+    
+begin
+   MainForm.Timer1.Enabled:=False;
+   MainForm.Table1.RecNo:=Index;
+   DataSent:=StrToInt('0x'+IntToStr(DataSent));
+   Chanel:=MainForm.Table1.FieldByName('ADDRESS').AsInteger;
+   PreTime:=MainForm.Table1.FieldByName('PREDVVREME').AsInteger;
+   CoolTime:=MainForm.Table1.FieldByName('OHLAZDANE').AsInteger;
+   Data1:=128+Chanel*8+2; // Set PRE-Time
+   IOResult:=WriteFile(hDevice,Data1,1,IOCount,NIL);
+   IOResult:=WriteFile(hDevice,PreTime,1,IOCount,NIL);
+   Data1:=128+Chanel*8+3; // Set Cool-Time
+   IOResult:=WriteFile(hDevice,Data1,1,IOCount,NIL);
+   IOResult:=WriteFile(hDevice,CoolTime,1,IOCount,NIL);
+   Data1:=128+Chanel*8+5; // Set Main-Time
+   IOResult:=WriteFile(hDevice,Data1,1,IOCount,NIL);
+   IOResult:=WriteFile(hDevice,DataSent,1,IOCount,NIL);
+   IOResult:=ReadFile(hDevice,IOByte,1,IOCount,NIL);
+   MainForm.Timer1.Enabled:=True;
+end;
+
+procedure ReadStatus();
+var
+    Data1:Byte;
+    NewStatus: Byte;
+    Chanel1:Byte;
+    SolariumNo: Byte;
+    Update: Boolean;
+    StrBuff: AnsiString;
+    Temp: Integer;
+begin
+ if (MainForm.AdvPageControl1.ActivePageIndex=1) then
+  begin
+ SolariumNo:=TimerTime1 mod Solariums;
+ Chanel1:=CabineChanel[SolariumNo];
+ IOByte:=0;
+ IOResult:=ReadFile(hDevice,IOByte,1,IOCount,NIL);
+// MainForm.Label92.Caption:=IntToHex(IOByte,2);
+ //MainForm.Label91.Caption:=IntToStr(SolariumNo)+' '+IntToHex(IOByte,2)+ ' Ch='+ IntToStr(Chanel1);
+ if IOResult then
+  begin
+   if IOCount=0 then
+      NewStatus:=4
+     else NewStatus:=IOByte div 64;
+    if NewStatus=CabineStatus[SolariumNo] then Update:= False
+      else Update:=True;
+    if IOCount=0 then
+      CabineStatus[SolariumNo]:=4
+     else CabineStatus[SolariumNo]:=IOByte div 64;
+    CabineTime[SolariumNo]:=IOByte-CabineStatus[SolariumNo]*64;
+    StrBuff:= IntToHex(CabineTime[SolariumNo],2);
+    if TimerTime1>30 then
+        if not TryStrToInt(StrBuff,Temp) then
+        CabineTime[SolariumNo]:=0 else   CabineTime[SolariumNo]:=Temp;
+
+    if SolariumNo=0 then
+     begin
+      case CabineStatus[0] of
+       4:MainForm.StatusShape1.Color:=clBlack;
+       1:MainForm.StatusShape1.Color:=clRed;
+       2:MainForm.StatusShape1.Color:=clBlue;
+       3:MainForm.StatusShape1.Color:=clYellow;
+      end;
+      case CabineStatus[0] of
+       1..3:
+         begin
+           MainForm.StatusShape1.Visible:=true;
+           MainForm.Kabina1cena.Caption:='';
+           MainForm.Kabina1minuti.Caption:='Остават'+IntToStr(CabineTime[0])+'мин.';
+         end;
+        4:MainForm.StatusShape1.Visible:=true;
+        0: MainForm.StatusShape1.Visible:=False;
+      end;
+     end;
+    if SolariumNo=1 then
+     begin
+      case CabineStatus[1] of
+       4:MainForm.StatusShape2.Color:=clBlack;
+       1:MainForm.StatusShape2.Color:=clRed;
+       2:MainForm.StatusShape2.Color:=clBlue;
+       3:MainForm.StatusShape2.Color:=clYellow;
+      end;
+      case CabineStatus[1] of
+       1..3:
+         begin
+           MainForm.StatusShape2.Visible:=true;
+           MainForm.Kabina2cena.Caption:='';
+           MainForm.Kabina2minuti.Caption:='Остават'+IntToStr(CabineTime[1])+'мин.';
+         end;
+        4:MainForm.StatusShape2.Visible:=true;
+        0: MainForm.StatusShape2.Visible:=False;
+      end;
+     end;
+    if SolariumNo=2 then
+     begin
+      case CabineStatus[2] of
+       4:MainForm.StatusShape3.Color:=clBlack;
+       1:MainForm.StatusShape3.Color:=clRed;
+       2:MainForm.StatusShape3.Color:=clBlue;
+       3:MainForm.StatusShape3.Color:=clYellow;
+      end;
+      case CabineStatus[2] of
+       1..3:
+         begin
+           MainForm.StatusShape3.Visible:=true;
+           MainForm.Kabina3cena.Caption:='';
+           MainForm.Kabina3minuti.Caption:='Остават'+IntToStr(CabineTime[2])+'мин.';
+         end;
+        4: MainForm.StatusShape3.Visible:=true;
+        0: MainForm.StatusShape3.Visible:=False;
+      end;
+     end;
+     if SolariumNo=3 then
+     begin
+      case CabineStatus[3] of
+       4:MainForm.StatusShape4.Color:=clBlack;
+       1:MainForm.StatusShape4.Color:=clRed;
+       2:MainForm.StatusShape4.Color:=clBlue;
+       3:MainForm.StatusShape4.Color:=clYellow;
+      end;
+      case CabineStatus[3] of
+       1..3:
+         begin
+           MainForm.StatusShape4.Visible:=true;
+           MainForm.Kabina4cena.Caption:='';
+           MainForm.Kabina4minuti.Caption:='Остават'+IntToStr(CabineTime[3])+'мин.';
+         end;
+        4:MainForm.StatusShape4.Visible:=true;
+        0: MainForm.StatusShape4.Visible:=False;
+      end;
+     end;
+     if SolariumNo=4 then
+     begin
+      case CabineStatus[4] of
+       4:MainForm.StatusShape5.Color:=clBlack;
+       1:MainForm.StatusShape5.Color:=clRed;
+       2:MainForm.StatusShape5.Color:=clBlue;
+       3:MainForm.StatusShape5.Color:=clYellow;
+      end;
+      case CabineStatus[4] of
+       1..3:
+         begin
+           MainForm.StatusShape5.Visible:=true;
+           MainForm.Kabina5cena.Caption:='';
+           MainForm.Kabina5minuti.Caption:='Остават'+IntToStr(CabineTime[4])+'мин.';
+         end;
+        4:MainForm.StatusShape5.Visible:=true;
+        0: MainForm.StatusShape5.Visible:=False;
+      end;
+     end;
+     if SolariumNo=5 then
+     begin
+      case CabineStatus[5] of
+       4:MainForm.StatusShape6.Color:=clBlack;
+       1:MainForm.StatusShape6.Color:=clRed;
+       2:MainForm.StatusShape6.Color:=clBlue;
+       3:MainForm.StatusShape6.Color:=clYellow;
+      end;
+      case CabineStatus[5] of
+       1..3:
+         begin
+           MainForm.StatusShape6.Visible:=true;
+           MainForm.Kabina6cena.Caption:='';
+           MainForm.Kabina6minuti.Caption:='Остават'+IntToStr(CabineTime[5])+'мин.';
+         end;
+        4:MainForm.StatusShape6.Visible:=true;
+        0: MainForm.StatusShape6.Visible:=False;
+      end;
+     end;
+  end
+  else MainForm.Label91.Caption:='ERROR';
+  //Update:=True;
+  If Update then UpdatePageControl();
+//   IOResult:=CancelIO(hDevice);
+   IOResult:=ReadFile(hDevice,IOByte,1,IOCount,NIL);
+   IOResult:=ReadFile(hDevice,IOByte,1,IOCount,NIL);
+   IOResult:=ReadFile(hDevice,IOByte,1,IOCount,NIL);
+   SolariumNo:=(TimerTime1+1) mod Solariums;
+   Chanel1:=CabineChanel[SolariumNo];
+   Data1:=128+Chanel1*8; // Get status command for selected chanel
+   IOResult:=WriteFile(hDevice,Data1,1,IOCount,NIL);
+ end;
+end;
+{ if (MainForm.AdvPageControl1.ActivePageIndex=1) then
+
+ begin
+  IOResult:=CancelIO(hDevice);
+  SolariumNo:=TimerTime1 mod 4;
+  //CancelIO(hDevice);
+  Chanel1:=CabineChanel[SolariumNo];
+  Data1:=128+Chanel1*8; // Get status command for selected chanel
+  IOResult:=WriteFile(hDevice,Data1,1,IOCount,0);
+  IOByte:=0;   Update:=False;
+  IOResult:=ReadFile(hDevice,IOByte,1,IOCount,0);
+  if IOResult then
+  begin
+    if IOCount=0 then
+      NewStatus:=4
+     else NewStatus:=IOByte div 64;
+    if (NewStatus=CabineStatus[SolariumNo]) then
+     begin
+      if (CabineStatus[SolariumNo]<>CabineOldStatus[SolariumNo]) then
+       begin Update:= true;
+       end;
+     end
+    else
+       begin
+        CabineStatus[SolariumNo]:=NewStatus;
+       end;
+    CabineTime[SolariumNo]:=IOByte-CabineStatus[SolariumNo]*64;
+    StrBuff:= IntToHex(CabineTime[SolariumNo],2);
+    if TimerTime1>30 then
+      try CabineTime[SolariumNo]:= StrToInt(RightStr(StrBuff,2));
+      except
+       on EConvertError do ;
+      end;
+    if SolariumNo=0 then
+     begin
+      case CabineStatus[0] of
+       4:MainForm.StatusShape1.Color:=clBlack;
+       1:MainForm.StatusShape1.Color:=clRed;
+       2:MainForm.StatusShape1.Color:=clBlue;
+       3:MainForm.StatusShape1.Color:=clYellow;
+      end;
+      case CabineStatus[0] of
+       1..3:
+         begin
+           MainForm.StatusShape1.Visible:=true;
+           MainForm.Label70.Caption:='';
+           MainForm.Label69.Caption:='Остават'+IntToStr(CabineTime[0])+'мин.';
+         end;
+        4:MainForm.StatusShape1.Visible:=true;
+        0: begin
+            MainForm.StatusShape1.Visible:=False;
+            if Update and (CabineTime[SolariumNo]=2)
+               and (CabineOldStatus[SolariumNo]=1) then SendData(LastTime[(SolariumNo+1)],(SolariumNo+1));
+           end;
+
+      end;
+     end;
+    if SolariumNo=1 then
+     begin
+      case CabineStatus[1] of
+       4:MainForm.StatusShape2.Color:=clBlack;
+       1:MainForm.StatusShape2.Color:=clRed;
+       2:MainForm.StatusShape2.Color:=clBlue;
+       3:MainForm.StatusShape2.Color:=clYellow;
+      end;
+      case CabineStatus[1] of
+       1..3:
+         begin
+           MainForm.StatusShape2.Visible:=true;
+           MainForm.Label72.Caption:='';
+           MainForm.Label71.Caption:='Остават'+IntToStr(CabineTime[1])+'мин.';
+         end;
+        4:MainForm.StatusShape2.Visible:=true;
+        0:begin
+            MainForm.StatusShape2.Visible:=False;
+            if Update and (CabineTime[SolariumNo]=2)
+               and (CabineOldStatus[SolariumNo]=1) then SendData(LastTime[(SolariumNo+1)],(SolariumNo+1));
+           end;
+      end;
+     end;
+    if SolariumNo=2 then
+     begin
+      case CabineStatus[2] of
+       4:MainForm.StatusShape3.Color:=clBlack;
+       1:MainForm.StatusShape3.Color:=clRed;
+       2:MainForm.StatusShape3.Color:=clBlue;
+       3:MainForm.StatusShape3.Color:=clYellow;
+      end;
+      case CabineStatus[2] of
+       1..3:
+         begin
+           MainForm.StatusShape3.Visible:=true;
+           MainForm.Label74.Caption:='';
+           MainForm.Label73.Caption:='Остават'+IntToStr(CabineTime[2])+'мин.';
+         end;
+        4: MainForm.StatusShape3.Visible:=true;
+        0: begin
+            MainForm.StatusShape1.Visible:=False;
+            if Update and (CabineTime[SolariumNo]=2)
+               and (CabineOldStatus[SolariumNo]=1) then SendData(LastTime[(SolariumNo+1)],(SolariumNo+1));
+           end;
+       end;
+     end;
+  end
+  else MainForm.Label91.Caption:='ERROR';
+  //Update:=True;
+  if (CabineStatus[SolariumNo]=2) or (CabineOldStatus[SolariumNo]=4)
+    then LastTime[SolariumNo]:=0;
+  If Update then
+   begin
+    CabineOldStatus[SolariumNo]:= CabineStatus[SolariumNo];
+    UpdatePageControl();
+   end
+ end;
+end;}
+procedure SendCmd(CmdNum: byte);
+var
+  Chanel1: Byte;
+  Data1: Byte;
+begin
+ Chanel1:=CabineChanel[IndexSol-1];
+  case CmdNum of
+  1:      //start
+   begin
+
+  Data1:=128+Chanel1*8+1; // Start Command
+  IOResult:=WriteFile(hDevice,Data1,1,IOCount,NIL);
+
+   end;
+  2:
+   begin
+    Data1:=128+Chanel1*8+4; // Stop Command
+    IOResult:=WriteFile(hDevice,Data1,1,IOCount,NIL);
+   end;
+  3:
+  begin    //test
+    Data1:=128+Chanel1*8+2; // Pre-Time set
+    IOResult:=WriteFile(hDevice,Data1,1,IOCount,NIL);
+    Data1:=1; // 1 minute
+    IOResult:=WriteFile(hDevice,Data1,1,IOCount,NIL);
+    Data1:=128+Chanel1*8+5; // MainTime
+    IOResult:=WriteFile(hDevice,Data1,1,IOCount,NIL);
+    Data1:=1; // 1 minute
+    IOResult:=WriteFile(hDevice,Data1,1,IOCount,NIL);
+    Data1:=128+Chanel1*8+3; // Cool Time
+    IOResult:=WriteFile(hDevice,Data1,1,IOCount,NIL);
+    Data1:=2; // 2 minutes
+    IOResult:=WriteFile(hDevice,Data1,1,IOCount,NIL);
+    end;
+    4:
+    begin    //pause
+    Data1:=128+Chanel1*8+2; // Pre-Time set
+    IOResult:=WriteFile(hDevice,Data1,1,IOCount,NIL);
+    Data1:=15; // 15 minute
+    IOResult:=WriteFile(hDevice,Data1,1,IOCount,NIL);
+    end;
+   end;
+   UpdatePageControl();
+end;
+procedure Backup;
+var
+ CopyStatus: Boolean;
+ FileName1: string;
+ FileName2: string;
+begin
+ MainForm.sol1.FlushBuffers;
+ MainForm.sol1.Close;
+ FileName1:='\SolarStudio1\data\solarbas.ABS';
+ FileName2:='\SolarStudio1\data\solarbas'+IntToStr(DayOfWeek(Date))+'.abs';
+ CopyStatus:=CopyFIle(PChar(FileName1),PChar(FileName2),False);
+ if CopyStatus then Application.MessageBox(PChar('Архивиране на данните... успешно!'),PChar('Архивиране'),MB_OK)
+   else  Application.MessageBox(PChar('Архивиране на данните... Грешка!'),PChar('Архивиране'),MB_OK);
+ Backuped:=True;
+ OpenTables;
+end;
+
+procedure TMainForm.Timer1Timer(Sender: TObject);
+var
+  Data1: Byte;
+begin
+ TimerTime1:=TimerTime1+1;
+ Label1.Caption:=IntToStr(TimerTime1); 
+ if (AdvPageControl1.ActivePageIndex in [3,18]) then SLE4442Timer3();
+ If (AdvPageControl1.ActivePageIndex=1) and (not Backuped) and (Time>StrToTime('20:00:00')) then
+ begin
+  Timer1.Enabled:=false;
+  Backup;
+  Timer1.Enabled:=True;
+ end;
+ if TimerTime1=13 then
+  begin
+   AdvPageControl1.ActivePage:=AdvTabSheet2;
+   UpdatePageControl();
+  end;
+  if TimerTime1=3 then
+  begin
+   config_uart(1);
+   init_uart(1);
+   AdvPageControl1.ActivePage:=AdvTabSheet10;
+   Table1.First;
+   StatusChar[0]:='Изключен';
+   StatusChar[1]:='Включен';
+  end;
+ if (TimerTime1<13)and (TimerTime1>3)then
+   begin
+
+     ImageName:=Table1.FieldByName('PICTURE').AsString;
+     IndexSol:= Table1.FieldByName('ADDRESS').AsInteger;
+     Data1:=128+IndexSol*8; // Get status command for selected chanel
+     IOResult:=WriteFile(hDevice,Data1,1,IOCount,0);
+     IOByte:=0;
+     IOResult:=ReadFile(hDevice,IOByte,1,IOCount,0);
+     if IOCount>0 then IOCount:=1;
+      if (FileExists(ImageName) and (not Table1.Eof)) then
+         begin
+          case (TimerTime1-3) of
+           1:  begin Image34.Picture.LoadFromFile(ImageName);
+                  Label75.Caption:=StatusChar[IOCount];
+               end;
+           2: begin Image35.Picture.LoadFromFile(ImageName);
+               Label76.Caption:=StatusChar[IOCount];
+               end;
+           3: begin Image36.Picture.LoadFromFile(ImageName);
+                Label77.Caption:=StatusChar[IOCount];
+               end;
+           4: Begin Image37.Picture.LoadFromFile(ImageName);
+                Label78.Caption:=StatusChar[IOCount];
+               end;
+           5: begin Image38.Picture.LoadFromFile(ImageName);
+                Label79.Caption:=StatusChar[IOCount];
+               end;
+           6: begin Image39.Picture.LoadFromFile(ImageName);
+                Label80.Caption:=StatusChar[IOCount];
+               end;
+           7: begin Image40.Picture.LoadFromFile(ImageName);
+                Label81.Caption:=StatusChar[IOCount];
+               end;
+           8: begin Image41.Picture.LoadFromFile(ImageName);
+                Label82.Caption:=StatusChar[IOCount];
+               end;
+          end;
+         end
+         else Image42.Picture:=Imagepress1.Picture;
+
+    Table1.Next;
+    Gauge1.Progress:=(TimerTime1-3)*12;
+   end;
+
+ //case CabineStatus[0] of
+ //0:
+ //end;
+ if (AdvPageControl1.ActivePageIndex=1) and ((TimerTime1 mod 10)=9) then
+ begin
+  KeyBuff:='';
+  Edit5.Text:='';
+  Edit5.SetFocus;
+ end;
+ if TimerTime1=13 then Timer1.Interval:=200;
+ if TimerTime1>13 then
+   begin ReadStatus;
+    Label143.Caption:=DateToStr(Date);
+    Label144.Caption:=TimeToStr(Time);
+   end;
+ if TimerTime1>1000 then TimerTime1:=501;
+end;
+
+
+procedure TMainForm.BitBtn4Click(Sender: TObject);
+begin
+ //  IOByte:=TimerTime1;
+   IOByte:=StrToInt( Edit3.Text);
+   IOResult:=WriteFile(hDevice,IOByte,1,IOCount,0);
+   Label2.Caption:=IntToStr(IOCount)+'='+BoolToStr(IOResult,True);
+   Label57.Caption:='Baud-'+ IntToStr(CB_RS232.BaudRate)
+      +'-Flags-'+IntToStr(CB_RS232.Flags)+'-Size-'+IntToStr(CB_RS232.ByteSize)
+      +'-Parity-'+ IntToStr(CB_RS232.Parity)+'-Stop-'+IntToStr(CB_RS232.StopBits);
+end;
+
+
+
+procedure TMainForm.BitBtn1Click(Sender: TObject);
+begin
+ while (1=1) do
+  begin
+   IOByte:=TimerTime1;
+    Mess2:=@Mess1;
+//   POverlaped:=0;
+   IOResult:=WriteFile(hDevice,IOByte,1,IOCount,0);
+     Application.ProcessMessages;
+  end;
+   Label2.Caption:=IntToStr(IOCount)+'='+BoolToStr(IOResult,True);
+
+end;
+
+procedure TMainForm.BitBtn2Click(Sender: TObject);
+begin
+ Mess1:='In=';
+ Mess2:=@Mess1;
+ IOByte:=0;
+ IOResult:=ReadFile(hDevice,IOByte,1,IOCount,0);
+ Label2.Caption:=Mess1+IntToHex(IOByte,4);
+ if IOCount=0 then Label3.Caption:= 'No input'
+ else Label3.Caption:= 'Received';
+end;
+
+procedure TMainForm.BitBtn5Click(Sender: TObject);
+begin
+Mess1:='COM2: baud=2400 parity=N data=8 stop=1';
+Mess2:=@Mess1;
+BuildCommDCB(Mess2,CB_RS232);
+   Label57.Caption:='Baud-'+ IntToStr(CB_RS232.BaudRate)
+      +'-Flags-'+IntToStr(CB_RS232.Flags)+'-Size-'+IntToStr(CB_RS232.ByteSize)
+      +'-Parity-'+ IntToStr(CB_RS232.Parity)+'-Stop-'+IntToStr(CB_RS232.StopBits);
+Label3.Caption:=ComList;
+end;
+
+procedure TMainForm.BitBtn3Click(Sender: TObject);
+begin
+  CB_RS232.Flags:= StrToInt( Edit2.Text);
+  config_uart(1);
+end;
+function ConvertCurr1(Money: Real): AnsiString;
+var Kstring: AnsiString;
+    IntPart: Integer;
+    DecPart: Integer;
+begin
+  Kstring:=CurrToStr(Money,LocalFormat);
+{ IntPart:=Trunc(Money);
+ DecPart:=Trunc(Money*100)-IntPart*100;
+ Kstring:=IntToStr(IntPart)+'.'+IntToStr(DecPart) ;}
+   if Money<1000 then
+    begin
+     if Money<10 then Kstring:='0'+Kstring;
+     if AnsiPos('.',Kstring) = 0 then Kstring:=Kstring+'.00';
+     if Length(Kstring)=4 then Kstring:=Kstring+'0';
+    end
+    else if Money>99999 then Kstring:='OVERFL';
+   Kstring:=LeftStr(Kstring,5);
+   result:=Kstring;
+end;
+procedure FillValues1();
+
+begin
+SDELKANOMER:=0;
+ with MainForm do
+  begin
+   Table1.RecNo:=IndexSol;
+   if TimeSet>99 then TimeSet:=99;
+   if TimeSet>9 then
+    begin
+      Label8.Caption:=IntToStr(TimeSet)+'.00'
+    end
+   else  Label8.Caption:='0'+IntToStr(TimeSet)+'.00' ;
+   Price:=TimeSet*Table1.FieldByName('CENA').AsVariant;
+   Label9.Caption:=ConvertCurr1(Price);
+   Label62.Caption:=Label9.Caption;
+  // Label63.Caption:=Label9.Caption;
+  // Label64.Caption:='00.00';
+  end;
+end;
+
+procedure TMainForm.Button1Click(Sender: TObject);
+begin
+FillValues1();
+end;
+
+procedure TMainForm.Image6Click(Sender: TObject);
+var
+T: Integer;
+begin
+TimeSet:=TimeSet-Table1.FieldValues['STAPKA']*Table1.FieldValues['KOEFICIENT'];
+if TimeSet<Table1.FieldByName('MIVREME').AsInteger then TimeSet:=Table1.FieldByName('MIVREME').AsInteger ;
+FillValues1();
+end;
+procedure TMainForm.Image7Click(Sender: TObject);
+var
+T: Integer;
+begin
+TimeSet:=TimeSet-Table1.FieldValues['STAPKA'];
+if TimeSet<Table1.FieldByName('MIVREME').AsInteger then TimeSet:=Table1.FieldByName('MIVREME').AsInteger;
+FillValues1();
+end;
+
+procedure TMainForm.Image8Click(Sender: TObject);
+var
+T: Integer;
+begin
+ T:=TimeSet+Table1.FieldValues['STAPKA'];
+if T> 30 then
+else  TimeSet:=T;
+ FillValues1();
+end;
+
+procedure TMainForm.Image9Click(Sender: TObject);
+var
+T: Integer;
+begin
+T:=TimeSet+Table1.FieldValues['STAPKA']*Table1.FieldValues['KOEFICIENT'];
+if T> 30 then
+else TimeSet:=T;
+FillValues1();
+end;
+
+procedure LocateSolarium;
+
+begin
+with MainForm do
+ begin
+  AdvPageControl1.ActivePage:=AdvTabsheet5;
+   case IndexSol of
+     1: Image20.Picture:=Imagesol1.Picture;
+     2: Image20.Picture:=Imagesol2.Picture;
+     3: Image20.Picture:=Imagesol3.Picture;
+     4: Image20.Picture:=Imagesol4.Picture;
+     5: Image20.Picture:=Imagesol5.Picture;
+     6: Image20.Picture:=Imagesol6.Picture;
+   end;
+ Table1.RecNo:=IndexSol;
+// Table1.Locate('SOLARIUM',IntToStr(IndexSol),[loCaseInsensitive]) ;
+ TimeSet:=Table1.FieldByName('MIVREME').AsInteger;
+ FillValues1();
+ AdvTabSheet5Show(MainForm);
+ end;
+end;
+procedure TMainForm.SpeedButton1Click(Sender: TObject);
+begin
+ImageForm.ShowModal();
+if ImageForm.ModalResult=mrOK then
+  begin
+ //    Label30.Caption:=ImageName;
+     Image18.Picture.LoadFromFile(ImageName);
+     Table1.Edit;
+     Table1.FieldByName('PICTURE').AsString := ImageName;
+     Table1.Post;
+
+  end
+
+ // else Label30.Caption:='NoFile';
+
+//CreateMDIChild(ImageForm.CreateParented(TMainForm));
+
+end;
+
+//procedure ChangeImageName();
+//begin
+//ImageName:='nul';
+//end;
+procedure TMainForm.Table1AfterScroll(DataSet: TDataSet);
+begin
+
+     ImageName:= Table1.FieldByName('PICTURE').AsString;
+     if FileExists(ImageName) then
+     begin
+       Image16.Picture.LoadFromFile(ImageName);
+       Image16.Visible:=True;
+       Image18.Picture.LoadFromFile(ImageName);
+       Image18.Hint:= ImageName;
+       Image18.Visible:=True;
+     end
+     else
+     begin
+       Image16.Visible:=False;
+//       Image18.Visible:=False;
+       Image18.Picture:=Imagepress1.Picture;;
+       Image18.Hint:= '';
+
+     end;
+end;
+
+procedure TMainForm.Label13Click(Sender: TObject);
+begin
+ Table1.First;
+AdvPageControl1.ActivePage:=AdvTabSheet7;
+
+end;
+
+procedure TMainForm.Label31Click(Sender: TObject);
+begin
+ AdvPageControl1.ActivePage:=AdvTabSheet8;
+end;
+
+procedure TMainForm.Label33Click(Sender: TObject);
+begin
+AdvPageControl1.ActivePage:=AdvTabSheet9;
+end;
+
+procedure TMainForm.Label40Click(Sender: TObject);
+begin
+AdvPageControl1.ActivePage:=AdvTabSheet7;
+end;
+
+procedure TMainForm.Label47Click(Sender: TObject);
+begin
+AdvPageControl1.ActivePage:=AdvTabSheet9;
+end;
+
+procedure TMainForm.Label48Click(Sender: TObject);
+begin
+AdvPageControl1.ActivePage:=AdvTabSheet7;
+end;
+
+procedure TMainForm.Label49Click(Sender: TObject);
+begin
+AdvPageControl1.ActivePage:=AdvTabSheet2;
+UpdatePageControl();
+end;
+
+procedure TMainForm.Label22Click(Sender: TObject);
+begin
+ AdvPageControl1.ActivePage:=AdvTabSheet2;
+ UpdatePageControl;
+end;
+
+
+procedure TMainForm.Label10Click(Sender: TObject);
+var
+  i: Integer;
+begin
+ AdvPageControl1.ActivePage:=AdvTabsheet4;
+ PaidCash:=0;
+ PaidCard:=0;
+ PaidChipCard:=0;
+ for i:=0 to SizeOf(PoseshteniaPaid) do PoseshteniaPaid[i]:=0;
+ PosPaid:=0;
+ BroiKartiPaid:=0;
+ DBtext4.Visible:=False;
+ DBtext7.Visible:=False;
+ Edit8.Visible:=False;
+  ADVComboBox1.Visible:=False;
+  ADVComboBox2.Visible:=False;
+  Label72.Visible:=False;
+  Label130.Visible:=False;
+  Label71.Visible:=False;
+  Label119.Visible:=False;
+  Label127.Visible:=False;
+  Label149.Visible:=False;
+  UpdatePageControl();
+end;
+
+procedure TMainForm.Label11Click(Sender: TObject);
+begin
+ AdvPageControl1.ActivePage:=AdvTabsheet2;
+  UpdatePageControl();
+end;
+
+procedure TMainForm.BitBtn6Click(Sender: TObject);
+begin
+ PasswordForm.ShowModal;
+end;
+
+
+procedure TMainForm.Imagepress1MouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  if (Sender=Imagepress1) or (Sender=StatusShape1) then  IndexSol:=1;
+  if (Sender=Imagepress3) or (Sender=StatusShape3) then  IndexSol:=3;
+  if (Sender=Imagepress2) or (Sender=StatusShape2) then  IndexSol:=2;
+  if (Sender=Imagepress4) or (Sender=StatusShape4) then  IndexSol:=4;
+  if (Sender=Imagepress5) or (Sender=StatusShape5) then  IndexSol:=5;
+  if (Sender=Imagepress6) or (Sender=StatusShape6) then  IndexSol:=6;
+
+  if Button=mbRight then
+    begin
+     NotshalterForm.Label1.Caption:='КАБИНА '+IntToStr(IndexSol);
+     NotshalterForm.ShowModal;
+     if NotshalterForm.ModalResult=mrOk then SendCmd(1);
+     if NotshalterForm.ModalResult=mrIgnore then SendCmd(2);
+     if NotshalterForm.ModalResult=mrAbort then SendCmd(3);
+     if NotshalterForm.ModalResult=mrRetry then SendCmd(4);
+    end;
+  if Button=mbLeft then
+     if CabineStatus[IndexSol-1]=0 then LocateSolarium ;
+
+end;
+
+procedure TMainForm.Label54Click(Sender: TObject);
+begin
+///ScanForm.ShowModal;
+Table1.Edit;
+Table1.Append;
+Table1.FieldValues['CENA']:=0;
+Table1.FieldValues['VREME']:=0;
+Table1.FieldValues['OHLAZDANE']:=0;
+Table1.FieldValues['PREDVVREME']:=0;
+Table1.FieldValues['OPISANIE1']:='НОВА КАБИНА '+IntToStr(Table1.RecordCount+1);
+Table1.FieldValues['MIVREME']:=0;
+Table1.FieldValues['SAOBSHTAVA']:=True;
+Table1.FieldValues['ADDRESS']:=0;
+Table1.FieldValues['MIVREME']:=0;
+Table1.FieldValues['LICEVICHAS']:=0;
+Table1.FieldValues['LAMPICHAS']:=0;
+Table1.Post;
+Label115.Caption:=IntToStr(Table1.RecNo);
+Label116.Caption:=IntToStr(Table1.RecNo);
+Label117.Caption:=IntToStr(Table1.RecNo);
+end;
+
+procedure TMainForm.Label55Click(Sender: TObject);
+begin
+ if Application. MessageBox('Наистина ли ще изтриете този солариум?', '',MB_YESNO)=6 then
+  begin
+   Table1.Delete;
+   AdvTabSheet7Show(Sender);
+  end;
+end;
+
+procedure TMainForm.Image27Click(Sender: TObject);
+begin
+Table1.Next;
+  ImageName:=Table1.FieldByName('PICTURE').AsString;
+  if FileExists(ImageName) then Image16.Picture.LoadFromFile(ImageName)
+  else Image16.Picture:=Imagepress1.Picture;
+  Image18.Picture:=Image16.Picture;
+  Label115.Caption:=IntToStr(Table1.RecNo);
+  Label116.Caption:=IntToStr(Table1.RecNo);
+ Label117.Caption:=IntToStr(Table1.RecNo);
+ //Table1.Refresh;
+  if Table1.Eof and (Table1.RecNo > 2) then Label55.Visible:=true
+ else Label55.Visible:=false;
+end;
+
+procedure TMainForm.Image26Click(Sender: TObject);
+begin
+ Table1.Prior;
+ ImageName:=Table1.FieldByName('PICTURE').AsString;
+ if FileExists(ImageName) then Image16.Picture.LoadFromFile(ImageName)
+ else Image16.Picture:=Imagepress1.Picture;
+ Image18.Picture:=Image16.Picture;
+ Label115.Caption:=IntToStr(Table1.RecNo);
+ Label116.Caption:=IntToStr(Table1.RecNo);
+ Label117.Caption:=IntToStr(Table1.RecNo);
+  if Table1.EOF then Label55.Visible:=true
+ else Label55.Visible:=false;
+end;
+procedure TMainForm.FormCreate(Sender: TObject);
+var
+ i1: Integer;
+begin
+ GetLocaleFormatSettings(Languages.LocaleID[0],LocalFormat);
+ LocalFormat.DecimalSeparator:='.';
+ TimerTime1:=0;
+ StatistikaSQL:='SELECT * FROM PLASHTANIA ';
+ QStatistika.SQL.Text:=StatistikaSQL;
+ Solariums:= Table1.RecordCount;
+ If Solariums>6 then Solariums:=6;
+ If Solariums<2 Then Solariums:=2;
+ ViewByKlient:= True;
+ Label1.Caption:='0';
+ For  i1:= 0 to 16  do
+ begin
+ CabineStatus[i1]:=0;
+ CabineTime[i1]:=0;
+ CabinePreTime[i1]:=0;
+ end;
+ Backuped:=False;
+ AdvPageControl1.ActivePage:=AdvTabsheet1;
+  if FileExists('c:\Master.txt') then
+  else AdvPageControl1.TabHeight:=1;
+  mode_set();
+ KeyCount:=0;
+ OpenTables;
+ case Solariums of
+ 2:set2main;
+ 3:set3main;
+ 4:set4main;
+ 5:set5main;
+ 6:set6main;
+ end;
+// ScanForm.ShowModal;
+end;
+procedure TMainForm.RTFLabel1Click(Sender: TObject);
+begin
+ //Label58.Caption:=RTFLabel1.RichText;
+end;
+
+procedure TMainForm.Edit4Change(Sender: TObject);
+begin
+CB_RS232.BaudRate:=StrToInt( Edit4.Text);
+end;
+
+procedure TMainForm.AdvPageControl1Change(Sender: TObject);
+begin
+ UpdatePageControl();
+end;
+
+procedure TMainForm.Label28Click(Sender: TObject);
+var
+ TempBalans: Real;
+ PosSelected: Byte;
+ PosOld: Byte;
+ PosNew: Byte;
+ KartiBroi: Byte;
+ L: Boolean;
+ KartaNomer: integer;
+ ParvaKartaPlatena: Integer;
+ ParvaKartaPlateno: Byte;
+ i: Byte;
+begin
+ if Price=PaidCard+PaidCash+PaidChipCard then
+  if PaidChipCard>0 then
+   begin
+     SLE4442ReadCardInfo();
+     Card.Balans:=Card.Balans-PaidChipCard;
+     TempBalans:=Card.Balans;
+    if (Card.ErrCounter>2) then
+     begin
+      Data:=Internet.FieldValues['PIN'];
+      SLE4442Submit();
+      SLE4442ReadCardInfo();
+      Card.Balans:=TempBalans;
+      SLE4442WriteCardInfo();
+      SLE4442ReadCardInfo();
+      if abs(Card.Balans- TempBalans)>0.5 then
+       begin
+        PaidChipCard:=0;
+        Application.MessageBox(PChar('Картата не може да бъде записана!'),PChar('Warning'),MB_OK);
+        Edit8.Text:='0.00';
+       end;
+     end
+    else
+     begin
+      Application.MessageBox(PChar('Картата е блокирана!'),PChar('Warning'),MB_OK);
+      PaidChipCard:=0;
+     end;
+   end;
+  if Price=PaidCard+PaidCash+PaidChipCard then
+  begin
+   LastTime[(IndexSol-1)]:=TimeSet;
+   SendData(TimeSet,IndexSol);
+   PosSelected:=0;
+   ParvaKartaPlatena:=0;
+   ParvaKartaPlateno:=0;
+   if PaidCard > 0 then
+    begin
+    QKarti.First;
+//    PosSelected:=PoseshteniaPaid[0];
+    i:=0;
+    while (i < SizeOf(PoseshteniaPaid)) and (i < QKarti.RecordCount) do
+      begin
+       if (PoseshteniaPaid[i]>0)then
+        begin
+         KartaNomer:=QKarti.FieldValues['KARTANOMER'];
+         PosOld:=QKarti.FieldValues['POSESHTENIA'];
+         QKarti.Edit;
+         QKarti.FieldValues['POSESHTENIA']:=PosOld - PoseshteniaPaid[i];
+         QKarti.Post;
+         If ParvaKartaPlatena=0 then
+           begin
+           ParvaKartaPlatena:=KartaNomer;
+           ParvaKartaPlateno:=PoseshteniaPaid[i];
+           PoseshteniaPaid[i]:=0;
+           end;
+        end;
+        QKarti.Next;
+        i:=i+1;
+       end;
+    end;
+   KartiBroi:=QKarti.RecordCount;
+   Label149.Caption:= IntToStr(KartiBroi);
+   Plashtania.ReadOnly:=False;
+   Plashtania.Edit;
+   Plashtania.Append;
+   Plashtania.FieldValues['SOLARIUM']:=IndexSol;
+   Plashtania.FieldValues['SUMABROI']:=PaidCash;
+   Plashtania.FieldValues['BROI']:=TimeSet;
+   Plashtania.FieldValues['CHAS']:=TimeToStr(Time);
+   Plashtania.FieldValues['DATA']:=Date;
+   if (PaidCard > 0) and AdvComboBox2.Visible then
+    begin
+    Plashtania.FieldValues['OTKARTA']:=ParvaKartaPlatena;
+    Plashtania.FieldValues['POSESHTENIA']:=ParvaKartaPlateno;
+    end;
+   if (PaidChipCard > 0) and Label71.Visible then
+    begin
+     Plashtania.FieldValues['OTCHIPKARTA']:=Card.ClientNomer; // Temporary Value
+     Plashtania.FieldValues['KARTASUMA']:=PaidChipCard;
+     Plashtania.FieldValues['STUDIOCODE']:=Card.StudioNomer;
+    end;
+   Plashtania.Post;
+   CabineRecord[IndexSol]:=Plashtania.FieldByName('RECORDID').AsInteger;
+   if (BroiKartiPaid > 1) and AdvComboBox2.Visible then
+    begin
+    i:=0;
+    QKarti.First;
+    while (i< KartiBroi) and (i < SizeOf(PoseshteniaPaid))do
+     begin
+      if PoseshteniaPaid[i]>0 then
+      begin
+       Plashtania.Edit;
+       Plashtania.Append;
+       Plashtania.FieldValues['SOLARIUM']:=IndexSol;
+       Plashtania.FieldValues['CHAS']:=TimeToStr(Time);
+       Plashtania.FieldValues['DATA']:=Date;
+       Plashtania.FieldValues['OTKARTA']:=QKarti.FieldValues['KARTANOMER'];
+       Plashtania.FieldValues['POSESHTENIA']:=PoseshteniaPaid[i];
+       Plashtania.Post;
+      end;
+      i:=i+1;
+      QKarti.Next;
+     end;
+    end;
+   Table1.Edit;
+   Table1.FieldValues['LAMPICHAS']:=Table1.FieldValues['LAMPICHAS']-(TimeSet/60);
+   Table1.FieldValues['LICEVICHAS']:=Table1.FieldValues['LICEVICHAS']-(TimeSet/60);
+   Table1.Post;
+   AdvPageControl1.ActivePage:=AdvTabsheet2;
+   UpdatePageControl();
+  end;
+end;
+
+procedure TMainForm.FormKeyPress(Sender: TObject; var Key: Char);
+begin
+   if Key = #13 then
+    begin
+      Key := #0;
+      { move focus to next control in tab order. }
+      Perform(wm_NextDlgCtl,0,0);
+    end;
+   TimerTime1 := TimerTime1-(TimerTime1 mod 10);
+   KeyBuff:=KeyBuff+Key;
+   Kabina11.Caption:=KeyBuff;
+   if KeyBuff='1234' then
+   begin
+    PasswordForm.ShowModal;
+    If PasswordForm.ModalResult=mrOK then
+        AdvPageControl1.ActivePage:=AdvTabsheet6
+        else
+        UpdatePageControl;
+    KeyBuff:='';
+   end;
+end;
+
+procedure TMainForm.Label14Click(Sender: TObject);
+begin
+ AdvPageControl1.ActivePage:=AdvTabsheet12;
+end;
+
+procedure TMainForm.Label68Click(Sender: TObject);
+begin
+  AdvPageControl1.ActivePage:=AdvTabsheet2;
+  UpdatePageControl();
+end;
+
+procedure TMainForm.Label91Click(Sender: TObject);
+begin
+  Table3.Active:=True;
+  AdvPageControl1.ActivePage:=AdvTabsheet13;
+  UpdatePageControl();
+end;
+
+procedure TMainForm.Label92Click(Sender: TObject);
+begin
+     Table3.Active:=False;
+     KARTIALL1.Active:=False;
+     Table3.IndexName:='';
+     Table3.MasterFields:='';
+     Table3.MasterSource:=nil;
+     KARTIALL1.IndexName:='KlientDet';
+     KARTIALL1.MasterFields:='NOMER';
+     KARTIALL1.MasterSource:=DataSource2;
+     Table3.Active:=True;
+     KARTIALL1.Active:=True;
+   AdvPageControl1.ActivePage:=AdvTabsheet18;
+end;
+
+procedure TMainForm.Label94Click(Sender: TObject);
+begin
+
+Form1.QuickRep1.Preview;
+//  QKartiPaid.Active:=False;
+end;
+
+procedure TMainForm.Label95Click(Sender: TObject);
+begin
+  AdvPageControl1.ActivePage:=AdvTabsheet6;
+  if Internet.Modified then Internet.Post;
+end;
+
+
+procedure TMainForm.Label30Click(Sender: TObject);
+begin
+ Form2.QuickRep2.Preview;
+end;
+
+procedure TMainForm.ButtonScanNewClick(Sender: TObject);
+begin
+ScanForm.ShowModal;
+end;
+
+procedure TMainForm.Label23Click(Sender: TObject);
+begin
+
+ AdvPageControl1.ActivePage:=AdvTabsheet15;
+
+end;
+
+procedure TMainForm.DBLUCombo11Change(Sender: TObject);
+begin
+ DayTotal.ParamByName('DATA_COMBO_SELECTED').AsDate:=StrToDate(DBLUCombo1.Text);
+ DayTotal.Active:=False;
+ DayTotal.Active:=True;
+end;
+
+procedure TMainForm.Label107Click(Sender: TObject);
+begin
+
+   Form3.QuickRep3.Preview;
+end;
+
+procedure TMainForm.Label108Click(Sender: TObject);
+begin
+DBChart1.Print;
+end;
+
+procedure TMainForm.Label110Click(Sender: TObject);
+begin
+ MinMax.Close;
+ MinMax.SQL.Text:='Select max(RECORDID) from plashtania';
+ MinMax.ExecSQL;
+ MinMax.Open;
+ if MinMax.Fields.Count>0 then
+ SDELKANOMER:=MinMax.Fields.Fields[0].AsInteger;
+ AdvPageControl1.ActivePage:=AdvTabsheet16;
+sol1.StartTransaction;
+ SDELKA.Close;
+ SDELKA.ParamByName('SDELKANOMER').AsInteger:=SDELKANOMER;
+ SDELKA.ExecSQL;
+ SDELKA.Open;
+ Suma:=0;
+end;
+
+procedure TMainForm.StaticText1Click(Sender: TObject);
+var
+  DecPart: integer;
+begin
+ PaidCash:=Price- (PaidCard+PaidChipCard);
+// Label64.Caption:= ConvertCurr1(PaidCard+PaidCash);
+//Label63.Caption:= ConvertCurr1(Price-(PaidCard+PaidCash));
+ Edit1.Text:=ConvertCurr1(PaidCash);
+ DecPart:=Trunc(PaidCash*100);
+ AdvComboBox1Change(Sender);
+end;
+
+procedure TMainForm.b2Click(Sender: TObject);
+begin
+IOResult:=CancelIO(hDevice);
+end;
+
+procedure TMainForm.Label120Click(Sender: TObject);
+begin
+ Karti.Active:=False;
+ Karti.SQL.SetText(PChar('SELECT * FROM STOKI WHERE STOKAKOD < 0 AND POSESHTENIA > 0 AND SUMA = 0'));
+ Karti.Active:=True;
+ RefillForm.ShowModal;
+ QKarti.Active:=False;
+ QKarti.SQL.SetText(PChar('SELECT * FROM kartiall WHERE klientdetail = '+
+ IntToStr(QKlienti.FieldValues['NOMER'])+ ' ORDER BY KARTANOMER DESC'));
+ QKarti.Active:=True;
+end;
+
+procedure TMainForm.LMDButton2Click(Sender: TObject);
+var
+  maxcode: integer;
+  mincode: integer;
+  code: integer;
+  L:Boolean;
+begin
+mincode:=0;
+maxcode:=0;
+STOKI.First;
+L:=False;
+ while (not L) do
+ begin
+   code:=STOKI.FieldByName('STOKAKOD').AsInteger;
+   if (code>0) and (code > maxcode) then maxcode:=code;
+   if (code<0) and (code < mincode) then mincode:=code;
+   L:=STOKI.Eof;
+   STOKI.Next;
+ end;
+STOKI.Append;
+STOKI.FieldValues['STOKAKOD']:=maxcode+1;
+STOKI.FieldValues['STOKAIME']:='Козметика №'+IntTostr(maxcode+1);
+STOKI.FieldValues['STOKACENA']:=0;
+STOKI.FieldValues['STOKANASKLAD']:=0;
+STOKI.Post;
+STOKITE.Close;
+STOKITE.Active:=False;
+STOKITE.Active:=True;
+end;
+
+procedure TMainForm.LMDButton3Click(Sender: TObject);
+var
+ Message1: String;
+ StokaKod: Integer;
+ Result: Integer;
+begin
+ Message1:=('Наистина ли искате да изтриете '+STOKITE.FieldValues['STOKAIME']);
+ if Application.MessageBox(PChar(Message1),'ПОТВЪРДЕТЕ ИЗТРИВАНЕТО!',MB_YESNO)=6 then;
+  begin
+   StokaKod:=STOKITE.FieldValues['STOKAKOD'];
+   STOKITE.Active:=False;
+   STOKI.Locate('STOKAKOD',StokaKod,[]);
+   STOKI.Delete;
+   STOKI.Refresh;
+   STOKITE.Active:=True;
+  end;
+end;
+
+procedure TMainForm.LMDButton4Click(Sender: TObject);
+var
+ Message1: String;
+ StokaKod: Integer;
+ Result: Integer;
+begin
+ Message1:=('Наистина ли искате да изтриете '+KARTI.FieldValues['STOKAIME']);
+ if Application.MessageBox(PChar(Message1),'ПОТВЪРДЕТЕ ИЗТРИВАНЕТО!',MB_YESNO)=6 then;
+  begin
+   StokaKod:=KARTI.FieldValues['STOKAKOD'];
+   KARTI.Active:=False;
+   STOKI.Locate('STOKAKOD',StokaKod,[]);
+   STOKI.Delete;
+   STOKI.Refresh;
+   KARTI.Active:=True;
+  end;
+end;
+procedure TMainForm.wwDBGrid3FieldChanged(Sender: TObject; Field: TField);
+var
+ Poseshtenia: Variant;
+ cod: Integer;
+begin
+
+ try
+  // Poseshtenia:=STOKITE.FieldValues['POSESHTENIA'];
+   cod:=STOKITE.FieldValues['STOKAKOD'];
+ //  STOKI.Locate('STOKAKOD',cod,[]);
+ //  STOKI.FieldValues['STOKAIME']:='Карта за '+IntTostr(Poseshtenia)+' посещения';
+ //  STOKITE.Post;
+ except
+ end;
+end;
+
+procedure TMainForm.Label123Click(Sender: TObject);
+begin
+Form4.QuickRep1.Preview;
+end;
+
+procedure TMainForm.LMDButton6Click(Sender: TObject);
+
+var
+  maxnomer: integer;
+  nomer: integer;
+  L: Boolean;
+begin
+ maxnomer:=0;
+ nomer:=0;
+ Table3.First;
+ L:=False;
+ while (not L) do
+ begin
+   nomer:=Table3.FieldByName('NOMER').AsInteger;
+   if (nomer>0) and (nomer > maxnomer) then maxnomer:=nomer;
+   L:=Table3.Eof;
+   Table3.Next;
+ end;
+
+ Table3.Append;
+ Table3.FieldValues['NOMER']:=maxnomer+1;
+ Table3.FieldValues['IME']:='Нов клиент №'+IntTostr(maxnomer+1);
+ Table3.Post;
+ Table3.Last;
+ QKlienti.Active:=False;
+ QKlienti.SQL.SetText(PChar('SELECT * FROM klienti ORDER BY NOMER DESC'));
+ QKlienti.Active:=True;
+ RefillForm.ShowModal;
+ QKarti.Active:=False;
+ QKarti.SQL.SetText(PChar('SELECT * FROM kartiall WHERE klientdetail = '+
+ IntToStr(QKlienti.FieldValues['NOMER'])+ ' ORDER BY KARTANOMER DESC'));
+ QKarti.Active:=True;
+end;
+
+procedure TMainForm.Image57Click(Sender: TObject);
+var
+ i: Integer;
+begin
+ PaidCash:=0;
+ PaidCard:=0;
+ PaidChipCard:=0;
+ for i:=0 to SizeOf(PoseshteniaPaid) do PoseshteniaPaid[i]:=0;
+ PosPaid:=0;
+ BroiKartiPaid:=0;
+  AdvPageControl1.ActivePage:=AdvTabsheet18;
+end;
+
+procedure TMainForm.LMDShapeButton1Click(Sender: TObject);
+var
+  Stoka: integer;
+  Cena: Real;
+  Broi: Integer;
+  Cena1: Real;
+begin
+ Stoka:=STOKITE.FieldValues['STOKAKOD'];
+ Cena:=STOKITE.FieldValues['STOKACENA'];
+ Broi:= STOKITE.FieldValues['STOKANASKLAD'];
+ Suma:=Suma+Cena;
+ if Broi>0 then
+  begin
+  STOKITE.Edit;
+  STOKITE.FieldValues['STOKANASKLAD']:=Broi-1;
+  STOKITE.Post;
+  if SDELKA.Locate('STOKA',Stoka,[]) then
+   begin
+    SDELKA.Edit;
+    Broi:=SDELKA.FieldValues['BROI'];
+    SDELKA.FieldValues['BROI']:=Broi+1;
+    Cena1:=SDELKA.FieldValues['SUMABROI'];
+    SDELKA.FieldValues['SUMABROI']:=Cena1+Cena;
+    SDELKA.Post;
+   end
+  else
+   begin
+    plashtania.Append;
+    plashtania.FieldValues['STOKA']:=Stoka;
+    plashtania.FieldValues['SUMABROI']:=Cena;
+    plashtania.FieldValues['BROI']:=1;
+    plashtania.FieldValues['DATA']:=Date;
+    plashtania.FieldValues['CHAS']:=TimeToStr(Time);
+    Plashtania.Post;
+   end;
+  SDELKA.ParamByName('SDELKANOMER').AsInteger:=SDELKANOMER;
+  SDELKA.Active:=False;
+  SDELKA.Active:=True;
+  KasseLabel.Caption:=ConvertCurr1(Suma);
+  end
+end;
+
+procedure TMainForm.Label112Click(Sender: TObject);
+begin
+ sol1.Commit(True);
+ AdvPageControl1.ActivePage:=AdvTabsheet2;
+end;
+
+procedure TMainForm.Label111Click(Sender: TObject);
+begin
+ Sol1.Rollback;
+ AdvPageControl1.ActivePage:=AdvTabsheet2;
+end;
+
+procedure TMainForm.Image59Click(Sender: TObject);
+var
+  i: Integer;
+  L: Boolean;
+  KartiBroi: Integer;
+  KlientNomer: Integer;
+  KartaSelected: Integer;
+begin
+ if Price>0 then
+ begin
+ if (QKarti.RecordCount>0 ) then KartaSelected:=QKarti.FieldValues['KARTANOMER']
+ else KartaSelected:=0;
+ KlientNomer:= QKLienti.FieldValues['NOMER'];
+ QKarti.Active:=False;
+ QKarti.SQL.SetText(PChar('SELECT * FROM kartiall WHERE klientdetail = '+
+  IntToStr(QKlienti.FieldValues['NOMER'])+ ' AND POSESHTENIA > 0 ORDER BY KARTANOMER'));
+ QKarti.Active:=True;
+  if (QKarti.RecordCount>0 ) then
+   begin
+    DBtext4.Visible:=True;
+    DBtext7.Visible:=True;
+    Edit8.Visible:=True;
+    ADVComboBox1.Visible:=True;
+    ADVComboBox2.Visible:=True;
+    Label72.Visible:=True;
+    Label130.Visible:=True;
+    Label71.visible:=True;
+    Label119.Visible:=True;
+    Label127.Visible:=True;
+    AdvComboBox1.ItemIndex:=30;
+    AdvComboBox2.Items.Clear;
+    QKarti.First;
+    L:=False;
+    i:=0;
+    while not (L) and (i < SizeOf(PoseshteniaPaid))do begin
+     AdvComboBox2.Items.Append(IntToStr(QKarti.FieldValues['KARTANOMER']));
+     QKarti.Next;
+     L:=QKarti.Eof;
+     PoseshteniaPaid[i]:=0;
+     i:=i+1;
+
+    end;
+     QKarti.Locate('KARTANOMER',KartaSelected,[]);
+     AdvComboBox2.ItemIndex:=QKarti.RecNo-1;
+
+  end;
+  AdvPageControl1.ActivePage:=AdvTabsheet4;
+  Label149.Caption:='';
+  KartiBroi:=QKarti.RecordCount;
+  if KartiBroi>0 then begin
+  Label149.Caption:= 'Брой карти = '+IntToStr(KartiBroi);
+  Label149.Visible:=True;
+  AdvComboBox1Change(Sender);
+  end
+  else  Label149.Visible:=False;
+ end
+ else  AdvPageControl1.ActivePage:=AdvTabsheet2;
+end;
+
+procedure TMainForm.AdvComboBox1Change(Sender: TObject);
+var
+  MainTime: integer;
+  KartaSuma: Integer;
+  PosSelected: Integer;
+  Cena: Real;
+  Minutina1: Integer;
+  Klient: Integer;
+  I: Integer;
+  L: Boolean;
+  KartiBroi: Integer;
+begin
+
+  PosPaid:=0;
+  i:=0;
+  if AdvComboBox1.Visible then
+  begin
+   KartiBroi:=QKarti.RecordCount;
+   while (i< KartiBroi) and (i < SizeOf(PoseshteniaPaid)) do
+   begin
+    if not (i=ADVComboBox2.ItemIndex) then
+    PosPaid:=PoseshteniaPaid[i]+PosPaid;
+    i:=i+1;
+   end;
+
+   L:=False;
+   Cena:=Table1.FieldValues['CENA'];
+   MainTime:=Table1.FieldValues['VREME'];
+   Klient:=QKlienti.FieldValues['NOMER'];
+   Minutina1:=Table1.FieldValues['MINUTINA1'];
+   KartaSuma:=0;
+   if (QKarti.Locate('KARTANOMER',StrToInt(AdvComboBox2.Text),[])) then
+    KartaSuma:=QKarti.FieldValues['POSESHTENIA']
+   else KartaSuma:=0;
+   If ADVComboBox1.ItemIndex > KartaSuma then ADVComboBox1.ItemIndex:=KartaSuma;
+   If (ADVComboBox1.ItemIndex+PosPaid)*Minutina1>TimeSet then ADVComboBox1.ItemIndex:= (TimeSet div Minutina1)-PosPaid;
+   PoseshteniaPaid[ADVComboBox2.ItemIndex]:=ADVComboBox1.ItemIndex;
+   PaidCard:=(ADVComboBox1.ItemIndex+PosPaid)*Minutina1*Cena;
+   PosPaid:= ADVComboBox1.ItemIndex+PosPaid;
+  end;
+ // Label64.Caption:= ConvertCurr1(PaidCard+PaidCash);
+ // Label63.Caption:= ConvertCurr1(Price-(PaidCard+PaidCash));
+  CalcPaid;
+end;
+
+procedure TMainForm.Label16Click(Sender: TObject);
+begin
+AdvPageControl1.ActivePage:=AdvTabsheet17;
+end;
+
+procedure TMainForm.LMDButton7Click(Sender: TObject);
+begin
+{KARTIALL.Active:=False;
+KARTIALL1.Active:=False;}
+QKarti.ReadOnly:=False;
+if QKarti.Eof and QKarti.Bof then
+else QKarti.Delete;
+QKarti.Active:=False;
+QKarti.Active:=True;
+end;
+
+procedure TMainForm.AdvTabSheet2Show(Sender: TObject);
+begin
+UpdatePageControl();
+Price:=0;
+Edit5.SetFocus;
+end;
+
+procedure CalcPaid;
+var
+ i: integer;
+ KartiBroi: Integer;
+begin
+ with MainForm do
+ begin
+   LMDMemo1.Text:='';
+  i:=0;
+  KartiBroi:=QKarti.RecordCount;
+  BroiKartiPaid:=0;
+  while (i< KartiBroi) and (i<SizeOf(PoseshteniaPaid))do
+  begin
+   if PoseshteniaPaid[i]>0 then
+     begin
+      BroiKartiPaid:= BroiKartiPaid+1;
+     LMDMemo1.Lines.Add('Карта '+ADVComboBox2.Items[i]+' - '+
+     ConvertCurr1(PoseshteniaPaid[i]*Table1.FieldValues['MINUTINA1']*
+     Table1.FieldValues['CENA'])+'лв.');
+     end;
+   i:=i+1;
+  end;
+
+   LMDMemo1.Lines.Add('Общо карти - '+ConvertCurr1(PosPaid*Table1.FieldValues['MINUTINA1']*
+     Table1.FieldValues['CENA'])+'лв.');
+   if PaidChipCard>0 then     LMDMemo1.Lines.Add('От чип-карта - '+ConvertCurr1(PaidCHipCard));
+   if PaidCash>0 then
+   LMDMemo1.Lines.Add('В брой - '+ConvertCurr1(PaidCash));
+   LMDMemo1.Lines.Add('-----------');
+   LMDMemo1.Lines.Add('Остава - '+ConvertCurr1(Price-(PaidCard+PaidCash+PaidChipCard)));
+ end;
+
+end;
+
+procedure TMainForm.AdvTabSheet7Show(Sender: TObject);
+begin
+
+
+ ImageName:=Table1.FieldByName('PICTURE').AsString;
+ if FileExists(ImageName) then Image16.Picture.LoadFromFile(ImageName)
+ else Image16.Picture:=Imagepress1.Picture;
+ Label115.Caption:=IntToStr(Table1.RecNo);
+ if Table1.EOF then Label55.Visible:=true
+ else Label55.Visible:=false;
+end;
+
+procedure TMainForm.LMDButton5Click(Sender: TObject);
+var
+  Klient: Integer;
+  Message1: String;
+begin
+ if 1=1 then
+ begin
+  Message1:=('Наистина ли искате да изтриете '+QKlienti.FieldValues['IME']);
+  if Application.MessageBox(PChar(Message1),'ПОТВЪРДЕТЕ ИЗТРИВАНЕТО!',MB_YESNO)=6 then;
+   begin
+    Klient:=QKlienti.FieldValues['NOMER'];
+    QKarti.Active:=False;
+    QKarti.SQL.SetText(PChar('SELECT * FROM kartiall WHERE klientdetail = '+
+     IntToStr(QKlienti.FieldValues['NOMER'])+ ' ORDER BY KARTANOMER DESC'));
+    QKarti.Active:=True;
+    QKarti.First;
+    while not QKarti.Eof do
+     begin
+      QKarti.Delete;
+     end;
+    QKlienti.Delete;
+   end;
+  end
+  else Application.MessageBox(PChar('Изтриване на клиент работи само при режим на приглед по номер на клиент!'),'Изтроването невъзможно!',MB_OK);
+end;
+procedure TMainForm.AdvTabSheet18Show(Sender: TObject);
+begin
+QKarti.Active:=True;
+QKlienti.Active:=True;
+
+end;
+
+procedure TMainForm.wwDBGrid6Exit(Sender: TObject);
+begin
+QKlienti.Edit;
+QKlienti.Post;
+end;
+
+procedure TMainForm.AdvTabSheet16Show(Sender: TObject);
+begin
+KasseLabel.Caption:='0';
+end;
+
+procedure TMainForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+begin
+sol1.FlushBuffers;
+Timer1.Enabled:=False;
+//sol1.Close;
+end;
+
+procedure TMainForm.wwDBGrid6TitleButtonClick(Sender: TObject;
+  AFieldName: String);
+begin
+         ViewByKlient:=True;
+ if AFieldName= 'IME' then
+    begin
+      QKlienti.Active:=False;
+      QKlienti.SQL.SetText(PChar('SELECT * FROM klienti ORDER BY IME'));
+      QKlienti.Active:=True;
+    end;
+   if AFieldName = 'NOMER' then
+    begin
+      QKlienti.Active:=False;
+      QKlienti.SQL.SetText(PChar('SELECT * FROM klienti ORDER BY NOMER DESC'));
+      QKlienti.Active:=True;
+    end;
+    QKarti.Active:=False;
+    QKarti.SQL.SetText(PChar('SELECT * FROM kartiall WHERE klientdetail = '+
+     IntToStr(QKlienti.FieldValues['NOMER'])+ ' ORDER BY KARTANOMER'));
+    QKarti.Active:=True;
+
+end;
+
+procedure TMainForm.Edit6Change(Sender: TObject);
+begin
+      QKlienti.Active:=False;
+      QKlienti.SQL.SetText(PChar('SELECT * FROM klienti WHERE UPPER(IME) LIKE "'+
+      UpperCase(Edit6.Text) +'%" ORDER BY IME'));
+      QKlienti.Active:=True;
+      if QKlienti.RecordCount>0 then
+       wwDBGrid6RowChanged(Sender)
+      else begin
+       QKarti.Active:=False;
+       QKarti.SQL.SetText(PChar('SELECT * FROM kartiall  ORDER BY KARTANOMER'));
+       QKarti.Active:=True;
+      end;
+end;
+
+procedure TMainForm.wwDBGrid6RowChanged(Sender: TObject);
+begin
+    QKarti.Active:=False;
+    QKarti.SQL.SetText(PChar('SELECT * FROM kartiall WHERE klientdetail = '+
+     IntToStr(QKlienti.FieldValues['NOMER'])+ ' ORDER BY KARTANOMER'));
+    QKarti.Active:=True;
+
+end;
+
+procedure TMainForm.Edit7Change(Sender: TObject);
+begin
+    QKarti.Active:=False;
+    if StrLen(PChar(Edit7.Text))>0 then
+     QKarti.SQL.SetText(PChar('SELECT * FROM kartiall WHERE KARTANOMER = '+Edit7.Text+ ''))
+     else
+     QKarti.SQL.SetText(PChar('SELECT * FROM kartiall ORDER BY KARTANOMER'));
+    QKarti.Active:=True;
+    QKlienti.Active:=False;
+    if  QKarti.FieldValues['klientdetail']>0 then
+    QKlienti.SQL.SetText(PChar('SELECT * FROM klienti WHERE NOMER = '+
+     IntToStr(QKarti.FieldValues['klientdetail']) +''))
+    else
+    QKlienti.SQL.SetText(PChar('SELECT * FROM klienti ORDER BY NOMER DESC'));
+    QKlienti.Active:=True;
+    wwDBGrid6RowChanged(Sender);
+end;
+
+procedure TMainForm.wwDBGrid7TitleButtonClick(Sender: TObject;
+  AFieldName: String);
+begin
+ if AFieldName='KARTANOMER' then
+  begin
+    QKarti.Active:=False;
+    QKarti.SQL.SetText(PChar('SELECT * FROM kartiall ORDER BY KARTANOMER DESC'));
+    QKarti.Active:=True;
+    If QKarti.RecordCount>0 then
+    begin
+     QKlienti.Active:=False;
+     QKlienti.SQL.SetText(PChar('SELECT * FROM klienti WHERE NOMER = '+
+     IntToStr(QKarti.FieldValues['klientdetail']) +''));
+     QKlienti.Active:=True;
+    end
+    else
+    begin
+     QKlienti.Active:=False;
+     QKlienti.SQL.SetText(PChar('SELECT * FROM klienti WHERE NOMER = 0'));
+     QKlienti.Active:=True;
+    end;
+  end;
+ if AFieldName='STARTDATE' then
+  begin
+    QKarti.Active:=False;
+    QKarti.SQL.SetText(PChar('SELECT * FROM kartiall ORDER BY STARTDATE DESC'));
+    QKarti.Active:=True;
+    If QKarti.RecordCount>0 then
+    begin
+     QKlienti.Active:=False;
+     QKlienti.SQL.SetText(PChar('SELECT * FROM klienti WHERE NOMER = '+
+     IntToStr(QKarti.FieldValues['klientdetail']) +''));
+     QKlienti.Active:=True;
+    end
+    else
+    begin
+     QKlienti.Active:=False;
+     QKlienti.SQL.SetText(PChar('SELECT * FROM klienti WHERE NOMER = 0'));
+     QKlienti.Active:=True;
+    end;
+  end;
+end;
+procedure TMainForm.wwDBGrid7RowChanged(Sender: TObject);
+var
+ KlientNo: Integer;
+begin
+   Edit7.Text:='';
+    if QKlienti.RecordCount<2 then
+     begin
+      QKlienti.Active:=False;
+      if QKarti.FieldValues['klientdetail']>0 then
+       begin
+        QKlienti.SQL.SetText(PChar('SELECT * FROM klienti WHERE NOMER = '+
+         IntToStr(QKarti.FieldValues['klientdetail']) +''));
+        QKlienti.Active:=True;
+       end
+       else
+       begin
+        QKlienti.SQL.SetText(PChar('SELECT * FROM klienti ORDER BY NOMER DESC'));
+        QKlienti.Active:=True;
+       end;
+      end
+     else
+      begin
+       KlientNo:= QKlienti.FieldValues['NOMER'];
+
+      end;
+end;
+
+procedure TMainForm.Edit5Change(Sender: TObject);
+begin
+Edit5.Text:='';
+end;
+
+
+procedure TMainForm.AdvTabSheet4Show(Sender: TObject);
+var
+  KartiBroi: Integer;
+begin
+//AdvComboBox1.ItemIndex:=0;
+ Edit1.Text:='0.00';
+ LMDMemo1.Text:='Няма плащане';
+ Edit8.Text:='0.00';
+end;
+
+procedure TMainForm.PlannerMaskDatePicker2Change(Sender: TObject);
+begin
+ QStatistika.Active:=False;
+ if PlannerMaskDatePicker1.Text='' then PlannerMaskDatePicker1.Date:=Date;
+ if PlannerMaskDatePicker1.Text='' then PlannerMaskDatePicker1.Date:=Date;
+ QStatistika.SQL.Text:=StatistikaSQL+' WHERE SOLARIUM > 0 AND DATA BETWEEN "' +
+  PlannerMaskDatePicker1.Text +'" AND "'+PlannerMaskDatePicker2.Text+'"';
+ QStatistika.Active:=True;
+end;
+
+procedure TMainForm.Label17Click(Sender: TObject);
+begin
+
+ AdvPageControl1.ActivePage:=AdvTabsheet14;
+end;
+
+procedure TMainForm.AdvComboBox2Change(Sender: TObject);
+var
+R: Boolean;
+begin
+R:=QKarti.Locate('KARTANOMER',StrToInt(AdvComboBox2.Text),[]);
+if R then Label149.Color:=clBlack
+else Label149.Color:=clRed;
+AdvComboBox1.ItemIndex:=PoseshteniaPaid[AdvComboBox2.ItemIndex]
+end;
+
+procedure TMainForm.Label128DblClick(Sender: TObject);
+begin
+if PasswordForm.ShowModal=MROK then
+ begin
+  LMDButton7.Visible:=True;
+  LMDButton5.Visible:=True;
+  wwDBGrid7.ReadOnly:=False;
+ end;
+end;
+
+procedure TMainForm.RzBmpButton1MouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  RzBmpButton1.Margin:= RzBmpButton1.Margin+3;
+  Image7Click(Sender);
+end;
+
+procedure TMainForm.RzBmpButton1MouseUp(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+   RzBmpButton1.Margin:= RzBmpButton1.Margin-3;
+end;
+
+procedure TMainForm.RzBmpButton2MouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+    RzBmpButton2.Margin:= RzBmpButton2.Margin+3;
+  Image6Click(Sender);
+end;
+
+procedure TMainForm.RzBmpButton2MouseUp(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+    RzBmpButton2.Margin:= RzBmpButton2.Margin-3;
+end;
+
+procedure TMainForm.RzBmpButton3MouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+     RzBmpButton3.Margin:= RzBmpButton3.Margin+3;
+  Image8Click(Sender);
+end;
+
+procedure TMainForm.RzBmpButton3MouseUp(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+    RzBmpButton3.Margin:= RzBmpButton3.Margin-3;
+end;
+
+procedure TMainForm.RzBmpButton4MouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+       RzBmpButton4.Margin:= RzBmpButton4.Margin+3;
+  Image9Click(Sender);
+end;
+
+procedure TMainForm.RzBmpButton4MouseUp(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+ RzBmpButton4.Margin:= RzBmpButton4.Margin-3;
+end;
+
+procedure TMainForm.AdvTabSheet5Show(Sender: TObject);
+begin
+RzBmpButton4.Caption:=IntToStr(Table1.FieldValues['STAPKA']*Table1.FieldValues['KOEFICIENT'])+'  ';
+RzBmpButton2.Caption:='  '+IntToStr(Table1.FieldValues['STAPKA']*Table1.FieldValues['KOEFICIENT']);
+RzBmpButton1.Caption:='  '+IntToStr(Table1.FieldValues['STAPKA']);
+RzBmpButton3.Caption:=IntToStr(Table1.FieldValues['STAPKA'])+' ';
+
+end;
+
+procedure TMainForm.Label104Click(Sender: TObject);
+begin
+AdvPageControl1.ActivePage:=AdvTabsheet19;
+end;
+
+procedure TMainForm.wwDBEdit7KeyPress(Sender: TObject; var Key: Char);
+begin
+if (Key in ['a'..'f']) then Key:=UpCase(Key);
+if (Key in ['A'..'F']) or (Key in ['0'..'9']) or (Key<' ')then
+ else Key:= #0;
+end;
+procedure TMainForm.Label139Click(Sender: TObject);
+var
+  result: string;
+begin
+ if Price>0 then
+ begin
+ AdvPageControl1.ActivePage:=AdvTabsheet4;
+  Label71.visible:=True;
+  Label72.visible:=True; Edit8.Visible:=True;
+  PaidChipCard:=Price-(PaidCard+PaidCash+PaidChipCard);
+  if PaidChipCard>Card.Balans then PaidChipCard:=Card.Balans;
+  FmtStr(Result,'%4.2f',[PaidChipCard]);Edit8.Text:=Result;
+ end
+ else  AdvPageControl1.ActivePage:=AdvTabsheet2;
+end;
+
+procedure TMainForm.Edit7KeyPress(Sender: TObject; var Key: Char);
+begin
+if Not(Key in ['0'..'9']) then
+      if Key <> chr(8) then
+        Key := #0;
+end;
+
+procedure TMainForm.AdvComboBox2KeyPress(Sender: TObject; var Key: Char);
+begin
+Key:=#0;
+end;
+
+procedure TMainForm.Edit7KeyUp(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+    QKarti.Active:=False;
+    if StrLen(PChar(Edit7.Text))>0 then
+     QKarti.SQL.SetText(PChar('SELECT * FROM kartiall WHERE KARTANOMER = '+Edit7.Text+ ''))
+     else
+     QKarti.SQL.SetText(PChar('SELECT * FROM kartiall ORDER BY KARTANOMER'));
+    QKarti.Active:=True;
+    QKlienti.Active:=False;
+    if  QKarti.FieldValues['klientdetail']>0 then
+    QKlienti.SQL.SetText(PChar('SELECT * FROM klienti WHERE NOMER = '+
+     IntToStr(QKarti.FieldValues['klientdetail']) +''))
+    else
+    QKlienti.SQL.SetText(PChar('SELECT * FROM klienti ORDER BY NOMER DESC'));
+    QKlienti.Active:=True;
+    wwDBGrid6RowChanged(Sender);
+end;
+
+procedure TMainForm.N2Click(Sender: TObject);
+begin
+//
+
+    AdvPageControl1.ActivePage:=AdvTabsheet19;
+end;
+procedure TMainForm.N1Click(Sender: TObject);
+begin
+     AdvPageControl1.ActivePage:=AdvTabsheet18;
+end;
+
+procedure TMainForm.Label92MouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+var point1: TPoint;
+begin
+point1.X:=x; point1.Y:=y;
+point1:=Label92.ClientToScreen(point1);
+Label92.PopupMenu.Popup(Point1.X,Point1.Y);
+end;
+
+
+procedure TMainForm.DBCheckBox1Exit(Sender: TObject);
+begin
+Internet.Edit;
+Internet.Post;
+end;
+
+procedure TMainForm.LMDButton10Click(Sender: TObject);
+begin
+if Application.MessageBox(PChar('Ще бъдат изтрити всички стоки!?'),PChar('Стоки?!'),MB_OKCANCEL		)=IDOK	 then ;
+end;
+
+procedure TMainForm.LMDButton12Click(Sender: TObject);
+begin
+ if Application.MessageBox(PChar('Ще бъдат изтрити всички карти!?'),PChar('Карти?!'),MB_OKCANCEL		)=IDOK	 then ;
+
+end;
+
+procedure TMainForm.LMDButton13Click(Sender: TObject);
+begin
+if Application.MessageBox(PChar('Ще бъдат изтрити всички клиенти!?'),PChar('Клиенти?!'),MB_OKCANCEL		)=IDOK	 then ;
+
+end;
+
+procedure TMainForm.LMDButton14Click(Sender: TObject);
+begin
+if Application.MessageBox(PChar('Ще бъдат изтрити всички протоколи!?'),PChar('Протоколи?!'),MB_OKCANCEL		)=IDOK	 then ;
+
+end;
+
+procedure TMainForm.LMDButton9Click(Sender: TObject);
+var
+  KartaNomer: Integer;
+begin
+ if Application.MessageBox(PChar('Картата ще бъде изчистена!?'),PChar('Карта?!'),MB_OKCANCEL		)=IDOK	 then
+  begin
+
+   if Card.ErrCounter>2 then
+   begin
+     Card.ConStatus:=card.ConStatus;
+    Data:=Internet.FieldValues['PIN'];
+    SLE4442Submit();
+    SLE4442ReadCardInfo();
+    if ((not (Card.ErrCounter>2)) or (Card.ConStatus=0)) then exit
+    else
+     begin
+       KartaNomer:=Card.CardNomer;
+       ClearCard();
+       SLE4442ReadCardInfo();
+       Card.PIN:= Internet.FieldValues['PIN'];
+       SLE4442WriteCardInfo();
+       SLE4442ShowCardInfo();
+       if Card.CardNomer<0 then //successful cleaning - return deposit
+        begin
+         if MainForm.STOKI.Locate('POSESHTENIA',-1,[]) and (KartaNomer>0) then
+          begin
+           Plashtania.Append;
+           plashtania.FieldValues['BROI']:=1;
+           plashtania.FieldValues['DATA']:=Date;
+           plashtania.FieldValues['CHAS']:=TimeToStr(Time);
+           plashtania.FieldValues['OTCHIPKARTA']:=Card.ClientNomer;
+           plashtania.FieldValues['STOKA']:=MainForm.STOKI.FieldValues['STOKAKOD'];
+           plashtania.FieldValues['SUMABROI']:=-MainForm.STOKI.FieldValues['STOKACENA'];
+           Plashtania.Post;
+          end;
+        end;
+       Card.ErrCounter:=Card.ErrCounter;
+     end;
+   end;
+  end;
+end;
+
+procedure TMainForm.Label141Click(Sender: TObject);
+var
+  NewCard: Boolean;
+begin
+
+ if Card.ErrCounter>2 then
+  begin
+   Data:=Internet.FieldValues['PIN'];
+   SLE4442Submit();
+   SLE4442ReadCardInfo();
+   if not (Card.ErrCounter>2) then exit;
+   NewCard:=(Card.CardNomer<0);
+   if ((Card.StudioNomer=Internet.FieldValues['STUDIONOMER']) or (Card.StudioNomer=0)) then
+    begin
+     Card.StudioName:=Internet.FieldValues['STUDIONAME'];
+     Card.StudioNomer:=Internet.FieldValues['STUDIONOMER'];
+     Card.ClientName:=QKlienti.FieldValues['IME'];
+     Card.PIN:=Internet.FieldValues['PIN'];
+     Card.ClientNomer:= QKlienti.FieldValues['NOMER'];
+
+    end;
+   Karti.Active:=False;
+   Karti.SQL.SetText(PChar('SELECT * FROM STOKI WHERE STOKAKOD < 0 AND POSESHTENIA > 0 AND SUMA > 0'));
+   Karti.Active:=True;
+   RefillForm.ShowModal;
+   if RefillForm.ModalResult=mrOK then
+    begin
+     Card.CardNomer:=QKlienti.FieldValues['NOMER'];
+     SLE4442WriteCardInfo(); if Card.ConStatus >0 then;
+     SLE4442ReadCardInfo();SLE4442ShowCardInfo();
+     if (Card.CardNomer=QKlienti.FieldValues['NOMER']) and NewCard then
+      begin
+
+      end;
+    end;
+  end
+  else Application.MessageBox(PChar('Картата е блокирана!'),PChar('Warning'),MB_OK);
+end;
+
+procedure TMainForm.AdvTabSheet17Show(Sender: TObject);
+begin
+   Karti.Active:=False;
+   Karti.SQL.SetText(PChar('SELECT * FROM STOKI WHERE STOKAKOD < 0'));
+   Karti.Active:=True;
+end;
+
+procedure TMainForm.N3Click(Sender: TObject);
+var
+  maxcode: integer;
+  mincode: integer;
+  code: integer;
+  Pos: Integer;
+  Poseshtenia: integer;
+  L: Boolean;
+begin
+mincode:=0;
+maxcode:=0;
+Poseshtenia:=0;
+STOKI.First;
+L:=False;
+ while (not L) do
+ begin
+   code:=STOKI.FieldByName('STOKAKOD').AsInteger;
+   Pos:=STOKI.FieldByName('POSESHTENIA').AsInteger;
+   if (code>0) and (code > maxcode) then maxcode:=code;
+   if (code<0) and (code < mincode) then mincode:=code;
+   If Poseshtenia < Pos then Poseshtenia := Pos;
+   L:=STOKI.Eof;
+   STOKI.Next;
+ end;
+Poseshtenia:=Poseshtenia+10;
+STOKI.Append;
+STOKI.FieldValues['STOKAKOD']:=mincode-1;
+STOKI.FieldValues['STOKAIME']:='Карта за '+IntTostr(Poseshtenia)+' посещения';
+STOKI.FieldValues['STOKACENA']:=0;
+STOKI.FieldValues['STOKANASKLAD']:=0;
+STOKI.FieldValues['POSESHTENIA']:=Poseshtenia;
+STOKI.FieldValues['MINUTINA1']:=5;
+STOKI.Post;
+KARTI.Close;
+Karti.Active:=False;
+Karti.SQL.SetText(PChar('SELECT * FROM STOKI WHERE STOKAKOD < 0'));
+Karti.Active:=True;
+
+end;
+
+
+procedure TMainForm.LMDButton1MouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+var point1: TPoint;
+begin
+point1.X:=x; point1.Y:=y;
+point1:=LMDButton1.ClientToScreen(point1);
+LMDButton1.PopupMenu.Popup(Point1.X,Point1.Y);
+end;
+
+procedure TMainForm.N4Click(Sender: TObject);
+var
+  maxcode: integer;
+  mincode: integer;
+  code: integer;
+  Pos: Integer;
+  Poseshtenia: integer;
+  Suma: Real;
+  L: Boolean;
+begin
+mincode:=0;
+maxcode:=0;
+Poseshtenia:=0;
+Suma:=0;
+STOKI.First;
+L:=False;
+ while (not L) do
+ begin
+   code:=STOKI.FieldByName('STOKAKOD').AsInteger;
+   Suma:=STOKI.FieldByName('POSESHTENIA').AsInteger;
+   if (code>0) and (code > maxcode) then maxcode:=code;
+   if (code<0) and (code < mincode) then mincode:=code;
+   If Suma < STOKI.FieldValues['SUMA'] then Suma:=STOKI.FieldValues['SUMA'];
+   L:=STOKI.Eof;
+   STOKI.Next;
+ end;
+Suma:= Suma*2+(ShortInt(Suma=0)*10);
+STOKI.Append;
+STOKI.FieldValues['STOKAKOD']:=mincode-1;
+STOKI.FieldValues['STOKAIME']:='Чип карта за '+ IntToStr(Round(Suma))+' лв.';
+STOKI.FieldValues['STOKACENA']:=0;
+STOKI.FieldValues['STOKANASKLAD']:=0;
+STOKI.FieldValues['POSESHTENIA']:=0;
+STOKI.FieldValues['SUMA']:=Suma;
+STOKI.Post;
+KARTI.Close;
+Karti.Active:=False;
+Karti.SQL.SetText(PChar('SELECT * FROM STOKI WHERE STOKAKOD < 0'));
+Karti.Active:=True;
+
+end;
+
+
+procedure TMainForm.N5Click(Sender: TObject);
+var
+  maxcode: integer;
+  mincode: integer;
+  code: integer;
+  Pos: Integer;
+  Poseshtenia: integer;
+  Suma: Real;
+  L: Boolean;
+begin
+mincode:=0;
+maxcode:=0;
+Poseshtenia:=-1;
+Suma:=0;
+STOKI.First;
+L:=False;
+ if STOKI.Locate('POSESHTENIA',-1,[]) then
+  Application.MessageBox(PChar('Само един вид депозит може да има!'),PChar('Съобщение'),MB_OK)
+ else
+  begin
+   while (not L) do
+   begin
+     code:=STOKI.FieldByName('STOKAKOD').AsInteger;
+     Suma:=STOKI.FieldByName('POSESHTENIA').AsInteger;
+     if (code>0) and (code > maxcode) then maxcode:=code;
+     if (code<0) and (code < mincode) then mincode:=code;
+     If Suma < STOKI.FieldValues['SUMA'] then Suma:=STOKI.FieldValues['SUMA'];
+     L:=STOKI.Eof;
+     STOKI.Next;
+   end;
+   STOKI.Append;
+   STOKI.FieldValues['STOKAKOD']:=mincode-1;
+   STOKI.FieldValues['STOKAIME']:='Депозит за карта от '+ IntToStr(Round(Suma))+' лв. ';
+   STOKI.FieldValues['STOKACENA']:=0;
+   STOKI.FieldValues['STOKANASKLAD']:=0;
+   STOKI.FieldValues['POSESHTENIA']:=-1;
+   STOKI.FieldValues['SUMA']:=Suma;
+   STOKI.Post;
+   KARTI.Close;
+   Karti.Active:=False;
+   Karti.SQL.SetText(PChar('SELECT * FROM STOKI WHERE STOKAKOD < 0'));
+   Karti.Active:=True;
+  end;
+end;
+procedure TMainForm.Edit8KeyPress(Sender: TObject; var Key: Char);
+begin
+if Not(Key in ['0'..'9']) then
+      if Key <> chr(8) then
+       if Key<> '.' then
+        Key := #0;
+end;
+
+procedure TMainForm.Edit8Change(Sender: TObject);
+begin
+ PaidChipCard:= StrToFloat(Edit8.Text);
+ AdvComboBox1Change(Sender);
+end;
+
+procedure TMainForm.AdvTabSheet19Show(Sender: TObject);
+begin
+QKlienti.Active:=True;
+Label137.Caption:='Няма карта';
+Label137.Font.Color := clRed;
+SLE4442Init();
+
+end;
+
+procedure TMainForm.Label109Click(Sender: TObject);
+begin
+ AdvPageControl1.ActivePage:=AdvTabsheet2;
+  UpdatePageControl();
+end;
+
+end.
