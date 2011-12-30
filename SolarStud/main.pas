@@ -8,7 +8,7 @@ uses Windows, SysUtils,DateUtils, Classes, Graphics, Forms, Controls, Menus,
   DBGrids, ValEdit, Mask, DBClient,ImageWin, MXDB, Mxstore,
   Series, setformdata, Variants,
    QuickRpt, QRCtrls, TeeProcs, TeEngine, Chart,StrUtils,
-  StatChar, DBChart, RzBorder, wwSpeedButton, wwDBNavigator, wwclearpanel,
+  RzBorder, wwSpeedButton, wwDBNavigator, wwclearpanel,
   Wwdbigrd, Wwdbgrid, LMDControl, LMDBaseControl, LMDBaseGraphicControl,
   LMDGraphicControl, LMDLEDCustomLabel, LMDLEDLabel, ABSMain,
   AdvPageControl, LMDCustomControl, LMDCustomPanel, LMDButtonControl,
@@ -21,12 +21,12 @@ uses Windows, SysUtils,DateUtils, Classes, Graphics, Forms, Controls, Menus,
   AdvMEdBtn, PlannerMaskDatePicker, wwdbdatetimepicker, RzDTP, RzDBDTP,
   LMDBaseEdit, LMDCustomEdit, LMDCustomMaskEdit, LMDCustomExtCombo,
   LMDCalendarComboBox, LMDDBCalendarComboBox, wwcheckbox, LMDCheckBox,
-  RzButton, RzRadChk, TeeSurfa, RzDBCmbo, LMDCustomMemo, LMDMemo,
+  RzButton, RzRadChk, RzDBCmbo, LMDCustomMemo, LMDMemo,
   LMDCustomComponent, LMDBaseController, LMDCustomContainer,
   LMDCustomImageList, LMDImageList, LMDCustomMMButton, LMDMMButton,
   AdvToolBtn, RzBmpBtn, LMDCustom3DButton, LMD3DEffectButton, DBAdvEd,
-  LMDWndProcComponent, LMDFormStyler, TeeDBEdit, TeeDBCrossTab, RzStatus,
-  RzLabel, LMDStorBase, LMDStorINIVault, MainForm2;
+  LMDWndProcComponent, LMDFormStyler, RzStatus,
+  RzLabel, LMDStorBase, LMDStorINIVault, MainForm2, TeeDBEdit, TeeDBCrossTab;
 
 type TSLE4442Card = packed record
   StudioName: String;
@@ -3205,8 +3205,6 @@ end;
 
 procedure TMainForm.N2Click(Sender: TObject);
 begin
-//
-
     AdvPageControl1.ActivePage:=AdvTabsheet19;
 end;
 procedure TMainForm.N1Click(Sender: TObject);

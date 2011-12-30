@@ -1,21 +1,21 @@
 object RefillForm: TRefillForm
   Left = 192
   Top = 107
-  Width = 510
-  Height = 282
   HorzScrollBar.Visible = False
   Caption = #1047#1072#1088#1077#1078#1076#1072#1085#1077
+  ClientHeight = 248
+  ClientWidth = 502
   Color = clBtnFace
-  Font.Charset = DEFAULT_CHARSET
+  Font.Charset = RUSSIAN_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
-  Font.Name = 'MS Sans Serif'
+  Font.Name = 'Arial'
   Font.Style = []
   OldCreateOrder = False
   Position = poMainFormCenter
   OnShow = FormShow
   PixelsPerInch = 96
-  TextHeight = 13
+  TextHeight = 14
   object Image1: TImage
     Left = 0
     Top = 0
@@ -11908,10 +11908,10 @@ object RefillForm: TRefillForm
     Width = 103
     Height = 38
     Caption = #1044#1040
-    Font.Charset = DEFAULT_CHARSET
+    Font.Charset = RUSSIAN_CHARSET
     Font.Color = clWindowText
     Font.Height = -16
-    Font.Name = 'MS Sans Serif'
+    Font.Name = 'Arial'
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 0
@@ -11923,10 +11923,10 @@ object RefillForm: TRefillForm
     Width = 103
     Height = 38
     Caption = #1053#1045
-    Font.Charset = DEFAULT_CHARSET
+    Font.Charset = RUSSIAN_CHARSET
     Font.Color = clWindowText
     Font.Height = -16
-    Font.Name = 'MS Sans Serif'
+    Font.Name = 'Arial'
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 1
@@ -11936,13 +11936,13 @@ object RefillForm: TRefillForm
     Left = 24
     Top = 56
     Width = 297
-    Height = 28
+    Height = 26
     DataField = 'IME'
     DataSource = MainForm.DataSource2
-    Font.Charset = DEFAULT_CHARSET
+    Font.Charset = RUSSIAN_CHARSET
     Font.Color = clWindowText
     Font.Height = -16
-    Font.Name = 'MS Sans Serif'
+    Font.Name = 'Arial'
     Font.Style = []
     ParentFont = False
     TabOrder = 2
@@ -11965,36 +11965,36 @@ object RefillForm: TRefillForm
     Left = 24
     Top = 120
     Width = 297
-    Height = 28
+    Height = 26
     Color = clWindow
-    Version = '2.2.0.0'
-    AutoFocus = False
+    Version = '2.2.0.1'
+    Visible = True
     ButtonWidth = 18
-    Flat = False
-    FlatLineColor = clBlack
-    FlatParentColor = True
-    Etched = False
-    FocusBorder = False
     Ctl3D = True
     DropWidth = 0
     Enabled = True
-    Font.Charset = DEFAULT_CHARSET
+    Font.Charset = RUSSIAN_CHARSET
     Font.Color = clNavy
     Font.Height = -16
-    Font.Name = 'MS Sans Serif'
+    Font.Name = 'Arial'
     Font.Style = [fsBold, fsItalic]
-    ItemHeight = 20
+    ItemIndex = 0
+    ItemHeight = 18
     Items.Strings = (
-      #1063#1080#1087' '#1082#1072#1088#1090#1072' 50 '#1084#1080#1085'.'
-      #1063#1080#1087' '#1082#1072#1088#1090#1072'  79 '#1084#1080#1085'.'
-      #1063#1080#1087' '#1082#1072#1088#1090#1072' '#1079#1072' 140 '#1084#1080#1085'.'
+      #1063#1080#1087' '#1082#1072#1088#1090#1072'  90 '#1084#1080#1085'. 180W'
+      #1063#1080#1087' '#1082#1072#1088#1090#1072' '#1079#1072' 120 '#1084#1080#1085'. 180W'
       #1044#1077#1087#1086#1079#1080#1090' '#1079#1072'   '#1095#1080#1087'-'#1082#1072#1088#1090#1072' '
-      #1063#1080#1087' '#1082#1072#1088#1090#1072' '#1079#1072' 100 '#1084#1080#1085'.'
-      #1063#1080#1087' '#1082#1072#1088#1090#1072' '#1079#1072' 200 '#1084#1080#1085'.')
+      #1063#1080#1087' '#1082#1072#1088#1090#1072' '#1079#1072' 120 '#1084#1080#1085'. 240W'
+      #1063#1080#1087' '#1082#1072#1088#1090#1072' '#1079#1072' 240 '#1084#1080#1085'. 180W'
+      #1063#1080#1087' '#1082#1072#1088#1090#1072' '#1079#1072' 60 '#1084#1080#1085'. 240W'
+      #1063#1080#1087' '#1082#1072#1088#1090#1072' '#1079#1072' 90 '#1084#1080#1085'. 240W'
+      #1063#1080#1087' '#1082#1072#1088#1090#1072' '#1079#1072' 240 '#1084#1080#1085'. 240W'
+      #1053#1086#1074#1072' '#1050#1083#1091#1073#1085#1072' '#1082#1072#1088#1090#1072'-20'
+      #1053#1086#1074#1072' '#1050#1083#1091#1073#1085#1072' '#1082#1072#1088#1090#1072'-21'
+      #1063#1080#1087' '#1082#1072#1088#1090#1072' '#1079#1072' 540 '#1083#1074'.'
+      #1050#1072#1088#1090#1072' '#1079#1072' 280 '#1087#1086#1089#1077#1097#1077#1085#1080#1103)
     LabelPosition = lpLeftCenter
-    LabelMargin = 4
     LabelTransparent = True
-    LabelAlwaysEnabled = False
     LabelFont.Charset = DEFAULT_CHARSET
     LabelFont.Color = clWindowText
     LabelFont.Height = -16
@@ -12003,7 +12003,7 @@ object RefillForm: TRefillForm
     ParentCtl3D = False
     ParentFont = False
     TabOrder = 4
-    Text = #1063#1080#1087' '#1082#1072#1088#1090#1072' 50 '#1084#1080#1085'.'
+    Text = #1063#1080#1087' '#1082#1072#1088#1090#1072'  90 '#1084#1080#1085'. 180W'
     AutoHistory = False
     AutoHistoryLimit = 0
     AutoHistoryDirection = ahdFirst
@@ -12017,7 +12017,6 @@ object RefillForm: TRefillForm
     MatchCase = False
     ModifiedColor = clHighlight
     ShowModified = False
-    ItemIndex = 0
     DataField = 'STOKAIME'
     DataSource = MainForm.DataSource6
     DataLookup = True
@@ -12062,11 +12061,11 @@ object RefillForm: TRefillForm
     Left = 112
     Top = 24
     Width = 60
-    Height = 28
-    Font.Charset = DEFAULT_CHARSET
+    Height = 26
+    Font.Charset = RUSSIAN_CHARSET
     Font.Color = clWindowText
     Font.Height = -16
-    Font.Name = 'MS Sans Serif'
+    Font.Name = 'Arial'
     Font.Style = []
     ParentFont = False
     TabOrder = 6

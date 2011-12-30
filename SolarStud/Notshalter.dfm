@@ -11799,8 +11799,8 @@ object NotshalterForm: TNotshalterForm
     Transparent = True
   end
   object Label3: TLabel
-    Left = 155
-    Top = 96
+    Left = 152
+    Top = 92
     Width = 197
     Height = 30
     Caption = #1040#1074#1072#1088#1080#1077#1085' '#1096#1072#1083#1090#1077#1088
@@ -11838,10 +11838,10 @@ object NotshalterForm: TNotshalterForm
     Alignment = taCenter
     AutoSize = False
     Caption = #1058#1045#1057#1058
-    Font.Charset = DEFAULT_CHARSET
+    Font.Charset = RUSSIAN_CHARSET
     Font.Color = clWindowText
     Font.Height = -13
-    Font.Name = 'MS Sans Serif'
+    Font.Name = 'Arial'
     Font.Pitch = fpVariable
     Font.Style = []
     ParentFont = False
@@ -11856,10 +11856,10 @@ object NotshalterForm: TNotshalterForm
     Alignment = taCenter
     AutoSize = False
     Caption = #1055#1040#1059#1047#1040
-    Font.Charset = DEFAULT_CHARSET
+    Font.Charset = RUSSIAN_CHARSET
     Font.Color = clWindowText
     Font.Height = -13
-    Font.Name = 'MS Sans Serif'
+    Font.Name = 'Arial'
     Font.Pitch = fpVariable
     Font.Style = []
     ParentFont = False
@@ -11867,15 +11867,15 @@ object NotshalterForm: TNotshalterForm
     OnClick = Label5Click
   end
   object Panel1: TPanel
-    Left = 42
+    Left = 46
     Top = 160
     Width = 103
     Height = 38
     Caption = #1057#1058#1040#1056#1058
-    Font.Charset = DEFAULT_CHARSET
+    Font.Charset = RUSSIAN_CHARSET
     Font.Color = clWindowText
     Font.Height = -16
-    Font.Name = 'MS Sans Serif'
+    Font.Name = 'Arial'
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 0
@@ -11887,10 +11887,10 @@ object NotshalterForm: TNotshalterForm
     Width = 103
     Height = 38
     Caption = #1057#1058#1054#1055
-    Font.Charset = DEFAULT_CHARSET
+    Font.Charset = RUSSIAN_CHARSET
     Font.Color = clWindowText
     Font.Height = -16
-    Font.Name = 'MS Sans Serif'
+    Font.Name = 'Arial'
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 1
