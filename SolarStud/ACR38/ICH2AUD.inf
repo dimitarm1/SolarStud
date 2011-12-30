@@ -1,0 +1,104 @@
+; ****************************************************************************
+; ****************************************************************************
+; **    Filename:  ICH2AUD.INF
+; **    Abstract:  Windows* 2000 INF Update File for Intel(R) 82801BA/BAM
+; **               core devices
+; **    Last Update:  March 24, 2000 (Version 2.30 Build 0017)
+; ****************************************************************************
+; ****************************************************************************
+
+[Version]
+Signature="$CHICAGO$"
+Class=MEDIA
+ClassGUID={4d36e96c-e325-11ce-bfc1-08002be10318}
+provider=%IntelMfg%
+CatalogFile=ich2aud.cat
+DriverVer=03/24/2000,2.30.0017
+
+[Manufacturer]
+%IntelMfg%=Intel
+
+;; Excluding drivers from the "Add New Hardware" list.
+[ControlFlags]
+ExcludeFromSelect = *
+
+[Intel]
+%ICHAUD_BA.DeviceDesc%=ICHAUD, PCI\VEN_8086&DEV_2445
+%ICHAUD_BA.DeviceDesc%=ICHAUD, PCI\VEN_8086&DEV_2445&CC_0401
+
+;; ************************************************
+
+;;======================== Win98 section ========================
+
+[ICHAUD]
+Include=layout.inf,ks.inf,wdmaudio.inf,wdma_int.inf
+Needs=KS.Registration,WDMAUDIO.Registration,ICHAUD
+AddReg=FIXICHAUD.AddReg
+
+[FIXICHAUD.AddReg]
+HKR,Drivers\wave\wdmaud.drv,Description,,%ICHAUD.DeviceDesc%
+HKR,Drivers\midi\wdmaud.drv, Description,,%ICHAUD.DeviceDesc%
+HKR,Drivers\mixer\wdmaud.drv,Description,,%ICHAUD.DeviceDesc%
+
+[ICHAUD.Interfaces]
+Include=wdma_int.inf
+needs=ICHAUD.Interfaces
+
+[ICHAUD.Services]
+Include=wdma_int.inf
+needs=ICHAUD.Services
+
+;;======================== Win2k section ========================
+
+[ICHAUD.NTX86]
+Include=layout.inf,ks.inf,wdmaudio.inf,wdma_int.inf
+Needs=KS.Registration,WDMAUDIO.Registration,ICHAUD
+AddReg=FIXICHAUD.AddReg
+
+[ICHAUD.NTX86.Interfaces]
+Include=wdma_int.inf
+needs=ICHAUD.NTX86.Interfaces
+
+[ICHAUD.NTX86.Services]
+Include=wdma_int.inf
+needs=ICHAUD.NTX86.Services
+
+;; ************************************************
+;; Strings
+[Strings]
+IntelMfg="Intel"
+ICHAUD_BA.DeviceDesc="Intel(R) 82801BA/BAM AC '97 Audio Controller - 2445"
+ICHAUD.DeviceDesc="Intel(R) 82801BA/BAM AC '97 Audio Controller - 2445"
+
+; Copyright (c) 2000 Intel Corporation
+
+; ************************************************************
+; Intel is making no claims of usability, efficacy or 
+; warranty.  
+; ************************************************************
+; Information in this document is provided in connection with 
+; Intel products.  No license, express or implied, by estoppel 
+; or otherwise, to any intellectual property rights is granted 
+; by this document.  Intel assumes no liability whatsoever, 
+; and Intel disclaims any express or implied warranty, 
+; relating to sale and/or use of Intel products including 
+; liability or warranties relating to fitness for a particular 
+; purpose, merchantability, or infringement of any patent, 
+; copyright or other intellectual property right.  Intel 
+; products are not intended for use in medical, life saving, 
+; or life sustaining applications.
+
+; ************************************************************
+; Intel Corporation disclaims all warranties and liabilities 
+; for the use of this document and the information contained 
+; herein, and assumes no responsibility for any errors which 
+; may appear in this document, nor does Intel make a 
+; commitment to update the information contained herein. Intel 
+; reserves the right to make changes to this document at any 
+; time, without notice.
+; ************************************************************
+; ************************************************************
+
+; * Third-party brands and names are the property of their 
+; respective owners.
+
