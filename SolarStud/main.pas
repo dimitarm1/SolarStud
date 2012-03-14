@@ -1097,6 +1097,7 @@ begin
 
   with MainForm do
   begin
+    Timer1.Enabled := false;
     if not FileExists(MainForm.sol1.DatabaseFileName) then MainForm.sol1.CreateDatabase;
     try MainForm.sol1.Open;
      except  Application.MessageBox(PChar(GetMessage('M1')),PChar(GetMessage('M2')), MB_OK);
@@ -1107,6 +1108,9 @@ begin
      _Q.ExecSQL;
      _Q.Close;
 
+     MinMax.Active         :=FALSE;
+     QStatistika.Active    :=FALSE;
+     MaxDay.Active         :=FALSE;
      Stoki   .Close;
      Stokite .Close;
      stokispr.Close;
@@ -1213,9 +1217,7 @@ begin
         PLASHTANIA.Active     :=FALSE;
         DayTotal.Active       :=FALSE;
         QKartiPaid.Active     :=FALSE;
-        MinMax.Active         :=FALSE;
-        QStatistika.Active    :=FALSE;
-        MaxDay.Active         :=FALSE;
+
         Qstatistika.Active    :=FALSE;
         PlashtaniaTable.Active:=FALSE;
         SDELKA.Active         :=FALSE;
@@ -1224,10 +1226,9 @@ begin
         _Q.ExecSQL;// .Active:=true;
         _Q.Active:=FALSE;
         PLASHTANIA.Active     :=TRUE;
+        PlashtaniaTable.Active:=TRUE;
         DayTotal.Active       :=TRUE;
         QKartiPaid.Active     :=TRUE;
-        MinMax.Active         :=TRUE;
-        MaxDay.Active         :=TRUE;
         PlashtaniaTable.Active:=TRUE;
         SDELKA.Active         :=TRUE;
 
@@ -1257,8 +1258,7 @@ begin
      solariumspr.Active:=True;
      QKlienti.Active   :=True;
      personal1.Active  :=True;
-     maxday.Active     :=true;
-     maxday.Refresh;
+
      Planner.Active    :=True;
      Planner02.Active  :=true;
      Planner03.Active  :=True;
@@ -1273,6 +1273,12 @@ begin
        CeniTable.MasterFields   :='SOLARIUM';
        CeniTable.Active         :=True;
       end;
+     maxday.Active     :=true;
+     maxday.Refresh;
+     MinMax.Active         :=true;
+     MinMax.Refresh;
+//     QStatistika.Active    :=true;
+    Timer1.Enabled := true;
   end;
 end;
 
@@ -4361,7 +4367,6 @@ begin
   Label71.visible:=True;
   Label72.visible:=True;
   PayChipCardClick(Sender);
-  //
 //  PaidChipCard:=PriceCard ;//-(PaidCard+PaidCash); Removed...
 //  if PaidChipCard>Card.Balans then PaidChipCard:=Card.Balans;
 //  FmtStr(Result1,'%4.2f',[PaidChipCard]);
@@ -4447,7 +4452,7 @@ end;
 
 procedure TMainForm.LMDButton10Click(Sender: TObject);
 begin
-if Application.MessageBox(PChar(GetMessage('30')),PChar(GetMessage('31')),MB_OKCANCEL		)=IDOK	 then
+if Application.MessageBox(PChar(GetMessage('M30')),PChar(GetMessage('M31')),MB_OKCANCEL		)=IDOK	 then
 //if Application.MessageBox(PChar('Ще бъдат изтрити всички стоки!?'),PChar('Стоки?!'),MB_OKCANCEL		)=IDOK	 then
  begin
   while STOKITE.RecordCount>0 do STOKITE.Delete;
@@ -4456,7 +4461,7 @@ end;
 
 procedure TMainForm.LMDButton12Click(Sender: TObject);
 begin
- if Application.MessageBox(PChar(GetMessage('32')),PChar(GetMessage('33')),MB_OKCANCEL		)=IDOK	 then
+ if Application.MessageBox(PChar(GetMessage('M32')),PChar(GetMessage('M33')),MB_OKCANCEL		)=IDOK	 then
  //if Application.MessageBox(PChar('Ще бъдат изтрити всички видове карти!?'),PChar('Карти?!'),MB_OKCANCEL		)=IDOK	 then
  begin
   while KARTI.RecordCount>0 do KARTI.Delete;
@@ -4464,14 +4469,37 @@ begin
 end;
 
 procedure TMainForm.LMDButton13Click(Sender: TObject);
+var q: TABSQuery;
 begin
-if Application.MessageBox(PChar(GetMessage('34')),PChar(GetMessage('35')),MB_OKCANCEL		)=IDOK	 then
+if Application.MessageBox(PChar(GetMessage('M34')),PChar(GetMessage('M35')),MB_OKCANCEL		)=IDOK	 then
 //if Application.MessageBox(PChar('Ще бъдат изтрити всички клиенти!?'),PChar('Клиенти?!'),MB_OKCANCEL		)=IDOK	 then
+  q:=TABSQuery.Create(MainForm);
+  q.Databasename:='sol1';
+  q.ReadOnly:=False;
+  q.RequestLive:=TRUE;
+  q.SQL.SetText(PChar('DELETE FROM KARTICHIP'));
+  q.ExecSQL;
+  q.Close;
+  q.RequestLive:=TRUE;
+  q.SQL.SetText(PChar('DELETE FROM CHIPKARTI'));
+  q.ExecSQL;
+  q.Close;
+  q.RequestLive:=TRUE;
+  q.SQL.SetText(PChar('DELETE FROM KARTIALL'));
+  q.ExecSQL;
+  q.Close;
+  q.RequestLive:=TRUE;
+  q.SQL.SetText(PChar('DELETE FROM KLIENTI'));
+  q.ExecSQL;
+  q.Close;
+  Table3.Append;
+  Table3.FieldValues['NOMER']:=1;
+  Table3.FieldValues['IME']:=GetMessage('M36');
+  Table3.Post;
   MainForm.sol1.FlushBuffers;
+  MainForm.Timer1.Enabled := false;
   MainForm.sol1.Close;
   MainForm.sol1.Connected := false;
-  Table3.EmptyTable;
-  KARTICHIP.EmptyTable;
   Sleep(1000);
   MainForm.sol1.Connected := false;
   MainForm.sol1.Connected := false;
@@ -4481,29 +4509,24 @@ if Application.MessageBox(PChar(GetMessage('34')),PChar(GetMessage('35')),MB_OKC
   MainForm.sol1.Connected := false;
   MainForm.sol1.CompactDatabase();
   OpenTables;
-  Table3.Append;
-  Table3.FieldValues['NOMER']:=1;
-  Table3.FieldValues['IME']:=GetMessage('36');
+  MainForm.Timer1.Enabled := true;
   //Table3.FieldValues['IME']:='Администратор';
-  Table3.Post;
+
 end;
 
 procedure TMainForm.LMDButton14Click(Sender: TObject);
+var q: TABSQuery;
 begin
 //if Application.MessageBox(PChar('Ще бъдат изтрити всички протоколи!?'),PChar('Warning'),MB_OKCANCEL		)=IDOK	 then
 if Application.MessageBox(PChar(GetMessage('M79')),PChar('Warning'),MB_OKCANCEL		)=IDOK	 then
-  MainForm.sol1.FlushBuffers;
-  MainForm.sol1.Close;
-  PlashtaniaTable.EmptyTable;
-  MainForm.sol1.Connected := false;
-  MainForm.sol1.Connected := false;
-  MainForm.sol1.Connected := false;
-  Sleep(1000);
-  MainForm.sol1.Connected := false;
-  MainForm.sol1.Connected := false;
-  MainForm.sol1.Connected := false;
-  MainForm.sol1.CompactDatabase();
-  OpenTables;
+  MainForm.Timer1.Enabled := false;
+  q:=TABSQuery.Create(MainForm);
+  q.Databasename:='sol1';
+  q.ReadOnly:=False;
+  q.RequestLive:=TRUE;
+  q.SQL.SetText(PChar('DELETE FROM plashtania'));
+  q.ExecSQL;
+  q.Free;
   Plashtania.Append;
   plashtania.FieldValues['BROI']:=0;
   plashtania.FieldValues['DATA']:=Date;
@@ -4512,7 +4535,19 @@ if Application.MessageBox(PChar(GetMessage('M79')),PChar('Warning'),MB_OKCANCEL	
   plashtania.FieldValues['STOKA']:=0;
   plashtania.FieldValues['SUMABROI']:=0;
   Plashtania.Post;
+  MainForm.sol1.FlushBuffers;
+  MainForm.sol1.Close;
 
+  MainForm.sol1.Connected := false;
+  MainForm.sol1.Connected := false;
+  MainForm.sol1.Connected := false;
+  Sleep(1000);
+  MainForm.sol1.Connected := false;
+  MainForm.sol1.Connected := false;
+  MainForm.sol1.Connected := false;
+  MainForm.sol1.CompactDatabase();
+  OpenTables;
+  MainForm.Timer1.Enabled := true;
 end;
 
 procedure TMainForm.NuliraneChipCartaButtonClick(Sender: TObject);
@@ -5136,6 +5171,7 @@ begin
 //if Application.MessageBox(PChar('Ще бъдат изтрити всички издадени клубни карти!?'),PChar('Карти?!'),MB_OKCANCEL		)=IDOK	 then
  if Application.MessageBox(PChar(GetMessage('M64')),PChar(GetMessage('M65')),MB_OKCANCEL		)=IDOK	 then
  begin
+  MainForm.Timer1.Enabled := false;
   MainForm.sol1.FlushBuffers;
   MainForm.sol1.Close;
   Kartiall.EmptyTable;
@@ -5147,7 +5183,8 @@ begin
   MainForm.sol1.Connected := false;
   MainForm.sol1.Connected := false;
   MainForm.sol1.CompactDatabase();
- OpenTables;
+  OpenTables;
+  MainForm.Timer1.Enabled := true;
  end;
 end;
 
