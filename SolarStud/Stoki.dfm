@@ -3,7 +3,7 @@ object Form4: TForm4
   Top = 107
   Caption = 'Form4'
   ClientHeight = 442
-  ClientWidth = 680
+  ClientWidth = 817
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -126,7 +126,7 @@ object Form4: TForm4
         Size.Values = (
           44.979166666666670000
           2.645833333333333000
-          82.020833333333330000
+          82.020833333333340000
           105.833333333333300000)
         Alignment = taLeftJustify
         AlignToBand = False
@@ -151,8 +151,8 @@ object Form4: TForm4
         Size.Values = (
           44.979166666666670000
           510.645833333333300000
-          82.020833333333330000
-          68.791666666666670000)
+          82.020833333333340000
+          68.791666666666680000)
         Alignment = taLeftJustify
         AlignToBand = False
         AutoSize = True
@@ -176,7 +176,7 @@ object Form4: TForm4
         Size.Values = (
           44.979166666666670000
           1166.812500000000000000
-          82.020833333333330000
+          82.020833333333340000
           187.854166666666700000)
         Alignment = taLeftJustify
         AlignToBand = False
@@ -201,7 +201,7 @@ object Form4: TForm4
         Size.Values = (
           44.979166666666670000
           1441.979166666667000000
-          82.020833333333330000
+          82.020833333333340000
           357.187500000000000000)
         Alignment = taLeftJustify
         AlignToBand = False
@@ -226,7 +226,7 @@ object Form4: TForm4
         Size.Values = (
           44.979166666666670000
           277.812500000000000000
-          82.020833333333330000
+          82.020833333333340000
           119.062500000000000000)
         Alignment = taLeftJustify
         AlignToBand = False
@@ -273,9 +273,9 @@ object Form4: TForm4
         Frame.DrawRight = False
         Size.Values = (
           44.979166666666670000
-          891.645833333333300000
-          82.020833333333330000
-          84.666666666666670000)
+          891.645833333333200000
+          82.020833333333340000
+          84.666666666666680000)
         Alignment = taLeftJustify
         AlignToBand = False
         AutoSize = True
@@ -552,7 +552,7 @@ object Form4: TForm4
         Size.Values = (
           44.979166666666670000
           1651.000000000000000000
-          42.333333333333330000
+          42.333333333333340000
           121.708333333333300000)
         Alignment = taLeftJustify
         AlignToBand = False

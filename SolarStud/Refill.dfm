@@ -41,7 +41,7 @@ object RefillForm: TRefillForm
     Transparent = True
   end
   object Bevel1: TBevel
-    Left = 339
+    Left = 343
     Top = 17
     Width = 143
     Height = 210
@@ -66,7 +66,7 @@ object RefillForm: TRefillForm
   end
   object Label2: TLabel
     Left = 24
-    Top = 177
+    Top = 181
     Width = 140
     Height = 22
     Caption = #1062#1077#1085#1072' '#1085#1072' '#1082#1072#1088#1090#1072#1090#1072
@@ -159,25 +159,25 @@ object RefillForm: TRefillForm
     Width = 103
     Height = 38
     Caption = #1044#1040
-    Font.Charset = DEFAULT_CHARSET
+    Font.Charset = RUSSIAN_CHARSET
     Font.Color = clWindowText
     Font.Height = -16
-    Font.Name = 'MS Sans Serif'
+    Font.Name = 'Verdana'
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 0
     OnClick = Panel1Click
   end
   object Panel2: TPanel
-    Left = 360
+    Left = 359
     Top = 160
-    Width = 102
-    Height = 38
+    Width = 103
+    Height = 39
     Caption = #1053#1045
-    Font.Charset = DEFAULT_CHARSET
+    Font.Charset = RUSSIAN_CHARSET
     Font.Color = clWindowText
     Font.Height = -16
-    Font.Name = 'MS Sans Serif'
+    Font.Name = 'Verdana'
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 1
@@ -187,10 +187,10 @@ object RefillForm: TRefillForm
     Left = 24
     Top = 78
     Width = 297
-    Height = 28
+    Height = 26
     DataField = 'IME'
     DataSource = MainForm.DataSource2
-    Font.Charset = DEFAULT_CHARSET
+    Font.Charset = RUSSIAN_CHARSET
     Font.Color = clWindowText
     Font.Height = -16
     Font.Name = 'MS Sans Serif'
@@ -202,11 +202,11 @@ object RefillForm: TRefillForm
     Left = 115
     Top = 17
     Width = 206
-    Height = 24
-    Font.Charset = DEFAULT_CHARSET
+    Height = 26
+    Font.Charset = RUSSIAN_CHARSET
     Font.Color = clWindowText
     Font.Height = -15
-    Font.Name = 'MS Sans Serif'
+    Font.Name = 'Verdana'
     Font.Style = []
     ParentFont = False
     TabOrder = 3
@@ -216,7 +216,7 @@ object RefillForm: TRefillForm
     Left = 24
     Top = 137
     Width = 297
-    Height = 28
+    Height = 26
     Color = clWindow
     Version = '2.2.0.1'
     Visible = True
@@ -224,13 +224,13 @@ object RefillForm: TRefillForm
     Ctl3D = True
     DropWidth = 0
     Enabled = True
-    Font.Charset = DEFAULT_CHARSET
+    Font.Charset = RUSSIAN_CHARSET
     Font.Color = clNavy
     Font.Height = -16
-    Font.Name = 'MS Sans Serif'
+    Font.Name = 'Verdana'
     Font.Style = [fsBold, fsItalic]
     ItemIndex = 0
-    ItemHeight = 20
+    ItemHeight = 18
     Items.Strings = (
       #1063#1080#1087' '#1082#1072#1088#1090#1072'  90 '#1084#1080#1085'. 180W'
       #1063#1080#1087' '#1082#1072#1088#1090#1072' '#1079#1072' 120 '#1084#1080#1085'. 180W'
@@ -246,10 +246,10 @@ object RefillForm: TRefillForm
       #1050#1072#1088#1090#1072' '#1079#1072' 280 '#1087#1086#1089#1077#1097#1077#1085#1080#1103)
     LabelPosition = lpLeftCenter
     LabelTransparent = True
-    LabelFont.Charset = DEFAULT_CHARSET
+    LabelFont.Charset = RUSSIAN_CHARSET
     LabelFont.Color = clWindowText
     LabelFont.Height = -16
-    LabelFont.Name = 'MS Sans Serif'
+    LabelFont.Name = 'Verdana'
     LabelFont.Style = []
     ParentCtl3D = False
     ParentFont = False
@@ -274,52 +274,18 @@ object RefillForm: TRefillForm
     LookUpMode = lmGoto
     ReadOnly = True
   end
-  object LMDDBLabeledMaskEdit1: TLMDDBLabeledMaskEdit
-    Left = 256
-    Top = 109
-    Width = 65
-    Height = 26
-    Bevel.StyleInner = bvLowered
-    Bevel.BorderWidth = 1
-    Bevel.BorderInnerWidth = 1
-    Bevel.EdgeStyle = etSunken
-    Bevel.Mode = bmWindows
-    Caret.BlinkRate = 530
-    TabOrder = 5
-    Visible = False
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -16
-    Font.Name = 'MS Sans Serif'
-    Font.Style = []
-    ParentFont = False
-    Alignment = taRightJustify
-    CustomButtons = <>
-    DataField = 'NOMER'
-    DataSource = MainForm.DataSource2
-    EditLabel.Width = 128
-    EditLabel.Height = 15
-    EditLabel.AutoSize = False
-    EditLabel.Color = clBlack
-    EditLabel.Enabled = False
-    EditLabel.ParentColor = False
-    EditLabel.Twinkle = True
-    EditLabel.Visible = False
-    EditLabel.Caption = 'LMDDBLabeledMaskEdit1'
-    Value = 1
-  end
   object MaskEdit2: TMaskEditEx
     Left = 115
     Top = 48
     Width = 206
-    Height = 24
-    Font.Charset = DEFAULT_CHARSET
+    Height = 26
+    Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
     Font.Height = -15
-    Font.Name = 'MS Serif'
+    Font.Name = 'Verdana'
     Font.Style = []
     ParentFont = False
-    TabOrder = 6
+    TabOrder = 5
     Version = '1.2.0.0'
   end
   object Timer1: TTimer

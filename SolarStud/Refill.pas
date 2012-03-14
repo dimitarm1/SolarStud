@@ -28,7 +28,6 @@ type
     DBLUCombo2: TDBLUCombo;
     Label3    : TLabel;
     Label4    : TLabel;
-    LMDDBLabeledMaskEdit1: TLMDDBLabeledMaskEdit;
     MaskEdit2: TMaskEditEx;
     LMDLImage91: TLMDLImage;
     procedure Panel2Click(Sender: TObject);
