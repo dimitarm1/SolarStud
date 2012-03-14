@@ -1967,7 +1967,7 @@ begin
  end;
 // if (f1=nil) or (f2=nil) then show_message:=False;
  FileName1:='\SolarStudio1\data\solarbas.ABS';
- FileName2:='\SolarStudio1\data\solarbas'+IntToStr(DayOf(Date))+'_'+IntToStr(MonthOf(Date))+'_'+IntToStr(YearOf(Date))+'.abs';
+ FileName2:='\SolarStudio1\data\solarbas_'+IntToStr(YearOf(Date))+'_'+IntToStr(MonthOf(Date))+'_'+IntToStr(DayOf(Date))+'.abs';
  CopyStatus:=CopyFIle(PChar(FileName1),PChar(FileName2),False);
  if show_message then
   begin
