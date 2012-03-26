@@ -5324,6 +5324,7 @@ begin
 OpenDialog1.Execute;
 if OpenDialog1.Files.Count>0 then
  begin
+  MainForm.Timer1.Enabled := false;
   MainForm.sol1.FlushBuffers;
   MainForm.sol1.Close;
   FileName2:='\SolarStudio1\data\solarbas.ABS';
