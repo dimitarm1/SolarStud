@@ -2861,7 +2861,7 @@ begin
        end
      else if (Length(BarCodReaderBuff)>5) then  begin
        try
-         CardNomer:=StrToInt(Leftstr(BarCodReaderBuff,10));
+         CardNomer:=StrToInt(Rightstr(BarCodReaderBuff,9));
          label25.Caption:=IntToStr(CardNomer);
          Timer3.Enabled:=true;
        except;
