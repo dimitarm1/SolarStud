@@ -2740,12 +2740,13 @@ if sender1 = sender then;
      Plashtania.Edit;
      Plashtania.Append;
      Plashtania.FieldValues['SOLARIUM']:=IndexSol;
-     if PaidCash >0 then Plashtania.FieldValues['SUMABROI']:=PaidCash;
+//     if PaidCash >0 then
+     Plashtania.FieldValues['SUMABROI']:=PaidCash;
      Plashtania.FieldValues['BROI']:=TimeSet;
      Plashtania.FieldValues['CHAS']:=TimeToStr(Time);
      Plashtania.FieldValues['DATA']:=Date;
-     if (PaidCash>0) and (VipDiscount+DiscountPrize>0) then
-       Plashtania.FieldValues['DISCOUNT']:=VipDiscount+DiscountPrize;
+//     if (PaidCash>0) and (VipDiscount+DiscountPrize>0) then
+     Plashtania.FieldValues['DISCOUNT']:=VipDiscount+DiscountPrize;
      Plashtania.FieldValues['CENA']:=Price;
      if (_Q.RecordCount>0) and (not (IsChipCard)) and (CardNomer>0) then
        begin
@@ -4306,6 +4307,7 @@ var
   Result1: String;
   Ostatak: Real;
   Date: TDateTime;
+  temp_discount :Real;
 begin
  if (Label130.Visible And DBText7.Visible) or Label72.visible then
   begin
@@ -4339,8 +4341,10 @@ begin
       if (PaidChipCard)>Card.Balans then
         PaidChipCard:=Card.Balans;
       FmtStr(Result1,'%4.2f',[(PaidChipCard)]);
+      temp_discount := VipDiscount;
       VipDiscount:=0;
       CalcPaid;
+      VipDiscount := temp_discount;
     end;
      
   end
