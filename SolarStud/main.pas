@@ -2004,10 +2004,10 @@ begin
  if (AdvPageControl1.ActivePageIndex in [3,15,18]) then SLE4442Timer3();
 
  If (AdvPageControl1.ActivePageIndex=1) and (not Backuped)then begin
-  if (Time>StrToTime('20:00:00')) then begin
+  if (Time>StrToTime('22:15:00')) then begin
     Timer1.Enabled:=false;
     Backup(true);
-    Timer1.Enabled:=True;
+//    Timer1.Enabled:=True;
     OpenTables;
   end;
  end;
@@ -4348,8 +4348,8 @@ begin
     end;
      
   end
- else
- AdvPageControl1.ActivePage:=AdvTabsheet19;
+// else
+// AdvPageControl1.ActivePage:=AdvTabsheet19;
 end;
 
 procedure TMainForm.wwDBEdit7KeyPress(Sender: TObject; var Key: Char);
