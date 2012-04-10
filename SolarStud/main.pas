@@ -1676,31 +1676,37 @@ begin
     while retry<20 do
      begin
       for i:=1 to 10 do IOResult:=ReadFile(hDevice,IOByte,1,IOCount,NIL);
-      Data1:=128+Chanel*8+2; // Set PRE-Time
+      Data1:=128+Chanel*8+2;
       IOResult:=WriteFile(hDevice,Data1,1,IOCount,NIL);
-      sleep(1);
+      sleep(2);             // Set PRE-Time
       IOResult:=WriteFile(hDevice,PreTime,1,IOCount,NIL);
-      Data1:=128+Chanel*8+5; // Set main time
-      sleep(1);
+      Data1:=128+Chanel*8+5;
+      sleep(2);              // Set main time
       IOResult:=WriteFile(hDevice,Data1,1,IOCount,NIL);
-      sleep(1);
+      sleep(2);
       IOResult:=WriteFile(hDevice,DataSent,1,IOCount,NIL);
-      sleep(1);
+      sleep(2);
       IOResult:=ReadFile(hDevice,IOByte,1,IOCount,NIL);   // get old main time
       Data1:=128+Chanel*8+3; //  Set cool time
       IOResult:=WriteFile(hDevice,Data1,1,IOCount,NIL);
-      sleep(1);
+      sleep(2);
       IOResult:=WriteFile(hDevice,CoolTime,1,IOCount,NIL);
       sleep(4);
       IOResult:=ReadFile(hDevice,IOByte,1,IOCount,NIL); // Get checksum?
       if IOResult and (IOByte=CheckSum) then
       IOResult:=WriteFile(hDevice,CheckSum,1,IOCount,NIL);
-      sleep(5);
+      sleep(100);
       Data1:=128+Chanel*8; // Get status command for selected chanel
       IOResult:=WriteFile(hDevice,Data1,1,IOCount,NIL);
       sleep(5);
       IOResult:=ReadFile(hDevice,IOByte,1,IOCount,NIL);
-      if IOResult and ((IOByte div 64)<>0) then retry:=22 else retry:= retry+1;
+      IOByte:= IOByte div 64;
+      if IOResult and (IOByte <>0) and
+        ((DataSent=0) or (PreTime > 0) or ((IOByte = 1) and (DataSent >0)))    then
+        begin
+          retry:=22;
+        end
+      else retry:= retry+1;
       sleep(1);
       MainForm.Gauge2.Progress:=retry;
      end;
@@ -3008,7 +3014,7 @@ end;
 
 procedure TMainForm.DBLUCombo11Change(Sender: TObject);
 begin
- DayTotal.ParamByName('DATA_COMBO_SELECTED').AsDate:=StrToDate(DBLUCombo1.Text);
+ DayTotal.ParamByName('DATA_COMBO_SELECTED').AsDate:=StrToDate( AnsiReplaceText(DBLUCombo1.Text,' ã.',''));
  DayTotal.Active:=False;
  DayTotal.Active:=True;
 end;

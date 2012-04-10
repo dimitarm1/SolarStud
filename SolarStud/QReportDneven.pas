@@ -4,7 +4,8 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, QRCtrls, QuickRpt, QRPrntr, QR4Const, QRExport, ExtCtrls, StrUtils;
+  Dialogs, QRCtrls, QuickRpt, QRPrntr, QR4Const, QRExport, ExtCtrls, StrUtils,
+  Wwdbgrid;
 
 type
   TForm3 = class(TForm)
@@ -70,13 +71,14 @@ implementation
 procedure TForm3.QuickRep3AfterPreview(Sender: TObject);
 
 begin
-  QuickRep3.ExportToFilter(TQRXLSFilter.Create(OtchetFileName));
+//  QuickRep3.ExportToFilter(TQRXLSFilter.Create(OtchetFileName));
+ MainForm.wwDBGrid2.ExportOptions.FileName := OtchetFileName;
+ MainForm.wwDBGrid2.ExportOptions.TitleName := 'Отчет за ' + QRLabel16.Caption;
+ MainForm.wwDBGrid2.ExportOptions.Save();
  if MainForm.Internet.FieldValues['dialog'] then
  begin
   MainForm.LMDMapiSendMail1.Reset;
   MainForm.LMDMapiSendMail1.LogOn;
-
-
   MainForm.LMDMapiSendMail1.ToRecipient.Clear;
   MainForm.LMDMapiSendMail1.ToRecipient.Append(MainForm.Internet.FieldValues['to']);
   MainForm.LMDMapiSendMail1.Subject:= 'Otchet za '+QRLabel16.Caption;
@@ -90,7 +92,7 @@ procedure TForm3.QuickRep3StartPage(Sender: TCustomQuickRep);
 begin
 QRLabel16.Caption:= MainForm.DBLUCombo1.EditText;
 QRLabel16.Caption:= AnsiReplaceStr(QRLabel16.Caption,'/','-');
-OtchetFileName:='Otchet '+QRLabel16.Caption+'.XLS'
+OtchetFileName:='Otchet '+QRLabel16.Caption+'.html'
 end;
 
 procedure TForm3.DetailBand1BeforePrint(Sender: TQRCustomBand;

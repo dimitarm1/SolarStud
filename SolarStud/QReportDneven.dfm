@@ -202,9 +202,9 @@ object Form3: TForm3
         Frame.DrawRight = False
         Size.Values = (
           44.979166666666670000
-          886.354166666666700000
+          886.354166666666800000
           132.291666666666700000
-          66.145833333333330000)
+          66.145833333333320000)
         Alignment = taRightJustify
         AlignToBand = False
         AutoSize = True
@@ -376,7 +376,7 @@ object Form3: TForm3
           44.979166666666670000
           21.166666666666670000
           132.291666666666700000
-          82.020833333333330000)
+          82.020833333333320000)
         Alignment = taLeftJustify
         AlignToBand = False
         AutoSize = True
@@ -498,7 +498,7 @@ object Form3: TForm3
         Frame.DrawRight = False
         Size.Values = (
           44.979166666666670000
-          759.354166666666700000
+          759.354166666666800000
           47.625000000000000000
           235.479166666666700000)
         Alignment = taRightJustify
@@ -556,7 +556,7 @@ object Form3: TForm3
           44.979166666666670000
           714.375000000000000000
           132.291666666666700000
-          92.604166666666670000)
+          92.604166666666680000)
         Alignment = taRightJustify
         AlignToBand = False
         AutoSize = False
@@ -587,7 +587,7 @@ object Form3: TForm3
           44.979166666666670000
           1653.645833333333000000
           132.291666666666700000
-          82.020833333333330000)
+          82.020833333333320000)
         Alignment = taRightJustify
         AlignToBand = False
         AutoSize = True
@@ -673,7 +673,7 @@ object Form3: TForm3
           39.687500000000000000
           889.000000000000000000
           2.645833333333333000
-          66.145833333333330000)
+          66.145833333333320000)
         Alignment = taLeftJustify
         AlignToBand = False
         AutoSize = True
@@ -1024,7 +1024,7 @@ object Form3: TForm3
         Frame.DrawRight = False
         Size.Values = (
           39.687500000000000000
-          828.145833333333300000
+          828.145833333333200000
           2.645833333333333000
           52.916666666666670000)
         Alignment = taLeftJustify
@@ -1246,7 +1246,7 @@ object Form3: TForm3
         Frame.DrawRight = False
         Size.Values = (
           52.916666666666670000
-          656.166666666666700000
+          656.166666666666800000
           39.687500000000000000
           304.270833333333300000)
         Alignment = taRightJustify
