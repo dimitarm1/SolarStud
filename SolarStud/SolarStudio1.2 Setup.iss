@@ -7,7 +7,7 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{20BE3B2F-6275-48B2-8277-E59C73537CFF}
 AppName=SolarStudio1.2
-AppVerName=SolarStudio 1.2 Build 11-04-2012
+AppVerName=SolarStudio 1.2 Build 17-04-2012
 AppPublisher=D.M.
 AppPublisherURL=http://www.example.com/
 AppSupportURL=http://www.example.com/
@@ -69,6 +69,7 @@ Filename: "{app}\install_flash_player_10_active_x.exe";
 Filename: "{app}\Shockwave_Installer_Full.exe";
 Filename: "{app}\acr38\Setup.exe";
 Filename: "{app}\SolarStudio1.2.exe"; Description: "{cm:LaunchProgram,SolarStudio1}"; Flags: postinstall skipifsilent
+
 
 
 

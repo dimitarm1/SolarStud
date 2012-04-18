@@ -39,6 +39,7 @@ object Form3: TForm3
       '0'
       '0'
       #39#39)
+    OnPreview = QuickRep3Preview
     OnStartPage = QuickRep3StartPage
     Options = [FirstPageHeader, LastPageFooter]
     Page.Columns = 1
@@ -109,9 +110,9 @@ object Form3: TForm3
         Frame.DrawRight = False
         Size.Values = (
           52.916666666666670000
-          280.458333333333300000
-          42.333333333333330000
-          463.020833333333300000)
+          280.458333333333400000
+          42.333333333333340000
+          463.020833333333400000)
         Alignment = taLeftJustify
         AlignToBand = False
         AutoSize = True
@@ -202,9 +203,9 @@ object Form3: TForm3
         Frame.DrawRight = False
         Size.Values = (
           44.979166666666670000
-          886.354166666666800000
+          886.354166666666900000
           132.291666666666700000
-          66.145833333333320000)
+          66.145833333333340000)
         Alignment = taRightJustify
         AlignToBand = False
         AutoSize = True
@@ -327,7 +328,7 @@ object Form3: TForm3
         Size.Values = (
           44.979166666666670000
           1693.333333333333000000
-          42.333333333333330000
+          42.333333333333340000
           121.708333333333300000)
         Alignment = taLeftJustify
         AlignToBand = False
@@ -350,7 +351,7 @@ object Form3: TForm3
         Size.Values = (
           44.979166666666670000
           1524.000000000000000000
-          42.333333333333330000
+          42.333333333333340000
           145.520833333333300000)
         Alignment = taLeftJustify
         AlignToBand = False
@@ -376,7 +377,7 @@ object Form3: TForm3
           44.979166666666670000
           21.166666666666670000
           132.291666666666700000
-          82.020833333333320000)
+          82.020833333333340000)
         Alignment = taLeftJustify
         AlignToBand = False
         AutoSize = True
@@ -587,7 +588,7 @@ object Form3: TForm3
           44.979166666666670000
           1653.645833333333000000
           132.291666666666700000
-          82.020833333333320000)
+          82.020833333333340000)
         Alignment = taRightJustify
         AlignToBand = False
         AutoSize = True
@@ -673,7 +674,7 @@ object Form3: TForm3
           39.687500000000000000
           889.000000000000000000
           2.645833333333333000
-          66.145833333333320000)
+          66.145833333333340000)
         Alignment = taLeftJustify
         AlignToBand = False
         AutoSize = True
@@ -1144,7 +1145,7 @@ object Form3: TForm3
         Size.Values = (
           44.979166666666670000
           1693.333333333333000000
-          42.333333333333330000
+          42.333333333333340000
           121.708333333333300000)
         Alignment = taLeftJustify
         AlignToBand = False
@@ -1167,7 +1168,7 @@ object Form3: TForm3
         Size.Values = (
           44.979166666666670000
           1524.000000000000000000
-          42.333333333333330000
+          42.333333333333340000
           145.520833333333300000)
         Alignment = taLeftJustify
         AlignToBand = False
@@ -1227,6 +1228,7 @@ object Form3: TForm3
         Font.Style = []
         Color = clWhite
         Master = QuickRep3
+        OnPrint = QRExpr1Print
         ParentFont = False
         ResetAfterPrint = True
         Transparent = False

@@ -55,6 +55,8 @@ type
     procedure QuickRep3StartPage(Sender: TCustomQuickRep);
     procedure DetailBand1BeforePrint(Sender: TQRCustomBand;
       var PrintBand: Boolean);
+    procedure QuickRep3Preview(Sender: TObject);
+    procedure QRExpr1Print(sender: TObject; var Value: string);
   private
     { Private declarations }
   public
@@ -63,29 +65,49 @@ type
 
 var
   Form3: TForm3;
+  sum_total: string;
 
 implementation
  uses main;
 {$R *.dfm}
 
-procedure TForm3.QuickRep3AfterPreview(Sender: TObject);
+procedure TForm3.QRExpr1Print(sender: TObject; var Value: string);
+var test: string;
+begin
+  sum_total := Value;
+end;
 
+procedure TForm3.QuickRep3AfterPreview(Sender: TObject);
+   var body: TStringList;
 begin
 //  QuickRep3.ExportToFilter(TQRXLSFilter.Create(OtchetFileName));
  MainForm.wwDBGrid2.ExportOptions.FileName := OtchetFileName;
- MainForm.wwDBGrid2.ExportOptions.TitleName := 'Отчет за ' + QRLabel16.Caption;
+ MainForm.wwDBGrid2.ExportOptions.TitleName := 'Дневен отчет за ' +
+    QRLabel16.Caption + ' (Оборот: ' + sum_total + ' лв.)';
  MainForm.wwDBGrid2.ExportOptions.Save();
  if MainForm.Internet.FieldValues['dialog'] then
  begin
+ body := TStringList.Create();
   MainForm.LMDMapiSendMail1.Reset;
   MainForm.LMDMapiSendMail1.LogOn;
   MainForm.LMDMapiSendMail1.ToRecipient.Clear;
   MainForm.LMDMapiSendMail1.ToRecipient.Append(MainForm.Internet.FieldValues['to']);
   MainForm.LMDMapiSendMail1.Subject:= 'Otchet za '+QRLabel16.Caption;
+  body.Add('Day total: '+ sum_total + ' leva');
+  body.Add('**************************************');
+  MainForm.LMDMapiSendMail1.MessageBody := body;
   MainForm.LMDMapiSendMail1.Attachment.Clear;
   MainForm.LMDMapiSendMail1.Attachment.Append(OtchetFileName);
   MainForm.LMDMapiSendMail1.SendMail;
+  body.Destroy();
  end;
+end;
+
+procedure TForm3.QuickRep3Preview(Sender: TObject);
+var str: string;
+begin
+    str:=   QRExpr1.Value.strResult;
+    str := str + ' ';
 end;
 
 procedure TForm3.QuickRep3StartPage(Sender: TCustomQuickRep);

@@ -1475,11 +1475,11 @@ begin
     //buff := DateToStr(Date, LocalFormat );
     DBLUCombo1.Text :=  DateToStrBg(Date);
     DayTotal.Active:=False;
-    DayTotal.SQL.Text := ' SELECT * FROM Plashtania  LEFT OUTER join STOKI ON Plashtania.STOKA=STOKI.STOKAKOD'+
-                         ' WHERE DATA = :DATA_COMBO_SELECTED ORDER BY :ORDERPARAM ASC';
-    DayTotal.Active:=True;
+    DayTotal.SQL.Text := ' SELECT * FROM Plashtania p LEFT OUTER join STOKI s ON Plashtania.STOKA=STOKI.STOKAKOD'+
+                         ' WHERE DATA = :DATA_COMBO_SELECTED ORDER BY RECORDID ASC';
     DayTotal.ParamByName('DATA_COMBO_SELECTED').AsDate:=Date;
-
+//    DayTotal.ParamByName('ORDERPARAM').AsString:=' RECORDID ';
+    DayTotal.Active:=True;
    end;
 
    if   (AdvPageControl1.ActivePageIndex=1) then
