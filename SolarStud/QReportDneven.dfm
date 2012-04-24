@@ -39,7 +39,6 @@ object Form3: TForm3
       '0'
       '0'
       #39#39)
-    OnPreview = QuickRep3Preview
     OnStartPage = QuickRep3StartPage
     Options = [FirstPageHeader, LastPageFooter]
     Page.Columns = 1

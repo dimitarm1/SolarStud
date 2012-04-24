@@ -46,7 +46,7 @@ type TSLE4442Card = packed record
   ErrCounter: Integer;
   ConStatus: Integer;
 end;
- function ConvertCurr1(Money: Real): AnsiString;
+ function ConvertCurr1(Money_var: variant): AnsiString;
  function IntToStr2(value:variant):string;
 type
   TMainForm = class(TForm)
@@ -654,7 +654,6 @@ type
     wwDBGrid12: TwwDBGrid;
     DBNavigator2: TDBNavigator;
     Label112: TLabel;
-    Label157: TLabel;
     RangCombo: TwwDBComboBox;
     wwDBGrid13: TwwDBGrid;
     LMDLImage22: TLMDLImage;
@@ -717,6 +716,7 @@ type
     ShowAllKlientsCb: TCheckBox;
     Label169: TLabel;
     Timer6: TTimer;
+    Label157: TLabel;
     procedure Label1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
@@ -1041,6 +1041,7 @@ const
   IsDemoMode         : Boolean;
   IsDemo2            : Boolean;
   IniFile            : TIniFile;
+  UseNativeStart     :Boolean;
 //  WOverlaped: POverlaped;
 
 implementation
@@ -1301,6 +1302,7 @@ var
   Cmd         : array[0..255] of Char;
   PlannerStep : string;
   DemoString  : string;
+  UseNativeStartStr :string;
 begin
     IniFile:=TIniFile.Create(ChangeFileExt(Application.ExeName,'.ini'));
     ComPortName:=IniFile.ReadString('System','ComPort','COM20') ;
@@ -1337,6 +1339,17 @@ begin
        IsDemo2 := false;
       end
       else if (DemoString = 'True') or (DemoString = 'true') then IsDemo2 := true;
+
+
+    UseNativeStartStr := IniFile.ReadString('System','UseNativeStart','NoValue') ;
+    if UseNativeStartStr = 'NoValue' then //this is because KeyExists function is not working
+      begin
+       IniFile.DeleteKey   ('System','UseNativeStart');
+       IniFile.WriteString ('System','UseNativeStart','False');
+       IniFile.UpdateFile;
+       UseNativeStart := false;
+      end
+    else if (UseNativeStartStr = 'True') or (UseNativeStartStr = 'true') then UseNativeStart := true;
 end;
 
 Procedure initFlash();
@@ -1919,41 +1932,55 @@ procedure SendCmd(CmdNum: byte);
 var
   Chanel1: Byte;
   Data1: Byte;
+  IOResult : LongBool;
+  Chanel   : Byte;
 begin
  MainForm.Timer1.Enabled:=False;
  Chanel1:=CabineChanel[IndexSol-1];
  MainTime:=CabineSetTime[IndexSol-1];
- CoolTime:=2;
-  case CmdNum of
-  1:      //start
+ if(CmdNum = 1) and (UseNativeStart = true) then // start
    begin
-    PreTime:=0;
-   end;
-  2:    //stop
+      Chanel:=CabineChanel[IndexSol-1];
+      Data1:=128+Chanel*8+1; //Start command
+      IOResult:=WriteFile(hDevice,Data1,1,IOCount,NIL);
+      sleep(2);             // Validate start
+      Data1 := 85;
+      IOResult:=WriteFile(hDevice,Data1,1,IOCount,NIL); // 0x55 to validate start
+   end
+ else
    begin
-    MainTime:=0;
-    PreTime:=0;
+    CoolTime:=2;
+     case CmdNum of
+     1:      //start
+      begin
+       PreTime:=0;
+      end;
+     2:    //stop
+      begin
+       MainTime:=0;
+       PreTime:=0;
+      end;
+     3:
+      begin    //test
+       PreTime:=1;
+       MainTime:=1;
+       CabineSetTime[IndexSol-1]:=1;
+      end;
+     4:
+      begin    //pause
+       PreTime:=7;
+      end;
+     5:
+      begin //restore
+       PreTime:=0;
+       MainTime:=LastTime[IndexSol-1];
+      end;
+     end;
+     SendData(MainTime,IndexSol,false);
+
    end;
-  3:
-   begin    //test
-    PreTime:=1;
-    MainTime:=1;
-    CabineSetTime[IndexSol-1]:=1;
-   end;
-  4:
-   begin    //pause
-    PreTime:=7;
-   end;
-  5:
-   begin //restore
-    PreTime:=0;
-    MainTime:=LastTime[IndexSol-1];
-   end;
-  end;
-  SendData(MainTime,IndexSol,false);
   MainForm.Timer1.Enabled:=True;
   UpdatePageControl(1);
-
 end;
 
 procedure Backup (show_message:boolean);
@@ -2214,11 +2241,15 @@ begin
   //CB_RS232.Flags:= StrToInt( Edit2.Text);
  // config_uart(1);
 end;
-function ConvertCurr1(Money: Real): AnsiString;
+function ConvertCurr1(Money_var: variant): AnsiString;
 var Kstring: AnsiString;
     IntPart: Integer;
     DecPart: Integer;
+    Money: Real;
 begin
+  Money :=0;
+  if  varType(Money_var) <> varNull then Money := Money_var;
+  
   Kstring:=CurrToStr(Money,LocalFormat);
 { IntPart:=Trunc(Money);
  DecPart:=Trunc(Money*100)-IntPart*100;
@@ -4101,11 +4132,20 @@ if MainForm.AdvPageControl1.ActivePageIndex=18 then Ime:=Edit10.Text;
 end;
 
 procedure TMainForm.wwDBGrid6RowChanged(Sender: TObject);
+var
+  suma: Integer;
 begin
     QKarti.Active:=False;
     QKarti.SQL.SetText(PChar('SELECT * FROM kartiall WHERE klientdetail = '+
      '"'+IntToStr2(QKlienti.FieldValues['NOMER'])+ '"'+' ORDER BY KARTANOMER'));
     QKarti.Active:=True;
+    if(varType(KARTICHIP.FieldValues['SUMA']) <> varNull ) then
+       suma:=KARTICHIP.FieldValues['SUMA']/Solariumi.FieldValues['CENA']
+    else suma :=0;
+    if suma > 2 then
+      Label157.Caption := '~'+IntToStr2(suma) + ' минути'
+    else
+      Label157.Caption :='';
 end;
 
 procedure TMainForm.Edit7Change(Sender: TObject);
