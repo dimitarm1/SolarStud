@@ -69,27 +69,3 @@ Filename: "{app}\install_flash_player_10_active_x.exe";
 Filename: "{app}\Shockwave_Installer_Full.exe";
 Filename: "{app}\acr38\Setup.exe";
 Filename: "{app}\StartSolarStudio1.bat"; Description: "{cm:LaunchProgram,SolarStudio1}"; Flags: postinstall skipifsilent runminimized
-<<<<<<< HEAD
-
-
-
-
-
-
-
-
-
-
-
-=======
->>>>>>> added time control for Chipcarti
-
-
-
-
-
-
-
-
-
-
