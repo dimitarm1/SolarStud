@@ -715,7 +715,7 @@ type
     ShowAllKlientsCb: TCheckBox;
     Label169: TLabel;
     Timer6: TTimer;
-    Label157: TLabel;
+    ValidnostTime: TRzDBDateTimeEdit;
     procedure Label1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
@@ -2490,7 +2490,7 @@ begin
      if (NotshalterForm.ModalResult=mrRetry) and (CabineStatus[IndexSol-1]=3) then SendCmd(4);
     end;
   if Button=mbLeft then
-     //if CabineStatus[IndexSol-1]=0 then
+     if CabineStatus[IndexSol-1]=0 then
       LocateSolarium ;
   MainForm.Timer1.Enabled:=true;
 end;
@@ -4362,6 +4362,10 @@ begin
         Application.MessageBox(PChar('Валидността на картата е изтекла!'), PChar(''),MB_OK);
         exit;
       end;
+      if (KARTICHIP.FieldValues['STARTTIME']>0) and ( KARTICHIP.FieldValues['STARTTIME'] < TimeOf(Now) ) and not IsChipCard then begin
+        Application.MessageBox(PChar('Картата не може да бъде ползвана сега!'), PChar(''),MB_OK);
+        exit;
+      end;
       if (Card.PIN<>Internet.FieldValues['PIN'])and (Card.PIN<>'') then begin
             Application.MessageBox(PChar('Тази карта не може да бъде използвана в това студио!'), PChar(''),MB_OK);
             exit;
@@ -4857,6 +4861,7 @@ begin
     PosEdit.enabled       := true;
     OncePerDayBox.enabled := true;
     ValidnostDate.enabled := true;
+    ValidnostTime.enabled := true;
    end
   else
    begin
@@ -4865,6 +4870,7 @@ begin
     PosEdit.enabled       := false;
     OncePerDayBox.enabled := false;
     ValidnostDate.enabled := false;
+    ValidnostTime.enabled := false;
    end;
    wwDBGrid5.Columns[1].ReadOnly := not (PasswordForm.ModalResult = mrOK);
 end;

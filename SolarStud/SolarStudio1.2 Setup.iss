@@ -62,13 +62,14 @@ Name: "{group}\SolarStudio1"; Filename: "{app}\SolarStudio1.2.exe";  IconFilenam
 Name: "{group}\Guide (bg)"; Filename: "{app}\solarStudio1.htm";
 Name: "{group}\Guide (en)"; Filename: "{app}\Manual.htm";
 Name: "{group}\{cm:UninstallProgram,SolarStudio1}"; Filename: "{uninstallexe}"
-Name: "{commondesktop}\SolarStudio1"; Filename: "{app}\SolarStudio1.2.exe"; Tasks: desktopicon; IconFilename: "{app}\SolarStudio1.2.ico"
+Name: "{commondesktop}\SolarStudio1"; Filename: "{app}\StartSolarStudio1.bat"; Tasks: desktopicon; IconFilename: "{app}\SolarStudio1.2.ico" WorkingDir: "{app}"; Flags: runminimized
+
 
 [Run]
 Filename: "{app}\install_flash_player_10_active_x.exe";
 Filename: "{app}\Shockwave_Installer_Full.exe";
 Filename: "{app}\acr38\Setup.exe";
-Filename: "{app}\SolarStudio1.2.exe"; Description: "{cm:LaunchProgram,SolarStudio1}"; Flags: postinstall skipifsilent
+Filename: "{app}\StartSolarStudio1.bat"; Description: "{cm:LaunchProgram,SolarStudio1}"; Flags: postinstall skipifsilent runminimized
 
 
 
