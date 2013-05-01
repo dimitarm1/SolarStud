@@ -64,6 +64,7 @@ Name: "{group}\Guide (en)"; Filename: "{app}\Manual.htm";
 Name: "{group}\{cm:UninstallProgram,SolarStudio1}"; Filename: "{uninstallexe}"
 Name: "{commondesktop}\SolarStudio1"; Filename: "{app}\StartSolarStudio1.bat"; Tasks: desktopicon; IconFilename: "{app}\SolarStudio1.2.ico"; WorkingDir: "{app}"; Flags: runminimized
 
+
 [Run]
 Filename: "{app}\install_flash_player_10_active_x.exe";
 Filename: "{app}\Shockwave_Installer_Full.exe";
