@@ -35,7 +35,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Source: "D:\SolarStudio1\SolarStudio1.2.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\SolarStudio1\adimage.swf"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\SolarStudio1\Delotch.bat"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\SolarStudio1\FlexType 2.0 XP.zip"; DestDir: "{app}"; Flags: ignoreversion
+;Source: "D:\SolarStudio1\FlexType 2.0 XP.zip"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\SolarStudio1\install_flash_player_10_active_x.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\SolarStudio1\Shockwave_Installer_Full.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\SolarStudio1\installnotes.rtf"; DestDir: "{app}"; Flags: ignoreversion
@@ -58,13 +58,15 @@ Source: "D:\SolarStudio1\images\*"; DestDir: "{app}\images"; Flags: ignoreversio
 [Icons]
 Name: "{group}\SolarStudio1"; Filename: "{app}\SolarStudio1.2.exe";  IconFilename: "{app}\SolarStudio1.2.ico"
 Name: "{group}\{cm:UninstallProgram,SolarStudio1}"; Filename: "{uninstallexe}"
-Name: "{commondesktop}\SolarStudio1"; Filename: "{app}\SolarStudio1.2.exe"; Tasks: desktopicon; IconFilename: "{app}\SolarStudio1.2.ico"
+Name: "{commondesktop}\SolarStudio1"; Filename: "{app}\StartSolarStudio1.bat"; Tasks: desktopicon; IconFilename: "{app}\SolarStudio1.2.ico" WorkingDir: "{app}"; Flags: runminimized
+
 
 [Run]
 Filename: "{app}\install_flash_player_10_active_x.exe";
 Filename: "{app}\Shockwave_Installer_Full.exe";
 Filename: "{app}\acr38\Setup.exe";
-Filename: "{app}\SolarStudio1.2.exe"; Description: "{cm:LaunchProgram,SolarStudio1}"; Flags: postinstall skipifsilent
+Filename: "{app}\StartSolarStudio1.bat"; Description: "{cm:LaunchProgram,SolarStudio1}"; Flags: postinstall skipifsilent runminimized
+
 
 
 

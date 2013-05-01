@@ -26,7 +26,7 @@ object Form3: TForm3
     Frame.DrawRight = False
     AfterPreview = QuickRep3AfterPreview
     DataSet = MainForm.DayTotal
-    Font.Charset = DEFAULT_CHARSET
+    Font.Charset = RUSSIAN_CHARSET
     Font.Color = clWindowText
     Font.Height = -13
     Font.Name = 'Arial'
@@ -118,7 +118,7 @@ object Form3: TForm3
         AutoStretch = False
         Caption = #1044#1085#1077#1074#1077#1085' '#1087#1088#1086#1090#1086#1082#1086#1083' '#1082#1098#1084
         Color = clWhite
-        Font.Charset = DEFAULT_CHARSET
+        Font.Charset = RUSSIAN_CHARSET
         Font.Color = clWindowText
         Font.Height = -16
         Font.Name = 'Arial'
@@ -476,7 +476,7 @@ object Form3: TForm3
         AutoStretch = False
         Caption = #1057#1090#1091#1076#1080#1086
         Color = clWhite
-        Font.Charset = DEFAULT_CHARSET
+        Font.Charset = RUSSIAN_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'Arial'
@@ -649,7 +649,7 @@ object Form3: TForm3
         Color = clWhite
         DataSet = MainForm.DayTotal
         DataField = 'SOLARIUM'
-        Font.Charset = DEFAULT_CHARSET
+        Font.Charset = RUSSIAN_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'Arial'
@@ -681,7 +681,7 @@ object Form3: TForm3
         Color = clWhite
         DataSet = MainForm.DayTotal
         DataField = 'BROI'
-        Font.Charset = DEFAULT_CHARSET
+        Font.Charset = RUSSIAN_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'Arial'
@@ -713,7 +713,7 @@ object Form3: TForm3
         Color = clWhite
         DataSet = MainForm.DayTotal
         DataField = 'CHAS'
-        Font.Charset = DEFAULT_CHARSET
+        Font.Charset = RUSSIAN_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'Arial'
@@ -745,7 +745,7 @@ object Form3: TForm3
         Color = clWhite
         DataSet = MainForm.DayTotal
         DataField = 'SUMABROI'
-        Font.Charset = DEFAULT_CHARSET
+        Font.Charset = RUSSIAN_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'Arial'
@@ -778,7 +778,7 @@ object Form3: TForm3
         Color = clWhite
         DataSet = MainForm.DayTotal
         DataField = 'OTKARTA'
-        Font.Charset = DEFAULT_CHARSET
+        Font.Charset = RUSSIAN_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'Arial'
@@ -810,7 +810,7 @@ object Form3: TForm3
         Color = clWhite
         DataSet = MainForm.DayTotal
         DataField = 'POSESHTENIA'
-        Font.Charset = DEFAULT_CHARSET
+        Font.Charset = RUSSIAN_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'Arial'
@@ -842,7 +842,7 @@ object Form3: TForm3
         Color = clWhite
         DataSet = MainForm.DayTotal
         DataField = 'STOKA'
-        Font.Charset = DEFAULT_CHARSET
+        Font.Charset = RUSSIAN_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'Arial'
@@ -874,7 +874,7 @@ object Form3: TForm3
         Color = clWhite
         DataSet = MainForm.solariumspr
         DataField = 'OPISANIE1'
-        Font.Charset = DEFAULT_CHARSET
+        Font.Charset = RUSSIAN_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'Arial'
@@ -906,7 +906,7 @@ object Form3: TForm3
         Color = clWhite
         DataSet = MainForm.DayTotal
         DataField = 'STOKAIME'
-        Font.Charset = DEFAULT_CHARSET
+        Font.Charset = RUSSIAN_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'Arial'
@@ -938,7 +938,7 @@ object Form3: TForm3
         Color = clWhite
         DataSet = MainForm.DayTotal
         DataField = 'OTCHIPKARTA'
-        Font.Charset = DEFAULT_CHARSET
+        Font.Charset = RUSSIAN_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'Arial'
@@ -970,7 +970,7 @@ object Form3: TForm3
         Color = clWhite
         DataSet = MainForm.DayTotal
         DataField = 'KLIENTNOMER'
-        Font.Charset = DEFAULT_CHARSET
+        Font.Charset = RUSSIAN_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'Arial'
@@ -1002,7 +1002,7 @@ object Form3: TForm3
         Color = clWhite
         DataSet = MainForm.DayTotal
         DataField = 'STUDIOCODE'
-        Font.Charset = DEFAULT_CHARSET
+        Font.Charset = RUSSIAN_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'Arial'
@@ -1034,7 +1034,7 @@ object Form3: TForm3
         Color = clWhite
         DataSet = MainForm.DayTotal
         DataField = 'DISCOUNT'
-        Font.Charset = DEFAULT_CHARSET
+        Font.Charset = RUSSIAN_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'Arial'
@@ -1066,7 +1066,7 @@ object Form3: TForm3
         Color = clWhite
         DataSet = MainForm.DayTotal
         DataField = 'CENA'
-        Font.Charset = DEFAULT_CHARSET
+        Font.Charset = RUSSIAN_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'Arial'
@@ -1099,7 +1099,7 @@ object Form3: TForm3
         Color = clWhite
         DataSet = MainForm.DayTotal
         DataField = 'KARTASUMA'
-        Font.Charset = DEFAULT_CHARSET
+        Font.Charset = RUSSIAN_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'Arial'
@@ -1220,7 +1220,7 @@ object Form3: TForm3
         AlignToBand = False
         AutoSize = False
         AutoStretch = False
-        Font.Charset = DEFAULT_CHARSET
+        Font.Charset = RUSSIAN_CHARSET
         Font.Color = clWindowText
         Font.Height = -16
         Font.Name = 'Arial'
@@ -1255,7 +1255,7 @@ object Form3: TForm3
         AutoStretch = False
         Caption = #1042#1089#1080#1095#1082#1086
         Color = clWhite
-        Font.Charset = DEFAULT_CHARSET
+        Font.Charset = RUSSIAN_CHARSET
         Font.Color = clWindowText
         Font.Height = -16
         Font.Name = 'Arial'
@@ -1286,7 +1286,7 @@ object Form3: TForm3
         AutoStretch = False
         Caption = #1083#1077#1074#1072
         Color = clWhite
-        Font.Charset = DEFAULT_CHARSET
+        Font.Charset = RUSSIAN_CHARSET
         Font.Color = clWindowText
         Font.Height = -16
         Font.Name = 'Arial'
