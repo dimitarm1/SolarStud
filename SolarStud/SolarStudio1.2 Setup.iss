@@ -62,7 +62,7 @@ Name: "{group}\SolarStudio1"; Filename: "{app}\SolarStudio1.2.exe";  IconFilenam
 Name: "{group}\Guide (bg)"; Filename: "{app}\solarStudio1.htm";
 Name: "{group}\Guide (en)"; Filename: "{app}\Manual.htm";
 Name: "{group}\{cm:UninstallProgram,SolarStudio1}"; Filename: "{uninstallexe}"
-Name: "{commondesktop}\SolarStudio1"; Filename: "{app}\StartSolarStudio1.bat"; Tasks: desktopicon; IconFilename: "{app}\SolarStudio1.2.ico" WorkingDir: "{app}"; Flags: runminimized
+Name: "{commondesktop}\SolarStudio1"; Filename: "{app}\StartSolarStudio1.bat"; Tasks: desktopicon; IconFilename: "{app}\SolarStudio1.2.ico"; WorkingDir: "{app}"; Flags: runminimized
 
 
 [Run]
