@@ -716,6 +716,7 @@ type
     Label169: TLabel;
     Timer6: TTimer;
     ValidnostTime: TRzDBDateTimeEdit;
+    Label157: TLabel;
     procedure Label1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);

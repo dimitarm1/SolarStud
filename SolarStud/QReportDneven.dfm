@@ -5,7 +5,7 @@ object Form3: TForm3
   ClientHeight = 455
   ClientWidth = 815
   Color = clBtnFace
-  Font.Charset = DEFAULT_CHARSET
+  Font.Charset = RUSSIAN_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
