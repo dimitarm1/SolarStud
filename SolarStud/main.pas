@@ -345,7 +345,6 @@ type
     DataSource4: TDataSource;
     wwDBEdit5: TwwDBEdit;
     wwDBEdit7: TwwDBEdit;
-    Image13: TImage;
     KartaSearchBox: TEdit;
     LMDMemo1: TMemo;
     PopupMenu1: TPopupMenu;
@@ -2249,7 +2248,7 @@ var Kstring: AnsiString;
 begin
   Money :=0;
   if  varType(Money_var) <> varNull then Money := Money_var;
-  
+
   Kstring:=CurrToStr(Money,LocalFormat);
 { IntPart:=Trunc(Money);
  DecPart:=Trunc(Money*100)-IntPart*100;
