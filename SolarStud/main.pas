@@ -1748,7 +1748,7 @@ begin
  Chanel1:=CabineChanel[SolariumNo];
  IOByte:=0;
  IOResult:=ReadFile(hDevice,IOByte,1,IOCount,NIL);
- //MainForm.Label92.Caption:=IntToHex(IOByte,2);
+ MainForm.Label92.Caption:=IntToHex(IOByte,2);
  //MainForm.Label91.Caption:=IntToStr(SolariumNo)+' '+IntToHex(IOByte,2)+ ' Ch='+ IntToStr(Chanel1);
  if CabineChanel[SolariumNo]>15 then IsDemoMode:=True else IsDemoMode:=False;
  if IsDemoMode then

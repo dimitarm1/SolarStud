@@ -123,7 +123,7 @@
 			<Directories Name="UnitOutputDir"></Directories>
 			<Directories Name="PackageDLLOutputDir"></Directories>
 			<Directories Name="PackageDCPOutputDir"></Directories>
-			<Directories Name="SearchPath"></Directories>
+			<Directories Name="SearchPath">C:\Program Files\Borland\BDS\4.0\source\QuickReportsXI;C:\Program Files\Borland\BDS\4.0\source\DelphiSWFSDK;C:\Program Files\Borland\BDS\4.0\source\Info power\source\windows;C:\Program Files\Borland\BDS\4.0\source\Info power\source;C:\Program Files\Borland\BDS\4.0\source\Info power\bin\windows;C:\Program Files\Borland\BDS\4.0\source\Info power\bin;C:\Program Files\Borland\BDS\4.0\source\TMS;C:\Program Files\Borland\BDS\4.0\source\Delphi-Flash;C:\Program Files\Borland\BDS\4.0\source\DelphiSWFSDK\FlashAX</Directories>
 			<Directories Name="Packages">vclx;vcl;rtl;dbrtl;vcldb;adortl;dbxcds;dbexpress;vclib;ibxpress;vclactnband;xmlrtl;inet;IntrawebDB_80_100;Intraweb_80_100;vclie;inetdbbde;inetdbxpress;IndyCore;IndySystem;dclOfficeXP;VclSmp;soaprtl;dsnap;IndyProtocols;bdertl;vcldbx;veltvcl;FlashAX;flashcontrolPackage1;kbmMemD2006Run;TMSD2006;tmsexd2006;lmdtxt70_d7;lmd70_d7;lmd70db_d7;lmdstorage10_d7;lmdbar10_d7;lmdsp20_d7;lmdsh30_d7;lmdweb30_d7;lmdrtf30db_d7;lmdrtf30_d7;lmdtxt70db_d7;lmdsys20_d7;vclAbsDBd10;ipstudiowinclient;ipstudiowin;ipstudiowinwordxp;RaizeComponentsVcl;RaizeComponentsVclDb</Directories>
 			<Directories Name="Conditionals"></Directories>
 			<Directories Name="DebugSourceDirs"></Directories>
@@ -170,8 +170,6 @@
 			<VersionInfoKeys Name="ProductName"></VersionInfoKeys>
 			<VersionInfoKeys Name="ProductVersion">1.0.0.0</VersionInfoKeys>
 			<VersionInfoKeys Name="Comments"></VersionInfoKeys>
-		</VersionInfoKeys>  <Excluded_Packages>
-      <Excluded_Packages Name="f:\program files\borland\bds\4.0\Bin\dcltee100.bpl">TeeChart Components</Excluded_Packages>
-    </Excluded_Packages>
-  </Delphi.Personality>
+		</VersionInfoKeys>
+	</Delphi.Personality>
 </BorlandProject>
