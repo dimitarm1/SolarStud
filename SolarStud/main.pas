@@ -707,7 +707,6 @@ type
     TrackBar1: TTrackBar;
     LMDButton3: TLMDButton;
     PopalniCeniTableButton: TRzButton;
-    Label120: TLabel;
     Label128: TLabel;
     ValidnostDate: TRzDBDateTimeEdit;
     OncePerDayBox: TLMDDBCheckBox;
@@ -1317,7 +1316,7 @@ begin
    Macro:='set_com2.bat '+ComPortName;
    StrPCopy (Cmd, Macro);
    WinExec(Cmd, SW_SHOW);
-   WinExec(PChar('del Otchet*.*'),SW_SHOWMINIMIZED);
+   WinExec(PChar('Delotc.bat'),SW_SHOWMINIMIZED);
 
    PlannerStep := IniFile.ReadString('System','PlannerStep','NoValue') ;
     if PlannerStep = 'NoValue' then //this is because KeyExists function is not working
@@ -1748,7 +1747,7 @@ begin
  Chanel1:=CabineChanel[SolariumNo];
  IOByte:=0;
  IOResult:=ReadFile(hDevice,IOByte,1,IOCount,NIL);
- MainForm.Label92.Caption:=IntToHex(IOByte,2);
+// MainForm.Label92.Caption:=IntToHex(IOByte,2);
  //MainForm.Label91.Caption:=IntToStr(SolariumNo)+' '+IntToHex(IOByte,2)+ ' Ch='+ IntToStr(Chanel1);
  if CabineChanel[SolariumNo]>15 then IsDemoMode:=True else IsDemoMode:=False;
  if IsDemoMode then
@@ -2077,7 +2076,7 @@ begin
    opentables;
    TimerTime1:=3;
   // config_uart(1);
-   init_uart(1);
+
    AdvPageControl1.ActivePage:=AdvTabSheet10;
    SOLARIUMI.First;
    while (not SOLARIUMI.Eof) do
@@ -2095,6 +2094,10 @@ begin
    // StatusChar[0]:='Изключен';
    StatusChar[1]:=GetMessage('M8');
    //StatusChar[1]:='Включен';
+  end;
+  if (TimerTime1 = 3) then
+  begin
+     init_uart(1);
   end;
  if (TimerTime1<13)and (TimerTime1>3)then
    begin
