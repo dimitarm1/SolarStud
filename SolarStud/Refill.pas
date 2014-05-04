@@ -111,14 +111,17 @@ begin
  //  MainForm.CHIPKARTI.FieldValues['BALANS']:= MainForm.CHIPKARTI.FieldValues['BALANS']+ MainForm.KARTI.FieldValues['SUMA'];
   if Card.Balans >= Suma then
     begin
-      Valid:=False;
-      Application.MessageBox(PChar('Картата няма да бъде заредена! Вече е била заредена!'),PChar('Warning'),MB_OK);
-      MainForm.Qklienti.Cancel;
-      RefillForm.ModalResult:=mrCancel;
-      RefillForm.Close;
-      exit;//-->
-    end
-  else
+
+      if(mrCancel = Application.MessageBox(PChar('Внимание! Картата вече е заредена! Да продължа ли?'),PChar('Warning'),MB_OKCANCEL))
+      then
+      begin MainForm.Qklienti.Cancel;
+        Valid:=False;
+        RefillForm.ModalResult:=mrCancel;
+        RefillForm.Close;
+        exit;//-->
+      end;
+    end;
+   if True then // DEBUG
    begin
    if Card.CardNomer<0 then // New card - must pay a deposit
     begin
