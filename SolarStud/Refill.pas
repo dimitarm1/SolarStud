@@ -174,6 +174,8 @@ begin
 end;
 
 procedure TRefillForm.FormShow(Sender: TObject);
+var
+  SQLText:String;
 begin
 IsChipCard:= (MainForm.AdvPageControl1.ActivePageIndex<>17);
 if not IsChipCard then
@@ -202,7 +204,8 @@ if IsChipCard then
     if card.StudioNomer= MainForm.Internet.FieldValues['StudioNomer'] then
      begin
       MainForm.QKlienti.Active:=False;
-      MainForm.QKlienti.SQL.SetText(PChar('SELECT * FROM klienti ORDER BY IME'));
+      if not MainForm.ShowAllKlientsCb.Checked then SQLText := ' WHERE NOMER >-1 ';
+      MainForm.QKlienti.SQL.SetText(PChar('SELECT * FROM klienti '+ SQLText +' ORDER BY IME'));
       MainForm.QKlienti.Active:=True;
       if MainForm.Qklienti.Locate('NOMER',Card.ClientNomer,[]) then
        begin

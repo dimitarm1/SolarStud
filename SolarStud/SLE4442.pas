@@ -474,6 +474,7 @@ begin
   // 2. Send all inputs to the card
   ClearBuffers();
   tmpStr := TrimInput(Data);
+ 
   SendBuff[0] := $FF;
   SendBuff[1] := $D2;
   SendBuff[2] := $00;

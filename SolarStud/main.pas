@@ -4610,14 +4610,17 @@ end;
 procedure TMainForm.NuliraneChipCartaButtonClick(Sender: TObject);
 var
   KartaNomer: Integer;
+  IsOK: Integer;
 begin
+
   if ((Card.PIN<>Internet.FieldValues['PIN'])and (Card.PIN<>'')){  or
      (KARTICHIP.fieldvalues['suma']>0)} then  begin// Message shoud be corrected...
-    Application.MessageBox(PChar(GetMessage('M78')),PChar('Warning'),MB_OK);
+    IsOK := Application.MessageBox(PChar(GetMessage('M78')),PChar('Warning'),MB_OKCANCEL);
   //Application.MessageBox(PChar('Картата може да се нулира само във студиото където е издадена!'),PChar('Warning'),MB_OK);
     SLE4442ReadCardInfo();SLE4442ShowCardInfo();
-    exit;
+    if ((IsOK <> MROK) or (PasswordForm.ShowModal<>MROK)) then exit;
   end;
+
   if not IsChipCard then
     if PasswordForm.ModalResult<>MROK then
       if PasswordForm.ShowModal<>MROK then exit;
@@ -4769,17 +4772,28 @@ begin  //Зареждане
  Karti.SQL.SetText(PChar('SELECT * FROM STOKI WHERE STOKAKOD < 0 AND POSESHTENIA > 0 AND SUMA > 0'));
  Karti.Active:=True;
  sol1.StartTransaction;
+ Data:= Card.PIN;//Internet.FieldValues['PIN'];
+ SLE4442Submit();
+ SLE4442ReadCardInfo();
  RefillForm.ShowModal;
  if RefillForm.ModalResult=mrOK then  begin
    Balans1:=Card.Balans;
+   Data:=Card.PIN; //'ffffff';
+   SLE4442Submit();
    if  (Card.ConStatus >0) then  begin
      Card.CardNomer:= Card.ClientNomer;//QKlienti.FieldValues['NOMER'];
         Data:=Internet.FieldValues['PIN'];
+        if(strLen(PChar(Data)) <> 6) then begin
+          Application.MessageBox(PChar('Невалидна настройка за PIN код.'),PChar(''));
+          if sol1.InTransaction then
+             sol1.Rollback;
+          Exit;
+        end;
         SLE4442ChangePIN();
         Card.PIN:=Internet.FieldValues['PIN'];
         SLE4442WriteCardInfo();
      if Card.ConStatus >0 then;
-       SLE4442ReadCardInfo();
+       SLE4442ReadCardInfo();                                 
    end
    else begin
      if KARTICHIP.RecordCount=0 then  begin
@@ -4912,7 +4926,7 @@ begin
  Table3.Last;
  QKlienti.Active:=False;
  if not ShowAllKlientsCb.Checked then SQLText := ' WHERE NOMER >-1 ';
- 
+
  QKlienti.SQL.SetText(PChar('SELECT * FROM klienti '+ SQLText +' ORDER BY NOMER DESC'));
  QKlienti.Active:=True;
  ZarezdaneButtonClick(Sender);
