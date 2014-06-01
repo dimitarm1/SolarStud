@@ -410,8 +410,7 @@ var tmpStr: string;
 begin
 
   // 1. Check all input fields
-  if not InputOK(2) then
-    Exit;
+  if not IsChipCard then Exit;
 
   // 2. Send all inputs to the card
   ClearBuffers();

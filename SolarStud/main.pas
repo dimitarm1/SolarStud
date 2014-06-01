@@ -45,6 +45,7 @@ type TSLE4442Card = packed record
   CardNomer: Integer;
   ErrCounter: Integer;
   ConStatus: Integer;
+  NewCard: Boolean;
 end;
  function ConvertCurr1(Money_var: variant): AnsiString;
  function IntToStr2(value:variant):string;
@@ -4679,144 +4680,122 @@ end;
 
 procedure TMainForm.ZarezdaneButtonClick(Sender: TObject);
 var
-  NewCard: Boolean;
-  Balans1: real;
-  Result2: Integer;
+	Balans1: real;
+	Result2: Integer;
+    HasCard: Boolean;
 begin  //Зареждане
- if  QKlienti.RecordCount>0 then
- begin
- if not IsReader then begin
-   CardNomer:= QKlienti.FieldValues['NOMER'];
-   Card.StudioName:=Internet.FieldValues['STUDIONAME'];
-   Card.StudioNomer:=Internet.FieldValues['STUDIONOMER'];
-   Card.ClientName:=QKlienti.FieldValues['IME'];
-   //Card.PIN:=Internet.FieldValues['PIN'];
-   Card.ClientNomer:= QKlienti.FieldValues['NOMER'];
-   Card.CardNomer:= Card.ClientNomer;
-   if varType(KARTICHIP.FieldValues['SUMA']) <> varNull then begin
-     Card.Balans:= KARTICHIP.FieldValues['SUMA']  ;
-     //Application.MessageBox(PChar(IntToStr(KARTICHIP.FieldValues['KLIENTNOMER'])),PChar(''));
-   end
-   else Card.Balans := 0;
- end
- else if (KartiChip.RecordCount>0) then  begin
-  Result2:=0;
-  if  (KartiChip.FieldValues['SUMA']>0) and (Card.ClientNomer >0) then
-    Result2:=Application.MessageBox(PChar('Локалната база данни съдържа заредена сума. Да се прехвърли ли?'),PChar('Прехвърляне на сума'),MB_YESNO);
-  if Result2=6 then  begin
-    Card.Balans:=Card.Balans+ KARTICHIP.FieldValues['SUMA'];
-    Balans1:=Card.Balans;
-    Data:=Card.PIN; //'ffffff';
-    SLE4442Submit();
-    SLE4442WriteCardInfo();
-    SLE4442ReadCardInfo();
-    if ((Balans1-Card.Balans) <0.02 )then  begin
-       Application.MessageBox(PChar('Сумата за клиента от локалната база данни '
-        +ConvertCurr1(KARTICHIP.FieldValues['SUMA'])+' беше добавена към Чип картата'),PChar('Добавяне на сума'), MB_OK);
-       KARTICHIP.edit;
-       KARTICHIP.FieldValues['SUMA']:=0;
-       KARTICHIP.post;
-    end;
-  end;
- end;
- if CardNomer=0 then  begin
-  if Card.ErrCounter>2 then begin
-    if Card.CardNomer<0 then begin // new card
-      Data:=Card.PIN; //'ffffff';
-      SLE4442Submit();
-      SLE4442ReadCardInfo();
-      if Card.ErrCounter>5 then  begin
-//        Data:=Internet.FieldValues['PIN'];
-//        SLE4442ChangePIN();
-//        Card.PIN:=Internet.FieldValues['PIN'];
-//        SLE4442WriteCardInfo();
-      end
-      else exit;
-    end;
-    if Card.ErrCounter>2 then begin
-      Data:= Card.PIN;//Internet.FieldValues['PIN'];
-      SLE4442Submit();
-    end;
-    SLE4442ReadCardInfo();
-    if not (Card.ErrCounter>5) then exit;
-    if (Card.CardNomer>0) and (Card.ClientNomer <> QKlienti.FieldValues['NOMER']) then  begin
- // Application.MessageBox(PChar('Картата е на друг клиент и не е нулирана!'),PChar('Warning'),MB_OK);
-      Application.MessageBox(PChar(GetMessage('M75')),PChar('Warning'),MB_OK);
-      SLE4442ReadCardInfo();SLE4442ShowCardInfo();
-      exit;
-    end;
-    NewCard:=(Card.CardNomer=-1);
-    if ((Card.StudioNomer=Internet.FieldValues['STUDIONOMER']) or NewCard) then  begin
-      Card.StudioName:=Internet.FieldValues['STUDIONAME'];
-      Card.StudioNomer:=Internet.FieldValues['STUDIONOMER'];
-      Card.ClientName:=QKlienti.FieldValues['IME'];
-       //Card.PIN:=Internet.FieldValues['PIN'];
-      Card.ClientNomer:= QKlienti.FieldValues['NOMER'];
-    end;
-    if (Card.PIN<>Internet.FieldValues['PIN']) and (Card.CardNomer >-1) then  begin
-     // Application.MessageBox(PChar('Картата може да се зарежда само във студиото където е издадена!'),PChar('Warning'),MB_OK);
-      Application.MessageBox(PChar(GetMessage('M74')),PChar('Warning'),MB_OK);
-      SLE4442ReadCardInfo();SLE4442ShowCardInfo();
-      exit;
-    end ;
-  end
-  else  begin //Err Counter<2
-    if not (Card.ConStatus=0) then  begin
-      Application.MessageBox(PChar('ERROR - Replace Card!!!'),PChar('Warning'),MB_OK);
-      exit;
-    end;
-  end;
- end;  //end of new card creation
+	if  not QKlienti.RecordCount>0 then Exit;
+	Card.NewCard:=(Card.CardNomer=-1);
+	HasCard  := Card.ClientNomer > 0;
+	if not IsReader  or (Card.CardNomer<0) then begin    // If new card or no card
+		CardNomer:= QKlienti.FieldValues['NOMER'];
+		Card.StudioName:=Internet.FieldValues['STUDIONAME'];
+		Card.StudioNomer:=Internet.FieldValues['STUDIONOMER'];
+		Card.ClientName:=QKlienti.FieldValues['IME'];
+		//Card.PIN:=Internet.FieldValues['PIN'];
+		Card.ClientNomer:= QKlienti.FieldValues['NOMER'];
+		Card.CardNomer:= Card.ClientNomer;
+		if varType(KARTICHIP.FieldValues['SUMA']) <> varNull then begin
+			Card.Balans:= KARTICHIP.FieldValues['SUMA']  ;
+		end
+		else Card.Balans := 0;
+	end;
+	if IsReader then  begin
+		if not HasCard then begin
+			Application.MessageBox(PChar('Поставете карта!!!'),PChar('Warning'),MB_OK);
+			Exit;
+		end;
+		Data:=Card.PIN; //'ffffff';
+		if Card.ErrCounter>2 then begin
+			SLE4442Submit();
+			// SLE4442ReadCardInfo();
+		end;
+		if not (Card.ErrCounter>5) then begin
+			if not (Card.ConStatus=0) then  begin
+				Application.MessageBox(PChar('ERROR - Replace Card!!!'),PChar('Warning'),MB_OK);
+			end;
+			exit;
+		end;
+		if (Card.CardNomer>0) and (Card.ClientNomer <> QKlienti.FieldValues['NOMER']) then  begin
+			// Application.MessageBox(PChar('Картата е на друг клиент и не е нулирана!'),PChar('Warning'),MB_OK);
+			Application.MessageBox(PChar(GetMessage('M75')),PChar('Warning'),MB_OK);
+			// SLE4442ReadCardInfo();SLE4442ShowCardInfo();
+			exit;
+		end;
+		if (Card.PIN<>Internet.FieldValues['PIN']) and not Card.NewCard then  begin
+			// Application.MessageBox(PChar('Картата може да се зарежда само във студиото където е издадена!'),PChar('Warning'),MB_OK);
+			Application.MessageBox(PChar(GetMessage('M74')),PChar('Warning'),MB_OK);
+			// SLE4442ReadCardInfo();SLE4442ShowCardInfo();
+			exit;
+		end;
+	end;
+	if  IsReader and (KARTICHIP.FieldValues['SUMA']>0)then  begin
+		Result2:=Application.MessageBox(PChar('Локалната база данни съдържа заредена сума. Да се прехвърли ли?'),PChar('Прехвърляне на сума'),MB_YESNO);
+		if Result2 = 6 then  begin
+			Card.Balans:=Card.Balans+ KARTICHIP.FieldValues['SUMA'];
+			Balans1:=Card.Balans;
+			Data:=Card.PIN; //'ffffff';
+			SLE4442Submit();
+			SLE4442WriteCardInfo();
+			SLE4442ReadCardInfo();
+			if ((Balans1-Card.Balans) <0.02 )then  begin
+				Application.MessageBox(PChar('Сумата за клиента от локалната база данни '
+					+ConvertCurr1(KARTICHIP.FieldValues['SUMA'])+' беше добавена към Чип картата'),PChar('Добавяне на сума'), MB_OK);
+				KARTICHIP.edit;
+				KARTICHIP.FieldValues['SUMA']:=0;
+				KARTICHIP.post;
+			end;
+		end;
+	end;
 
- Karti.Active:=False;
- Karti.SQL.SetText(PChar('SELECT * FROM STOKI WHERE STOKAKOD < 0 AND POSESHTENIA > 0 AND SUMA > 0'));
- Karti.Active:=True;
- sol1.StartTransaction;
- Data:= Card.PIN;//Internet.FieldValues['PIN'];
- SLE4442Submit();
- SLE4442ReadCardInfo();
- RefillForm.ShowModal;
- if RefillForm.ModalResult=mrOK then  begin
-   Balans1:=Card.Balans;
-   Data:=Card.PIN; //'ffffff';
-   SLE4442Submit();
-   if  (Card.ConStatus >0) then  begin
-     Card.CardNomer:= Card.ClientNomer;//QKlienti.FieldValues['NOMER'];
-        Data:=Internet.FieldValues['PIN'];
-        if(strLen(PChar(Data)) <> 6) then begin
-          Application.MessageBox(PChar('Невалидна настройка за PIN код.'),PChar(''));
-          if sol1.InTransaction then
-             sol1.Rollback;
-          Exit;
-        end;
-        SLE4442ChangePIN();
-        Card.PIN:=Internet.FieldValues['PIN'];
-        SLE4442WriteCardInfo();
-     if Card.ConStatus >0 then;
-       SLE4442ReadCardInfo();                                 
-   end
-   else begin
-     if KARTICHIP.RecordCount=0 then  begin
-       KARTICHIP.Append;
-       KARTICHIP.FieldValues['SUMA']:=0;
-       KARTICHIP.Post;
-     end;
-     KARTICHIP.Edit;
-     if (KARTICHIP.FieldValues['SUMA'] <> KARTICHIP.FieldValues['SUMA']) then KARTICHIP.FieldValues['SUMA']:=0; // for null value
-     KARTICHIP.FieldValues['SUMA']:=Card.Balans;
-     KARTICHIP.Post;
-     Balans1:=Card.balans;
-   end;
-   if ((Card.Balans-Balans1)<2) then  sol1.Commit(True)
-   else  begin
-     sol1.Rollback;
-//           Application.MessageBox(PChar('Картата не е записана правилно!'),PChar('Warning'),MB_OK);
-     Application.MessageBox(PChar(GetMessage('M73')),PChar('Warning'),MB_OK);
-   end;
- end
- else sol1.Rollback; //user cancelation
-   SLE4442ReadCardInfo();SLE4442ShowCardInfo();
- end;
+	Karti.Active:=False;
+	Karti.SQL.SetText(PChar('SELECT * FROM STOKI WHERE STOKAKOD < 0 AND POSESHTENIA > 0 AND SUMA > 0'));
+	Karti.Active:=True;
+	if  (sol1.InTransaction) then sol1.Rollback;
+	sol1.StartTransaction;
+
+	RefillForm.ShowModal;
+	if RefillForm.ModalResult=mrOK then  begin
+		Balans1:=Card.Balans;
+		Data:=Card.PIN; //'ffffff';
+		SLE4442Submit();
+		if IsChipCard and (Card.ErrCounter >5) then  begin
+			Card.CardNomer:= Card.ClientNomer;//QKlienti.FieldValues['NOMER'];
+			Data:=Internet.FieldValues['PIN'];
+			if(strLen(PChar(Data)) <> 6) then begin
+				Application.MessageBox(PChar('Невалидна настройка за PIN код.'),PChar(''));
+				if sol1.InTransaction then sol1.Rollback;
+				Exit;
+			end;
+			SLE4442ChangePIN();
+			Card.PIN:=Internet.FieldValues['PIN'];
+			SLE4442WriteCardInfo();
+			SLE4442ReadCardInfo();
+		end
+		else begin
+			if KARTICHIP.RecordCount=0 then  begin
+				KARTICHIP.Append;
+				KARTICHIP.FieldValues['SUMA']:=0;
+				KARTICHIP.Post;
+			end;
+			KARTICHIP.Edit;
+			if (KARTICHIP.FieldValues['SUMA'] <> KARTICHIP.FieldValues['SUMA']) then KARTICHIP.FieldValues['SUMA']:=0; // for null value
+			KARTICHIP.FieldValues['SUMA']:=Card.Balans;
+			KARTICHIP.Post;
+			Balans1:=Card.balans;
+		end;
+		if ((Card.Balans-Balans1)<2) then  sol1.Commit(True)
+		else  begin
+			sol1.Rollback;
+		//  Application.MessageBox(PChar('Картата не е записана правилно!'),PChar('Warning'),MB_OK);
+			Application.MessageBox(PChar(GetMessage('M73')),PChar('Warning'),MB_OK);
+		end;
+	end;
+	if IsChipCard then begin
+		SLE4442ReadCardInfo();
+		SLE4442ShowCardInfo();
+	end;
+
 end;
 
 procedure TMainForm.Label143Click(Sender: TObject);

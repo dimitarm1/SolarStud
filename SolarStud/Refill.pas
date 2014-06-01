@@ -123,7 +123,7 @@ begin
     end;
    if True then // DEBUG
    begin
-   if Card.CardNomer<0 then // New card - must pay a deposit
+   if Card.NewCard then // New card - must pay a deposit
     begin
      Card.ClientNomer:= MainForm.QKlienti.FieldValues['NOMER'];
      Card.CardNomer  := Card.ClientNomer;
@@ -134,7 +134,7 @@ begin
      MainForm.plashtania.FieldValues['CHAS'       ]:=TimeToStr(Time);
      MainForm.plashtania.FieldValues['OTCHIPKARTA']:=Card.ClientNomer;
 
-     if MainForm.STOKI.Locate('POSESHTENIA',-1,[]) then
+     if MainForm.STOKI.Locate('POSESHTENIA',-1,[]) then      // Sell deposit
       begin
        MainForm.STOKI.Edit;
        MainForm.STOKI.FieldValues['STOKANASKLAD'] := MainForm.STOKI.FieldValues['STOKANASKLAD'] -1;
