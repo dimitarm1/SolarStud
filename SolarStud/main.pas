@@ -28,8 +28,8 @@ uses Windows, SysUtils,DateUtils, Classes, Graphics, Forms, Controls, Menus,
   AdvToolBtn, RzBmpBtn, LMDCustom3DButton, LMD3DEffectButton, DBAdvEd,
   LMDWndProcComponent, LMDFormStyler, TeeDBEdit, TeeDBCrossTab, RzStatus,
   RzLabel, LMDStorBase, LMDStorINIVault, MainForm2, LMDStorFormHook,
-  LMDStorPropertiesStorage, OleCtrls, ShockwaveFlashObjects_TLB, inifiles,
-  ShockwaveEx, LMDCustomNImage, LMDNImage, LMDBaseImage, LMDCustomLImage,
+  LMDStorPropertiesStorage, OleCtrls, inifiles,
+  LMDCustomNImage, LMDNImage, LMDBaseImage, LMDCustomLImage,
   LMDLImage, ABSTypes, LMDDBMaskEdit, LMDDBEdit, LMDCustomControl, Wwdotdot,
   Wwdbcomb, Planner, PlanSimpleEdit, PlanItemEdit, DBPlanner, AdvEdBtn,
   PlannerDatePicker, LMDCustomListComboBox, LMDListComboBox, LMDDBListComboBox,
@@ -186,7 +186,6 @@ type
     AdvTabSheet15: TAdvTabSheet;
     AdvTabSheet16: TAdvTabSheet;
     AdvTabSheet17: TAdvTabSheet;
-    Image1: TImage;
     Label96: TLabel;
     LMDDBCheckBox1: TLMDDBCheckBox;
     Label30: TLabel;
@@ -409,7 +408,6 @@ type
     Label3: TLabel;
     Label1: TLabel;
     IniFile: TLMDStorINIVault;
-    IntroFlash: TShockwaveFlashEx;
     LMDImageList1: TLMDImageList;
     ImagePress1: TLMDLImage;
     Imagepress2: TLMDLImage;
@@ -717,6 +715,8 @@ type
     Timer6: TTimer;
     ValidnostTime: TRzDBDateTimeEdit;
     Label157: TLabel;
+    Image1: TImage;
+    Image8: TImage;
     procedure Label1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
@@ -1358,19 +1358,7 @@ var
   FlashName: string;
 begin
   AppPath:=ExtractFilePath(application.ExeName);
-  FlashName:=IniFile.ReadString('System','FlashMovie','NoFlash') ;
-   if FlashName='NoFlash' then //this is because KeyExists function is not working
-      begin
-       IniFile.DeleteKey('System','FlashMovie');
-       FlashName:=AppPath+'adimage.swf';
-       IniFile.WriteString('System','FlashMovie',FlashName);
-       IniFile.Updatefile;
-      end;
-    FlashName:=IniFile.ReadString('System','FlashMovie',FlashName) ;
-    Main2.FlashPlayer.Movie:=FlashName;
-    Main2.FlashPlayer.Play;
-   // SaveLangText();
-    SetLangText();
+  SetLangText();
 end;
 
 Procedure HideKlInfo;
@@ -2652,8 +2640,7 @@ begin
   StatusColors[3]:=clYellow;StatusColors[4]:=clBlack;
   if FileExists((ExtractFilePath( Application.ExeName)+'language.ini'))then
      InitLang(); // SetLangText();
-     IntroFlash.Movie:=(ExtractFilePath( Application.ExeName)+'intro.swf');
-     IntroFlash.Playing:=true;
+     
 end;
 procedure TMainForm.RTFLabel1Click(Sender: TObject);
 begin
@@ -5283,7 +5270,7 @@ end;
 procedure TMainForm.Timer2Timer(Sender: TObject);
 begin
 Timer2Time:=Timer2Time+1;
-if Timer2Time>15 then
+if Timer2Time>16 then
   begin
   Timer2.Enabled:=False;
   Timer1.Interval:=1000;
@@ -5291,7 +5278,7 @@ if Timer2Time>15 then
   Timer1.Enabled:=True;
   end
  else
- label64.Caption:=leftstr('www.stefano-sport.com',Timer2Time);
+ label64.Caption:=leftstr('Solar studio 1.2',Timer2Time);
 end;
 
 procedure TMainForm.BHelpClick(Sender: TObject);

@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, LMDCustomControl, LMDCustomPanel, LMDCustomBevelPanel,
   LMDCustomParentPanel, LMDCustomPanelFill, LMDPanelShape, jpeg, ExtCtrls,
-  StdCtrls, setformdata, OleCtrls, ShockwaveFlashObjects_TLB, ShockwaveEx,
+  StdCtrls, setformdata, OleCtrls,  
   LMDControl, LMDBaseControl, LMDBaseGraphicControl, LMDGraphicControl,
   LMDBaseImage, LMDCustomLImage, LMDLImage, LMDCustomComponent,
   LMDBaseController, LMDCustomContainer, LMDCustomImageList, LMDImageList,
@@ -45,8 +45,6 @@ type
     ImageSol4: TImage;
     ImageSol5: TImage;
     ImageSol6: TImage;
-    P3: TPanel;
-    FlashPlayer  : TShockwaveFlashEx;
     LMDImageList1: TLMDImageList;
     ImagePress1  : TLMDLImage;
     Imagepress2  : TLMDLImage;

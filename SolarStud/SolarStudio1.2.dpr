@@ -50,8 +50,8 @@ begin
     MainForm.Show;
     MainForm.Top:=y;
     MainForm.Left:=x;
-    AddFontResource('f:\temp\murmansk.TTF') ;
-    SendMessage(HWND_BROADCAST, WM_FONTCHANGE, 0, 0) ;
+   // AddFontResource('f:\temp\murmansk.TTF') ;
+   // SendMessage(HWND_BROADCAST, WM_FONTCHANGE, 0, 0) ;
     //MainForm.ComboBox1.Items := Screen.Fonts;     Added for testing
     //MainForm.Font.Name:=ComboBox1.Text;
     //RemoveFontResource('f:\temp\LAZURSK1.TTF') ;
