@@ -82,6 +82,10 @@ begin
  Cena :=MainForm.KARTI.FieldValues['STOKACENA'];
  Suma :=MainForm.KARTI.FieldValues['SUMA'];
  Nomer:=StrToIntDef(MaskEdit2.EditText,-1);
+ if(16777214< Nomer ) and   IsChipCard then begin
+   Application.MessageBox(PChar('Прекалено голям номер на карта!!'),PChar('Warning'),MB_OK);
+   exit;  //-->
+ end;
  V    := MainForm.Qklienti.Lookup('NOMER',Nomer,'Nomer') ;
  if not (VarType(V) in [varNull]) then Nomer:=0;   // So, there is a record with that number
  MainForm.Qklienti.Edit;

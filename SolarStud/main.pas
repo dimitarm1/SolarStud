@@ -4674,6 +4674,8 @@ begin  //Зареждане
 	if  not QKlienti.RecordCount>0 then Exit;
 	Card.NewCard:=(Card.CardNomer=-1);
 	HasCard  := Card.ClientNomer > 0;
+    if IsReader  and (Card.CardNomer<0) then  HasCard := true;
+    
 	if not IsReader  or (Card.CardNomer<0) then begin    // If new card or no card
 		CardNomer:= QKlienti.FieldValues['NOMER'];
 		Card.StudioName:=Internet.FieldValues['STUDIONAME'];
@@ -4682,10 +4684,10 @@ begin  //Зареждане
 		//Card.PIN:=Internet.FieldValues['PIN'];
 		Card.ClientNomer:= QKlienti.FieldValues['NOMER'];
 		Card.CardNomer:= Card.ClientNomer;
-		if varType(KARTICHIP.FieldValues['SUMA']) <> varNull then begin
+		if (not IsReader) and (varType(KARTICHIP.FieldValues['SUMA']) <> varNull) then begin
 			Card.Balans:= KARTICHIP.FieldValues['SUMA']  ;
-		end
-		else Card.Balans := 0;
+		end;
+		if (Card.Balans <0) then Card.Balans:= 0;
 	end;
 	if IsReader then  begin
 		if not HasCard then begin
@@ -4716,24 +4718,7 @@ begin  //Зареждане
 			exit;
 		end;
 	end;
-	if  IsReader and (KARTICHIP.FieldValues['SUMA']>0)then  begin
-		Result2:=Application.MessageBox(PChar('Локалната база данни съдържа заредена сума. Да се прехвърли ли?'),PChar('Прехвърляне на сума'),MB_YESNO);
-		if Result2 = 6 then  begin
-			Card.Balans:=Card.Balans+ KARTICHIP.FieldValues['SUMA'];
-			Balans1:=Card.Balans;
-			Data:=Card.PIN; //'ffffff';
-			SLE4442Submit();
-			SLE4442WriteCardInfo();
-			SLE4442ReadCardInfo();
-			if ((Balans1-Card.Balans) <0.02 )then  begin
-				Application.MessageBox(PChar('Сумата за клиента от локалната база данни '
-					+ConvertCurr1(KARTICHIP.FieldValues['SUMA'])+' беше добавена към Чип картата'),PChar('Добавяне на сума'), MB_OK);
-				KARTICHIP.edit;
-				KARTICHIP.FieldValues['SUMA']:=0;
-				KARTICHIP.post;
-			end;
-		end;
-	end;
+
 
 	Karti.Active:=False;
 	Karti.SQL.SetText(PChar('SELECT * FROM STOKI WHERE STOKAKOD < 0 AND POSESHTENIA > 0 AND SUMA > 0'));
@@ -4742,7 +4727,21 @@ begin  //Зареждане
 	sol1.StartTransaction;
 
 	RefillForm.ShowModal;
-	if RefillForm.ModalResult=mrOK then  begin
+	if RefillForm.ModalResult=mrOK  then  begin
+   		if  IsReader and (KARTICHIP.FieldValues['SUMA']>0)then  begin
+			Result2:=Application.MessageBox(PChar('Локалната база данни съдържа заредена сума. Да се прехвърли ли?'),PChar('Прехвърляне на сума'),MB_YESNO);
+			if Result2 = 6 then  begin
+				Card.Balans:=Card.Balans+ KARTICHIP.FieldValues['SUMA'];
+				Balans1:=Card.Balans;
+				if ((Balans1-Card.Balans) <0.02 )then  begin
+					Application.MessageBox(PChar('Сумата за клиента от локалната база данни '
+						+ConvertCurr1(KARTICHIP.FieldValues['SUMA'])+' ще бъде добавена към Чип картата'),PChar('Добавяне на сума'), MB_OK);
+					KARTICHIP.edit;
+					KARTICHIP.FieldValues['SUMA']:=0;
+					KARTICHIP.post;
+				end;
+			end;
+	   	end;
 		Balans1:=Card.Balans;
 		Data:=Card.PIN; //'ffffff';
 		SLE4442Submit();
