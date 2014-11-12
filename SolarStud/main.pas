@@ -4723,7 +4723,12 @@ begin  //Зареждане
 	Karti.Active:=False;
 	Karti.SQL.SetText(PChar('SELECT * FROM STOKI WHERE STOKAKOD < 0 AND POSESHTENIA > 0 AND SUMA > 0'));
 	Karti.Active:=True;
-	if  (sol1.InTransaction) then sol1.Rollback;
+	if  (sol1.InTransaction) then
+    begin
+        Application.MessageBox(PChar('Базата данни е в транзакция. Това не би трябвало да се случва... Моля рапортувайте тази грешка на автора'),PChar('Вътрешна грешка'),MB_OK);
+
+        sol1.Rollback;
+    end;
 	sol1.StartTransaction;
 
 	RefillForm.ShowModal;
@@ -4776,7 +4781,8 @@ begin  //Зареждане
 		//  Application.MessageBox(PChar('Картата не е записана правилно!'),PChar('Warning'),MB_OK);
 			Application.MessageBox(PChar(GetMessage('M73')),PChar('Warning'),MB_OK);
 		end;
-	end;
+	end
+    else sol1.Rollback;
 	if IsChipCard then begin
 		SLE4442ReadCardInfo();
 		SLE4442ShowCardInfo();
