@@ -7,7 +7,7 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{20BE3B2F-6275-48B2-8277-E59C73537CFF}
 AppName=SolarStudio1.2
-AppVerName=SolarStudio 1.2 Build 06-07-2014
+AppVerName=SolarStudio 1.2 Build 12-11-2014
 AppPublisher=D.M.
 AppPublisherURL=http://www.example.com/
 AppSupportURL=http://www.example.com/
@@ -36,8 +36,9 @@ Source: "SolarStudio1.2.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "adimage.swf"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Delotch.bat"; DestDir: "{app}"; Flags: ignoreversion
 Source: "FlexType 2.0 XP.zip"; DestDir: "{app}"; Flags: ignoreversion
-Source: "install_flash_player_10_active_x.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "Shockwave_Installer_Full.exe"; DestDir: "{app}"; Flags: ignoreversion
+;Source: "install_flash_player_10_active_x.exe"; DestDir: "{app}"; Flags: ignoreversion
+;Source: "Shockwave_Installer_Full.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "pl2303_dirver.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "installnotes.rtf"; DestDir: "{app}"; Flags: ignoreversion
 Source: "intro.swf"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Language.ini"; DestDir: "{app}"; Flags: ignoreversion
@@ -58,7 +59,7 @@ Source: "images\*"; DestDir: "{app}\images"; Flags: ignoreversion recursesubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
-Name: "{group}\SolarStudio1"; Filename: "{app}\SolarStudio1.2.exe";  IconFilename: "{app}\SolarStudio1.2.ico"
+Name: "{group}\SolarStudio1"; Filename: "{app}\StartSolarStudio1.bat";  IconFilename: "{app}\SolarStudio1.2.ico"
 Name: "{group}\Guide (bg)"; Filename: "{app}\solarStudio1.htm";
 Name: "{group}\Guide (en)"; Filename: "{app}\Manual.htm";
 Name: "{group}\{cm:UninstallProgram,SolarStudio1}"; Filename: "{uninstallexe}"
@@ -66,10 +67,10 @@ Name: "{commondesktop}\SolarStudio1"; Filename: "{app}\StartSolarStudio1.bat"; T
 
 
 [Run]
-Filename: "{app}\install_flash_player_10_active_x.exe";
-Filename: "{app}\Shockwave_Installer_Full.exe";
+Filename: "{app}\pl2303_dirver.exe";
 Filename: "{app}\acr38\Setup.exe";
 Filename: "{app}\StartSolarStudio1.bat"; Description: "{cm:LaunchProgram,SolarStudio1}"; Flags: postinstall skipifsilent runminimized
+
 
 
 
