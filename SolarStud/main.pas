@@ -912,6 +912,7 @@ type
     procedure wwDBGrid11TitleButtonClick(Sender: TObject; AFieldName: string);
     procedure KasaGridTitleButtonClick(Sender: TObject; AFieldName: string);
 
+
   private
 
     { Private declarations }
@@ -3380,832 +3381,837 @@ begin
 end;
 
 procedure TMainForm.wwDBGrid3TitleButtonClick(Sender: TObject;
-  AFieldName: string);
+    AFieldName: string);
 begin
-  ReorderSQLDataSet(KARTI,AFieldName);
+    ReorderSQLDataSet(KARTI,AFieldName);
 end;
 
 procedure TMainForm.StokiGridTitleButtonClick(Sender: TObject;
-  AFieldName: string);
+    AFieldName: string);
 begin
-  ReorderSQLDataSet(STOKITE,AFieldName);
+    ReorderSQLDataSet(STOKITE,AFieldName);
 end;
 
 procedure TMainForm.ReorderSQLDataSet(Query: TABSQuery; AFieldName: string);
-  procedure SetOrderParam(Field: string);
+    procedure SetOrderParam(Field: string);
     begin
-    Query.Active:=False;
-    if not AnsiContainsText(Query.SQL.Text, 'ORDERPARAM')then
-      Query.SQL.Text:= Query.SQL.Text + 'ORDER BY :ORDERPARAM ASC';
-    Query.ParamByName('ORDERPARAM').AsString := Field;
-  end;
+        Query.Active:=False;
+        if not AnsiContainsText(Query.SQL.Text, 'ORDERPARAM')then
+            Query.SQL.Text:= Query.SQL.Text + 'ORDER BY :ORDERPARAM ASC';
+        Query.ParamByName('ORDERPARAM').AsString := Field;
+    end;
 begin
-  SetOrderParam (AFieldName);
-  if AnsiContainsText(Query.SQL.Text, 'DESC')then
-     Query.SQL.Text:=(AnsiReplaceText(Query.SQL.Text, 'DESC', 'ASC'))
-  else if AnsiContainsText(Query.SQL.Text, 'ASC')then
-    Query.SQL.Text:=(AnsiReplaceText(Query.SQL.Text, 'ASC', 'DESC'))
+    SetOrderParam (AFieldName);
+    if AnsiContainsText(Query.SQL.Text, 'DESC')then
+        Query.SQL.Text:=(AnsiReplaceText(Query.SQL.Text, 'DESC', 'ASC'))
+    else if AnsiContainsText(Query.SQL.Text, 'ASC')then
+        Query.SQL.Text:=(AnsiReplaceText(Query.SQL.Text, 'ASC', 'DESC'))
     else Query.SQL.Text:=Query.SQL.Text+ ' ASC';
-  if not Query.Active then Query.Active:=True;
+    if not Query.Active then Query.Active:=True;
 end;
 
 procedure TMainForm.Label123Click(Sender: TObject);
 begin
-Form4.QuickRep1.Preview;
+    Form4.QuickRep1.Preview;
 end;
 
 procedure TMainForm.Label124Click(Sender: TObject);
 begin
-  IztriiStokaBtnClick(Sender);
+    IztriiStokaBtnClick(Sender);
 end;
 
 procedure TMainForm.LMDButton6Click(Sender: TObject);
 
 var
-  maxnomer: integer;
-  nomer: integer;
-  L: Boolean;
+    maxnomer: integer;
+    nomer: integer;
+    L: Boolean;
 begin
- maxnomer:=0;
- nomer:=0;
- Table3.First;
- L:=False;
- while (not L) do
- begin
-   nomer:=Table3.FieldByName('NOMER').AsInteger;
-   if (nomer>0) and (nomer > maxnomer) then maxnomer:=nomer;
-   L:=Table3.Eof;
-   Table3.Next;
- end;
-
- Table3.Append;
- Table3.FieldValues['NOMER']:=maxnomer+1;
- Table3.FieldValues['IME']:=GetMessage('M18')+IntTostr(maxnomer+1);
- //Table3.FieldValues['IME']:='New client №'+IntTostr(maxnomer+1);
- Table3.Post;
- Table3.Last;
- QKlienti.Active:=False;
- QKlienti.SQL.SetText(PChar('SELECT * FROM klienti ORDER BY NOMER DESC'));
- QKlienti.Active:=True;
-// RefillForm.DBEdit2.ReadOnly:=false;
- RefillForm.ShowModal;
- if RefillForm.ModalResult=mrOK then
-  else QKlienti.Delete;
- QKarti.Active:=False;
- QKarti.SQL.SetText(PChar('SELECT * FROM kartiall WHERE klientdetail = '+
- IntToStr2(QKlienti.FieldValues['NOMER'])+ ' ORDER BY KARTANOMER DESC'));
- QKarti.Active:=True;
+    maxnomer:=0;
+    nomer:=0;
+    Table3.First;
+    L:=False;
+    while (not L) do
+    begin
+        nomer:=Table3.FieldByName('NOMER').AsInteger;
+        if (nomer>0) and (nomer > maxnomer) then
+            maxnomer:=nomer;
+        L:=Table3.Eof;
+        Table3.Next;
+    end;
+    Table3.Append;
+    Table3.FieldValues['NOMER']:=maxnomer+1;
+    Table3.FieldValues['IME']:=GetMessage('M18')+IntTostr(maxnomer+1);
+    //Table3.FieldValues['IME']:='New client №'+IntTostr(maxnomer+1);
+    Table3.Post;
+    Table3.Last;
+    QKlienti.Active:=False;
+    QKlienti.SQL.SetText(PChar('SELECT * FROM klienti ORDER BY NOMER DESC'));
+    QKlienti.Active:=True;
+    // RefillForm.DBEdit2.ReadOnly:=false;
+    RefillForm.ShowModal;
+    if not RefillForm.ModalResult=mrOK then
+        QKlienti.Delete;
+    QKarti.Active:=False;
+    QKarti.SQL.SetText(PChar('SELECT * FROM kartiall WHERE klientdetail = '+
+    IntToStr2(QKlienti.FieldValues['NOMER'])+ ' ORDER BY KARTANOMER DESC'));
+    QKarti.Active:=True;
 end;
 
 procedure TMainForm.PayClubCardClick(Sender: TObject);
 var
- i: Integer;
+    i: Integer;
 begin
- PaidCash:=0;
- PaidCard:=0;
- PaidChipCard:=0;
- for i:=0 to SizeOf(PoseshteniaPaid) do PoseshteniaPaid[i]:=0;
- PosPaid:=0;
- BroiKartiPaid:=0;
-  AdvPageControl1.ActivePage:=AdvTabsheet18;
+    PaidCash:=0;
+    PaidCard:=0;
+    PaidChipCard:=0;
+    for i:=0 to SizeOf(PoseshteniaPaid) do PoseshteniaPaid[i]:=0;
+    PosPaid:=0;
+    BroiKartiPaid:=0;
+    AdvPageControl1.ActivePage:=AdvTabsheet18;
 end;
 
 procedure TMainForm.LMDShapeButton1Click(Sender: TObject);
 //Плащане с чип карта на стоки
 var
-  Stoka   : integer;
-  Cena    : Real;
-  CenaCard: Real;
-  Broi    : Integer;
-  Cena1   : Real;
+    Stoka   : integer;
+    Cena    : Real;
+    CenaCard: Real;
+    Broi    : Integer;
+    Cena1   : Real;
 begin
- Stoka:=Kasagrid.DataSource.DataSet.FieldValues['STOKAKOD'];
- if( KARTICHIP.RecordCount>0 ) and (varType(Kasagrid.DataSource.DataSet.FieldValues['STOKACENACARD'])<> varNull) then CenaCard:=Kasagrid.DataSource.DataSet.FieldValues['STOKACENACARD']
- else CenaCard:=Kasagrid.DataSource.DataSet.FieldValues['STOKACENA'];
- Cena:=Kasagrid.DataSource.DataSet.FieldValues['STOKACENA'];
- Broi:= Kasagrid.DataSource.DataSet.FieldValues['STOKANASKLAD'];
- if Stoka>10000 then Cena:=Cena-(cena*0/100);  //Added for VIP discount
- //End Add for VIP Price
- if Broi>0 then
-   begin
-    Suma:=Suma+Cena;
-    SumaCard:=SumaCard+CenaCard;
-    Kasagrid.DataSource.DataSet.Edit;
-    Kasagrid.DataSource.DataSet.FieldValues['STOKANASKLAD']:=Broi-1;
-    Kasagrid.DataSource.DataSet.Post;
-    if SDELKA.Locate('STOKA',Stoka,[]) then
-     begin
-      SDELKA.Edit;
-      Broi:=SDELKA.FieldValues['BROI'];
-      SDELKA.FieldValues['BROI']:=Broi+1;
-      if( KARTICHIP.RecordCount>0 ) then  SDELKA.FieldValues['SUMABROI']:=SDELKA.FieldValues['SUMABROI']+CenaCard
-      else SDELKA.FieldValues['SUMABROI']:=SDELKA.FieldValues['SUMABROI']+Cena;
-      SDELKA.FieldValues['KARTASUMA']:=SDELKA.FieldValues['KARTASUMA']+CenaCard;
-      SDELKA.Post;
-     end
-    else
-     begin
-      plashtania.Append;
-      plashtania.FieldValues['STOKA']     :=Stoka;
-      if( KARTICHIP.RecordCount>0 ) then plashtania.FieldValues['SUMABROI']  :=CenaCard
-      else plashtania.FieldValues['SUMABROI']  :=Cena;
-      plashtania.FieldValues['KARTASUMA'] :=CenaCard;
-      plashtania.FieldValues['BROI']      :=1;
-      plashtania.FieldValues['DATA']      :=Date;
-      plashtania.FieldValues['CHAS']      :=TimeToStr(Time);
-      Plashtania.Post;
-     end;
-    SDELKA.Active:=False;
-    SDELKA.ParamByName('SDELKANOMER').AsInteger:=SDELKANOMER;
-    SDELKA.Active:=True;
-    calcKasaPaid ;
-   end;
+    Stoka:=Kasagrid.DataSource.DataSet.FieldValues['STOKAKOD'];
+    if( KARTICHIP.RecordCount>0 ) and
+        (varType(Kasagrid.DataSource.DataSet.FieldValues['STOKACENACARD'])<> varNull) and
+        (Card.Balans >0) then
+            CenaCard:=Kasagrid.DataSource.DataSet.FieldValues['STOKACENACARD']
+    else CenaCard:=Kasagrid.DataSource.DataSet.FieldValues['STOKACENA'];
+    Cena:=Kasagrid.DataSource.DataSet.FieldValues['STOKACENA'];
+    Broi:= Kasagrid.DataSource.DataSet.FieldValues['STOKANASKLAD'];
+    if Stoka>10000 then
+        Cena:=Cena-(cena*0/100);  //Added for VIP discount
+        //End Add for VIP Price
+    if Broi>0 then
+    begin
+        Suma:=Suma+Cena;
+        SumaCard:=SumaCard+CenaCard;
+        Kasagrid.DataSource.DataSet.Edit;
+        Kasagrid.DataSource.DataSet.FieldValues['STOKANASKLAD']:=Broi-1;
+        Kasagrid.DataSource.DataSet.Post;
+        if SDELKA.Locate('STOKA',Stoka,[]) then
+        begin
+            SDELKA.Edit;
+            Broi:=SDELKA.FieldValues['BROI'];
+            SDELKA.FieldValues['BROI']:=Broi+1;
+            if( KARTICHIP.RecordCount>0 ) then
+                SDELKA.FieldValues['SUMABROI']:=SDELKA.FieldValues['SUMABROI']+CenaCard
+            else SDELKA.FieldValues['SUMABROI']:=SDELKA.FieldValues['SUMABROI']+Cena;
+            SDELKA.FieldValues['KARTASUMA']:=SDELKA.FieldValues['KARTASUMA']+CenaCard;
+            SDELKA.Post;
+        end
+        else
+        begin
+            plashtania.Append;
+            plashtania.FieldValues['STOKA']     :=Stoka;
+            if( KARTICHIP.RecordCount>0 ) then
+                plashtania.FieldValues['SUMABROI']  :=CenaCard
+            else plashtania.FieldValues['SUMABROI']  :=Cena;
+            plashtania.FieldValues['KARTASUMA'] :=CenaCard;
+            plashtania.FieldValues['BROI']      :=1;
+            plashtania.FieldValues['DATA']      :=Date;
+            plashtania.FieldValues['CHAS']      :=TimeToStr(Time);
+            Plashtania.Post;
+        end;
+        SDELKA.Active:=False;
+        SDELKA.ParamByName('SDELKANOMER').AsInteger:=SDELKANOMER;
+        SDELKA.Active:=True;
+        calcKasaPaid;
+    end;
 end;
 
 procedure TMainForm.calcKasaPaid ;
 var
-  DiscountFirmi:integer;
+    DiscountFirmi:integer;
 begin
-  Memo1.Clear;
-  PaidCash:=0;
-  PaidChipCard:=0;
-  DiscountFirmi:= Integer( (QKLIENTI.RecordCount>0) and
-     (QKLIENTI.FieldValues['FIRMA']>0))* Internet.FieldValues['DISCOUNT_PERCENT_FIRMI'];
-
-  if (Card.Balans>= SumaCard)and IsChipCard  then
-   begin
-    PaidChipCard:=SumaCard
-   end
-  else
-    if( KARTICHIP.RecordCount>0 )and (KARTICHIP.FieldValues['SUMA']>SumaCard) and false  then //never go here
-     begin
-      PaidChipCard:=SumaCard
-     end
+    Memo1.Clear;
+    PaidCash:=0;
+    PaidChipCard:=0;
+    DiscountFirmi:= Integer( (QKLIENTI.RecordCount>0) and
+        (QKLIENTI.FieldValues['FIRMA']>0))* Internet.FieldValues['DISCOUNT_PERCENT_FIRMI'];
+    if (Card.Balans>= SumaCard)and IsChipCard then
+    begin
+        PaidChipCard:=SumaCard
+    end
     else
-     begin
-       PaidChipCard:=0;
-       PaidCash:=Suma - (DiscountFirmi*Suma/100);
-     end;
-     if( KARTICHIP.RecordCount<1 ) then begin
-      Memo1.Lines.Add('Сума: '+ConvertCurr1(Suma));
-      if (DiscountFirmi>0) and (PaidCash>0) then
-        Memo1.Lines.Add('Отстъпка в брой: '+ConvertCurr1(DiscountFirmi));
-      Memo1.Lines.Add('В брой: '+ConvertCurr1(PaidCash));
-     end;
-  if PaidChipCard>0 then Memo1.Lines.Add('От карта: '+ConvertCurr1(PaidChipCard))
-  else  if( KARTICHIP.RecordCount>0 ) then  Memo1.Lines.Add('Сума с карта: '+ConvertCurr1(SumaCard))
-       
-
+    if( KARTICHIP.RecordCount>0 )and (KARTICHIP.FieldValues['SUMA']>SumaCard) and false  then //never go here
+    begin
+        PaidChipCard:=SumaCard
+    end
+    else
+    begin
+        PaidChipCard:=0;
+        PaidCash:=Suma - (DiscountFirmi*Suma/100);
+    end;
+    if( KARTICHIP.RecordCount<1 ) then
+    begin
+        Memo1.Lines.Add('Сума: '+ConvertCurr1(Suma));
+        if (DiscountFirmi>0) and (PaidCash>0) then
+            Memo1.Lines.Add('Отстъпка в брой: '+ConvertCurr1(DiscountFirmi));
+        Memo1.Lines.Add('В брой: '+ConvertCurr1(PaidCash));
+    end;
+    if PaidChipCard>0 then Memo1.Lines.Add('От карта: '+ConvertCurr1(PaidChipCard))
+    else  if( KARTICHIP.RecordCount>0 ) then  Memo1.Lines.Add('Сума с карта: '+ConvertCurr1(SumaCard))
 end;
 
 procedure TMainForm.Label112Click(Sender: TObject);
 // Финализиране на плащането
 var
- TempBalans, Cena1: real;
+    TempBalans, Cena1: real;
 begin
-  SDELKA.First;
-  While not Sdelka.Eof do
-   begin
-    SDELKA.Edit;
-    Cena1:=SDELKA.FieldValues['SUMABROI'];
-    SDELKA.FieldValues['CENA']:=Cena1;
-     if PaidCash>0 then
-      begin
-       SDELKA.FieldValues['KARTASUMA']:=0;
-       SDELKA.FieldValues['SUMABROI']:=Cena1-
-        cena1*Internet.FieldValues['DISCOUNT_PERCENT_FIRMI']/100;
-       SDELKA.FieldValues['DISCOUNT']:=Internet.FieldValues['DISCOUNT_PERCENT_FIRMI'];
-       if not QKLIENTI.IsEmpty then
+    SDELKA.First;
+    While not Sdelka.Eof do
+    begin
+        SDELKA.Edit;
+        Cena1:=SDELKA.FieldValues['SUMABROI'];
+        SDELKA.FieldValues['CENA']:=Cena1;
+        if PaidCash>0 then
         begin
-         SDELKA.FieldValues['KLIENTNOMER']:=QKLIENTI.FieldValues['NOMER2'];
-         SDELKA.FieldValues['OTCHIPKARTA']:=QKLIENTI.FieldValues['NOMER'];
-        end;
-      end
-      else
-       if PaidChipCard >0 then
-      begin
-       SDELKA.FieldValues['SUMABROI']:=0;
-       //Cena1:=SDELKA.FieldValues['SUMABROI'];
-       //SDELKA.FieldValues['KARTASUMA']:=Cena1;
-       SDELKA.FieldValues['OTCHIPKARTA']:=QKLIENTI.FieldValues['NOMER'];
-       SDELKA.FieldValues['KLIENTNOMER']:=QKLIENTI.FieldValues['NOMER2'];
-      end;
-    SDELKA.Post;
-    SDELKA.Next;
-   end;
-
-   if (PaidChipCard>0) and (PaidCash=0) then
-     begin
-     SLE4442ReadCardInfo();
-      if card.ConStatus>0 then
-       begin
-        Card.Balans:=Card.Balans-PaidChipCard;
-        TempBalans:=Card.Balans;
-         SLE4442WriteCardInfo();
-         SLE4442ReadCardInfo();
-         if abs(Card.Balans- TempBalans)>0.5 then
-         begin
-          PaidChipCard:=0;
-          Application.MessageBox(PChar(GetMessage('M10')),PChar('Warning'),MB_OK);
-          //Application.MessageBox(PChar('Картата не може да бъде записана!'),PChar('Warning'),MB_OK);
-          exit;
-         end;
-       end
-      else
-      if   KARTICHIP.RecordCount>0 then
-       begin
-        KARTICHIP.Edit;
-        KARTICHIP.FieldValues['SUMA']:= KARTICHIP.FieldValues['SUMA']-PaidChipCard;
-        kartichip.Post;
-       end
-       else
+            SDELKA.FieldValues['KARTASUMA']:=0;
+            SDELKA.FieldValues['SUMABROI']:=Cena1-
+            cena1*Internet.FieldValues['DISCOUNT_PERCENT_FIRMI']/100;
+            SDELKA.FieldValues['DISCOUNT']:=Internet.FieldValues['DISCOUNT_PERCENT_FIRMI'];
+            if not QKLIENTI.IsEmpty then
+            begin
+                SDELKA.FieldValues['KLIENTNOMER']:=QKLIENTI.FieldValues['NOMER2'];
+                SDELKA.FieldValues['OTCHIPKARTA']:=QKLIENTI.FieldValues['NOMER'];
+            end;
+        end
+        else
+        if PaidChipCard >0 then
         begin
-          Application.MessageBox(PChar(GetMessage('M10')),PChar('Warning'),MB_OK);
-          //Application.MessageBox(PChar('Картата не може да бъде записана!'),PChar('Warning'),MB_OK);
-          exit;
+            SDELKA.FieldValues['SUMABROI']:=0;
+            //Cena1:=SDELKA.FieldValues['SUMABROI'];
+            //SDELKA.FieldValues['KARTASUMA']:=Cena1;
+            SDELKA.FieldValues['OTCHIPKARTA']:=QKLIENTI.FieldValues['NOMER'];
+            SDELKA.FieldValues['KLIENTNOMER']:=QKLIENTI.FieldValues['NOMER2'];
         end;
-     end;
-
- sol1.Commit(True);
- AdvPageControl1.ActivePage:=AdvTabsheet2;
+        SDELKA.Post;
+        SDELKA.Next;
+    end;
+    if (PaidChipCard>0) and (PaidCash=0) then
+    begin
+        SLE4442ReadCardInfo();
+        if card.ConStatus>0 then
+        begin
+            Card.Balans:=Card.Balans-PaidChipCard;
+            TempBalans:=Card.Balans;
+            SLE4442WriteCardInfo();
+            SLE4442ReadCardInfo();
+            if abs(Card.Balans- TempBalans)>0.5 then
+            begin
+                PaidChipCard:=0;
+                Application.MessageBox(PChar(GetMessage('M10')),PChar('Warning'),MB_OK);
+                //Application.MessageBox(PChar('Картата не може да бъде записана!'),PChar('Warning'),MB_OK);
+                exit;
+            end;
+        end
+        else
+        if KARTICHIP.RecordCount>0 then
+        begin
+            KARTICHIP.Edit;
+            KARTICHIP.FieldValues['SUMA']:= KARTICHIP.FieldValues['SUMA']-PaidChipCard;
+            kartichip.Post;
+        end
+        else
+        begin
+            Application.MessageBox(PChar(GetMessage('M10')),PChar('Warning'),MB_OK);
+            //Application.MessageBox(PChar('Картата не може да бъде записана!'),PChar('Warning'),MB_OK);
+            exit;
+        end;
+    end;
+    sol1.Commit(True);
+    STOKITE.Active:=false;
+    AdvPageControl1.ActivePage:=AdvTabsheet2;
 end;
 
 procedure TMainForm.Label111Click(Sender: TObject);
 begin
- Sol1.Rollback;
- Sol1.FlushBuffers;
- AdvPageControl1.ActivePage:=AdvTabsheet2;
+    Sol1.Rollback;
+    Sol1.FlushBuffers;
+    STOKITE.Active:=false;
+    AdvPageControl1.ActivePage:=AdvTabsheet2;
 end;
 
 procedure TMainForm.EndButtonCardClick(Sender: TObject);
 var
-  i: Integer;
-  L: Boolean;
-  KartiBroi: Integer;
-  KlientNomer: Integer;
-  KartaSelected: Integer;
+    i: Integer;
+    L: Boolean;
+    KartiBroi: Integer;
+    KlientNomer: Integer;
+    KartaSelected: Integer;
 begin
- if (PriceCash>0) or (PriceCard>0) then begin
-   AdvPageControl1.ActivePage:=AdvTabsheet4;
-  // if Length(KartaSearchBox.Text)=0 then exit;
-
-   if (QKarti.RecordCount>0 ) then  begin
-     KartaSelected:=QKarti.FieldValues['KARTANOMER'];
-   end
-   else begin
-     KartaSelected:=0;
-   end;
-   KlientNomer:= QKLienti.FieldValues['NOMER'];
-   QKarti.Active:=False;
-   QKarti.SQL.SetText(PChar('SELECT * FROM kartiall WHERE klientdetail = '+
-     IntToStr2(QKlienti.FieldValues['NOMER'])+ ' AND (POSESHTENIA > 0) AND (STARTDATE >= CURRENT_DATE) ORDER BY KARTANOMER'));
-   QKarti.Active:=True;
-   if (QKarti.RecordCount>0 ) then begin
-     DBtext4.Visible:=True;
-     DBtext7.Visible:=True;
-     ADVComboBox1.Visible:=True;
-     ADVComboBox2.Visible:=True;
-     Label72.Visible:=True;
-     Label130.Visible:=True;
-     Label71.visible:=True;
-     Label119.Visible:=True;
-     Label127.Visible:=True;
-     AdvComboBox1.ItemIndex:=30;
-     AdvComboBox2.Items.Clear;
-     QKarti.First;
-     L:=False;
-     i:=0;
-     while not (L) and (i < SizeOf(PoseshteniaPaid))do begin
-       AdvComboBox2.Items.Append(IntToStr2(QKarti.FieldValues['KARTANOMER']));
-       QKarti.Next;
-       L:=QKarti.Eof;
-       PoseshteniaPaid[i]:=0;
-       i:=i+1;
-     end;
-     QKarti.Locate('KARTANOMER',KartaSelected,[]);
-     AdvComboBox2.ItemIndex:=QKarti.RecNo-1;
-    end;
-    Label149.Caption:='';
-    KartiBroi:=QKarti.RecordCount;
-    if KartiBroi>0 then begin
-      Label149.Caption:= 'Брой карти = '+IntToStr(KartiBroi);
-      Label149.Visible:=True;
-      PreCalcPaiment(Sender);
+    if (PriceCash>0) or (PriceCard>0) then
+    begin
+        AdvPageControl1.ActivePage:=AdvTabsheet4;
+        // if Length(KartaSearchBox.Text)=0 then exit;
+        if (QKarti.RecordCount>0 ) then
+        begin
+            KartaSelected:=QKarti.FieldValues['KARTANOMER'];
+        end
+        else
+        begin
+            KartaSelected:=0;
+        end;
+        KlientNomer:= QKLienti.FieldValues['NOMER'];
+        QKarti.Active:=False;
+        QKarti.SQL.SetText(PChar('SELECT * FROM kartiall WHERE klientdetail = '+
+        IntToStr2(QKlienti.FieldValues['NOMER'])+ ' AND (POSESHTENIA > 0) AND (STARTDATE >= CURRENT_DATE) ORDER BY KARTANOMER'));
+        QKarti.Active:=True;
+        if (QKarti.RecordCount>0 ) then
+        begin
+            DBtext4.Visible:=True;
+            DBtext7.Visible:=True;
+            ADVComboBox1.Visible:=True;
+            ADVComboBox2.Visible:=True;
+            Label72.Visible:=True;
+            Label130.Visible:=True;
+            Label71.visible:=True;
+            Label119.Visible:=True;
+            Label127.Visible:=True;
+            AdvComboBox1.ItemIndex:=30;
+            AdvComboBox2.Items.Clear;
+            QKarti.First;
+            L:=False;
+            i:=0;
+            while not (L) and (i < SizeOf(PoseshteniaPaid))do
+            begin
+                AdvComboBox2.Items.Append(IntToStr2(QKarti.FieldValues['KARTANOMER']));
+                QKarti.Next;
+                L:=QKarti.Eof;
+                PoseshteniaPaid[i]:=0;
+                i:=i+1;
+            end;
+            QKarti.Locate('KARTANOMER',KartaSelected,[]);
+            AdvComboBox2.ItemIndex:=QKarti.RecNo-1;
+        end;
+        Label149.Caption:='';
+        KartiBroi:=QKarti.RecordCount;
+        if KartiBroi>0 then
+        begin
+            Label149.Caption:= 'Брой карти = '+IntToStr(KartiBroi);
+            Label149.Visible:=True;
+            PreCalcPaiment(Sender);
+        end
+        else  Label149.Visible:=False;
     end
-    else  Label149.Visible:=False;
-   end
- else  AdvPageControl1.ActivePage:=AdvTabsheet2;
+    else  AdvPageControl1.ActivePage:=AdvTabsheet2;
 end;
 
 procedure TMainForm.PreCalcPaiment(Sender: TObject);
 var
-  MainTime: integer;
-  KartaSuma: Integer;
-  PosSelected: Integer;
-  Cena: Real;
-  Minutina1: Integer;
-  Klient: Integer;
-  I: Integer;
-  L: Boolean;
-  KartiBroi: Integer;
+    MainTime: integer;
+    KartaSuma: Integer;
+    PosSelected: Integer;
+    Cena: Real;
+    Minutina1: Integer;
+    Klient: Integer;
+    I: Integer;
+    L: Boolean;
+    KartiBroi: Integer;
 begin
-
-  PosPaid:=0;
-  i:=0;
-  if AdvComboBox1.Visible then
-  begin
-   KartiBroi:=QKarti.RecordCount;
-   while (i< KartiBroi) and (i < SizeOf(PoseshteniaPaid)) do
-   begin
-    if not (i=ADVComboBox2.ItemIndex) then
-    PosPaid:=PoseshteniaPaid[i]+PosPaid;
-    i:=i+1;
-   end;
-
-   L:=False;
-   Cena:=SOLARIUMI.FieldValues['CENA'];
-   MainTime:=SOLARIUMI.FieldValues['VREME'];
-   Klient:=QKlienti.FieldValues['NOMER'];
-   Minutina1:=SOLARIUMI.FieldValues['MINUTINA1'];
-   KartaSuma:=0;
-   if (QKarti.Locate('KARTANOMER',StrToInt(AdvComboBox2.Text),[])) then
-    KartaSuma:=QKarti.FieldValues['POSESHTENIA']
-   else KartaSuma:=0;
-   If ADVComboBox1.ItemIndex > KartaSuma then ADVComboBox1.ItemIndex:=KartaSuma;
-   If (ADVComboBox1.ItemIndex+PosPaid)*Minutina1>TimeSet then ADVComboBox1.ItemIndex:= (TimeSet div Minutina1)-PosPaid;
-   PoseshteniaPaid[ADVComboBox2.ItemIndex]:=ADVComboBox1.ItemIndex;
-   PaidCard:=(ADVComboBox1.ItemIndex+PosPaid)*Minutina1*Cena;
-   PosPaid:= ADVComboBox1.ItemIndex+PosPaid;
-  end;
-  CalcPaid;
+    PosPaid:=0;
+    i:=0;
+    if AdvComboBox1.Visible then
+    begin
+        KartiBroi:=QKarti.RecordCount;
+        while (i< KartiBroi) and (i < SizeOf(PoseshteniaPaid)) do
+        begin
+            if not (i=ADVComboBox2.ItemIndex) then
+                PosPaid:=PoseshteniaPaid[i]+PosPaid;
+            i:=i+1;
+        end;
+        L:=False;
+        Cena:=SOLARIUMI.FieldValues['CENA'];
+        MainTime:=SOLARIUMI.FieldValues['VREME'];
+        Klient:=QKlienti.FieldValues['NOMER'];
+        Minutina1:=SOLARIUMI.FieldValues['MINUTINA1'];
+        KartaSuma:=0;
+        if (QKarti.Locate('KARTANOMER',StrToInt(AdvComboBox2.Text),[])) then
+            KartaSuma:=QKarti.FieldValues['POSESHTENIA']
+        else KartaSuma:=0;
+        If ADVComboBox1.ItemIndex > KartaSuma then ADVComboBox1.ItemIndex:=KartaSuma;
+        If (ADVComboBox1.ItemIndex+PosPaid)*Minutina1>TimeSet then ADVComboBox1.ItemIndex:= (TimeSet div Minutina1)-PosPaid;
+        PoseshteniaPaid[ADVComboBox2.ItemIndex]:=ADVComboBox1.ItemIndex;
+        PaidCard:=(ADVComboBox1.ItemIndex+PosPaid)*Minutina1*Cena;
+        PosPaid:= ADVComboBox1.ItemIndex+PosPaid;
+    end;
+    CalcPaid;
 end;
 
 procedure TMainForm.Label162Click(Sender: TObject);
 begin
- AdvPageControl1.ActivePage:=AdvTabsheet19;
+    AdvPageControl1.ActivePage:=AdvTabsheet19;
 end;
 
 procedure TMainForm.Label165Click(Sender: TObject);
 begin
-KasaGrid.DataSource:=DataSource7;
+    KasaGrid.DataSource:=DataSource7;
 end;
 
 procedure TMainForm.Label166Click(Sender: TObject);
 begin
-  KasaGrid.DataSource:=DataSource18;
+    KasaGrid.DataSource:=DataSource18;
 end;
 
 procedure TMainForm.Label16Click(Sender: TObject);
 begin
-AdvPageControl1.ActivePage:=AdvTabsheet17;
+    AdvPageControl1.ActivePage:=AdvTabsheet17;
 end;
 
 procedure TMainForm.LMDButton7Click(Sender: TObject);
 begin
-if not(PasswordForm.ModalResult=MROK) then
-if PasswordForm.ShowModal=MROK then
- begin
-  wwDBGrid7.ReadOnly:=False;
- end;
- if PasswordForm.ModalResult=MROK then
- begin
-  {KARTIALL.Active:=False;
-  KARTIALL1.Active:=False;}
-  QKarti.ReadOnly:=False;
-  if QKarti.Eof and QKarti.Bof then
-  else QKarti.Delete;
-  QKarti.Active:=False;
-  QKarti.Active:=True;
-  end;
+    if not(PasswordForm.ModalResult=MROK) then
+    if PasswordForm.ShowModal=MROK then
+    begin
+        wwDBGrid7.ReadOnly:=False;
+    end;
+    if PasswordForm.ModalResult=MROK then
+    begin
+        {KARTIALL.Active:=False;
+        KARTIALL1.Active:=False;}
+        QKarti.ReadOnly:=False;
+        if not( QKarti.Eof and QKarti.Bof) then
+            QKarti.Delete;
+        QKarti.Active:=False;
+        QKarti.Active:=True;
+    end;
 end;
 
 procedure TMainForm.LMDButton9Click(Sender: TObject);
 begin
- LMDButton5Click(Sender); 
+    LMDButton5Click(Sender);
 end;
 
 procedure TMainForm.AdvTabSheet23Show(Sender: TObject);
 var
-  I: Integer;
+    I: Integer;
 begin
 
- USLUGITE.Active := false;
- USLUGITE.Active := true;
- Planner1.Sidebar.Font.Size    :=4;
- Planner1.Sidebar.HourFontRatio:=1.2;
- Planner1.sidebar.Width        :=30;
- planner1.Display.DisplayScale :=20;
-
- Planner2.Sidebar.Font.Size    :=3;
- Planner2.Sidebar.HourFontRatio:=1.2;
- Planner2.sidebar.Width        :=20;
- planner2.Display.DisplayScale :=12;
-
- Planner3.Sidebar.Font.Size    :=3;
- Planner3.Sidebar.HourFontRatio:=1.2;
- Planner3.sidebar.Width        :=20;
- planner3.Display.DisplayScale :=12;
- Planner1.Positions            :=USLUGITE.RecordCount + 1;
- Planner2.Positions            :=USLUGITE.RecordCount + 1;
- Planner3.Positions            :=USLUGITE.RecordCount + 1;
- Planner1.PositionGroup        :=1;
- with Planner1.Header do
- begin
-  Autosize:=true;
-  CustomGroups.Clear;
-  Captions.Clear;
-  GroupCaptions.Clear;
-  Captions.Add('');
-  Captions.Add('Солариум');
- end;
- Planner2.PositionGroup:=1;
- with Planner2.Header do
- begin
-  Captions.Clear;
-  GroupCaptions.Clear;
-  Captions.Add(''); Captions.Add('Солариум');
- end;
- Planner3.PositionGroup:=1;
- with Planner3.Header do
- begin
-  Captions.Clear;
-  GroupCaptions.Clear;
-  Captions.Add(''); Captions.Add('Солариум');
- end;
- DBDaySource1.NumberOfResources:= USLUGITE.RecordCount+1;
- DBDaySource2.NumberOfResources:= USLUGITE.RecordCount+1;
- DBDaySource3.NumberOfResources:= USLUGITE.RecordCount+1;
- DBDaySource1.NumberOfDays:= 1;
- DBDaySource2.NumberOfDays:= 1;
- DBDaySource3.NumberOfDays:= 1;
- DBDaySource1.ResourceMap.Clear;
- DBDaySource1.ResourceMap.Add;
- DBDaySource1.ResourceMap.Items[0].DisplayName:='Солариум';
- USLUGITE.First;
-  While not USLUGITE.Eof do
-   Begin
-     DBDaySource1.ResourceMap.Add;
-     DBDaySource1.ResourceMap.Items[USLUGITE.RecNo].DisplayName:= (USLUGITE.FieldValues['STOKAIME']);
-     Planner3.Header.Captions.Add((USLUGITE.FieldValues['STOKAIME']));
-     Planner2.Header.Captions.Add((USLUGITE.FieldValues['STOKAIME']));
-     Planner1.Header.Captions.Add((USLUGITE.FieldValues['STOKAIME']));
-     USLUGITE.Next;
-   End;
- DBDaySource2.ResourceMap.Clear;
- DBDaySource2.ResourceMap.Add;
- DBDaySource2.ResourceMap.Items[0].DisplayName:='Солариум';
- USLUGITE.First;
-  While not USLUGITE.Eof do
-   Begin
-     DBDaySource2.ResourceMap.Add;
-     DBDaySource2.ResourceMap.Items[USLUGITE.RecNo].DisplayName:= (USLUGITE.FieldValues['STOKAIME']);
-
-     USLUGITE.Next;
-   End;
- DBDaySource3.ResourceMap.Clear;
- DBDaySource3.ResourceMap.Add;
- DBDaySource3.ResourceMap.Items[0].DisplayName:='Солариум';
- USLUGITE.First;
-  While not USLUGITE.Eof do
-   Begin
-     DBDaySource3.ResourceMap.Add;
-     DBDaySource3.ResourceMap.Items[USLUGITE.RecNo].DisplayName:= (USLUGITE.FieldValues['STOKAIME']);
-     USLUGITE.Next;
-   End;
-
- PlannerDatePicker1.Date := dateof(now);
- PlannerDatePicker1Change(Sender);
+    USLUGITE.Active := false;
+    USLUGITE.Active := true;
+    Planner1.Sidebar.Font.Size    :=4;
+    Planner1.Sidebar.HourFontRatio:=1.2;
+    Planner1.sidebar.Width        :=30;
+    planner1.Display.DisplayScale :=20;
+    Planner2.Sidebar.Font.Size    :=3;
+    Planner2.Sidebar.HourFontRatio:=1.2;
+    Planner2.sidebar.Width        :=20;
+    planner2.Display.DisplayScale :=12;
+    Planner3.Sidebar.Font.Size    :=3;
+    Planner3.Sidebar.HourFontRatio:=1.2;
+    Planner3.sidebar.Width        :=20;
+    planner3.Display.DisplayScale :=12;
+    Planner1.Positions            :=USLUGITE.RecordCount + 1;
+    Planner2.Positions            :=USLUGITE.RecordCount + 1;
+    Planner3.Positions            :=USLUGITE.RecordCount + 1;
+    Planner1.PositionGroup        :=1;
+    with Planner1.Header do
+    begin
+        Autosize:=true;
+        CustomGroups.Clear;
+        Captions.Clear;
+        GroupCaptions.Clear;
+        Captions.Add('');
+        Captions.Add('Солариум');
+    end;
+    Planner2.PositionGroup:=1;
+    with Planner2.Header do
+    begin
+        Captions.Clear;
+        GroupCaptions.Clear;
+        Captions.Add(''); Captions.Add('Солариум');
+    end;
+    Planner3.PositionGroup:=1;
+    with Planner3.Header do
+    begin
+        Captions.Clear;
+        GroupCaptions.Clear;
+        Captions.Add(''); Captions.Add('Солариум');
+    end;
+    DBDaySource1.NumberOfResources:= USLUGITE.RecordCount+1;
+    DBDaySource2.NumberOfResources:= USLUGITE.RecordCount+1;
+    DBDaySource3.NumberOfResources:= USLUGITE.RecordCount+1;
+    DBDaySource1.NumberOfDays:= 1;
+    DBDaySource2.NumberOfDays:= 1;
+    DBDaySource3.NumberOfDays:= 1;
+    DBDaySource1.ResourceMap.Clear;
+    DBDaySource1.ResourceMap.Add;
+    DBDaySource1.ResourceMap.Items[0].DisplayName:='Солариум';
+    USLUGITE.First;
+    While not USLUGITE.Eof do
+    begin
+        DBDaySource1.ResourceMap.Add;
+        DBDaySource1.ResourceMap.Items[USLUGITE.RecNo].DisplayName:= (USLUGITE.FieldValues['STOKAIME']);
+        Planner3.Header.Captions.Add((USLUGITE.FieldValues['STOKAIME']));
+        Planner2.Header.Captions.Add((USLUGITE.FieldValues['STOKAIME']));
+        Planner1.Header.Captions.Add((USLUGITE.FieldValues['STOKAIME']));
+        USLUGITE.Next;
+    end;
+    DBDaySource2.ResourceMap.Clear;
+    DBDaySource2.ResourceMap.Add;
+    DBDaySource2.ResourceMap.Items[0].DisplayName:='Солариум';
+    USLUGITE.First;
+    while not USLUGITE.Eof do
+    begin
+        DBDaySource2.ResourceMap.Add;
+        DBDaySource2.ResourceMap.Items[USLUGITE.RecNo].DisplayName:= (USLUGITE.FieldValues['STOKAIME']);
+        USLUGITE.Next;
+    end;
+    DBDaySource3.ResourceMap.Clear;
+    DBDaySource3.ResourceMap.Add;
+    DBDaySource3.ResourceMap.Items[0].DisplayName:='Солариум';
+    USLUGITE.First;
+    while not USLUGITE.Eof do
+    begin
+        DBDaySource3.ResourceMap.Add;
+        DBDaySource3.ResourceMap.Items[USLUGITE.RecNo].DisplayName:= (USLUGITE.FieldValues['STOKAIME']);
+        USLUGITE.Next;
+    end;
+    PlannerDatePicker1.Date := dateof(now);
+    PlannerDatePicker1Change(Sender);
 end;
 
 procedure TMainForm.AdvTabSheet2Show(Sender: TObject);
 begin
-  KeyBuff  :='';
-  UpdatePageControl(0);
-  PriceCard:=0;
-  PriceCash:=0;
-  Edit5.SetFocus;
+    KeyBuff  :='';
+    UpdatePageControl(0);
+    PriceCard:=0;
+    PriceCash:=0;
+    Edit5.SetFocus;
 end;
 
 procedure CalcPaid;
 var
-  i        : integer;
-  KartiBroi: Integer;
-  Result1  : String;
-  Ostatak  : Real;
-  Price    : Real;
+    i        : integer;
+    KartiBroi: Integer;
+    Result1  : String;
+    Ostatak  : Real;
+    Price    : Real;
 begin
- with MainForm do
- begin
-  if PaidChipCard>0 then Price := PriceCard else Price :=PriceCash;  
-  LMDMemo1.Text:='';
-  i:=0;
-  KartiBroi    :=QKarti.RecordCount;
-  BroiKartiPaid:=0;
-  while (i< KartiBroi) and (i<SizeOf(PoseshteniaPaid))do
-  begin
-   if PoseshteniaPaid[i]>0 then
-     begin
-       BroiKartiPaid:= BroiKartiPaid+1; //'Карта '
-       LMDMemo1.Lines.Add(GetMessage('M42')+' '+ADVComboBox2.Items[i]+' - '+
-       ConvertCurr1(PoseshteniaPaid[i]*SOLARIUMI.FieldValues['MINUTINA1']*
-       SOLARIUMI.FieldValues['CENA'])+GetMessage('M20'));//'лв.'
-     end;
-   i:=i+1;
-  end;
-   if (PaidChipCard > 0) or (PaidCard > 0) then Price := PriceCard else Price :=PriceCash;
-   //LMDMemo1.Lines.Add('Общо карти - '+ConvertCurr1(PosPaid*SOLARIUMI.FieldValues['MINUTINA1']*
-   LMDMemo1.Lines.Add(GetMessage('M19')+' '+ConvertCurr1(PosPaid*SOLARIUMI.FieldValues['MINUTINA1']*
-   SOLARIUMI.FieldValues['CENA'])+GetMessage('M20'));
-   //SOLARIUMI.FieldValues['CENA'])+'лв.');
-   if PaidChipCard>0 then     LMDMemo1.Lines.Add(GetMessage('M21')+' '+ConvertCurr1(PaidCHipCard));
-   //if PaidChipCard>0 then     LMDMemo1.Lines.Add('От чип-карта - '+ConvertCurr1(PaidCHipCard));
-   if PaidCash>0 then LMDMemo1.Lines.Add(GetMessage('M86')+' '+ConvertCurr1(ToBePaidCash));
-   // LMDMemo1.Lines.Add('Сума за плащане в брой -'+ConvertCurr1(ToBePaidCash));
-   if PaidCash>0 then
-       LMDMemo1.Lines.Add(GetMessage('M87')+' '+ConvertCurr1(VipDiscount+DiscountPrize));
-   // LMDMemo1.Lines.Add('Отстъпка, % -'+ConvertCurr1(ToBePaidCash));
-   LMDMemo1.Lines.Add(GetMessage('M22')+' '+ConvertCurr1(PaidCash));
-   // LMDMemo1.Lines.Add('В брой - '+ConvertCurr1(PaidCash));
-   LMDMemo1.Lines.Add('-----------');
-   LMDMemo1.Lines.Add(GetMessage('M23')+' '+ConvertCurr1(Price-(PaidCard+ToBePaidCash+PaidChipCard)));
-   //LMDMemo1.Lines.Add('Остава - '+ConvertCurr1(Price-(PaidCard+PaidCash+PaidChipCard)));
-   if Price-(PaidCard+ToBePaidCash+PaidChipCard)<0.02 then PaymentOKLabel.Visible:=true;
-   FmtStr(Result1,'%4.2f',[(PaidChipCard)]);
-   Ostatak:= (Card.Balans - (PaidChipCard))/SOLARIUMI.FieldValues['CENA'];
-   FmtStr(Result1,'%4.2f',[Ostatak]);
-   Label72.Caption:=''+ Result1+GetMessage('M28')+' / ';
-   //Label72.Caption:=''+ Result1+'минути / ';
-   Ostatak:= (Card.Balans - (PaidChipCard));
-   FmtStr(Result1,'%4.2f',[Ostatak]);
-   Label72.Caption:=Label72.Caption + ''+ Result1+GetMessage('M29');
-   //Label72.Caption:=Label72.Caption + ''+ Result1+'лв.';
- end;
-
+    with MainForm do
+    begin
+        if PaidChipCard>0 then Price := PriceCard else Price :=PriceCash;
+        LMDMemo1.Text:='';
+        i:=0;
+        KartiBroi    :=QKarti.RecordCount;
+        BroiKartiPaid:=0;
+        while (i< KartiBroi) and (i<SizeOf(PoseshteniaPaid))do
+        begin
+            if PoseshteniaPaid[i]>0 then
+            begin
+                BroiKartiPaid:= BroiKartiPaid+1; //'Карта '
+                LMDMemo1.Lines.Add(GetMessage('M42')+' '+ADVComboBox2.Items[i]+' - '+
+                ConvertCurr1(PoseshteniaPaid[i]*SOLARIUMI.FieldValues['MINUTINA1']*
+                SOLARIUMI.FieldValues['CENA'])+GetMessage('M20'));//'лв.'
+            end;
+            i:=i+1;
+        end;
+        if (PaidChipCard > 0) or (PaidCard > 0) then Price := PriceCard else Price :=PriceCash;
+        //LMDMemo1.Lines.Add('Общо карти - '+ConvertCurr1(PosPaid*SOLARIUMI.FieldValues['MINUTINA1']*
+        LMDMemo1.Lines.Add(GetMessage('M19')+' '+ConvertCurr1(PosPaid*SOLARIUMI.FieldValues['MINUTINA1']*
+        SOLARIUMI.FieldValues['CENA'])+GetMessage('M20'));
+        //SOLARIUMI.FieldValues['CENA'])+'лв.');
+        if PaidChipCard>0 then     LMDMemo1.Lines.Add(GetMessage('M21')+' '+ConvertCurr1(PaidCHipCard));
+        //if PaidChipCard>0 then     LMDMemo1.Lines.Add('От чип-карта - '+ConvertCurr1(PaidCHipCard));
+        if PaidCash>0 then LMDMemo1.Lines.Add(GetMessage('M86')+' '+ConvertCurr1(ToBePaidCash));
+        // LMDMemo1.Lines.Add('Сума за плащане в брой -'+ConvertCurr1(ToBePaidCash));
+        if PaidCash>0 then
+        LMDMemo1.Lines.Add(GetMessage('M87')+' '+ConvertCurr1(VipDiscount+DiscountPrize));
+        // LMDMemo1.Lines.Add('Отстъпка, % -'+ConvertCurr1(ToBePaidCash));
+        LMDMemo1.Lines.Add(GetMessage('M22')+' '+ConvertCurr1(PaidCash));
+        // LMDMemo1.Lines.Add('В брой - '+ConvertCurr1(PaidCash));
+        LMDMemo1.Lines.Add('-----------');
+        LMDMemo1.Lines.Add(GetMessage('M23')+' '+ConvertCurr1(Price-(PaidCard+ToBePaidCash+PaidChipCard)));
+        //LMDMemo1.Lines.Add('Остава - '+ConvertCurr1(Price-(PaidCard+PaidCash+PaidChipCard)));
+        if Price-(PaidCard+ToBePaidCash+PaidChipCard)<0.02 then PaymentOKLabel.Visible:=true;
+        FmtStr(Result1,'%4.2f',[(PaidChipCard)]);
+        Ostatak:= (Card.Balans - (PaidChipCard))/SOLARIUMI.FieldValues['CENA'];
+        FmtStr(Result1,'%4.2f',[Ostatak]);
+        Label72.Caption:=''+ Result1+GetMessage('M28')+' / ';
+        //Label72.Caption:=''+ Result1+'минути / ';
+        Ostatak:= (Card.Balans - (PaidChipCard));
+        FmtStr(Result1,'%4.2f',[Ostatak]);
+        Label72.Caption:=Label72.Caption + ''+ Result1+GetMessage('M29');
+        //Label72.Caption:=Label72.Caption + ''+ Result1+'лв.';
+    end;
 end;
 
 procedure TMainForm.AdvTabSheet7Show(Sender: TObject);
-var f1,f2:TField;
+var
+    f1,f2:TField;
 begin
-
- f1:=SOLARIUMI.FindField('LICEVILASTDATE');
- f2:=SOLARIUMI.FindField('LAMPILASTDATE');
- if f1= nil then
-  begin
-   SOLARIUMI.RestructureFieldDefs.Add('LICEVILASTDATE',aftDate);
-   SOLARIUMI.Close;
-   SOLARIUMI.RestructureTable; SOLARIUMI.Open;
-   SOLARIUMI.FieldValues['LICEVILASTDATE']:='01/01/1998';
-  end;
- dbtext11.DataField:= 'LICEVILASTDATE' ;
- if f2= nil then
-  begin
-   SOLARIUMI.RestructureFieldDefs.Add('LAMPILASTDATE',aftDate);
-   SOLARIUMI.close;
-   SOLARIUMI.RestructureTable;
-   SOLARIUMI.open;
-   SOLARIUMI.FieldValues['LAMPILASTDATE']:='01/01/1998';
-  end;
- dbtext12.DataField:= 'LAMPILASTDATE';
- ImageName:=SOLARIUMI.FieldByName('PICTURE').AsString;
- if FileExists(ImageName) then Image16.Picture.LoadFromFile(ImageName);
-// else Image16.Picture:=Imagepress1.Picture;
- Label115.Caption:=IntToStr(SOLARIUMI.RecNo);
- if SOLARIUMI.EOF then LMDButton16.Visible:=true
- else LMDButton16.Visible:=false;
+    f1:=SOLARIUMI.FindField('LICEVILASTDATE');
+    f2:=SOLARIUMI.FindField('LAMPILASTDATE');
+    if f1= nil then
+    begin
+        SOLARIUMI.RestructureFieldDefs.Add('LICEVILASTDATE',aftDate);
+        SOLARIUMI.Close;
+        SOLARIUMI.RestructureTable; SOLARIUMI.Open;
+        SOLARIUMI.FieldValues['LICEVILASTDATE']:='01/01/1998';
+    end;
+    dbtext11.DataField:= 'LICEVILASTDATE' ;
+    if f2= nil then
+    begin
+        SOLARIUMI.RestructureFieldDefs.Add('LAMPILASTDATE',aftDate);
+        SOLARIUMI.close;
+        SOLARIUMI.RestructureTable;
+        SOLARIUMI.open;
+        SOLARIUMI.FieldValues['LAMPILASTDATE']:='01/01/1998';
+    end;
+    dbtext12.DataField:= 'LAMPILASTDATE';
+    ImageName:=SOLARIUMI.FieldByName('PICTURE').AsString;
+    if FileExists(ImageName) then Image16.Picture.LoadFromFile(ImageName);
+    // else Image16.Picture:=Imagepress1.Picture;
+    Label115.Caption:=IntToStr(SOLARIUMI.RecNo);
+    if SOLARIUMI.EOF then LMDButton16.Visible:=true
+    else LMDButton16.Visible:=false;
 end;
 
 procedure TMainForm.LMDButton5Click(Sender: TObject);
 var
-  Klient: Integer;
-  Message1: String;
-  Result2: integer;
-  _Q:TABSQUery;
+    Klient: Integer;
+    Message1: String;
+    Result2: integer;
+    _Q:TABSQUery;
 begin  // Delete klient
- if  KARTICHIP.FieldValues['SUMA'] <> 0 then begin
-   NuliraneChipCartaButtonClick(Sender);
-   exit;
- end; 
+    if  KARTICHIP.FieldValues['SUMA'] <> 0 then
+    begin
+        NuliraneChipCartaButtonClick(Sender);
+        exit;
+    end;
+    _Q:=TABSQuery.Create(nil);
+    _Q.Databasename:='sol1';
+    _Q.ReadOnly:=False;
+    _Q.RequestLive:=True;
+    if not(PasswordForm.ModalResult=MROK) then
+    begin
+        if PasswordForm.ShowModal=MROK then
+        begin
+            wwDBGrid7.ReadOnly:=False;
+        end;
+        if PasswordForm.ModalResult=MROK then
+        begin
+            Message1:=GetMessage('M24');
+            //Message1:='Наистина ли искате да изтриете ';
+            if not (VarType(QKlienti.FieldValues['IME']) in [varNull]) then
+                Message1:=Message1 + QKlienti.FieldValues['IME'];
+            Result2:=Application.MessageBox(PChar(Message1),PChar(GetMessage('M25')),MB_YESNO);
+            //Result2:=Application.MessageBox(PChar(Message1),'ПОТВЪРДЕТЕ ИЗТРИВАНЕТО!',MB_YESNO);
+            if Result2=6 then
+            begin
+                Klient:=QKlienti.FieldValues['NOMER'];
+                QKarti.Active:=False;
+                QKarti.SQL.SetText(PChar('SELECT * FROM kartiall WHERE klientdetail = '+
+                IntToStr2(QKlienti.FieldValues['NOMER'])+ ' ORDER BY KARTANOMER DESC'));
+                QKarti.Active:=True;
+                QKarti.First;
+                while not QKarti.Eof do
+                begin
+                    QKarti.Delete;
+                end;
+                _Q.SQL.SetText(PChar('select * from KARTICHIP where KLIENTNOMER = '+IntToStr(QKLIENTI.FieldValues['NOMER'])));
+                _Q.Open;
+                if _Q.RecordCount>0 then _Q.Delete;
+                QKlienti.Edit;
+                QKlienti.FieldValues['NOMER'] := -( (YearOf(now) - 2000)*10000+ MonthOf(now)*100 + DayOf(now)); // To preserve data for klients
+                QKlienti.Post;
+                Plashtania.ReadOnly:=False;
+                Plashtania.Edit;
+                Plashtania.Append;
+                Plashtania.FieldValues['STOKA']:=0;
+                Plashtania.FieldValues['DATA']:=Date;
+                Plashtania.FieldValues['OTCHIPKARTA']:=Klient;
+                Plashtania.FieldValues['CHAS']:=TimeToStr(Time);
+                Plashtania.Post; // Create empty record to register "Deletion" operation
+            end;
+        end
+    else Application.MessageBox(PChar(GetMessage('M26')),PChar(GetMessage('M27')),MB_OK);
+    end;
+        //else Application.MessageBox(PChar('Изтриване на клиент ползува само администратора!'),'Изтроването невъзможно!',MB_OK);
+    _Q.Free;
+end;
 
- _Q:=TABSQuery.Create(nil);
- _Q.Databasename:='sol1';
- _Q.ReadOnly:=False;
- _Q.RequestLive:=True;
-if not(PasswordForm.ModalResult=MROK) then
-if PasswordForm.ShowModal=MROK then
- begin
-  wwDBGrid7.ReadOnly:=False;
- end;
- if PasswordForm.ModalResult=MROK then
- begin
-  Message1:=GetMessage('M24');
-  //Message1:='Наистина ли искате да изтриете ';
-  if not (VarType(QKlienti.FieldValues['IME']) in [varNull]) then
-  Message1:=Message1 + QKlienti.FieldValues['IME'];
-  Result2:=Application.MessageBox(PChar(Message1),PChar(GetMessage('M25')),MB_YESNO);
-  //Result2:=Application.MessageBox(PChar(Message1),'ПОТВЪРДЕТЕ ИЗТРИВАНЕТО!',MB_YESNO);
-  if Result2=6 then
-   begin
-    Klient:=QKlienti.FieldValues['NOMER'];
-    QKarti.Active:=False;
-    QKarti.SQL.SetText(PChar('SELECT * FROM kartiall WHERE klientdetail = '+
-     IntToStr2(QKlienti.FieldValues['NOMER'])+ ' ORDER BY KARTANOMER DESC'));
-    QKarti.Active:=True;
-    QKarti.First;
-    while not QKarti.Eof do
-     begin
-      QKarti.Delete;
-     end;
-    _Q.SQL.SetText(PChar('select * from KARTICHIP where KLIENTNOMER = '+IntToStr(QKLIENTI.FieldValues['NOMER'])));
-    _Q.Open;
-    if _Q.RecordCount>0 then _Q.Delete;
-    QKlienti.Edit;
-    QKlienti.FieldValues['NOMER'] := -( (YearOf(now) - 2000)*10000+ MonthOf(now)*100 + DayOf(now)); // To preserve data for klients
-    QKlienti.Post;
-    Plashtania.ReadOnly:=False;
-    Plashtania.Edit;
-    Plashtania.Append;
-    Plashtania.FieldValues['STOKA']:=0;
-    Plashtania.FieldValues['DATA']:=Date;
-    Plashtania.FieldValues['OTCHIPKARTA']:=Klient;
-    Plashtania.FieldValues['CHAS']:=TimeToStr(Time);
-    Plashtania.Post; // Create empty record to register "Deletion" operation
-   end;
-  end
-  else Application.MessageBox(PChar(GetMessage('M26')),PChar(GetMessage('M27')),MB_OK);
-  //else Application.MessageBox(PChar('Изтриване на клиент ползува само администратора!'),'Изтроването невъзможно!',MB_OK);
-  _Q.Free;
- end;
 procedure TMainForm.AdvTabSheet18Show(Sender: TObject);
 begin
-  QKarti.Active:=True;
-  QKlienti.Active:=True;
-  wwDBGrid6.Columns[1].ReadOnly := not (PasswordForm.ModalResult = mrOK);
-  wwDBGrid7.ReadOnly            := not (PasswordForm.ModalResult = mrOK);
+    QKarti.Active:=True;
+    QKlienti.Active:=True;
+    wwDBGrid6.Columns[1].ReadOnly := not (PasswordForm.ModalResult = mrOK);
+    wwDBGrid7.ReadOnly            := not (PasswordForm.ModalResult = mrOK);
 end;
 
 procedure TMainForm.wwDBGrid6Exit(Sender: TObject);
 begin
- if QKlienti.State=dsEdit then QKlienti.Post;
+    if QKlienti.State=dsEdit then QKlienti.Post;
 end;
 
 procedure TMainForm.AdvTabSheet16Show(Sender: TObject);
 begin
-  Memo1.Clear; Memo1.Lines.Add('Сума:'); Memo1.Lines.Add('В брой:');
-  Memo1.Lines.Add('От карта:');
-  QKlienti.Active:=False;
-  QKlienti.SQL.SetText(PChar('SELECT * FROM klienti where nomer = 999990 ORDER BY IME DESC'));
-  CardNomer:=0;
-  QKlienti.Active:=True;
-  ComboBox2.Clear;
+    Memo1.Clear; Memo1.Lines.Add('Сума:'); Memo1.Lines.Add('В брой:');
+    Memo1.Lines.Add('От карта:');
+    QKlienti.Active:=False;
+    QKlienti.SQL.SetText(PChar('SELECT * FROM klienti where nomer = 999990 ORDER BY IME DESC'));
+    CardNomer:=0;
+    QKlienti.Active:=True;
+    ComboBox2.Clear;
+    STOKITE.Active:=true;
 end;
 
 procedure TMainForm.wwDBGrid6TitleButtonClick(Sender: TObject;
-  AFieldName: String);
-  var
-   SQLText:String;
+    AFieldName: String);
+var
+    SQLText:String;
 begin
-  if not ShowAllKlientsCb.Checked then SQLText := ' WHERE NOMER > -1 ';
-  
- ViewByKlient:=True;
- if (AFieldName= 'IME')and (not(AnsiContainsText(QKlienti.SQL.Text, 'IME'))) then
+    if not ShowAllKlientsCb.Checked then SQLText := ' WHERE NOMER > -1 ';
+    ViewByKlient:=True;
+    if (AFieldName= 'IME')and (not(AnsiContainsText(QKlienti.SQL.Text, 'IME'))) then
     begin
-      QKlienti.Active:=False;
-      QKlienti.SQL.SetText(PChar('SELECT * FROM klienti '+ SQLText +' ORDER BY IME DESC'));
+        QKlienti.Active:=False;
+        QKlienti.SQL.SetText(PChar('SELECT * FROM klienti '+ SQLText +' ORDER BY IME DESC'));
     end;
-   if (AFieldName = 'NOMER')  then
+    if (AFieldName = 'NOMER')  then
     begin
-      QKlienti.Active:=False;
-      if AnsiContainsText(QKlienti.SQL.Text, 'DESC')then
-       QKlienti.SQL.SetText(PChar('SELECT * FROM klienti '+ SQLText +' ORDER BY NOMER DESC'))
-      else
-       QKlienti.SQL.SetText(PChar('SELECT * FROM klienti '+ SQLText +' ORDER BY NOMER ASC'));
+        QKlienti.Active:=False;
+        if AnsiContainsText(QKlienti.SQL.Text, 'DESC')then
+            QKlienti.SQL.SetText(PChar('SELECT * FROM klienti '+ SQLText +' ORDER BY NOMER DESC'))
+        else
+            QKlienti.SQL.SetText(PChar('SELECT * FROM klienti '+ SQLText +' ORDER BY NOMER ASC'));
     end;
     if (AFieldName = 'BALANS') and(not(AnsiContainsText(QKlienti.SQL.Text, 'BALANS')))then
     begin
-      QKlienti.Active:=False;
-      QKlienti.SQL.SetText(PChar('SELECT * FROM klienti ' + SQLText + ' ORDER BY BALANS DESC'));
+        QKlienti.Active:=False;
+        QKlienti.SQL.SetText(PChar('SELECT * FROM klienti ' + SQLText + ' ORDER BY BALANS DESC'));
     end;
     if AnsiContainsText(QKlienti.SQL.Text, 'DESC')then
-       QKlienti.SQL.Text:=(AnsiReplaceText(QKlienti.SQL.Text, 'DESC', 'ASC'))
-      else
-         if AnsiContainsText(QKlienti.SQL.Text, 'ASC')then
-           QKlienti.SQL.Text:=(AnsiReplaceText(QKlienti.SQL.Text, 'ASC', 'DESC'))
-         else  QKlienti.SQL.Text:=QKlienti.SQL.Text+ ' ASC';
+        QKlienti.SQL.Text:=(AnsiReplaceText(QKlienti.SQL.Text, 'DESC', 'ASC'))
+    else
+    if AnsiContainsText(QKlienti.SQL.Text, 'ASC')then
+        QKlienti.SQL.Text:=(AnsiReplaceText(QKlienti.SQL.Text, 'ASC', 'DESC'))
+    else  QKlienti.SQL.Text:=QKlienti.SQL.Text+ ' ASC';
     QKlienti.Active:=True;
-
     QKarti.Active:=False;
     QKarti.SQL.SetText(PChar('SELECT * FROM kartiall WHERE klientdetail = '+
-     IntToStr2(QKlienti.FieldValues['NOMER'])+ ' ORDER BY KARTANOMER '));
-     Qkarti.SQL.Text:=QKarti.SQL.Text;
+    IntToStr2(QKlienti.FieldValues['NOMER'])+ ' ORDER BY KARTANOMER '));
+    Qkarti.SQL.Text:=QKarti.SQL.Text;
     QKarti.Active:=True;
 end;
 
 procedure TMainForm.Edit6Change(Sender: TObject);
 var
-Ime, SQLText: String;
+    Ime, SQLText: String;
 begin
-if MainForm.AdvPageControl1.ActivePageIndex=17 then Ime:= Edit6.Text;
-if MainForm.AdvPageControl1.ActivePageIndex=18 then Ime:=Edit10.Text;
-      Ime:=AnsiLowerCase(Ime);
-      QKlienti.Active:=False;
-      SQLText:= 'SELECT * FROM klienti WHERE LOWER(IME) LIKE "'+ (Ime)+'%"';
-      if not(ShowAllKlientsCb.Checked) then SQLText := SQLText + ' and NOMER >-1 ';
-      QKlienti.SQL.SetText(PChar(SQLText + ' ORDER BY IME'));
-      QKlienti.Active:=True;
-      if QKlienti.RecordCount>0 then
-       wwDBGrid6RowChanged(Sender)
-      else begin
+    if MainForm.AdvPageControl1.ActivePageIndex=17 then Ime:= Edit6.Text;
+    if MainForm.AdvPageControl1.ActivePageIndex=18 then Ime:=Edit10.Text;
+    Ime:=AnsiLowerCase(Ime);
+    QKlienti.Active:=False;
+    SQLText:= 'SELECT * FROM klienti WHERE LOWER(IME) LIKE "'+ (Ime)+'%"';
+    if not(ShowAllKlientsCb.Checked) then SQLText := SQLText + ' and NOMER >-1 ';
+    QKlienti.SQL.SetText(PChar(SQLText + ' ORDER BY IME'));
+    QKlienti.Active:=True;
+    if QKlienti.RecordCount>0 then
+        wwDBGrid6RowChanged(Sender)
+    else
+    begin
        QKarti.Active:=False;
        SQLText:=  'SELECT * FROM kartiall ';
        QKarti.SQL.SetText(PChar(SQLText + ' ORDER BY KARTANOMER'));
        QKarti.Active:=True;
-      end;
+    end;
 end;
 
 procedure TMainForm.wwDBGrid6RowChanged(Sender: TObject);
 var
-  suma: Integer;
+    suma: Integer;
 begin
     QKarti.Active:=False;
     QKarti.SQL.SetText(PChar('SELECT * FROM kartiall WHERE klientdetail = '+
-     '"'+IntToStr2(QKlienti.FieldValues['NOMER'])+ '"'+' ORDER BY KARTANOMER'));
+        '"'+IntToStr2(QKlienti.FieldValues['NOMER'])+ '"'+' ORDER BY KARTANOMER'));
     QKarti.Active:=True;
     if(varType(KARTICHIP.FieldValues['SUMA']) <> varNull ) then
        suma:=KARTICHIP.FieldValues['SUMA']/Solariumi.FieldValues['CENA']
     else suma :=0;
     if suma > 2 then
-      Label157.Caption := '~'+IntToStr2(suma) + ' минути'
+        Label157.Caption := '~'+IntToStr2(suma) + ' минути'
     else
-      Label157.Caption :='';
+        Label157.Caption :='';
 end;
 
 procedure TMainForm.Edit7Change(Sender: TObject);
 var
-  SQLText:String;
+    SQLText:String;
 begin
     QKarti.Active:=False;
     if StrLen(PChar(KartaSearchBox.Text))>0 then
-     QKarti.SQL.SetText(PChar('SELECT * FROM kartiall WHERE KARTANOMER = '+KartaSearchBox.Text+ ''))
-     else
-     QKarti.SQL.SetText(PChar('SELECT * FROM kartiall ORDER BY KARTANOMER'));
+        QKarti.SQL.SetText(PChar('SELECT * FROM kartiall WHERE KARTANOMER = '+KartaSearchBox.Text+ ''))
+    else
+        QKarti.SQL.SetText(PChar('SELECT * FROM kartiall ORDER BY KARTANOMER'));
     QKarti.Active:=True;
     QKlienti.Active:=False;
     SQLText:='';
     if not(ShowAllKlientsCb.Checked) then SQLText :=  ' and NOMER >-1 ';
     if  QKarti.FieldValues['klientdetail']>0 then
-    QKlienti.SQL.SetText(PChar('SELECT * FROM klienti WHERE NOMER = '+
-     IntToStr2(QKarti.FieldValues['klientdetail']) +''))
+        QKlienti.SQL.SetText(PChar('SELECT * FROM klienti WHERE NOMER = '+
+            IntToStr2(QKarti.FieldValues['klientdetail']) +''))
     else
-    QKlienti.SQL.SetText(PChar('SELECT * FROM klienti '+ SQLText +' ORDER BY NOMER DESC'));
+        QKlienti.SQL.SetText(PChar('SELECT * FROM klienti '+ SQLText +' ORDER BY NOMER DESC'));
     QKlienti.Active:=True;
     wwDBGrid6RowChanged(Sender);
 end;
 
 procedure TMainForm.wwDBGrid7TitleButtonClick(Sender: TObject;
-  AFieldName: String);
+    AFieldName: String);
 begin
- if AFieldName='KARTANOMER' then
-  begin
-    QKarti.Active:=False;
-    QKarti.SQL.SetText(PChar('SELECT * FROM kartiall ORDER BY KARTANOMER DESC'));
-    QKarti.Active:=True;
-    If QKarti.RecordCount>0 then
+    if AFieldName='KARTANOMER' then
     begin
-     QKlienti.Active:=False;
-     QKlienti.SQL.SetText(PChar('SELECT * FROM klienti WHERE NOMER = '+
-     IntToStr2(QKarti.FieldValues['klientdetail']) +''));
-     QKlienti.Active:=True;
-    end
-    else
-    begin
-     QKlienti.Active:=False;
-     QKlienti.SQL.SetText(PChar('SELECT * FROM klienti WHERE NOMER = 0'));
-     QKlienti.Active:=True;
+        QKarti.Active:=False;
+        QKarti.SQL.SetText(PChar('SELECT * FROM kartiall ORDER BY KARTANOMER DESC'));
+        QKarti.Active:=True;
+        If QKarti.RecordCount>0 then
+        begin
+            QKlienti.Active:=False;
+            QKlienti.SQL.SetText(PChar('SELECT * FROM klienti WHERE NOMER = '+
+                IntToStr2(QKarti.FieldValues['klientdetail']) +''));
+            QKlienti.Active:=True;
+        end
+        else
+        begin
+            QKlienti.Active:=False;
+            QKlienti.SQL.SetText(PChar('SELECT * FROM klienti WHERE NOMER = 0'));
+            QKlienti.Active:=True;
+        end;
     end;
-  end;
- if AFieldName='STARTDATE' then
-  begin
-    QKarti.Active:=False;
-    QKarti.SQL.SetText(PChar('SELECT * FROM kartiall ORDER BY STARTDATE DESC'));
-    QKarti.Active:=True;
-    If QKarti.RecordCount>0 then
+    if AFieldName='STARTDATE' then
     begin
-     QKlienti.Active:=False;
-     QKlienti.SQL.SetText(PChar('SELECT * FROM klienti WHERE NOMER = '+
-     IntToStr2(QKarti.FieldValues['klientdetail']) +''));
-     QKlienti.Active:=True;
-    end
-    else
-    begin
-     QKlienti.Active:=False;
-     QKlienti.SQL.SetText(PChar('SELECT * FROM klienti WHERE NOMER = 0'));
-     QKlienti.Active:=True;
+        QKarti.Active:=False;
+        QKarti.SQL.SetText(PChar('SELECT * FROM kartiall ORDER BY STARTDATE DESC'));
+        QKarti.Active:=True;
+        If QKarti.RecordCount>0 then
+        begin
+            QKlienti.Active:=False;
+            QKlienti.SQL.SetText(PChar('SELECT * FROM klienti WHERE NOMER = '+
+                IntToStr2(QKarti.FieldValues['klientdetail']) +''));
+            QKlienti.Active:=True;
+        end
+        else
+        begin
+            QKlienti.Active:=False;
+            QKlienti.SQL.SetText(PChar('SELECT * FROM klienti WHERE NOMER = 0'));
+            QKlienti.Active:=True;
+        end;
     end;
-  end;
 end;
 procedure TMainForm.wwDBGrid7RowChanged(Sender: TObject);
 var
- KlientNo,i1: Integer;
+    KlientNo,i1: Integer;
 begin
 //   i1:=AdvPageControl1.ActivePageIndex;
 //   if i1=17 then
@@ -4235,273 +4241,280 @@ end;
 
 procedure TMainForm.Edit5Change(Sender: TObject);
 begin
-Edit5.Text:='';
+    Edit5.Text:='';
 end;
 
 
 procedure TMainForm.AdvTabSheet4Show(Sender: TObject);
 begin
 //AdvComboBox1.ItemIndex:=0;
- LMDMemo1.SetFocus;
- Edit1.Text:='0';
- LMDMemo1.Text:='Няма плащане';
+    LMDMemo1.SetFocus;
+    Edit1.Text:='0';
+    LMDMemo1.Text:='Няма плащане';
 end;
 
 procedure TMainForm.PlannerMaskDatePicker2Change(Sender: TObject);
 begin
- LoadChart(ComboBox1.ItemIndex);
+    LoadChart(ComboBox1.ItemIndex);
 end;
 
 procedure TMainForm.Label17Click(Sender: TObject);
 begin
-if MainForm.Label21.color=clblack then
- AdvPageControl1.ActivePage:=AdvTabsheet14;
+    if MainForm.Label21.color=clblack then
+        AdvPageControl1.ActivePage:=AdvTabsheet14;
 end;
 
 procedure TMainForm.AdvComboBox2Change(Sender: TObject);
 var
-R: Boolean;
+    R: Boolean;
 begin
-R:=QKarti.Locate('KARTANOMER',StrToInt(AdvComboBox2.Text),[]);
-if R then Label149.Color:=clBlack
-else Label149.Color:=clRed;
-AdvComboBox1.ItemIndex:=PoseshteniaPaid[AdvComboBox2.ItemIndex]
+    R:=QKarti.Locate('KARTANOMER',StrToInt(AdvComboBox2.Text),[]);
+    if R then Label149.Color:=clBlack
+    else Label149.Color:=clRed;
+    AdvComboBox1.ItemIndex:=PoseshteniaPaid[AdvComboBox2.ItemIndex]
 end;
 
 procedure TMainForm.KlientLabel_p18DblClick(Sender: TObject);
 begin
-if PasswordForm.ShowModal=MROK then
- begin
-  LMDButton7.Visible:=True;
-  LMDButton5.Visible:=True;
-  wwDBGrid7.ReadOnly:=False;
- end;
+    if PasswordForm.ShowModal=MROK then
+    begin
+        LMDButton7.Visible:=True;
+        LMDButton5.Visible:=True;
+        wwDBGrid7.ReadOnly:=False;
+    end;
 end;
 
 procedure TMainForm.RzBmpButton1MouseDown(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
  // Label40.top:= Label40.top+3;
-  Image7Click(Sender);
+    Image7Click(Sender);
 end;
 
 procedure TMainForm.RzBmpButton1MouseUpton1MouseUp(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
-  // Label40.top:= Label40.top-3;
+    // Label40.top:= Label40.top-3;
 end;
 
 procedure TMainForm.RzBmpButton2MouseDown(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
    // Label33.Top:= Label33.Top+3;
-  Image6Click(Sender);
+    Image6Click(Sender);
 end;
 
 procedure TMainForm.RzBmpButton2MouseUp(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
   //  Label33.Top:= Label33.Top-3;
 end;
 
 procedure TMainForm.RzBmpButton3MouseDown(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
 //   Label47.Top:= Label47.Top+3;
-  Image8Click(Sender);
+    Image8Click(Sender);
 end;
 
 procedure TMainForm.RzBmpButton3MouseUp(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
    // Label47.Top:= Label47.Top-3;
 end;
 
 procedure TMainForm.RzBmpButton4MouseDown(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
   // Label154.Top:= Label154.Top+3;
-  Image9Click(Sender);
+    Image9Click(Sender);
 end;
 
 procedure TMainForm.RzBmpButton4MouseUp(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
  //Label154.Top:= Label154.Top-3;
 end;
 
 procedure TMainForm.AdvTabSheet5Show(Sender: TObject);
 begin
-Label154.Caption:=IntToStr2(SOLARIUMI.FieldValues['STAPKA']*SOLARIUMI.FieldValues['KOEFICIENT']);
-Label33.Caption:=IntToStr2(SOLARIUMI.FieldValues['STAPKA']*SOLARIUMI.FieldValues['KOEFICIENT']);
-Label40.Caption:=IntToStr2(SOLARIUMI.FieldValues['STAPKA']);
-Label47.Caption:=IntToStr2(SOLARIUMI.FieldValues['STAPKA']);
-
+    Label154.Caption:=IntToStr2(SOLARIUMI.FieldValues['STAPKA']*SOLARIUMI.FieldValues['KOEFICIENT']);
+    Label33.Caption:=IntToStr2(SOLARIUMI.FieldValues['STAPKA']*SOLARIUMI.FieldValues['KOEFICIENT']);
+    Label40.Caption:=IntToStr2(SOLARIUMI.FieldValues['STAPKA']);
+    Label47.Caption:=IntToStr2(SOLARIUMI.FieldValues['STAPKA']);
 end;
 
 procedure TMainForm.PayChipCardClick(Sender: TObject);
 var
-  Result1: String;
-  Ostatak: Real;
-  Date: TDateTime;
-  temp_discount :Real;
+    Result1: String;
+    Ostatak: Real;
+    Date: TDateTime;
+    temp_discount :Real;
 begin
- if (Label130.Visible And DBText7.Visible) or Label72.visible then
-  begin
-   if (PriceCash>0) or (PriceCard>0) then
+    if (Label130.Visible And DBText7.Visible) or Label72.visible then
     begin
-      if (KARTICHIP.FieldValues['ENDDATE']>0) and ( KARTICHIP.FieldValues['ENDDATE'] < DateOf(Now) ) and not IsChipCard then begin
-        Application.MessageBox(PChar('Валидността на картата е изтекла!'), PChar(''),MB_OK);
-        exit;
-      end;
-      if (KARTICHIP.FieldValues['STARTTIME']>0) and ( KARTICHIP.FieldValues['STARTTIME'] < TimeOf(Now) ) and not IsChipCard then begin
-        Application.MessageBox(PChar('Картата не може да бъде ползвана сега!'), PChar(''),MB_OK);
-        exit;
-      end;
-      if (Card.PIN<>Internet.FieldValues['PIN'])and (Card.PIN<>'') then begin
-            Application.MessageBox(PChar('Тази карта не може да бъде използвана в това студио!'), PChar(''),MB_OK);
-            exit;
-      end;
-      if (KARTICHIP.FieldValues['ONCE_PERDAY'] = true) and (Card.StudioNomer = Internet.FieldValues['STUDIONOMER'] ) then begin
-        PLASHTANIA.Last;
-        Date := DateOf(Now);
-        while (PLASHTANIA.FieldValues['DATA'] = Date) do begin
-          if ((PLASHTANIA.FieldValues['SOLARIUM'] >-1) and (PLASHTANIA.FieldValues['OTCHIPKARTA'] = KARTICHIP.FieldValues['KLIENTNOMER'])) then begin
-            Application.MessageBox(PChar('Тази карта позволява само едно печене на ден!'), PChar(''),MB_OK);
-            exit;
-          end;
-          PLASHTANIA.Prior;
+        if (PriceCash>0) or (PriceCard>0) then
+        begin
+            if (KARTICHIP.FieldValues['ENDDATE']>0) and ( KARTICHIP.FieldValues['ENDDATE'] < DateOf(Now) ) and not IsChipCard then
+            begin
+                Application.MessageBox(PChar('Валидността на картата е изтекла!'), PChar(''),MB_OK);
+                exit;
+            end;
+            if (KARTICHIP.FieldValues['STARTTIME']>0) and ( KARTICHIP.FieldValues['STARTTIME'] < TimeOf(Now) ) and not IsChipCard then
+            begin
+                Application.MessageBox(PChar('Картата не може да бъде ползвана сега!'), PChar(''),MB_OK);
+                exit;
+            end;
+            if (Card.PIN<>Internet.FieldValues['PIN'])and (Card.PIN<>'') then
+            begin
+                Application.MessageBox(PChar('Тази карта не може да бъде използвана в това студио!'), PChar(''),MB_OK);
+                exit;
+            end;
+            if (KARTICHIP.FieldValues['ONCE_PERDAY'] = true) and (Card.StudioNomer = Internet.FieldValues['STUDIONOMER'] ) then
+            begin
+                PLASHTANIA.Last;
+                Date := DateOf(Now);
+                while (PLASHTANIA.FieldValues['DATA'] = Date) do
+                begin
+                    if ((PLASHTANIA.FieldValues['SOLARIUM'] >-1) and (PLASHTANIA.FieldValues['OTCHIPKARTA'] = KARTICHIP.FieldValues['KLIENTNOMER'])) then
+                    begin
+                        Application.MessageBox(PChar('Тази карта позволява само едно печене на ден!'), PChar(''),MB_OK);
+                        exit;
+                    end;
+                    PLASHTANIA.Prior;
+                end;
+            end;
+            PaidCash:=0; TobePaidCash:=0;
+            Label71.visible:=True;
+            Label72.visible:=True;
+            if PriceCard = PriceCash then
+                PaidChipCard:=PriceCard -(PaidCard+PaidCash)
+            else  PaidChipCard:=PriceCard;
+            if (PaidChipCard)>Card.Balans then
+                PaidChipCard:=Card.Balans;
+            FmtStr(Result1,'%4.2f',[(PaidChipCard)]);
+            temp_discount := VipDiscount;
+            VipDiscount:=0;
+            CalcPaid;
+            VipDiscount := temp_discount;
         end;
-      end;
-      PaidCash:=0; TobePaidCash:=0;
-      Label71.visible:=True;
-      Label72.visible:=True;
-      if PriceCard = PriceCash then
-        PaidChipCard:=PriceCard -(PaidCard+PaidCash)
-      else  PaidChipCard:=PriceCard;
-      if (PaidChipCard)>Card.Balans then
-        PaidChipCard:=Card.Balans;
-      FmtStr(Result1,'%4.2f',[(PaidChipCard)]);
-      temp_discount := VipDiscount;
-      VipDiscount:=0;
-      CalcPaid;
-      VipDiscount := temp_discount;
-    end;
-     
-  end
+    end
 // else
 // AdvPageControl1.ActivePage:=AdvTabsheet19;
 end;
 
 procedure TMainForm.wwDBEdit7KeyPress(Sender: TObject; var Key: Char);
 begin
-if (Key in ['a'..'f']) then Key:=UpCase(Key);
-if (Key in ['A'..'F']) or (Key in ['0'..'9']) or (Key<' ')then
- else Key:= #0;
+    if (Key in ['a'..'f']) then Key:=UpCase(Key);
+    if (Key in ['A'..'F']) or (Key in ['0'..'9']) or (Key<' ')then
+    else Key:= #0;
 end;
+
 procedure TMainForm.Label139Click(Sender: TObject); //ChipCard Payment
 var
-  result1: string;
+    result1: string;
 begin
- if KARTICHIP.State in [dsEdit, dsInsert]  then KARTICHIP.Post;
- if QKLIENTI.State in [dsEdit,dsInsert]  then QKLIENTI.Post;
-
- if PriceCard>0 then
- begin
-  AdvPageControl1.ActivePage:=AdvTabsheet4;
-  Label71.visible:=True;
-  Label72.visible:=True;
-  PayChipCardClick(Sender);
-//  PaidChipCard:=PriceCard ;//-(PaidCard+PaidCash); Removed...
-//  if PaidChipCard>Card.Balans then PaidChipCard:=Card.Balans;
-//  FmtStr(Result1,'%4.2f',[PaidChipCard]);
- end
- else  AdvPageControl1.ActivePage:=AdvTabsheet2;
+    if KARTICHIP.State in [dsEdit, dsInsert]  then KARTICHIP.Post;
+    if QKLIENTI.State in [dsEdit,dsInsert]  then QKLIENTI.Post;
+    if PriceCard>0 then
+    begin
+        AdvPageControl1.ActivePage:=AdvTabsheet4;
+        Label71.visible:=True;
+        Label72.visible:=True;
+        PayChipCardClick(Sender);
+        //  PaidChipCard:=PriceCard ;//-(PaidCard+PaidCash); Removed...
+        //  if PaidChipCard>Card.Balans then PaidChipCard:=Card.Balans;
+        //  FmtStr(Result1,'%4.2f',[PaidChipCard]);
+    end
+    else  AdvPageControl1.ActivePage:=AdvTabsheet2;
 end;
 
 procedure TMainForm.KartaSearchBoxKeyPress(Sender: TObject; var Key: Char);
 begin
-  if (TimeKeyPress = 0) or (Length(KartaSearchBox.Text)<1) then  TimeKeyPress := Now;
-  if Not(Key in ['0'..'9']) then begin
-      if Key <> chr(8) then
-        Key := #0;
-  end
-  else if (PasswordForm.ModalResult <> MROK) and (SecondsBetween (Now,TimeKeyPress) >= 1) and (Length(KartaSearchBox.Text) > 5) then Key := #0;
+    if (TimeKeyPress = 0) or (Length(KartaSearchBox.Text)<1) then  TimeKeyPress := Now;
+    if Not(Key in ['0'..'9']) then
+    begin
+        if Key <> chr(8) then
+            Key := #0;
+    end
+    else if (PasswordForm.ModalResult <> MROK) and (SecondsBetween (Now,TimeKeyPress) >= 1) and (Length(KartaSearchBox.Text) > 5) then Key := #0;
 end;
 
 procedure TMainForm.AdvComboBox2KeyPress(Sender: TObject; var Key: Char);
 begin
-  Key:=#0;
+    Key:=#0;
 end;
 
 procedure TMainForm.KartaSearchBoxKeyUp(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
+    Shift: TShiftState);
 var
- SQLText: String;
+    SQLText: String;
 begin
     QKarti.Active:=False;
     if StrLen(PChar(KartaSearchBox.Text))>0 then
-      QKarti.SQL.SetText(PChar('SELECT * FROM kartiall WHERE KARTANOMER = '+KartaSearchBox.Text+ ''))
+        QKarti.SQL.SetText(PChar('SELECT * FROM kartiall WHERE KARTANOMER = '+KartaSearchBox.Text+ ''))
     else
-      QKarti.SQL.SetText(PChar('SELECT * FROM kartiall ORDER BY KARTANOMER'));
+        QKarti.SQL.SetText(PChar('SELECT * FROM kartiall ORDER BY KARTANOMER'));
     QKarti.Active:=True;
     QKlienti.Active:=False;
     if not ShowAllKlientsCb.Checked then SQLText := ' WHERE NOMER >-1 ';
-
     if  QKarti.FieldValues['klientdetail']>0 then
       QKlienti.SQL.SetText(PChar('SELECT * FROM klienti WHERE NOMER = '+
         IntToStr2(QKarti.FieldValues['klientdetail']) +''))
     else
-    QKlienti.SQL.SetText(PChar('SELECT * FROM klienti ' + SQLText + ' ORDER BY NOMER DESC'));
+        QKlienti.SQL.SetText(PChar('SELECT * FROM klienti ' + SQLText + ' ORDER BY NOMER DESC'));
     QKlienti.Active:=True;
     wwDBGrid6RowChanged(Sender);
-    if Length(KartaSearchBox.Text)>0 then    
-      while not QKarti.Eof do begin
-        if QKarti.FieldValues['KARTANOMER'] = StrToInt(KartaSearchBox.Text) then break;
-        QKarti.Next;
-      end;
+    if Length(KartaSearchBox.Text)>0 then
+    begin
+        while not QKarti.Eof do
+        begin
+            if QKarti.FieldValues['KARTANOMER'] = StrToInt(KartaSearchBox.Text) then break;
+            QKarti.Next;
+        end;
+    end;
 end;
 
 procedure TMainForm.N2Click(Sender: TObject);
 var
- SQLText:String;
+    SQLText:String;
 begin
-  if not ShowAllKlientsCb.Checked then SQLText := ' WHERE NOMER > -1 ';
-
-  AdvPageControl1.ActivePage:=AdvTabsheet19;
-  QKlienti.Active:=False;
-  QKlienti.SQL.SetText(PChar('SELECT * FROM klienti ' + SQLText + ' ORDER BY IME DESC'));
-  CardNomer:=0;
-  QKlienti.Active:=True;
+    if not ShowAllKlientsCb.Checked then SQLText := ' WHERE NOMER > -1 ';
+    AdvPageControl1.ActivePage:=AdvTabsheet19;
+    QKlienti.Active:=False;
+    QKlienti.SQL.SetText(PChar('SELECT * FROM klienti ' + SQLText + ' ORDER BY IME DESC'));
+    CardNomer:=0;
+    QKlienti.Active:=True;
 end;
+
 procedure TMainForm.N1Click(Sender: TObject);
 begin
      AdvPageControl1.ActivePage:=AdvTabsheet18;
 end;
 
 procedure TMainForm.Label92MouseDown(Sender: TObject; Button: TMouseButton;
-  Shift: TShiftState; X, Y: Integer);
-var point1: TPoint;
+    Shift: TShiftState; X, Y: Integer);
+var
+    point1: TPoint;
 begin
-point1.X:=x; point1.Y:=y;
-point1:=Label92.ClientToScreen(point1);
-Label92.PopupMenu.Popup(Point1.X,Point1.Y);
+    point1.X:=x; point1.Y:=y;
+    point1:=Label92.ClientToScreen(point1);
+    Label92.PopupMenu.Popup(Point1.X,Point1.Y);
 end;
-
 
 procedure TMainForm.DBCheckBox1Exit(Sender: TObject);
 begin
-Internet.Edit;
-Internet.Post;
+    Internet.Edit;
+    Internet.Post;
 end;
 
 procedure TMainForm.LMDButton10Click(Sender: TObject);
 begin
-if Application.MessageBox(PChar(GetMessage('M30')),PChar(GetMessage('M31')),MB_OKCANCEL		)=IDOK	 then
-//if Application.MessageBox(PChar('Ще бъдат изтрити всички стоки!?'),PChar('Стоки?!'),MB_OKCANCEL		)=IDOK	 then
- begin
-  while STOKITE.RecordCount>0 do STOKITE.Delete;
- end;
+    if Application.MessageBox(PChar(GetMessage('M30')),PChar(GetMessage('M31')),MB_OKCANCEL		)=IDOK	 then
+    //if Application.MessageBox(PChar('Ще бъдат изтрити всички стоки!?'),PChar('Стоки?!'),MB_OKCANCEL		)=IDOK	 then
+    begin
+        while STOKITE.RecordCount>0 do STOKITE.Delete;
+    end;
 end;
 
 procedure TMainForm.LMDButton12Click(Sender: TObject);
@@ -4801,6 +4814,7 @@ begin
   Karti.Active:=False;
   Karti.SQL.SetText(PChar('SELECT * FROM STOKI WHERE STOKAKOD < 0'));
   Karti.Active:=True;
+  STOKITE.Active:=true;
 end;
 
 procedure TMainForm.N3Click(Sender: TObject);
