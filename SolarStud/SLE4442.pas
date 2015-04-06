@@ -29,6 +29,7 @@ uses main, Password, Windows, Messages, SysUtils, Variants, Classes, Graphics, C
  dwActProtocol1       : DWORD;
  cBAtrLen             : DWORD;
  abc1,abc2, abc3, abc4:integer;
+ iii                  : Integer;
 
 procedure ClearBuffers();
 //procedure InitMenu();
@@ -49,6 +50,54 @@ function  SLE4442Submit(): Boolean;
 procedure ClearCard();
 procedure SLE4442Init();  procedure SLE4442Reset();
 procedure SLE4442ChangePIN();
+
+Function OpenLib():LONG; stdcall; external 'SLE4442Lib.dll';
+/// closes the library
+Function CloseLib():LONG; stdcall; external 'SLE4442Lib.dll';
+
+/// Gets the list of connected readers
+/// Readers are separated by ;
+Function GetReaderList(szReaders:PChar; pnLen:PInt):LONG; stdcall; external 'SLE4442Lib.dll';
+
+/// Connects to the given reader
+Function Connect(szReader:PChar):LONG; stdcall; external 'SLE4442Lib.dll';
+
+/// Disconnect to the given reader
+Function Disconnect():LONG; stdcall; external 'SLE4442Lib.dll';
+
+/// Reads from the main memory at the specified buffer
+Function ReadMainMemory(buffer:LPBYTE; offset:WORD; pnLen:PWORD):LONG; stdcall; external 'SLE4442Lib.dll';
+
+/// Writes in the main memory at the specified buffer
+Function UpdateMainMemory(buffer:LPBYTE; offset:WORD; nLen:WORD):LONG; stdcall; external 'SLE4442Lib.dll';
+
+/// Verify the PIN
+Function VerifyPIN(pin:LPBYTE; nLen:WORD):LONG; stdcall; external 'SLE4442Lib.dll';
+
+/// Changes the PIN
+Function ChangePIN(oldpin:LPBYTE; oldLen:WORD; newpin:LPBYTE; newLen:WORD):LONG; stdcall; external 'SLE4442Lib.dll';
+
+/// Waits for a smart card inserted
+Function WaitForSmartCardInserted(szReader:PChar; timeout:WORD):LONG; stdcall; external 'SLE4442Lib.dll';
+
+/// Waits for a smart card removed
+Function WaitForSmartCardRemoved(szReader:PChar; timeout:WORD):LONG; stdcall; external 'SLE4442Lib.dll';
+
+/// Cancels waiting
+Function CancelWaiting():LONG; stdcall; external 'SLE4442Lib.dll';
+
+/// Sets the card handle
+Function SetCardHandle(hCard:SCARDHANDLE; szReader:PChar):LONG; stdcall; external 'SLE4442Lib.dll';
+
+/// Check if the smart card is inserted
+Function IsSmartCardPresent():LONG; stdcall; external 'SLE4442Lib.dll';
+
+/// Writes the protection memory bits
+Function WriteProtectionMemoryBits(buffer:LPBYTE; offset:WORD; nLen:WORD):LONG; stdcall; external 'SLE4442Lib.dll';
+
+
+
+
 
 implementation
    uses SetLang;
@@ -218,7 +267,6 @@ begin
 end;
 procedure SLE4442Init();
 begin
-
   // 1. Establish context and obtain hContext handle
   retCode := SCardEstablishContext(SCARD_SCOPE_USER,
                                    nil,
@@ -284,7 +332,8 @@ if hCard<>0 then
  end;
   // 1. Direct Connection
   retCode := SCardConnectA(hContext,
-                           PChar('ACS ACR38U 0'),
+                           //PChar('ACS CCID USB Reader 0'),
+                           Buffer,
                            SCARD_SHARE_DIRECT,
                            0,
                            @hCard,
@@ -299,8 +348,17 @@ if hCard<>0 then
   // 2. Select Card Type
   ClearBuffers();
   SendLen := 4;
+
   SendBuff[0] := $12;     // Card Type for SLE4442
-  retCode := CallCardControl();
+  retCode := SCardControl(hCard,
+                  IOCTL_SMARTCARD_SET_CARD_TYPE,
+                  @SendBuff,
+                  SendLen,
+                  @RecvBuff,
+                  10,
+                  @nBytesRet);
+  if retCode <> SCARD_S_SUCCESS then
+      DisplayOut(1, retCode, '');
   if retCode <> SCARD_S_SUCCESS then
     Exit;
 
@@ -314,7 +372,8 @@ if hCard<>0 then
       Exit;
     end;
   retCode := SCardConnectA(hContext,
-                           PChar('ACS ACR38U 0'),
+//                           PChar('ACS CCID USB Reader 0'),
+                           Buffer,
                            SCARD_SHARE_SHARED,
                            SCARD_PROTOCOL_T0 or SCARD_PROTOCOL_T1,
                            @hCard,
@@ -786,6 +845,7 @@ var
  Ostatak,vBalans:Real;
  Result2        :Integer;
  _Q             :TABSQuery;
+
 begin
 
  _Q:=TABSQuery.Create(nil);
@@ -822,7 +882,8 @@ begin
 //  SLE4432_4442Main.cbReader.ItemIndex := 0;
      // 1. Direct Connection
    retCode := SCardConnectA(hContext,
-                           PChar('ACS ACR38U 0'),
+//                           PChar('ACS CCID USB Reader 0'),
+                            Buffer,
                            SCARD_SHARE_DIRECT,
                            0,
                            @hCard,
@@ -835,13 +896,21 @@ begin
      end;
 
   // 2. Select Card Type
-   ClearBuffers();
-   SendLen := 4;
-   SendBuff[0] := $12;     // Card Type for SLE4442
-   retCode := CallCardControl();
-   if retCode <> SCARD_S_SUCCESS then
+    ClearBuffers();
+    SendLen := 4;
+    SendBuff[0] := $12;     // Card Type for SLE4442
+    retCode := SCardControl(hCard,
+                  IOCTL_SMARTCARD_SET_CARD_TYPE,
+                  @SendBuff,
+                  SendLen,
+                  @RecvBuff,
+                  10,
+                  @nBytesRet);
+    if retCode <> SCARD_S_SUCCESS then
+        DisplayOut(1, retCode, '');
+//    retCode := CallCardControl();
+    if retCode <> SCARD_S_SUCCESS then
      Exit;
-
   // 3. Reconnect using SCARD_SHARE_SHARED and
   //    SCARD_PROTOCOL_T0 parameters
    retCode := SCardDisconnect(hCard, SCARD_UNPOWER_CARD);
@@ -852,7 +921,8 @@ begin
        Exit;
      end;
    retCode := SCardConnectA(hContext,
-                           PChar('ACS ACR38U 0'),
+//                           PChar('ACS CCID USB Reader 0'),
+                           Buffer,
                            SCARD_SHARE_SHARED,
                            SCARD_PROTOCOL_T0 or SCARD_PROTOCOL_T1,
                            @hCard,
