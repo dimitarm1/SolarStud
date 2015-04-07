@@ -293,8 +293,7 @@ begin
     MainForm.mMsg.Clear;
 
     DisplayOut(0, 0, GetMessage('M82'));
-
-
+    SLE4442Reset();
 
 end;
 
@@ -314,87 +313,6 @@ begin
 
 end;
 
-procedure SLE4442Connect();
-begin
-if hCard<>0 then
- begin
-  retCode:=SCardState(hCard,@dwState1,@dwActProtocol1,@bATR1,@cBAtrLen1);
-  if dwState1=6 {ConnActive} then
-  begin
-    DisplayOut(0, 0, '!Connection is already active.');
-    Exit;
-  end
-  else
-   begin
-    displayOut(0,0,IntToStr(retCode)+'state='+IntToStr(dwState1)+' protocol='+IntToStr(dwActProtocol1)+IntToStr(bATR1));
-
-   end;
- end;
-  // 1. Direct Connection
-  retCode := SCardConnectA(hContext,
-                           //PChar('ACS CCID USB Reader 0'),
-                           Buffer,
-                           SCARD_SHARE_DIRECT,
-                           0,
-                           @hCard,
-                           @dwActProtocol);
-  if retCode <> SCARD_S_SUCCESS then
-    begin
-      DisplayOut(1, retCode, '');
-      ConnActive := False;
-      Exit;
-    end;
-
-  // 2. Select Card Type
-  ClearBuffers();
-  SendLen := 4;
-
-  SendBuff[0] := $12;     // Card Type for SLE4442
-  retCode := SCardControl(hCard,
-                  IOCTL_SMARTCARD_SET_CARD_TYPE,
-                  @SendBuff,
-                  SendLen,
-                  @RecvBuff,
-                  10,
-                  @nBytesRet);
-  if retCode <> SCARD_S_SUCCESS then
-      DisplayOut(1, retCode, '');
-  if retCode <> SCARD_S_SUCCESS then
-    Exit;
-
-  // 3. Reconnect using SCARD_SHARE_SHARED and
-  //    SCARD_PROTOCOL_T0 parameters
-  retCode := SCardDisconnect(hCard, SCARD_UNPOWER_CARD);
-  if retCode <> SCARD_S_SUCCESS then
-    begin
-      DisplayOut(1, retCode, '');
-      ConnActive := False;
-      Exit;
-    end;
-  retCode := SCardConnectA(hContext,
-//                           PChar('ACS CCID USB Reader 0'),
-                           Buffer,
-                           SCARD_SHARE_SHARED,
-                           SCARD_PROTOCOL_T0 or SCARD_PROTOCOL_T1,
-                           @hCard,
-                           @dwActProtocol);
-  if retCode <> SCARD_S_SUCCESS then
-    begin
-      DisplayOut(1, retCode, '');
-      ConnActive := False;
-      Exit;
-    end
-  else
-    DisplayOut(0, 0, 'Successful connection to ' + 'ACR');
-  ConnActive := True;
-
-  // Get ATR
-  GetATR();
-
-//  ClearFields();
-//  gbFunction.Enabled := True;
-
-end;
 procedure SLE4442Read();
 var tmpStr: string;
     indx: integer;
@@ -550,21 +468,6 @@ begin
     Exit;
 
   Data:='';
-
-end;
-
-Function SLE4442GetReaderState():String;
-var
- dwState:DWORD;
- bATR: Byte;
- cBAtrLen: DWORD;
-
-begin
-
-retCode:=0;
-retCode:=SCardState(hCard,@dwState,@dwActProtocol,@bATR,@cBAtrLen);
-displayOut(0,0,IntToStr(retCode)+'state='+IntToStr(dwState)+' protocol='+IntToStr(dwActProtocol)+IntToStr(bATR));
- //displayOut(0,0,GetReaderStateStrMsg(dwState));
 
 end;
 
@@ -764,6 +667,7 @@ begin
    MainForm.mMsg.Lines.Add('Status: BAD');
   end;
 end;
+
 procedure SLE4442ShowCardInPaiment();
  var q: TABSQuery;
  begin
@@ -1027,6 +931,7 @@ begin
    end;
  end;
  _Q.Free;
+ SLE4442Reset();
 end;
 
 procedure ClearCard();
