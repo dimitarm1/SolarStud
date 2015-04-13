@@ -2,7 +2,7 @@ unit SLE4442;
 
 interface
 uses main, Password, Windows, Messages, SysUtils, Variants, Classes, Graphics,
-    Controls, Forms,
+Controls, Forms,
     Dialogs, ACSModule, StdCtrls, ExtCtrls, ComCtrls, StrUtils, ABSMain;
 const
     MAX_BUFFER_LEN = 256;
@@ -32,7 +32,6 @@ var
     dwActProtocol1: DWORD;
     cBAtrLen: DWORD;
     abc1, abc2, abc3, abc4: integer;
-    iii: Integer;
 
 procedure ClearBuffers();
 //procedure InitMenu();
@@ -54,59 +53,6 @@ procedure ClearCard();
 procedure SLE4442Init();
 procedure SLE4442Reset();
 procedure SLE4442ChangePIN();
-
-function OpenLib(): LONG; stdcall; external 'SLE4442Lib.dll';
-/// closes the library
-function CloseLib(): LONG; stdcall; external 'SLE4442Lib.dll';
-
-/// Gets the list of connected readers
-/// Readers are separated by ;
-function GetReaderList(szReaders: PChar; pnLen: PInt): LONG; stdcall; external
-'SLE4442Lib.dll';
-
-/// Connects to the given reader
-function Connect(szReader: PChar): LONG; stdcall; external 'SLE4442Lib.dll';
-
-/// Disconnect to the given reader
-function Disconnect(): LONG; stdcall; external 'SLE4442Lib.dll';
-
-/// Reads from the main memory at the specified buffer
-function ReadMainMemory(buffer: LPBYTE; offset: WORD; pnLen: PWORD): LONG;
-stdcall; external 'SLE4442Lib.dll';
-
-/// Writes in the main memory at the specified buffer
-function UpdateMainMemory(buffer: LPBYTE; offset: WORD; nLen: WORD): LONG;
-stdcall; external 'SLE4442Lib.dll';
-
-/// Verify the PIN
-function VerifyPIN(pin: LPBYTE; nLen: WORD): LONG; stdcall; external
-'SLE4442Lib.dll';
-
-/// Changes the PIN
-function ChangePIN(oldpin: LPBYTE; oldLen: WORD; newpin: LPBYTE; newLen: WORD):
-    LONG; stdcall; external 'SLE4442Lib.dll';
-
-/// Waits for a smart card inserted
-function WaitForSmartCardInserted(szReader: PChar; timeout: WORD): LONG;
-stdcall; external 'SLE4442Lib.dll';
-
-/// Waits for a smart card removed
-function WaitForSmartCardRemoved(szReader: PChar; timeout: WORD): LONG; stdcall;
-external 'SLE4442Lib.dll';
-
-/// Cancels waiting
-function CancelWaiting(): LONG; stdcall; external 'SLE4442Lib.dll';
-
-/// Sets the card handle
-function SetCardHandle(hCard: SCARDHANDLE; szReader: PChar): LONG; stdcall;
-external 'SLE4442Lib.dll';
-
-/// Check if the smart card is inserted
-function IsSmartCardPresent(): LONG; stdcall; external 'SLE4442Lib.dll';
-
-/// Writes the protection memory bits
-function WriteProtectionMemoryBits(buffer: LPBYTE; offset: WORD; nLen: WORD):
-    LONG; stdcall; external 'SLE4442Lib.dll';
 
 implementation
 uses SetLang;
@@ -293,6 +239,7 @@ end;
 
 procedure SLE4442Init();
 begin
+
     // 1. Establish context and obtain hContext handle
     retCode := SCardEstablishContext(SCARD_SCOPE_USER,
         nil,
@@ -317,8 +264,8 @@ begin
     end
     else
         MainForm.mMsg.Clear;
+
     DisplayOut(0, 0, GetMessage('M82'));
-    SLE4442Reset();
 
 end;
 
@@ -335,6 +282,79 @@ begin
 
     retCode := SCardReleaseContext(hCard);
     //  InitMenu();
+
+end;
+
+procedure SLE4442Connect();
+begin
+    if hCard <> 0 then
+    begin
+        retCode := SCardState(hCard, @dwState1, @dwActProtocol1, @bATR1,
+            @cBAtrLen1);
+        if dwState1 = 6 {ConnActive} then
+        begin
+            DisplayOut(0, 0, '!Connection is already active.');
+            Exit;
+        end
+        else
+        begin
+            displayOut(0, 0, IntToStr(retCode) + 'state=' + IntToStr(dwState1) +
+                ' protocol=' + IntToStr(dwActProtocol1) + IntToStr(bATR1));
+
+        end;
+    end;
+    // 1. Direct Connection
+    retCode := SCardConnectA(hContext,
+        PChar('ACS ACR38U 0'),
+        SCARD_SHARE_DIRECT,
+        0,
+        @hCard,
+        @dwActProtocol);
+    if retCode <> SCARD_S_SUCCESS then
+    begin
+        DisplayOut(1, retCode, '');
+        ConnActive := False;
+        Exit;
+    end;
+
+    // 2. Select Card Type
+    ClearBuffers();
+    SendLen := 4;
+    SendBuff[0] := $12; // Card Type for SLE4442
+    retCode := CallCardControl();
+    if retCode <> SCARD_S_SUCCESS then
+        Exit;
+
+    // 3. Reconnect using SCARD_SHARE_SHARED and
+    //    SCARD_PROTOCOL_T0 parameters
+    retCode := SCardDisconnect(hCard, SCARD_UNPOWER_CARD);
+    if retCode <> SCARD_S_SUCCESS then
+    begin
+        DisplayOut(1, retCode, '');
+        ConnActive := False;
+        Exit;
+    end;
+    retCode := SCardConnectA(hContext,
+        PChar('ACS ACR38U 0'),
+        SCARD_SHARE_SHARED,
+        SCARD_PROTOCOL_T0 or SCARD_PROTOCOL_T1,
+        @hCard,
+        @dwActProtocol);
+    if retCode <> SCARD_S_SUCCESS then
+    begin
+        DisplayOut(1, retCode, '');
+        ConnActive := False;
+        Exit;
+    end
+    else
+        DisplayOut(0, 0, 'Successful connection to ' + 'ACR');
+    ConnActive := True;
+
+    // Get ATR
+    GetATR();
+
+    //  ClearFields();
+    //  gbFunction.Enabled := True;
 
 end;
 
@@ -505,6 +525,22 @@ begin
 
 end;
 
+function SLE4442GetReaderState(): string;
+var
+    dwState: DWORD;
+    bATR: Byte;
+    cBAtrLen: DWORD;
+
+begin
+
+    retCode := 0;
+    retCode := SCardState(hCard, @dwState, @dwActProtocol, @bATR, @cBAtrLen);
+    displayOut(0, 0, IntToStr(retCode) + 'state=' + IntToStr(dwState) +
+        ' protocol=' + IntToStr(dwActProtocol) + IntToStr(bATR));
+    //displayOut(0,0,GetReaderStateStrMsg(dwState));
+
+end;
+
 procedure SLE4442WriteCardInfo();
 var
     Result: string;
@@ -551,8 +587,7 @@ begin
     SendBuff[5] := Byte(Card.CardNomer div (256 * 256));
     SendBuff[6] := Byte((Card.CardNomer - SendBuff[5] * 256 * 256) div 256);
     SendBuff[7] := Byte((Card.CardNomer - SendBuff[5] * 256 * 256 - SendBuff[6]
-        *
-        256));
+        * 256));
     if Card.CardNomer < 0 then
     begin
         SendBuff[5] := 255;
@@ -628,8 +663,7 @@ begin
         SLE4442Read;
         Address := IntToHex(Byte(RecvBuff[0]), 2);
         Card.PIN := IntToHex(Byte(RecvBuff[0]), 2) + IntToHex(Byte(RecvBuff[1]),
-            2)
-            + IntToHex(Byte(RecvBuff[2]), 2);
+            2) + IntToHex(Byte(RecvBuff[2]), 2);
 
         Address := 'fd';
         Length1 := '03'; // Четене на номер на карта
@@ -684,7 +718,7 @@ begin
     else
     begin
         PrintText := GetMessage('M37') + ' ' + IntToStr(Card.ClientNomer);
-        // 'Клиент номер:> '
+            // 'Клиент номер:> '
         MainForm.mMsg.Lines.Add(PrintText);
         MainForm.mMsg.SelAttributes.Color := clBlack;
         PrintText := GetMessage('M38') + ' ' + Card.ClientName; //'Клиент:> '
@@ -700,7 +734,7 @@ begin
         MainForm.mMsg.Lines.Add(PrintText);
         MainForm.mMsg.SelAttributes.Color := clBlack;
         PrintText := GetMessage('M41') + ' ' + IntToStr(Card.StudioNomer);
-        //'Студио №:> '
+            //'Студио №:> '
         MainForm.mMsg.Lines.Add(PrintText);
         MainForm.mMsg.SelAttributes.Color := clBlack;
     end;
@@ -810,7 +844,6 @@ var
     Ostatak, vBalans: Real;
     Result2: Integer;
     _Q: TABSQuery;
-
 begin
 
     _Q := TABSQuery.Create(nil);
@@ -848,46 +881,26 @@ begin
        //  SLE4432_4442Main.cbReader.ItemIndex := 0;
             // 1. Direct Connection
         retCode := SCardConnectA(hContext,
-            //                           PChar('ACS CCID USB Reader 0'),
-            Buffer,
-            SCARD_SHARE_SHARED, 
-            SCARD_PROTOCOL_T0,
+            PChar('ACS ACR38U 0'),
+            SCARD_SHARE_DIRECT,
+            0,
             @hCard,
             @dwActProtocol);
         if retCode <> SCARD_S_SUCCESS then
         begin
-            retCode := SCardConnectA(hContext,
-            //                           PChar('ACS CCID USB Reader 0'),
-            Buffer,
-            SCARD_SHARE_SHARED,
-            SCARD_PROTOCOL_UNDEFINED,
-            @hCard,
-            @dwActProtocol);
             DisplayOut(1, retCode, ' Con2');
-             if retCode <> SCARD_S_SUCCESS then
-            begin
-                ConnActive := False;
-                Exit;
-            end;
+            ConnActive := False;
+            Exit;
         end;
 
         // 2. Select Card Type
         ClearBuffers();
         SendLen := 4;
         SendBuff[0] := $12; // Card Type for SLE4442
-        retCode := SCardControl(hCard,
-            IOCTL_SMARTCARD_SET_CARD_TYPE,
-            @SendBuff,
-            SendLen,
-            @RecvBuff,
-            10,
-            @nBytesRet);
-
-        if retCode <> SCARD_S_SUCCESS then
-            DisplayOut(1, retCode, '');
-        //    retCode := CallCardControl();
+        retCode := CallCardControl();
         if retCode <> SCARD_S_SUCCESS then
             Exit;
+
         // 3. Reconnect using SCARD_SHARE_SHARED and
         //    SCARD_PROTOCOL_T0 parameters
         retCode := SCardDisconnect(hCard, SCARD_UNPOWER_CARD);
@@ -898,8 +911,7 @@ begin
             Exit;
         end;
         retCode := SCardConnectA(hContext,
-            //                           PChar('ACS CCID USB Reader 0'),
-            Buffer,
+            PChar('ACS ACR38U 0'),
             SCARD_SHARE_SHARED,
             SCARD_PROTOCOL_T0 or SCARD_PROTOCOL_T1,
             @hCard,
@@ -962,11 +974,10 @@ begin
                 MainForm.Label71.Visible := True;
                 MainForm.Label72.Visible := True;
                 if (Card.StudioNomer =
-                    MainForm.Internet.FieldValues['STUDIONOMER']) and
-                    (Card.PIN = MainForm.Internet.FieldValues['PIN']) then
+                    MainForm.Internet.FieldValues['STUDIONOMER']) and (Card.PIN =
+                    MainForm.Internet.FieldValues['PIN']) then
                 begin
-                    _Q.SQL.SetText(PChar('select * from KARTICHIP where KLIENTNOMER = ' +
-                        IntToStr(Card.ClientNomer)));
+                    _Q.SQL.SetText(PChar('select * from KARTICHIP where KLIENTNOMER = ' + IntToStr(Card.ClientNomer)));
                     _Q.Open;
                     if _Q.RecordCount > 0 then
                     begin
@@ -993,11 +1004,10 @@ begin
                     MainForm.SOLARIUMI.FieldValues['CENA'];
                 FmtStr(Result, '%4.2f', [Ostatak]);
                 MainForm.Label72.Caption := '' + Result + GetMessage('M85');
-                //'минути / ';
+                    //'минути / ';
                 FmtStr(Result, '%4.2f', [Card.Balans]);
                 MainForm.Label72.Caption := MainForm.Label72.Caption + '' +
-                    Result +
-                    GetMessage('29'); //'лв.';
+                    Result + GetMessage('29'); //'лв.';
             end;
             Exit;
         end
@@ -1021,7 +1031,6 @@ begin
         end;
     end;
     _Q.Free;
-    SLE4442Reset();
 end;
 
 procedure ClearCard();
