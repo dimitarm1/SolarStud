@@ -90,6 +90,7 @@ begin
  if not (VarType(V) in [varNull]) then Nomer:=0;   // So, there is a record with that number
  MainForm.Qklienti.Edit;
  MainForm.Qklienti.FieldValues['BALANS']:=  MainForm.Qklienti.FieldValues['BALANS']+MainForm.KARTI.FieldValues['STOKACENA'];
+
  if Nomer>0 then MainForm.Qklienti.FieldValues['NOMER']:=Nomer;
  MainForm.Qklienti.post;
  MainForm.Sol1.FlushBuffers;

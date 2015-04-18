@@ -4800,6 +4800,14 @@ begin  //Зареждане
 			KARTICHIP.Edit;
 			if (KARTICHIP.FieldValues['SUMA'] <> KARTICHIP.FieldValues['SUMA']) then KARTICHIP.FieldValues['SUMA']:=0; // for null value
 			KARTICHIP.FieldValues['SUMA']:=Card.Balans;
+            if(KARTI.FieldValues['VALIDNOST_KARTI']>0) then
+            begin
+              KARTICHIP.FieldValues['ENDDATE']:= Date + KARTI.FieldValues['VALIDNOST_KARTI'];
+            end;
+            if(KARTICHIP.FieldValues['ONCE_PERDAY']<>KARTICHIP.FieldValues['ONCE_PERDAY']) then
+            begin
+              KARTICHIP.FieldValues['ONCE_PERDAY']:= true;
+            end;
 			KARTICHIP.Post;
 			Balans1:=Card.balans;
 		end;

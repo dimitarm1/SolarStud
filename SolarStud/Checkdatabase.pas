@@ -364,6 +364,9 @@ begin
     DBVer:=4;
   end;
 
+  ExecSQL(' ALTER TABLE STOKI ADD (                            '+
+            ' IF NOT EXISTS VALINDOST_KARTA INTEGER) ');
+
 
   ExecSQL('delete from KARTICHIP where not KLIENTNOMER >0'); //Truncate bad records silently
 
