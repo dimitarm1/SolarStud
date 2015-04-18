@@ -911,6 +911,9 @@ type
     procedure StokiGridTitleButtonClick(Sender: TObject; AFieldName: string);
     procedure wwDBGrid11TitleButtonClick(Sender: TObject; AFieldName: string);
     procedure KasaGridTitleButtonClick(Sender: TObject; AFieldName: string);
+    procedure AdvTabSheet19Hide(Sender: TObject);
+    procedure AdvTabSheet16Hide(Sender: TObject);
+    procedure AdvTabSheet4Hide(Sender: TObject);
 
 
   private
@@ -4054,6 +4057,11 @@ begin
     if QKlienti.State=dsEdit then QKlienti.Post;
 end;
 
+procedure TMainForm.AdvTabSheet16Hide(Sender: TObject);
+begin
+    SLE4442Deinit();
+end;
+
 procedure TMainForm.AdvTabSheet16Show(Sender: TObject);
 begin
     Memo1.Clear; Memo1.Lines.Add('Сума:'); Memo1.Lines.Add('В брой:');
@@ -4064,6 +4072,7 @@ begin
     QKlienti.Active:=True;
     ComboBox2.Clear;
     STOKITE.Active:=true;
+    SLE4442Init();
 end;
 
 procedure TMainForm.wwDBGrid6TitleButtonClick(Sender: TObject;
@@ -4245,12 +4254,18 @@ begin
 end;
 
 
+procedure TMainForm.AdvTabSheet4Hide(Sender: TObject);
+begin
+    SLE4442Deinit();
+end;
+
 procedure TMainForm.AdvTabSheet4Show(Sender: TObject);
 begin
 //AdvComboBox1.ItemIndex:=0;
     LMDMemo1.SetFocus;
     Edit1.Text:='0';
     LMDMemo1.Text:='Няма плащане';
+    SLE4442Init();
 end;
 
 procedure TMainForm.PlannerMaskDatePicker2Change(Sender: TObject);
@@ -4851,12 +4866,16 @@ end;
 
 
 
+procedure TMainForm.AdvTabSheet19Hide(Sender: TObject);
+begin
+    SLE4442Deinit();
+end;
+
 procedure TMainForm.AdvTabSheet19Show(Sender: TObject);
 begin
   QKlienti.Active:=True;
   Label137.Caption:=GetMessage('M67');//'Няма карта';
-  Label137.Font.Color := clRed; SLE4442Reset();
-  SLE4442Init();
+  Label137.Font.Color := clRed;
   if (PasswordForm.ModalResult=MROK) then
    begin
     PercentEdit.enabled   := true;
@@ -4876,6 +4895,7 @@ begin
     ValidnostTime.enabled := false;
    end;
    wwDBGrid5.Columns[1].ReadOnly := not (PasswordForm.ModalResult = mrOK);
+   SLE4442Init();
 end;
 
 procedure TMainForm.NovKlientButtonClick(Sender: TObject);

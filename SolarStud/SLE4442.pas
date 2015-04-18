@@ -2,8 +2,8 @@ unit SLE4442;
 
 interface
 uses main, Password, Windows, Messages, SysUtils, Variants, Classes, Graphics,
-Controls, Forms,
-    Dialogs, ACSModule, StdCtrls, ExtCtrls, ComCtrls, StrUtils, ABSMain;
+    Controls, Forms, Dialogs, ACSModule, StdCtrls, ExtCtrls, ComCtrls, StrUtils,
+    ABSMain;
 const
     MAX_BUFFER_LEN = 256;
 const
@@ -32,6 +32,7 @@ var
     dwActProtocol1: DWORD;
     cBAtrLen: DWORD;
     abc1, abc2, abc3, abc4: integer;
+    readerName: string;
 
 procedure ClearBuffers();
 //procedure InitMenu();
@@ -49,10 +50,12 @@ procedure SLE4442ReadCardInfo();
 procedure SLE4442WriteCardInfo();
 procedure SLE4442ShowCardInfo();
 function SLE4442Submit(): Boolean;
-procedure ClearCard();
 procedure SLE4442Init();
-procedure SLE4442Reset();
+procedure SLE4442Deinit();
+procedure ClearCard();
 procedure SLE4442ChangePIN();
+procedure SLE4442Read(addr: integer; length: integer);
+procedure SLE4442Write(addr: integer; len: integer);
 
 implementation
 uses SetLang;
@@ -237,54 +240,6 @@ begin
 
 end;
 
-procedure SLE4442Init();
-begin
-
-    // 1. Establish context and obtain hContext handle
-    retCode := SCardEstablishContext(SCARD_SCOPE_USER,
-        nil,
-        nil,
-        @hContext);
-    if retCode <> SCARD_S_SUCCESS then
-    begin
-        DisplayOut(1, retCode, '');
-        Exit;
-    end;
-
-    // 2. List PC/SC card readers installed in the system
-    BufferLen := MAX_BUFFER_LEN;
-    retCode := SCardListReadersA(hContext,
-        nil,
-        @Buffer,
-        @BufferLen);
-    if retCode <> SCARD_S_SUCCESS then
-    begin
-        DisplayOut(1, retCode, '');
-        Exit;
-    end
-    else
-        MainForm.mMsg.Clear;
-
-    DisplayOut(0, 0, GetMessage('M82'));
-
-end;
-
-procedure SLE4442Reset();
-begin
-
-    //  ClearFields();
-    //  rgCardType.ItemIndex := -1;
-    if ConnActive then
-    begin
-        retCode := SCardDisconnect(hCard, SCARD_UNPOWER_CARD);
-        ConnActive := False;
-    end;
-
-    retCode := SCardReleaseContext(hCard);
-    //  InitMenu();
-
-end;
-
 procedure SLE4442Connect();
 begin
     if hCard <> 0 then
@@ -305,7 +260,8 @@ begin
     end;
     // 1. Direct Connection
     retCode := SCardConnectA(hContext,
-        PChar('ACS ACR38U 0'),
+        //        PChar('ACS ACR38U 0'),
+        Buffer,
         SCARD_SHARE_DIRECT,
         0,
         @hCard,
@@ -322,11 +278,11 @@ begin
     SendLen := 4;
     SendBuff[0] := $12; // Card Type for SLE4442
     retCode := CallCardControl();
-    if retCode <> SCARD_S_SUCCESS then
-        Exit;
+    //    if retCode <> SCARD_S_SUCCESS then
+    //        Exit;
 
-    // 3. Reconnect using SCARD_SHARE_SHARED and
-    //    SCARD_PROTOCOL_T0 parameters
+        // 3. Reconnect using SCARD_SHARE_SHARED and
+        //    SCARD_PROTOCOL_T0 parameters
     retCode := SCardDisconnect(hCard, SCARD_UNPOWER_CARD);
     if retCode <> SCARD_S_SUCCESS then
     begin
@@ -335,7 +291,8 @@ begin
         Exit;
     end;
     retCode := SCardConnectA(hContext,
-        PChar('ACS ACR38U 0'),
+        //PChar('ACS ACR38U 0'),
+        Buffer,
         SCARD_SHARE_SHARED,
         SCARD_PROTOCOL_T0 or SCARD_PROTOCOL_T1,
         @hCard,
@@ -358,23 +315,19 @@ begin
 
 end;
 
-procedure SLE4442Read();
+procedure SLE4442Read(addr: integer; length: integer);
 var
     tmpStr: string;
     indx: integer;
 begin
-
-    // 1. Check all input fields
-    if not InputOK(0) then
-        Exit;
 
     // 2. Send all inputs to the card
     ClearBuffers();
     SendBuff[0] := $FF;
     SendBuff[1] := $B0;
     SendBuff[2] := $00;
-    SendBuff[3] := (StrToInt('$' + copy(Address, 1, 2)));
-    SendBuff[4] := (StrToInt('$' + copy(Length1, 1, 2)));
+    SendBuff[3] := addr;
+    SendBuff[4] := length;
     SendLen := 5;
     RecvLen := SendBuff[4] + 6;
     tmpStr := '';
@@ -392,7 +345,7 @@ begin
 
 end;
 
-procedure SLE4442Write();
+procedure SLE4442Write(addr: integer; len: integer);
 var
     tmpStr: string;
     indx: integer;
@@ -408,8 +361,8 @@ begin
     SendBuff[0] := $FF;
     SendBuff[1] := $D0;
     SendBuff[2] := $00;
-    SendBuff[3] := (StrToInt('$' + copy(Address, 1, 2)));
-    SendBuff[4] := (StrToInt('$' + copy(Length1, 1, 2)));
+    SendBuff[3] := addr;
+    SendBuff[4] := len;
     if not (Data = '') then
     begin
         tmpStr := Data;
@@ -548,19 +501,13 @@ var
     Temp: Integer;
 begin
     Data := LeftStr(Card.StudioName, 16);
-    Address := '80';
-    Length1 := '0f';
-    SLE4442Write; // Запис на име на студиото на адрес 80-8f
+    SLE4442Write($80, $0F); // Запис на име на студиото на адрес 80-8f
 
     Data := char(Card.StudioNomer);
-    Address := 'f9';
-    Length1 := '01'; // Запис на номер на студиото
-    SLE4442Write;
+    SLE4442Write($F9, $01); // Запис на номер на студиото
 
     Data := LeftStr(Card.ClientName, 32);
-    Address := '90';
-    Length1 := '1f'; // Запис на име на клиента
-    SLE4442Write;
+    SLE4442Write($90, $1F); // Запис на име на клиента
 
     //FmtStr(Result,'%4.2f',[Card.Balans]);
     if Card.Balans < 0 then
@@ -572,17 +519,13 @@ begin
     SendBuff[6] := Byte((Temp - SendBuff[5] * 256 * 256) div 256);
     SendBuff[7] := Byte((Temp - SendBuff[5] * 256 * 256 - SendBuff[6] * 256));
     Data := '';
-    Address := 'b0';
-    Length1 := '03'; // Запис на баланс
-    SLE4442Write;
+    SLE4442Write($B0, $03); // Запис на баланс
 
     Data := '';
     SendBuff[5] := Byte(StrToInt('$' + (LeftStr(Card.PIN, 2))));
     SendBuff[6] := Byte(StrToInt('$' + (MidStr(Card.PIN, 3, 2))));
     SendBuff[7] := Byte(StrToInt('$' + (MidStr(Card.PIN, 5, 2))));
-    Address := 'fa';
-    Length1 := '03'; // Запис на PIN-код
-    SLE4442Write;
+    SLE4442Write($FA, $03); // Запис на PIN-код
 
     SendBuff[5] := Byte(Card.CardNomer div (256 * 256));
     SendBuff[6] := Byte((Card.CardNomer - SendBuff[5] * 256 * 256) div 256);
@@ -595,9 +538,7 @@ begin
         SendBuff[7] := 255;
     end;
     Data := '';
-    Address := 'fd';
-    Length1 := '03'; // Запис на номер на карта
-    SLE4442Write;
+    SLE4442Write($FD, $03); // Запис на номер на карта
 
     SendBuff[5] := Byte(Card.ClientNomer div (256 * 256));
     SendBuff[6] := Byte((Card.ClientNomer - SendBuff[5] * 256 * 256) div 256);
@@ -610,9 +551,7 @@ begin
         SendBuff[7] := 255;
     end;
     Data := '';
-    Address := 'f6';
-    Length1 := '03'; // Запис на номер на клиент
-    SLE4442Write;
+    SLE4442Write($F6, $03); // Запис на номер на клиент
 
 end;
 
@@ -625,30 +564,43 @@ var
     AResult: Pointer;
     Result2: integer;
     StudioNomer: integer;
+    tmpStr: string;
+    indx: integer;
 begin
     if IsChipCard then
     begin
 
-        Address := '80';
-        Length1 := '0f';
-        SLE4442Read; // Четене на име на студиото на адрес 80-8f
+        // 2. Send all inputs to the card
+        ClearBuffers();
+        SendBuff[0] := $FF;
+        SendBuff[1] := $B0;
+        SendBuff[2] := $00;
+        SendBuff[3] := (StrToInt('$00'));
+        SendBuff[4] := (StrToInt('$ff'));
+        SendLen := 5;
+        RecvLen := SendBuff[4] + 6;
+        tmpStr := '';
+        for indx := 0 to SendLen - 1 do
+            tmpStr := tmpStr + Format('%.02X ', [SendBuff[indx]]);
+        retCode := SendAPDUandDisplay(2, tmpStr);
+        if retCode <> SCARD_S_SUCCESS then
+            Exit;
+        retCode := SendAPDUandDisplay(2, tmpStr);
+        RecvBuff[0] := RecvBuff[0];
+
+        SLE4442Read($80, $0F); // Четене на име на студиото на адрес 80-8f
         Result := #0;
         Temp := Pos(Result, Data) - 1;
         Card.StudioName := LeftStr(Data, Temp);
-        Address := 'f9';
-        Length1 := '01'; // Четене на номер на студиото
-        SLE4442Read;
+
+        SLE4442Read($F9, $01); // Четене на номер на студиото
         Card.StudioNomer := ord(Data[1]);
 
-        Address := '90';
-        Length1 := '1f'; // Четене на име на клиента
-        SLE4442Read;
+        SLE4442Read($90, $1F); // Четене на име на клиента
         Temp := Pos(Result, Data) - 1;
         Card.ClientName := LeftStr(Data, Temp);
 
-        Address := 'b0';
-        Length1 := '03'; // Четене на баланс
-        SLE4442Read;
+        SLE4442Read($B0, $03); // Четене на баланс
         Data := '$';
         for i := 0 to 2 do
             Data := Data + Format('%.2X', [(RecvBuff[i])]);
@@ -658,16 +610,12 @@ begin
             Temp := -1;
         Card.Balans := Temp / 100;
 
-        Address := 'fa';
-        Length1 := '03'; // Четене на PIN-код
-        SLE4442Read;
+        SLE4442Read($FA, $03); // Четене на PIN-код
         Address := IntToHex(Byte(RecvBuff[0]), 2);
         Card.PIN := IntToHex(Byte(RecvBuff[0]), 2) + IntToHex(Byte(RecvBuff[1]),
             2) + IntToHex(Byte(RecvBuff[2]), 2);
 
-        Address := 'fd';
-        Length1 := '03'; // Четене на номер на карта
-        SLE4442Read;
+        SLE4442Read($FD, $03); // Четене на номер на карта
         Data := '$';
         for i := 0 to 2 do
             Data := Data + Format('%.2X', [(RecvBuff[i])]);
@@ -676,15 +624,14 @@ begin
         if Temp > 65535 then
             Temp := -1;
         Card.CardNomer := Temp;
-        Address := 'f6';
-        Length1 := '03'; // Четене на номер на клиент
-        SLE4442Read;
+
+        SLE4442Read($F6, $03); // Четене на номер на клиент
         Data := '$';
         for i := 0 to 2 do
             Data := Data + Format('%.2X', [(RecvBuff[i])]);
         if not TryStrToInt(Data, Temp) then
             Temp := 0;
-        if Temp > 65535 then
+        if Temp > 16777214 then
             Temp := -1;
         Card.ClientNomer := Temp;
         if Card.ClientNomer < 0 then
@@ -718,7 +665,7 @@ begin
     else
     begin
         PrintText := GetMessage('M37') + ' ' + IntToStr(Card.ClientNomer);
-            // 'Клиент номер:> '
+        // 'Клиент номер:> '
         MainForm.mMsg.Lines.Add(PrintText);
         MainForm.mMsg.SelAttributes.Color := clBlack;
         PrintText := GetMessage('M38') + ' ' + Card.ClientName; //'Клиент:> '
@@ -734,7 +681,7 @@ begin
         MainForm.mMsg.Lines.Add(PrintText);
         MainForm.mMsg.SelAttributes.Color := clBlack;
         PrintText := GetMessage('M41') + ' ' + IntToStr(Card.StudioNomer);
-            //'Студио №:> '
+        //'Студио №:> '
         MainForm.mMsg.Lines.Add(PrintText);
         MainForm.mMsg.SelAttributes.Color := clBlack;
     end;
@@ -855,84 +802,8 @@ begin
     TimerTime := TimerTime + 1;
     if TimerTime = 2 then
     begin
-        retCode := SCardEstablishContext(SCARD_SCOPE_USER,
-            nil,
-            nil,
-            @hContext);
-        if retCode <> SCARD_S_SUCCESS then
-        begin
-            DisplayOut(1, retCode, 'Con1');
-            TimerTime := 0;
-            Exit;
-        end;
-        // 2. List PC/SC card readers installed in the system
-        { BufferLen := MAX_BUFFER_LEN;
-         retCode := SCardListReadersA(hContext,
-                                      nil,
-                                      @Buffer,
-                                      @BufferLen);
-         if retCode <> SCARD_S_SUCCESS then
-           begin
-             DisplayOut(1, retCode, ' List1');
-             Exit;
-           end;     }
-       //  SLE4432_4442Main.cbReader.Clear;
-       //  LoadListToControl(SLE4432_4442Main.cbReader,@buffer,bufferLen);
-       //  SLE4432_4442Main.cbReader.ItemIndex := 0;
-            // 1. Direct Connection
-        retCode := SCardConnectA(hContext,
-            PChar('ACS ACR38U 0'),
-            SCARD_SHARE_DIRECT,
-            0,
-            @hCard,
-            @dwActProtocol);
-        if retCode <> SCARD_S_SUCCESS then
-        begin
-            DisplayOut(1, retCode, ' Con2');
-            ConnActive := False;
-            Exit;
-        end;
-
-        // 2. Select Card Type
-        ClearBuffers();
-        SendLen := 4;
-        SendBuff[0] := $12; // Card Type for SLE4442
-        retCode := CallCardControl();
-        if retCode <> SCARD_S_SUCCESS then
-            Exit;
-
-        // 3. Reconnect using SCARD_SHARE_SHARED and
-        //    SCARD_PROTOCOL_T0 parameters
-        retCode := SCardDisconnect(hCard, SCARD_UNPOWER_CARD);
-        if retCode <> SCARD_S_SUCCESS then
-        begin
-            DisplayOut(1, retCode, 'Con3');
-            ConnActive := False;
-            Exit;
-        end;
-        retCode := SCardConnectA(hContext,
-            PChar('ACS ACR38U 0'),
-            SCARD_SHARE_SHARED,
-            SCARD_PROTOCOL_T0 or SCARD_PROTOCOL_T1,
-            @hCard,
-            @dwActProtocol);
-        if retCode <> SCARD_S_SUCCESS then
-        begin
-            //  DisplayOut(1, retCode, '');
-            ConnActive := False;
-            IsChipCard := FALSE;
-            MainForm.NovKlientButton.Visible := False;
-            //       MainForm.NuliraneChipCartaButton.Visible:=False;
+        if hCard = 0 then
             SLE4442Init();
-            Exit;
-        end
-        else
-        begin
-            ConnActive := True;
-            IsChipCard := True;
-            MainForm.NovKlientButton.Visible := TRUE;
-            //     MainForm.NuliraneChipCartaButton.Visible:=TRUE;
-        end;
     end;
 
     //Само ако има връзка с карта
@@ -974,7 +845,8 @@ begin
                 MainForm.Label71.Visible := True;
                 MainForm.Label72.Visible := True;
                 if (Card.StudioNomer =
-                    MainForm.Internet.FieldValues['STUDIONOMER']) and (Card.PIN =
+                    MainForm.Internet.FieldValues['STUDIONOMER']) and (Card.PIN
+                    =
                     MainForm.Internet.FieldValues['PIN']) then
                 begin
                     _Q.SQL.SetText(PChar('select * from KARTICHIP where KLIENTNOMER = ' + IntToStr(Card.ClientNomer)));
@@ -1004,7 +876,7 @@ begin
                     MainForm.SOLARIUMI.FieldValues['CENA'];
                 FmtStr(Result, '%4.2f', [Ostatak]);
                 MainForm.Label72.Caption := '' + Result + GetMessage('M85');
-                    //'минути / ';
+                //'минути / ';
                 FmtStr(Result, '%4.2f', [Card.Balans]);
                 MainForm.Label72.Caption := MainForm.Label72.Caption + '' +
                     Result + GetMessage('29'); //'лв.';
@@ -1028,7 +900,35 @@ begin
             end;
             MainForm.mMsg.Clear;
             Card.ClientNomer := -1;
+
+            retCode := SCardConnectA(hContext,
+                //            PChar('ACS ACR38U 0'),
+                Buffer,
+                SCARD_SHARE_SHARED,
+                SCARD_PROTOCOL_T0 or SCARD_PROTOCOL_T1,
+                @hCard,
+                @dwActProtocol);
+            if retCode <> SCARD_S_SUCCESS then
+            begin
+                //  DisplayOut(1, retCode, '');
+                ConnActive := False;
+                IsChipCard := FALSE;
+                MainForm.NovKlientButton.Visible := False;
+                //       MainForm.NuliraneChipCartaButton.Visible:=False;
+                Exit;
+            end
+            else
+            begin
+                ConnActive := True;
+                IsChipCard := True;
+                MainForm.NovKlientButton.Visible := TRUE;
+                //     MainForm.NuliraneChipCartaButton.Visible:=TRUE;
+            end;
         end;
+    end
+    else
+    begin
+
     end;
     _Q.Free;
 end;
@@ -1045,18 +945,142 @@ begin
         RecvBuff[indx + 5] := $FF;
     end;
     Data := '';
-    Address := '80';
-    Length1 := '3f';
-    SLE4442Write; // Запис
+    SLE4442Write($80, $3F); // Запис
     for indx := 0 to 80 do
     begin
         SendBuff[indx + 5] := $FF;
         RecvBuff[indx + 5] := $FF;
     end;
-    Address := 'c0';
-    Length1 := '3f';
-    SLE4442Write; // Запис
+    SLE4442Write($C0, $3F); // Запис
 
+end;
+
+procedure SLE4442Init();
+var
+    i: integer;
+    tmpStr: string;
+    indx: integer;
+begin
+    IsChipCard := false;
+    // 1. Establish context and obtain hContext handle
+    retCode := SCardEstablishContext(SCARD_SCOPE_USER,
+        nil,
+        nil,
+        @hContext);
+    if retCode <> SCARD_S_SUCCESS then
+    begin
+        DisplayOut(1, retCode, '');
+        Exit;
+    end;
+
+    // 2. List PC/SC card readers installed in the system
+    BufferLen := MAX_BUFFER_LEN;
+    retCode := SCardListReadersA(hContext,
+        nil,
+        @Buffer,
+        @BufferLen);
+    if retCode <> SCARD_S_SUCCESS then
+    begin
+        DisplayOut(1, retCode, '');
+        Exit;
+    end
+    else
+        DisplayOut(0, 0, 'Select reader and card type, and connect.');
+    readerName := string(buffer);
+
+    if ConnActive then
+    begin
+        DisplayOut(0, 0, 'Connection is already active.');
+        Exit;
+    end;
+    if not StrUtils.ContainsText(readerName, 'CCID') then
+    begin
+
+        // 1. Direct Connection
+        retCode := SCardConnectA(hContext,
+            PChar(readerName),
+            SCARD_SHARE_DIRECT,
+            0,
+            @hCard,
+            @dwActProtocol);
+        if retCode <> SCARD_S_SUCCESS then
+        begin
+            DisplayOut(1, retCode, '');
+            ConnActive := False;
+            Exit;
+        end;
+
+        // 2. Select Card Type
+        ClearBuffers();
+        SendLen := 4;
+        SendBuff[0] := $12; // Card Type for SLE4442
+        retCode := CallCardControl();
+        if retCode <> SCARD_S_SUCCESS then
+            Exit;
+
+        // 3. Reconnect using SCARD_SHARE_SHARED and
+        //    SCARD_PROTOCOL_T0 parameters
+        retCode := SCardDisconnect(hCard, SCARD_UNPOWER_CARD);
+        if retCode <> SCARD_S_SUCCESS then
+        begin
+            DisplayOut(1, retCode, '');
+            ConnActive := False;
+            Exit;
+        end;
+    end;
+    retCode := SCardConnectA(hContext,
+        PChar(readerName),
+        SCARD_SHARE_SHARED,
+        SCARD_PROTOCOL_T0 or SCARD_PROTOCOL_T1,
+        @hCard,
+        @dwActProtocol);
+    if retCode <> SCARD_S_SUCCESS then
+    begin
+        DisplayOut(1, retCode, '');
+        ConnActive := False;
+        Exit;
+    end
+    else
+        DisplayOut(0, 0, 'Successful connection to ' + readerName);
+    ConnActive := True;
+    IsChipCard := True;
+    // Get ATR
+    GetATR();
+    SLE4442Timer3();
+    // // 2. Send all inputs to the card
+    //  ClearBuffers();
+    //  SendBuff[0] := $FF;
+    //  SendBuff[1] := $B0;
+    //  SendBuff[2] := $00;
+    //  SendBuff[3] := (StrToInt('$80'));
+    //  SendBuff[4] := (StrToInt('$20'));
+    //  SendLen := 5;
+    //  RecvLen := SendBuff[4] + 6;
+    //  tmpStr := '';
+    //  for indx := 0 to SendLen-1 do
+    //    tmpStr := tmpStr + Format('%.02X ',[SendBuff[indx]]);
+    //  retCode := SendAPDUandDisplay(2, tmpStr);
+    //  if retCode <> SCARD_S_SUCCESS then
+    //    Exit;
+    //
+    //  // 3. Display data read from card into Data textbox
+    //  tmpStr := '';
+    //  for indx := 0 to SendBuff[4]-1 do
+    //    tmpStr := tmpStr + chr(RecvBuff[indx]);
+    //  DisplayOut(2, 0, tmpStr);
+
+end;
+
+procedure SLE4442Deinit();
+var
+    i: integer;
+begin
+    if ConnActive then
+    begin
+        retCode := SCardDisconnect(hCard, SCARD_UNPOWER_CARD);
+        ConnActive := False;
+    end;
+    retCode := SCardReleaseContext(hCard);
 end;
 
 end.
