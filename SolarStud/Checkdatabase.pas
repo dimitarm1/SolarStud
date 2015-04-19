@@ -365,7 +365,9 @@ begin
   end;
 
   ExecSQL(' ALTER TABLE STOKI ADD (                            '+
-            ' IF NOT EXISTS VALINDOST_KARTA INTEGER) ');
+            ' IF NOT EXISTS VALIDNOST_KARTI INTEGER) ');
+  ExecSQL(' ALTER TABLE KARTICHIP MODIFY (                            '+
+            ' ONCE_PERDAY LOGICAL DEFAULT TRUE) ');
 
 
   ExecSQL('delete from KARTICHIP where not KLIENTNOMER >0'); //Truncate bad records silently
