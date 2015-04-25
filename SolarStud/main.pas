@@ -4000,10 +4000,13 @@ begin  // Delete klient
     begin
         if PasswordForm.ShowModal=MROK then
         begin
-            wwDBGrid7.ReadOnly:=False;
+           wwDBGrid7.ReadOnly:=False;
         end;
+    end;
+    begin
         if PasswordForm.ModalResult=MROK then
         begin
+            wwDBGrid7.ReadOnly:=False;
             Message1:=GetMessage('M24');
             //Message1:='Наистина ли искате да изтриете ';
             if not (VarType(QKlienti.FieldValues['IME']) in [varNull]) then
@@ -4700,6 +4703,7 @@ var
     HasCard: Boolean;
 begin  //Зареждане
 	if  not QKlienti.RecordCount>0 then Exit;
+    if KARTICHIP.FieldValues['ENDDATE'] > 0 then Exit;
 	Card.NewCard:=(Card.CardNomer=-1);
 	HasCard  := Card.ClientNomer > 0;
     if IsReader  and (Card.CardNomer<0) then  HasCard := true;
