@@ -1481,10 +1481,11 @@ begin
     DBLUCombo1.Text :=  DateToStrBg(Date);
     DayTotal.Active:=False;
     DayTotal.SQL.Text := ' SELECT * FROM Plashtania p LEFT OUTER join STOKI s ON Plashtania.STOKA=STOKI.STOKAKOD'+
-                         ' WHERE DATA = :DATA_COMBO_SELECTED ORDER BY RECORDID ASC';
+                         ' WHERE DATA = :DATA_COMBO_SELECTED ORDER BY :ORDERPARAM DESC';
     DayTotal.ParamByName('DATA_COMBO_SELECTED').AsDate:=Date;
-//    DayTotal.ParamByName('ORDERPARAM').AsString:=' RECORDID ';
+//    DayTotal.ParamByName('ORDERPARAM').AsString:=' STOKA ';
     DayTotal.Active:=True;
+    ReorderSQLDataSet( DayTotal, 'STOKA');
    end;
 
    if   (AdvPageControl1.ActivePageIndex=1) then
