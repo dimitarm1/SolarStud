@@ -816,6 +816,10 @@ begin
         begin
             if not (MainForm.Label137.Font.Color = clGreen) then
             begin
+                ConnActive := True;
+                IsChipCard := True;
+                MainForm.NovKlientButton.Visible := TRUE;
+
                 MainForm.Label137.Caption := GetMessage('M84'); //'Има Карта!';
                 MainForm.Label137.Font.Color := clGreen;
                 SLE4442ReadCardInfo();
