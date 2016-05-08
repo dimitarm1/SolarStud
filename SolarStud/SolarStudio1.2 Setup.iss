@@ -54,9 +54,9 @@ Source: "SolarStudio1.2.ini"; DestDir: "{app}"; Flags: ignoreversion
 Source: "SolarStudio1.2.ico"; DestDir: "{app}"; Flags: ignoreversion
 Source: "solarstudio1-guide.doc"; DestDir: "{app}"; Flags: ignoreversion
 Source: "StartSolarStudio1.bat"; DestDir: "{app}"; Flags: ignoreversion
-Source: "data\*"; DestDir: "{app}\data";
-Source: "acr38\*"; DestDir: "{app}\acr38"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "images\*"; DestDir: "{app}\images"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "data\*"; DestDir: "{app}\data";  Flags: ignoreversion
+Source: "acr38\*"; DestDir: "{app}\acr38"; Flags:  recursesubdirs createallsubdirs  ignoreversion
+Source: "images\*"; DestDir: "{app}\images"; Flags:  recursesubdirs createallsubdirs ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
@@ -71,6 +71,8 @@ Name: "{commondesktop}\SolarStudio1"; Filename: "{app}\StartSolarStudio1.bat"; T
 Filename: "{app}\pl2303_dirver.exe";
 Filename: "{app}\acr38\Setup.exe";
 Filename: "{app}\StartSolarStudio1.bat"; Description: "{cm:LaunchProgram,SolarStudio1}"; Flags: postinstall skipifsilent runminimized
+
+
 
 
 

@@ -123,7 +123,7 @@ var
     indx: integer;
 begin
 
-    DisplayOut(2, 0, 'Get ATR');
+    DisplayOut(2, 0, 'Get ATR');     // Select Card type
     ClearBuffers();
     SendLen := 6;
     RecvLen := 6;
@@ -172,14 +172,20 @@ begin
                     for indx := (RecvLen - 2) to (RecvLen - 1) do
                         tmpStr := tmpStr + Format('%.02X ', [(RecvBuff[indx])]);
                     if (Trim(tmpStr) <> '90 00') then
+                    begin
                         DisplayOut(1, 0, 'Return bytes are not acceptable.');
+                        retCode:= SCARD_F_UNKNOWN_ERROR;
+                    end;
                 end;
             1:
                 begin // Display ATR after checking SW1/SW2
                     for indx := (RecvLen - 2) to (RecvLen - 1) do
                         tmpStr := tmpStr + Format('%.02X ', [(RecvBuff[indx])]);
                     if (Trim(tmpStr) <> '90 00') then
-                        DisplayOut(1, 0, 'Return bytes are not acceptable.')
+                    begin
+                        DisplayOut(1, 0, 'Return bytes are not acceptable.');
+                        retCode:= SCARD_F_UNKNOWN_ERROR;
+                    end
                     else
                     begin
                         tmpStr := 'ATR :';
@@ -193,7 +199,10 @@ begin
                     for indx := (RecvLen - 2) to (RecvLen - 1) do
                         tmpStr := tmpStr + Format('%.02X ', [(RecvBuff[indx])]);
                     if (Trim(tmpStr) <> '90 00') then
-                        DisplayOut(1, 0, 'Return bytes are not acceptable.')
+                    begin
+                        DisplayOut(1, 0, 'Return bytes are not acceptable.');
+                        retCode:= SCARD_F_UNKNOWN_ERROR;
+                    end
                     else
                     begin
                         tmpStr := '';
@@ -430,7 +439,8 @@ begin
     SendBuff[1] := $B1;
     SendBuff[2] := $00;
     SendBuff[3] := $00;
-    SendBuff[4] := $00;
+//    SendBuff[4] := $00;
+    SendBuff[4] := $04;
     SendLen := 5;
     RecvLen := 6;
     tmpStr := '';
@@ -997,7 +1007,7 @@ begin
         DisplayOut(0, 0, 'Connection is already active.');
         Exit;
     end;
-    if not StrUtils.ContainsText(readerName, 'CCID') then
+    if (not StrUtils.ContainsText(readerName, 'CCID')) and (not StrUtils.ContainsText(readerName, 'OMNIKEY'))then
     begin
 
         // 1. Direct Connection
