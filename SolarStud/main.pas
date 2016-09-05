@@ -717,6 +717,9 @@ type
     Label157: TLabel;
     Image1: TImage;
     Image8: TImage;
+    STOKITE_SKLAD: TABSQuery;
+    DataSource23: TDataSource;
+    StokaEditBtn: TLabel;
     procedure Label1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
@@ -914,6 +917,7 @@ type
     procedure AdvTabSheet19Hide(Sender: TObject);
     procedure AdvTabSheet16Hide(Sender: TObject);
     procedure AdvTabSheet4Hide(Sender: TObject);
+    procedure StokaEditBtnClick(Sender: TObject);
 
 
   private
@@ -1098,7 +1102,7 @@ var
 begin
  _Q:=nil;
  _Q:=TABSQuery.Create(nil);
- _Q.DatabaseName:='sol1';
+ _Q.DatabaseName:='sol1'; 
 
   with MainForm do
   begin
@@ -3023,6 +3027,7 @@ begin
   if  STOKITE.State in [dsEdit,dsInsert] then  STOKITE.Post;
   if  Internet.State in [dsEdit,dsInsert] then  Internet.Post;
   if  Solariumi.State in [dsEdit,dsInsert] then  Solariumi.Post;
+  if  STOKITE_SKLAD.State in [dsEdit,dsInsert] then  STOKITE_SKLAD.Post;
 end;
 
 
@@ -3265,6 +3270,8 @@ begin
         STOKI.Post;
         STOKITE.Refresh;
         STOKITE.Locate('STOKAKOD',maxcode,[]);
+        STOKITE_SKLAD.Refresh;
+        STOKITE_SKLAD.Locate('STOKAKOD',maxcode,[]);
       end;
       4:  //Услуги
        begin
@@ -3295,7 +3302,7 @@ var
 begin
  case StokiteTab.ActivePageIndex of
    0:StokaKod:=  KARTI.FieldValues['STOKAKOD'];
-   1:StokaKod:=  STOKITE.FieldValues['STOKAKOD'];
+   1:StokaKod:=  STOKITE_SKLAD.FieldValues['STOKAKOD'];
    2:StokaKod:=  USLUGITE.FieldValues['STOKAKOD'];
  end;
  if STOKI.Modified then
@@ -3317,6 +3324,8 @@ begin
    STOKI.Delete;
    STOKI.Refresh;
    STOKITE.refresh;
+   STOKITE_SKLAD.Active := False;
+   STOKITE_SKLAD.Active := True;
    KARTI.Refresh;
    USLUGITE.Refresh;
   end;
@@ -3388,6 +3397,26 @@ procedure TMainForm.wwDBGrid3TitleButtonClick(Sender: TObject;
     AFieldName: string);
 begin
     ReorderSQLDataSet(KARTI,AFieldName);
+end;
+
+procedure TMainForm.StokaEditBtnClick(Sender: TObject);
+begin
+  if StokaEditBtn.Tag = 0 then
+  begin
+    STOKITE_SKLAD.Active := False;
+     StokaEditBtn.Tag := 1;
+    STOKITE_SKLAD.SQL.SetText('SELECT *  FROM STOKI WHERE STOKAKOD > 0 ORDER BY STOKAKOD');
+    StokaEditBtn.Font.Color := clGreen;
+    STOKITE_SKLAD.Active := True;
+  end
+  else begin
+    if  STOKITE_SKLAD.State in [dsEdit,dsInsert] then  STOKITE_SKLAD.Post;
+    STOKITE_SKLAD.Active := False;
+    StokaEditBtn.Tag := 0;
+    STOKITE_SKLAD.SQL.SetText('SELECT STOKAIME, STOKAKOD, STOKANASKLAD, SUMA, SUMA * STOKANASKLAD as STOKATOTAL_IN,  STOKACENA,  STOKACENA * STOKANASKLAD as STOKATOTAL_SELL,  POSESHTENIA,  STOKATIP,  STOKACENACARD  FROM STOKI WHERE STOKAKOD > 0   ORDER BY STOKAKOD');
+    StokaEditBtn.Font.Color := clBlack;
+    STOKITE_SKLAD.Active := True;
+  end;
 end;
 
 procedure TMainForm.StokiGridTitleButtonClick(Sender: TObject;
@@ -4842,7 +4871,8 @@ begin
   Karti.Active:=False;
   Karti.SQL.SetText(PChar('SELECT * FROM STOKI WHERE STOKAKOD < 0'));
   Karti.Active:=True;
-  STOKITE.Active:=true;
+  STOKITE_SKLAD.Active:=true;
+  STOKITE_SKLAD.ReadOnly := false;
 end;
 
 procedure TMainForm.N3Click(Sender: TObject);
