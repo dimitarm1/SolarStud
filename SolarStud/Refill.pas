@@ -90,6 +90,7 @@ begin
  if not (VarType(V) in [varNull]) then Nomer:=0;   // So, there is a record with that number
  MainForm.Qklienti.Edit;
  MainForm.Qklienti.FieldValues['BALANS']:=  MainForm.Qklienti.FieldValues['BALANS']+MainForm.KARTI.FieldValues['STOKACENA'];
+ // Clear new card flag
 
  if Nomer>0 then MainForm.Qklienti.FieldValues['NOMER']:=Nomer;
  MainForm.Qklienti.post;
@@ -106,6 +107,7 @@ begin
    MainForm.KARTIALL1.FieldValues['KARTANOMER'  ]:= StrToInt(Edit1.Text);
    MainForm.KARTIALL1.FieldValues['POSESHTENIA' ]:= MainForm.KARTI.FieldValues['POSESHTENIA'];
    MainForm.KARTIALL1.FieldValues['KLIENTDETAIL']:= MainForm.QKlienti.FieldValues['NOMER'];
+
 // MainForm.KARTIALL1.FieldValues['MINUTINA1']:=MainForm.KARTI.FieldValues['MINUTINA1'];
    MainForm.KARTIALL1.Post;
    KartaNomer:=   MainForm.KARTIALL1.FieldValues['KARTANOMER'];
@@ -139,7 +141,7 @@ begin
      MainForm.plashtania.FieldValues['CHAS'       ]:=TimeToStr(Time);
      MainForm.plashtania.FieldValues['OTCHIPKARTA']:=Card.ClientNomer;
 
-     if MainForm.STOKI.Locate('POSESHTENIA',-1,[]) then      // Sell deposit
+     if MainForm.STOKI.Locate('STOKATIP','D',[]) then      // Sell deposit
       begin
        MainForm.STOKI.Edit;
        MainForm.STOKI.FieldValues['STOKANASKLAD'] := MainForm.STOKI.FieldValues['STOKANASKLAD'] -1;
@@ -151,7 +153,13 @@ begin
      MainForm.Plashtania.Post;
      Card.Balans:=0;
     end;
-   Card.Balans:=Card.Balans + MainForm.KARTI.FieldValues['SUMA'];
+    Card.Balans:=Card.Balans + MainForm.KARTI.FieldValues['SUMA'];
+    if(MainForm.KARTICHIP.FieldValues['COUNTER'] = -1) then
+    begin
+      MainForm.KARTICHIP.Edit();
+      MainForm.KARTICHIP.FieldValues['COUNTER']:= 0;
+      MainForm.KARTICHIP.Post();
+    end;
    end;
  end;
  if Valid then

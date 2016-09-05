@@ -783,7 +783,7 @@ begin
             else
                 MainForm.KARTICHIP.Edit;
             MainForm.KARTICHIP.FieldValues['DISCOUNT'] := 0;
-            MainForm.KARTICHIP.FieldValues['COUNTER'] := 0;
+            MainForm.KARTICHIP.FieldValues['COUNTER'] := -1; // Нов клиент - Нова карта
             MainForm.KARTICHIP.post;
             MainForm.Timer3.enabled := True;
         end;

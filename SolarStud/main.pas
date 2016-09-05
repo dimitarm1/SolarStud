@@ -918,6 +918,8 @@ type
     procedure AdvTabSheet16Hide(Sender: TObject);
     procedure AdvTabSheet4Hide(Sender: TObject);
     procedure StokaEditBtnClick(Sender: TObject);
+    procedure AdvTabSheet21Show(Sender: TObject);
+    procedure StokiteTabChange(Sender: TObject);
 
 
   private
@@ -2994,9 +2996,12 @@ begin
   Table3.Active:=True;
 
   AdvPageControl1.ActivePage:=AdvTabsheet13;
-  DayTotal.Active:=false; DayTotal.Active:=true;
+  DayTotal.Active:=false;
+  DayTotal.Active:=true;
   UpdatePageControl(1);
   Timer4.Enabled:=True;
+  ReorderSQLDataSet(DayTotal,'CHAS');
+  ReorderSQLDataSet(DayTotal,'CHAS');
 end;
 
 procedure TMainForm.Label92Click(Sender: TObject);
@@ -3188,6 +3193,7 @@ var
     L       :Boolean;
     _Q      :TABSQuery;
 begin
+
     _Q:=TABSQuery.Create(nil);
     _Q.DatabaseName:='sol1';
     case tipstoka of
@@ -3198,12 +3204,7 @@ begin
         _Q.Open;
         if _Q.IsEmpty then
          begin
-            _Q.Close;
-            _Q.SQL.SetText(PChar('select Min(STOKAKOD) as min1 from STOKI'));
-            _Q.Open;
-            mincode:=_Q.FieldValues['min1'];
-            if mincode>-1 then mincode:=-1;
-            STOKI.Append;
+            if not STOKI.Locate('STOKAKOD',-1,[]) then STOKI.Append;
           //   STOKI.FieldValues['STOKAIME']:='Депозит за карта от '+ IntToStr(Round(Suma))+' лв. ';
 //            STOKI.FieldValues['STOKAIME']:=GetMessage('M68')+' '+ IntToStr(Round(Suma))+' '+GetMessage('M20');
             STOKI.FieldValues['STOKACENA']:=0;
@@ -3226,7 +3227,11 @@ begin
       begin
         _Q.SQL.SetText(PChar('select Min(STOKAKOD) as min1 from STOKI'));
         _Q.Open;
-        mincode:=_Q.FieldValues['min1'];
+        try
+          mincode:=_Q.FieldValues['min1']
+        except
+          mincode:=-1;
+        end;
         if mincode>-1 then mincode:=-1;
         STOKI.Append;
         STOKI.FieldValues['STOKAKOD']:=mincode-1;
@@ -3242,7 +3247,11 @@ begin
       begin
         _Q.SQL.SetText(PChar('select Min(STOKAKOD) as min1 from STOKI'));
         _Q.Open;
-        mincode:=_Q.FieldValues['min1'];
+        try
+          mincode:=_Q.FieldValues['min1']
+        except
+          mincode:=-1;
+        end;
         if mincode>-1 then mincode:=-1;
         STOKI.Append;
         STOKI.FieldValues['STOKAKOD']:=mincode-1;
@@ -3256,11 +3265,14 @@ begin
       end;
      3:   //Козметика
       begin
-        _Q:=TABSQuery.Create(nil);
-        _Q.DatabaseName:='sol1';
         _Q.SQL.SetText(PChar('select Max(STOKAKOD) as max1 from STOKI'));
         _Q.Open;
-        maxcode:=_Q.FieldValues['max1'];
+        try
+          maxcode:=_Q.FieldValues['max1']
+        except
+          maxcode:=0;
+        end;
+        if maxcode< 0 then maxcode:=0;
         STOKI.Append;
         STOKI.FieldValues['STOKAKOD']:=maxcode+1;
         STOKI.FieldValues['STOKAIME']:='Нова Козметика №'+IntTostr(maxcode+1);
@@ -3268,16 +3280,23 @@ begin
         STOKI.FieldValues['STOKANASKLAD']:=0;
         STOKI.FieldValues['STOKATIP']:='S';
         STOKI.Post;
-        STOKITE.Refresh;
+        STOKITE.Active := False;
+        STOKITE.Active := True;
         STOKITE.Locate('STOKAKOD',maxcode,[]);
-        STOKITE_SKLAD.Refresh;
+        STOKITE_SKLAD.Active := False;
+        STOKITE_SKLAD.Active := True;
         STOKITE_SKLAD.Locate('STOKAKOD',maxcode,[]);
       end;
       4:  //Услуги
        begin
         _Q.SQL.SetText(PChar('select Max(STOKAKOD) as  max1 from STOKI'));
         _Q.Open;
-        maxcode:=_Q.FieldValues['max1'];
+        try
+          maxcode:=_Q.FieldValues['max1']
+        except
+          maxcode:=0;
+        end;
+        if maxcode < 0 then maxcode:=0;
         STOKI.Append;
         STOKI.FieldValues['STOKAKOD']:=maxcode+1;
         STOKI.FieldValues['STOKAIME']:='Нова Услуга №'+IntTostr(maxcode+1);
@@ -3287,6 +3306,16 @@ begin
         STOKI.Post;
         USLUGITE.Refresh;
         USLUGITE.Locate('STOKAKOD',maxcode,[]);
+      end;
+      5:   //Операция изтриване на клиент
+      begin
+        STOKI.Append;
+        STOKI.FieldValues['STOKAKOD']:=0;
+        STOKI.FieldValues['STOKAIME']:='Изтриване на клиент';
+        STOKI.FieldValues['STOKACENA']:=0;
+        STOKI.FieldValues['STOKANASKLAD']:=0;
+        STOKI.FieldValues['STOKATIP']:='S';
+        STOKI.Post;
       end;
      end;
      _Q.Free;
@@ -3404,8 +3433,8 @@ begin
   if StokaEditBtn.Tag = 0 then
   begin
     STOKITE_SKLAD.Active := False;
-     StokaEditBtn.Tag := 1;
-    STOKITE_SKLAD.SQL.SetText('SELECT *  FROM STOKI WHERE STOKAKOD > 0 ORDER BY STOKAKOD');
+    StokaEditBtn.Tag := 1;
+    STOKITE_SKLAD.SQL.SetText('SELECT *  FROM STOKI WHERE STOKATIP = "S" ORDER BY STOKAKOD');
     StokaEditBtn.Font.Color := clGreen;
     STOKITE_SKLAD.Active := True;
   end
@@ -3413,8 +3442,9 @@ begin
     if  STOKITE_SKLAD.State in [dsEdit,dsInsert] then  STOKITE_SKLAD.Post;
     STOKITE_SKLAD.Active := False;
     StokaEditBtn.Tag := 0;
-    STOKITE_SKLAD.SQL.SetText('SELECT STOKAIME, STOKAKOD, STOKANASKLAD, SUMA, SUMA * STOKANASKLAD as STOKATOTAL_IN,  STOKACENA,  STOKACENA * STOKANASKLAD as STOKATOTAL_SELL,  POSESHTENIA,  STOKATIP,  STOKACENACARD  FROM STOKI WHERE STOKAKOD > 0   ORDER BY STOKAKOD');
+    STOKITE_SKLAD.SQL.SetText('SELECT STOKAIME, STOKAKOD, STOKANASKLAD, SUMA, SUMA * STOKANASKLAD as STOKATOTAL_IN,  STOKACENA,  STOKACENA * STOKANASKLAD as STOKATOTAL_SELL,  POSESHTENIA,  STOKATIP,  STOKACENACARD  FROM STOKI WHERE STOKATIP = "S" ORDER BY STOKAKOD');
     StokaEditBtn.Font.Color := clBlack;
+    STOKITE_SKLAD.ReadOnly := True;
     STOKITE_SKLAD.Active := True;
   end;
 end;
@@ -3423,6 +3453,21 @@ procedure TMainForm.StokiGridTitleButtonClick(Sender: TObject;
     AFieldName: string);
 begin
     ReorderSQLDataSet(STOKITE,AFieldName);
+end;
+
+procedure TMainForm.StokiteTabChange(Sender: TObject);
+begin
+  if (StokiteTab.ActivePageIndex =1) then
+  begin
+    StokaEditBtn.Visible := true;
+    STOKITE_SKLAD.Active := False;
+    STOKITE_SKLAD.Active := True;
+  end
+  else
+  begin
+    StokaEditBtn.Visible := false;
+    if  STOKITE_SKLAD.State in [dsEdit,dsInsert] then  STOKITE_SKLAD.Post;
+  end;
 end;
 
 procedure TMainForm.ReorderSQLDataSet(Query: TABSQuery; AFieldName: string);
@@ -3825,6 +3870,11 @@ begin
     LMDButton5Click(Sender);
 end;
 
+procedure TMainForm.AdvTabSheet21Show(Sender: TObject);
+begin
+  StokaEditBtn.Visible := true;
+end;
+
 procedure TMainForm.AdvTabSheet23Show(Sender: TObject);
 var
     I: Integer;
@@ -4012,6 +4062,7 @@ end;
 
 procedure TMainForm.LMDButton5Click(Sender: TObject);
 var
+    R: boolean;
     Klient: Integer;
     Message1: String;
     Result2: integer;
@@ -4026,15 +4077,12 @@ begin  // Delete klient
     _Q.Databasename:='sol1';
     _Q.ReadOnly:=False;
     _Q.RequestLive:=True;
-    if not(PasswordForm.ModalResult=MROK) then
+    if IsChipCard and not(PasswordForm.ModalResult=MROK) then
     begin
-        if PasswordForm.ShowModal=MROK then
-        begin
-           wwDBGrid7.ReadOnly:=False;
-        end;
+        PasswordForm.ShowModal();
     end;
     begin
-        if PasswordForm.ModalResult=MROK then
+        if not IsChipCard or (PasswordForm.ModalResult=MROK) then
         begin
             wwDBGrid7.ReadOnly:=False;
             Message1:=GetMessage('M24');
@@ -4069,7 +4117,12 @@ begin  // Delete klient
                 Plashtania.FieldValues['OTCHIPKARTA']:=Klient;
                 Plashtania.FieldValues['CHAS']:=TimeToStr(Time);
                 Plashtania.Post; // Create empty record to register "Deletion" operation
-            end;
+                R:=STOKI.Locate('STOKAKOD',0,[]);
+                if not R then
+                begin
+                    AddStokaButtonClick(5); //Добавяне на код за изтриване на клиент
+                end;
+            end
         end
     else Application.MessageBox(PChar(GetMessage('M26')),PChar(GetMessage('M27')),MB_OK);
     end;
@@ -4657,11 +4710,28 @@ if Application.MessageBox(PChar(GetMessage('M79')),PChar('Warning'),MB_OKCANCEL	
 end;
 
 procedure TMainForm.NuliraneChipCartaButtonClick(Sender: TObject);
+  procedure ReturnDeposit(KartaNomer: Integer);
+    begin
+      if MainForm.STOKI.Locate('STOKATIP','D',[]) and (KartaNomer>0) then
+      begin
+          MainForm.STOKI.Edit;
+          MainForm.STOKI.FieldValues['STOKANASKLAD']:= MainForm.STOKI.FieldValues['STOKANASKLAD'] +1;
+          MainForm.STOKI.post;
+          Plashtania.Append;
+          plashtania.FieldValues['BROI']:=1;
+          plashtania.FieldValues['DATA']:=Date;
+          plashtania.FieldValues['CHAS']:=TimeToStr(Time);
+          plashtania.FieldValues['OTCHIPKARTA']:=KartaNomer;
+          plashtania.FieldValues['STOKA']:=MainForm.STOKI.FieldValues['STOKAKOD'];
+          plashtania.FieldValues['SUMABROI']:=-MainForm.STOKI.FieldValues['STOKACENA'];
+          Plashtania.Post;
+      end;
+    end;
 var
   KartaNomer: Integer;
   IsOK: Integer;
-begin
 
+begin
   if ((Card.PIN<>Internet.FieldValues['PIN'])and (Card.PIN<>'')){  or
      (KARTICHIP.fieldvalues['suma']>0)} then  begin// Message shoud be corrected...
     IsOK := Application.MessageBox(PChar(GetMessage('M78')),PChar('Warning'),MB_OKCANCEL);
@@ -4669,10 +4739,12 @@ begin
     SLE4442ReadCardInfo();SLE4442ShowCardInfo();
     if ((IsOK <> MROK) or (PasswordForm.ShowModal<>MROK)) then exit;
   end;
-
   if not IsChipCard then
-    if PasswordForm.ModalResult<>MROK then
-      if PasswordForm.ShowModal<>MROK then exit;
+    if not(MainForm.STOKI.Locate('STOKATIP','D',[])) then
+    begin
+      if PasswordForm.ModalResult<>MROK then
+        if PasswordForm.ShowModal<>MROK then exit;
+    end;
   if Application.MessageBox(PChar(GetMessage('M77')),PChar('?!'),MB_OKCANCEL		)=IDOK	 then begin
   //Картата ще бъде изчистена!?
    KARTICHIP.Edit;
@@ -4680,6 +4752,11 @@ begin
    KARTICHIP.FieldValues['DISCOUNT'] := 0;
    KARTICHIP.FieldValues['SUMA'] := 0;
    KARTICHIP.Post;
+   if not IsChipCard then
+   begin
+     ReturnDeposit(KARTICHIP.FieldValues['KLIENTNOMER']);
+   end;
+   
    if Card.ErrCounter>2 then
    begin
     Card.ConStatus:=card.ConStatus;
@@ -4697,21 +4774,9 @@ begin
       SLE4442WriteCardInfo();
       SLE4442ShowCardInfo();
       if ((Card.CardNomer<0)and (KartaNomer>0)) then begin//successful cleaning - return deposit
-        if MainForm.STOKI.Locate('POSESHTENIA',-1,[]) and (KartaNomer>0) then  begin
-          MainForm.STOKI.Edit;
-          MainForm.STOKI.FieldValues['STOKANASKLAD']:= MainForm.STOKI.FieldValues['STOKANASKLAD'] +1;
-          MainForm.STOKI.post;
-          Plashtania.Append;
-          plashtania.FieldValues['BROI']:=1;
-          plashtania.FieldValues['DATA']:=Date;
-          plashtania.FieldValues['CHAS']:=TimeToStr(Time);
-          plashtania.FieldValues['OTCHIPKARTA']:=KartaNomer;
-          plashtania.FieldValues['STOKA']:=MainForm.STOKI.FieldValues['STOKAKOD'];
-          plashtania.FieldValues['SUMABROI']:=-MainForm.STOKI.FieldValues['STOKACENA'];
-          Plashtania.Post;
-          end;
-        end;
+       ReturnDeposit(KartaNomer);
        Card.ErrCounter:=Card.ErrCounter;
+      end;
      end;
    end;
   end
@@ -4746,6 +4811,10 @@ begin  //Зареждане
 		//Card.PIN:=Internet.FieldValues['PIN'];
 		Card.ClientNomer:= QKlienti.FieldValues['NOMER'];
 		Card.CardNomer:= Card.ClientNomer;
+    if (not IsReader) and ((varType(KARTICHIP.FieldValues['SUMA']) = varNull) or KARTICHIP.FieldValues['COUNTER'] = -1) then
+    begin
+      Card.NewCard := true;
+    end; 
 		if (not IsReader) and (varType(KARTICHIP.FieldValues['SUMA']) <> varNull) then begin
 			Card.Balans:= KARTICHIP.FieldValues['SUMA']  ;
 		end;
@@ -4986,10 +5055,11 @@ begin
        begin
          _Q.Edit;
          _Q.FieldValues['SUMA']:=0;
+         _Q.FieldValues['COUNTER']:= -1;
        end
        else  _Q.Append;
        _Q.FieldValues['KLIENTNOMER']:= QKLIENTI.FieldValues['NOMER'];
-       _Q.FieldValues['COUNTER']:= 0;
+       _Q.FieldValues['COUNTER']:= -1;
        _Q.FieldValues['DISCOUNT']:= 0;
         if not IsReader then  _Q.FieldValues['SUMA']:= _Q.FieldValues['SUMA'] + KARTI.FieldValues['SUMA'];
        _Q.Post;
