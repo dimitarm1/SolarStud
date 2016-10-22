@@ -1431,6 +1431,7 @@ begin
     if (hDevice = INVALID_HANDLE_VALUE) then    // did we succeed?
      if not(IsDemoMode) then
       begin
+        if(n1 = 0) then Exit;
         ComPortName:=GetMessage('M3')+' ('+ComPortName+ ')';
         //ComPortName:='Програмата няма достъп до серийния порт ('+ComPortName+ ')';
         Application.MessageBox(PChar(ComPortName), 'error', MB_OK);
@@ -1846,7 +1847,19 @@ begin
        end
    end;
   end
-  else MainForm.Label91.Caption:='ERROR';
+  else
+  begin
+    MainForm.Label91.Caption:='ERROR';
+    if (hDevice <> INVALID_HANDLE_VALUE) then
+    begin
+        CloseHandle(hDevice);
+    end;
+    init_uart(0);
+    if (hDevice <> INVALID_HANDLE_VALUE) then
+    begin
+      MainForm.Label91.Caption:='протокол';
+    end;    
+  end;
   //Update:=True;
 
    if  (CabineOldStatus[SolariumNo]=1)and (CabineStatusCounter[SolariumNo]>4) then LastTime[SolariumNo]:= CabineSetTime[SolariumNo]-MinutesBetween(Now,CabineStartTime[SolariumNo]); //working
@@ -5537,6 +5550,7 @@ begin
  SaveDialog1.Execute;
  if  SaveDialog1.Files.Count>0 then
   begin
+   Timer1.Enabled:=False;
    MainForm.sol1.FlushBuffers;
    MainForm.sol1.Close;
    FileName1:=sol1.DatabaseFileName;
@@ -5546,6 +5560,7 @@ begin
      else  Application.MessageBox(PChar('Архивиране на данните... Грешка!'),PChar('Архивиране'),MB_OK);
    Backuped:=True;
    OpenTables;
+   Timer1.Enabled:=True;
   end;
 end;
 
