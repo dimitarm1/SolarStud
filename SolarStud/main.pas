@@ -49,6 +49,7 @@ type TSLE4442Card = packed record
 end;
  function ConvertCurr1(Money_var: variant): AnsiString;
  function IntToStr2(value:variant):string;
+ procedure FillValues1();
 type
   TMainForm = class(TForm)
     OpenDialog: TOpenDialog;
@@ -189,7 +190,6 @@ type
     Label96: TLabel;
     LMDDBCheckBox1: TLMDDBCheckBox;
     Label30: TLabel;
-    DBEdit5: TDBEdit;
     Label56: TLabel;
     Label97: TLabel;
     Image52: TImage;
@@ -567,7 +567,6 @@ type
     LMDLImage137: TLMDLImage;
     LMDLImage138: TLMDLImage;
     LMDLImage126: TLMDLImage;
-    DBEdit2: TDBEdit;
     LMDLImage1: TLMDLImage;
     LMDLImage37: TLMDLImage;
     LMDLImage38: TLMDLImage;
@@ -720,6 +719,9 @@ type
     STOKITE_SKLAD: TABSQuery;
     DataSource23: TDataSource;
     StokaEditBtn: TLabel;
+    wwDBGrid8: TwwDBGrid;
+    PopalniCeniTableButton2: TRzButton;
+    DataSource24: TDataSource;
     procedure Label1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
@@ -920,7 +922,7 @@ type
     procedure StokaEditBtnClick(Sender: TObject);
     procedure AdvTabSheet21Show(Sender: TObject);
     procedure StokiteTabChange(Sender: TObject);
-
+    procedure PopalniCeniTableButton2Click(Sender: TObject);
 
   private
 
@@ -1081,6 +1083,7 @@ var
    DATA_COMBO_SELECTED: ShortString;
    SDELKANOMER        : Integer;
 
+
 procedure TMainForm.Label1Click(Sender: TObject);
 begin
  //Label1.Caption:='TEST';
@@ -1201,6 +1204,14 @@ begin
            _Q.FieldValues['MINUTA'  ] :=i2;
            _Q.FieldValues['CENA'    ] :=cena1*i2;
            _Q.Post;
+           if (i2<10) then
+           begin
+               _Q.Append;
+               _Q.FieldValues['SOLARIUM'] :=i1 + 100;
+               _Q.FieldValues['MINUTA'  ] :=i2;
+               _Q.FieldValues['CENA'    ] :=cena1;
+               _Q.Post;
+           end;
          end;
        end;
       end;
@@ -1408,6 +1419,7 @@ begin
   MainForm.Label158.Visible  :=True;
   MainForm.BonusLabel.Visible:=True;
   MainForm.DBText14.Visible  :=True;
+  FillValues1();
 end;
 
 
@@ -2047,7 +2059,6 @@ begin
  TimerTime1:=TimerTime1+1;
 // Label1.Caption:=IntToStr(TimerTime1);
  if (AdvPageControl1.ActivePageIndex in [3,15,18]) then SLE4442Timer3();
-
  If (AdvPageControl1.ActivePageIndex=1) and (not Backuped)then begin
   if (Time>StrToTime('22:15:00')) then begin
     Timer1.Enabled:=false;
@@ -2284,10 +2295,13 @@ procedure FillValues1();
 var
  IsOK: Boolean;
  Temp: Integer;
+ _Q4: TABSQuery;
+ stoka: Integer;
 begin
  SDELKANOMER:=0;
  with MainForm do
   begin
+   PriceCard := -1;
    SOLARIUMI.RecNo:=IndexSol;
    if TimeSet>99 then TimeSet:=99;
    if TimeSet>9 then
@@ -2300,7 +2314,29 @@ begin
    PriceCash:=Q1.FieldValues['CENA'];
    Temp:=Q1.RecNo;
    if IsOK then PriceCash:=PriceCash+0.0000001;
-   PriceCard:=TimeSet*SOLARIUMI.FieldByName('CENA').AsVariant;
+   if  (Qklienti.FieldValues['nomer']>0) then
+   begin
+     _Q4 :=  TABSQuery.Create(nil);
+     _Q4.DatabaseName:='sol1';
+     _Q4.SQL.Text := 'SELECT * FROM KLIENTI k join PLASHTANIA p on k.NOMER = p.OTCHIPKARTA where p.STOKA in (select STOKAKOD from stoki where STOKATIP = "K") and p.OTCHIPKARTA = '+ IntToStr(MainForm.Qklienti.FieldValues['nomer'])+' order by p.RECORDID desc';
+     _Q4.Active   := true;
+     if(_Q4.RecordCount > 0)  then
+     begin
+       stoka := - _Q4.FieldByName('STOKA').AsInteger;
+       _Q4.Active := False;
+       _Q4.SQL.Text := 'SELECT * from TABLICA_CENI where SOLARIUM = ' + IntToStr(MainForm.SOLARIUMI.RecNo + 100) +' and MINUTA = '+ IntToStr(stoka);
+       _Q4.Active   := true;
+       if(_Q4.RecordCount > 0) then
+       begin
+         PriceCard := TimeSet* _Q4.FieldByName('CENA').AsVariant;
+       end;
+     end;
+   end;
+   if(PriceCard = -1) then
+   begin
+       PriceCard:=TimeSet*SOLARIUMI.FieldByName('CENA').AsVariant;
+   end;
+
   { if  (Qklienti.FieldValues['nomer']>0) and
        (Internet.FieldValues['DISCOUNT_PERCENT']>0) and
         ((KARTICHIP.FieldValues['COUNTER']div
@@ -2314,6 +2350,8 @@ begin
    PriceCardLabel4.Caption:=Label9A.Caption;
   // Label63.Caption:=Label9.Caption;
   // Label64.Caption:='00.00';
+   _Q4.Close;
+   _Q4.Free;
   end;
 end;
 
@@ -2544,6 +2582,7 @@ begin
   end;
 end;
 
+
 procedure TMainForm.Image27Click(Sender: TObject);
 begin
 SOLARIUMI.Next;
@@ -2555,6 +2594,9 @@ SOLARIUMI.Next;
  Label117.Caption:=IntToStr(SOLARIUMI.RecNo);
  if SOLARIUMI.Eof and (SOLARIUMI.RecNo > 2) then LMDButton16.Visible:=true
  else LMDButton16.Visible:=false;
+ QCeni.Active := False;
+ QCeni.SQL.Text := ('select * from TABLICA_CENI where SOLARIUM = '+ IntToStr(SOLARIUMI.RecNo + 100));
+ QCeni.Active := True;
 end;
 
 procedure TMainForm.Image26Click(Sender: TObject);
@@ -2568,6 +2610,9 @@ begin
  Label117.Caption:=IntToStr(SOLARIUMI.RecNo);
   if SOLARIUMI.EOF then LMDButton16.Visible:=true
  else LMDButton16.Visible:=false;
+ QCeni.Active := False;
+ QCeni.SQL.Text := ('select * from TABLICA_CENI where SOLARIUM = '+ IntToStr(SOLARIUMI.RecNo + 100));
+ QCeni.Active := True;
 end;
 procedure TMainForm.FormCreate(Sender: TObject);
 var
@@ -2643,6 +2688,14 @@ begin
          Q1.FieldValues['MINUTA']:=i2;
          Q1.FieldValues['CENA']:=cena1*i2;
          Q1.Post;
+         if (i2 < 10) then
+         begin
+             Q1.Append;
+             Q1.FieldValues['SOLARIUM']:=i1 + 100;
+             Q1.FieldValues['MINUTA']:=i2;
+             Q1.FieldValues['CENA']:=cena1;
+             Q1.Post;
+         end;
        end;
     end;
    end;
@@ -5462,6 +5515,9 @@ end;
 procedure TMainForm.AdvTabSheet9Show(Sender: TObject);
 begin
  Label117.Caption:=IntToStr(SOLARIUMI.RecNo);
+ QCeni.Active := False;
+ QCeni.SQL.Text := ('select * from TABLICA_CENI where SOLARIUM = '+ IntToStr(SOLARIUMI.RecNo + 100));
+ QCeni.Active := True;
 end;
 
 procedure TMainForm.ComboBox1Change(Sender: TObject);
@@ -5712,6 +5768,18 @@ begin
   Planner1.Display.DisplayScale := TrackBar1.Position;
   Planner2.Display.DisplayScale := Round(TrackBar1.Position*0.6);
   Planner3.Display.DisplayScale := Round(TrackBar1.Position*0.6);
+end;
+
+procedure TMainForm.PopalniCeniTableButton2Click(Sender: TObject);
+begin
+   QCeni.First;
+   While (not QCeni.Eof) do
+     begin
+       QCeni.Edit;
+       QCeni.FieldValues['CENA']:=solariumi.FieldValues['CENA'];
+       QCeni.Post;
+       QCeni.Next;
+     end;
 end;
 
 procedure TMainForm.PopalniCeniTableButtonClick(Sender: TObject);

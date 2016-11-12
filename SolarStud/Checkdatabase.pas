@@ -372,7 +372,7 @@ begin
 
   ExecSQL('delete from KARTICHIP where not KLIENTNOMER >0'); //Truncate bad records silently
 
-  _Q.SQL.Text:='select * from TABLICA_CENI';
+  _Q.SQL.Text:='select * from TABLICA_CENI where SOLARIUM < 100';
   _Q.readonly:=False;
   _Q.InMemory:=false;
   _Q.Active  :=true;
@@ -389,6 +389,31 @@ begin
         _Q.FieldValues['SOLARIUM'] := _Q2.FieldValues['SOLARIUM'];
         _Q.FieldValues['MINUTA'  ] := i2;
         _Q.FieldValues['CENA'    ] := _Q2.FieldValues['CENA'] * i2;
+        _Q.Post;
+       end;
+      _Q2.Next;
+    end;
+  end;
+
+  _Q.Active  :=false;
+  _Q.SQL.Text:='select * from TABLICA_CENI where SOLARIUM >= 100';
+  _Q.readonly:=False;
+  _Q.InMemory:=false;
+  _Q.Active  :=true;
+  _Q.readonly:=False;
+  if _Q.RecordCount < 10 then  begin  // Попълване на таблица цени ако е празна
+    CENA1:=0;
+    _Q2.Active := False;
+    _Q2.SQL.Text:='select * from SOLARIUM ';
+    _Q2.readonly:=False;
+    _Q2.InMemory:=false;
+    _Q2.Active  :=true;
+    while not _Q2.Eof do  begin
+      for i2:= 0 to 10 do  begin
+        _Q.Append;
+        _Q.FieldValues['SOLARIUM'] := _Q2.FieldValues['SOLARIUM']+100;
+        _Q.FieldValues['MINUTA'  ] := i2;
+        _Q.FieldValues['CENA'    ] := _Q2.FieldValues['CENA'];
         _Q.Post;
        end;
       _Q2.Next;

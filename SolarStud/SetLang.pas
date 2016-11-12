@@ -175,7 +175,7 @@ procedure SetLangText();
     Label148.Caption:=GetLabel('L148');
     Label149.Caption:=GetLabel('L149');
     Label58.Caption:=GetLabel('L58');
-    Label59.Caption:=GetLabel('L59');
+    //Label59.Caption:=GetLabel('L59');
     Label60.Caption:=GetLabel('L60');
     Label69.Caption:=GetLabel('L69');
     Label70.Caption:=GetLabel('L70');
