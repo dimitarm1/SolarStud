@@ -401,22 +401,35 @@ begin
   _Q.InMemory:=false;
   _Q.Active  :=true;
   _Q.readonly:=False;
-  if _Q.RecordCount < 10 then  begin  // Попълване на таблица цени ако е празна
+  if _Q.RecordCount < 120 then  begin  // Попълване на таблица цени ако е празна
     CENA1:=0;
     _Q2.Active := False;
     _Q2.SQL.Text:='select * from SOLARIUM ';
     _Q2.readonly:=False;
     _Q2.InMemory:=false;
     _Q2.Active  :=true;
-    while not _Q2.Eof do  begin
-      for i2:= 0 to 10 do  begin
+    for i1 := 0 to 5 do
+    begin
+      if(i1 < _Q2.RecordCount) then
+      begin
+        _Q2.RecNo := i1;
+        CENA1 := _Q2.FieldValues['CENA'];
+      end
+      else
+      begin
+        CENA1 := 0.9; 
+      end;
+      for i2:= 0 to 30 do
+      begin
+        if (not _Q.Locate('SOLARIUM;MINUTA',VarArrayOf([i1+100,i2]),[])) then
+        begin
         _Q.Append;
-        _Q.FieldValues['SOLARIUM'] := _Q2.FieldValues['SOLARIUM']+100;
+        _Q.FieldValues['SOLARIUM'] := i1 + 100;
         _Q.FieldValues['MINUTA'  ] := i2;
-        _Q.FieldValues['CENA'    ] := _Q2.FieldValues['CENA'];
+        _Q.FieldValues['CENA'    ] := CENA1;
         _Q.Post;
-       end;
-      _Q2.Next;
+        end;
+      end;
     end;
   end;
 

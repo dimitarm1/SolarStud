@@ -10,4 +10,8 @@ xcopy data\*.* e:\SolarStudio1_backup\data /D /Y /r
 xcopy data\*.* f:\SolarStudio1_backup\data /D /Y /r
 call Set_com2.bat
 solarstudio1.2.exe
+xcopy data d:\SolarStudio1_backup\data /D /Y /r
+xcopy data\*.* e:\SolarStudio1_backup\data /D /Y /r
+xcopy data\*.* f:\SolarStudio1_backup\data /D /Y /r
+call delotch.bat
 

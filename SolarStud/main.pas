@@ -4037,6 +4037,7 @@ begin
     PriceCard:=0;
     PriceCash:=0;
     Edit5.SetFocus;
+    PriceCard := 0;
 end;
 
 procedure CalcPaid;
