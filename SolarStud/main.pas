@@ -2331,6 +2331,8 @@ begin
          PriceCard := TimeSet* _Q4.FieldByName('CENA').AsVariant;
        end;
      end;
+     _Q4.Close;
+     _Q4.Free;
    end;
    if(PriceCard = -1) then
    begin
@@ -2350,8 +2352,6 @@ begin
    PriceCardLabel4.Caption:=Label9A.Caption;
   // Label63.Caption:=Label9.Caption;
   // Label64.Caption:='00.00';
-   _Q4.Close;
-   _Q4.Free;
   end;
 end;
 
