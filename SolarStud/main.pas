@@ -4584,17 +4584,18 @@ var
 begin
     if KARTICHIP.State in [dsEdit, dsInsert]  then KARTICHIP.Post;
     if QKLIENTI.State in [dsEdit,dsInsert]  then QKLIENTI.Post;
-    if PriceCard>0 then
-    begin
-        AdvPageControl1.ActivePage:=AdvTabsheet4;
-        Label71.visible:=True;
-        Label72.visible:=True;
-        PayChipCardClick(Sender);
-        //  PaidChipCard:=PriceCard ;//-(PaidCard+PaidCash); Removed...
-        //  if PaidChipCard>Card.Balans then PaidChipCard:=Card.Balans;
-        //  FmtStr(Result1,'%4.2f',[PaidChipCard]);
-    end
-    else  AdvPageControl1.ActivePage:=AdvTabsheet2;
+//    if PriceCard>0 then
+//    begin
+//        AdvPageControl1.ActivePage:=AdvTabsheet4;
+//        Label71.visible:=True;
+//        Label72.visible:=True;
+//        PayChipCardClick(Sender);
+//        //  PaidChipCard:=PriceCard ;//-(PaidCard+PaidCash); Removed...
+//        //  if PaidChipCard>Card.Balans then PaidChipCard:=Card.Balans;
+//        //  FmtStr(Result1,'%4.2f',[PaidChipCard]);
+//    end
+//    else
+    AdvPageControl1.ActivePage:=AdvTabsheet2;
 end;
 
 procedure TMainForm.KartaSearchBoxKeyPress(Sender: TObject; var Key: Char);
