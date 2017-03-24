@@ -1,0 +1,31 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: SLE4432_4442 - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "D:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP17.tmp" with contents
+[
+/nologo /subsystem:windows /incremental:yes /pdb:"Debug/SLE4432_4442.pdb" /debug /machine:I386 /out:"Debug/SLE4432_4442.exe" /pdbtype:sept 
+".\Debug\SLE4432_4442.obj"
+".\Debug\SLE4432_4442Dlg.obj"
+".\Debug\StdAfx.obj"
+".\Debug\SLE4432_4442.res"
+".\Winscard.lib"
+]
+Creating command line "link.exe @D:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP17.tmp"
+<h3>Output Window</h3>
+Linking...
+Creating command line "bscmake.exe /nologo /o"Debug/SLE4432_4442.bsc"  ".\Debug\StdAfx.sbr" ".\Debug\SLE4432_4442.sbr" ".\Debug\SLE4432_4442Dlg.sbr""
+Creating browse info file...
+<h3>Output Window</h3>
+
+
+
+<h3>Results</h3>
+SLE4432_4442.exe - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>
