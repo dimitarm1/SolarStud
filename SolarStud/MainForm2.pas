@@ -4,12 +4,8 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, LMDCustomControl, LMDCustomPanel, LMDCustomBevelPanel,
-  LMDCustomParentPanel, LMDCustomPanelFill, LMDPanelShape, jpeg, ExtCtrls,
-  StdCtrls, setformdata, OleCtrls,  
-  LMDControl, LMDBaseControl, LMDBaseGraphicControl, LMDGraphicControl,
-  LMDBaseImage, LMDCustomLImage, LMDLImage, LMDCustomComponent,
-  LMDBaseController, LMDCustomContainer, LMDCustomImageList, LMDImageList,
+  Dialogs,  ExtCtrls,
+  StdCtrls, setformdata,
   ImgList;
 
 type
@@ -45,13 +41,13 @@ type
     ImageSol4: TImage;
     ImageSol5: TImage;
     ImageSol6: TImage;
-    LMDImageList1: TLMDImageList;
-    ImagePress1  : TLMDLImage;
-    Imagepress2  : TLMDLImage;
-    Imagepress3  : TLMDLImage;
-    Imagepress6  : TLMDLImage;
-    imagepress5  : TLMDLImage;
-    Imagepress4  : TLMDLImage;
+    LMDImageList1: TImageList;
+    ImagePress1  : TImage;
+    Imagepress2  : TImage;
+    Imagepress3  : TImage;
+    Imagepress6  : TImage;
+    imagepress5  : TImage;
+    Imagepress4  : TImage;
     Image128: TImage;
     StatusShape1: TShape;
     StatusShape2: TShape;

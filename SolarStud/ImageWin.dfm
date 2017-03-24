@@ -1,6 +1,8 @@
 object ImageForm: TImageForm
   Left = 268
+  Height = 300
   Top = 256
+  Width = 490
   ActiveControl = FileEdit
   Align = alCustom
   BorderIcons = [biSystemMenu, biMinimize]
@@ -11,63 +13,44 @@ object ImageForm: TImageForm
   ClientWidth = 490
   Color = clBtnFace
   ParentFont = True
-  OldCreateOrder = True
-  ExplicitWidth = 320
-  ExplicitHeight = 240
-  PixelsPerInch = 96
-  TextHeight = 13
+  LCLVersion = '1.6.4.0'
   object Bevel1: TBevel
     Left = 316
+    Height = 156
     Top = 5
     Width = 171
-    Height = 156
   end
   object Label1: TLabel
     Left = 328
+    Height = 13
     Top = 8
     Width = 38
-    Height = 13
     Caption = 'Preview'
-  end
-  object DirectoryListBox1: TDirectoryListBox
-    Left = 8
-    Top = 12
-    Width = 148
-    Height = 260
-    FileList = FileListBox1
-    IntegralHeight = True
-    ItemHeight = 16
-    TabOrder = 1
-  end
-  object DriveComboBox1: TDriveComboBox
-    Left = 9
-    Top = 277
-    Width = 148
-    Height = 19
-    DirList = DirectoryListBox1
-    TabOrder = 3
+    ParentColor = False
   end
   object FileEdit: TEdit
     Left = 166
+    Height = 21
     Top = 13
     Width = 139
-    Height = 21
+    OnKeyPress = FileEditKeyPress
     TabOrder = 0
     Text = '*.bmp;*.jpg'
-    OnKeyPress = FileEditKeyPress
   end
   object Panel1: TPanel
     Left = 324
+    Height = 118
     Top = 27
     Width = 153
-    Height = 118
     BevelInner = bvLowered
+    ClientHeight = 118
+    ClientWidth = 153
     TabOrder = 5
     object Image1: TImage
       Left = 2
+      Height = 114
       Top = 2
       Width = 149
-      Height = 114
       Align = alClient
       Proportional = True
       Stretch = True
@@ -75,42 +58,51 @@ object ImageForm: TImageForm
   end
   object FileListBox1: TFileListBox
     Left = 166
+    Height = 227
     Top = 41
     Width = 139
-    Height = 227
-    FileEdit = FileEdit
-    ItemHeight = 13
+    Directory = 'D:\lazarus'
+    ItemHeight = 0
     Mask = '*.bmp;*.jpg'
-    TabOrder = 2
     OnClick = FileListBox1Click
+    TabOrder = 1
   end
   object FilterComboBox1: TFilterComboBox
     Left = 166
+    Height = 21
     Top = 275
     Width = 140
-    Height = 21
-    FileList = FileListBox1
     Filter = 'images (*.bmp; jpg)|*.bmp;*.jpg|All files (*.*)|*.*'
-    TabOrder = 4
+    ItemIndex = 0
+    TabOrder = 3
   end
   object Button1: TButton
     Left = 344
+    Height = 33
     Top = 256
     Width = 89
-    Height = 33
     Caption = 'OK'
     Default = True
     Enabled = False
     ModalResult = 1
-    TabOrder = 6
+    TabOrder = 2
   end
   object Button2: TButton
     Left = 344
+    Height = 33
     Top = 200
     Width = 89
-    Height = 33
     Caption = 'Cancel'
     ModalResult = 2
-    TabOrder = 7
+    TabOrder = 4
+  end
+  object ShellTreeView1: TShellTreeView
+    Left = 16
+    Height = 281
+    Top = 13
+    Width = 145
+    FileSortType = fstNone
+    TabOrder = 6
+    ObjectTypes = [otFolders]
   end
 end

@@ -3,12 +3,13 @@ unit ImageWin;
 interface
 
 uses Windows, Classes, Graphics, Forms, Controls,
-  FileCtrl, StdCtrls, ExtCtrls, Buttons, Spin, ComCtrls, Dialogs;
+  FileCtrl, StdCtrls, ExtCtrls, Buttons, Spin, ComCtrls, Dialogs, ShellCtrls;
 
 type
+
+  { TImageForm }
+
   TImageForm = class(TForm)
-    DirectoryListBox1: TDirectoryListBox;
-    DriveComboBox1   : TDriveComboBox;
     FileEdit         : TEdit;
     Panel1           : TPanel;
     Image1           : TImage;
@@ -18,6 +19,7 @@ type
     Button1          : TButton;
     Button2          : TButton;
     Label1           : TLabel;
+    ShellTreeView1: TShellTreeView;
     procedure FileListBox1Click(Sender: TObject);
     procedure ViewBtnClick     (Sender: TObject);
     procedure ViewAsGlyph      (const FileExt: string);

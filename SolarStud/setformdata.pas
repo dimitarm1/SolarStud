@@ -3,17 +3,13 @@ unit setformdata;
 interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, LMDCustomControl, LMDCustomPanel,
-  LMDCustomBevelPanel, LMDCustomParentPanel, LMDCustomPanelFill,
-  LMDPanelShape, LMDCustomImageList, LMDControl, LMDBaseControl,
-  LMDBaseGraphicControl, LMDGraphicControl, LMDBaseImage, LMDCustomLImage,
-  LMDLImage;
+  Dialogs, StdCtrls, ExtCtrls;
 
 type
   TForm6 = class(TForm)
     Label1: TLabel;
     Image1: TImage;
-    Image68: TLMDLImage;
+    Image68: TImage;
     StatusShape3: TShape;
 
   private
@@ -51,7 +47,7 @@ procedure set5main();
 procedure equalscreens();
 procedure equalStatus(Status1:TShape; Status2:TShape);
 procedure equallabels(Label1:TLabel; Label2:TLabel);
-procedure equalpictures(picture1:TLMDLImage; picture2:TLMDLImage);
+procedure equalpictures(picture1:TImage; picture2:TImage);
 implementation
 uses MAIN, MainForm2;
 {$R *.dfm}

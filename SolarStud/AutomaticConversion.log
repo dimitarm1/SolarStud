@@ -1,0 +1,7 @@
+Hint: * Converting file D:\SolarStud_Lazarus\SolarStud\SolarStudio1.2.dpr *
+Hint: Added defines -dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL in custom options
+Hint: Found all unit files
+Hint: Replaced unit "Windows" with "LCLIntf, LCLType, LMessages" in uses section.
+Hint: Fixed unit name from SolarStudio1_2 to SolarStudio1.2.
+Hint: * Fixing used units for file D:\SolarStud_Lazarus\SolarStud\SolarStudio1.2.dpr *
+Hint: Conversion Aborted.
