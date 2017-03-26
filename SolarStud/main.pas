@@ -926,7 +926,6 @@ type
     procedure PopalniCeniTableButton2Click(Sender: TObject);
     function FormHelp(Command: Word; Data: Integer;
       var CallHelp: Boolean): Boolean;
-    procedure FormShow(Sender: TObject);
 
   private
 
@@ -5073,6 +5072,10 @@ end;
 
 procedure TMainForm.AdvTabSheet19Show(Sender: TObject);
 begin
+  if(GetStudioWorkType() < 2) then
+  begin
+      NovKlientButton.Visible := false;
+  end;
   QKlienti.Active:=True;
   Label137.Caption:=GetMessage('M67');//'Няма карта';
   Label137.Font.Color := clRed;
@@ -5855,7 +5858,7 @@ end;
 
 function TMainForm.GetStudioWorkType(): Integer;
 begin
-    result:= Internet.FieldValues['SUBJECT'];
+    result:= DBComboBox2.ItemIndex;
 end;
 
 end.
