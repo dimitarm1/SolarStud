@@ -3699,7 +3699,7 @@ begin
     Memo1.Clear;
     PaidCash:=0;
     PaidChipCard:=0;
-    DiscountFirmi:= Integer( (QKLIENTI.RecordCount>0) and
+    DiscountFirmi:= Integer( (QKLIENTI.RecordCount = 1) and
         (QKLIENTI.FieldValues['FIRMA']>0))* Internet.FieldValues['DISCOUNT_PERCENT_FIRMI'];
     if (Card.Balans>= SumaCard)and IsChipCard then
     begin
@@ -4884,7 +4884,7 @@ var
 	Result2: Integer;
     HasCard: Boolean;
 begin  //Зареждане
-	if  not QKlienti.RecordCount>0 then Exit;
+	if  not (QKlienti.RecordCount = 1) then Exit;
     if KARTICHIP.FieldValues['ENDDATE'] > 0 then Exit;
 	Card.NewCard:=(Card.CardNomer=-1);
 	HasCard  := Card.ClientNomer > 0;
@@ -4996,7 +4996,14 @@ begin  //Зареждане
             end;
             if(KARTICHIP.FieldValues['ONCE_PERDAY']<>KARTICHIP.FieldValues['ONCE_PERDAY']) then
             begin
-              KARTICHIP.FieldValues['ONCE_PERDAY']:= true;
+              if(GetStudioWorkType() = 1) then
+              begin
+                KARTICHIP.FieldValues['ONCE_PERDAY']:= false;
+              end
+              else
+              begin
+                KARTICHIP.FieldValues['ONCE_PERDAY']:= true;
+              end;
             end;
 			KARTICHIP.Post;
 			Balans1:=Card.balans;
@@ -5072,7 +5079,7 @@ end;
 
 procedure TMainForm.AdvTabSheet19Show(Sender: TObject);
 begin
-  if(GetStudioWorkType() < 2) then
+  if(GetStudioWorkType() < 3) then
   begin
       NovKlientButton.Visible := false;
   end;
