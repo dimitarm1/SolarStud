@@ -362,7 +362,6 @@ type
     N5: TMenuItem;
     PopupMenu3: TPopupMenu;
     AddressComboBox: TDBComboBox;
-    LMDFormStyler1: TLMDFormStyler;
     Bclose: TButton;
     Chart1: TChart;
     QStatistika: TABSQuery;
@@ -722,6 +721,8 @@ type
     wwDBGrid8: TwwDBGrid;
     PopalniCeniTableButton2: TRzButton;
     DataSource24: TDataSource;
+    Label120: TLabel;
+    DBComboBox2: TDBComboBox;
     procedure Label1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
@@ -923,6 +924,9 @@ type
     procedure AdvTabSheet21Show(Sender: TObject);
     procedure StokiteTabChange(Sender: TObject);
     procedure PopalniCeniTableButton2Click(Sender: TObject);
+    function FormHelp(Command: Word; Data: Integer;
+      var CallHelp: Boolean): Boolean;
+    procedure FormShow(Sender: TObject);
 
   private
 
@@ -930,6 +934,7 @@ type
   public
     procedure calcKasaPaid ;
     procedure ReorderSQLDataSet(Query: TABSQuery; AFieldName: string);
+    function GetStudioWorkType(): Integer;
     { Public declarations }
 
   //   procedure ChangeImageName();
@@ -940,6 +945,7 @@ type
     Procedure initFlash();
     Procedure HideKlInfo;
     Procedure ShowKlInfo;
+
 type _RS232DCB = packed record // dcb
      DCBlength          : DWORD;           // sizeof(DCB)
      BaudRate         : DWORD;             // current baud rate
@@ -2719,6 +2725,20 @@ begin
      InitLang(); // SetLangText();
      
 end;
+function TMainForm.FormHelp(Command: Word; Data: Integer;
+  var CallHelp: Boolean): Boolean;
+  var
+    S1: string;
+    S2: string;
+begin
+  S1:=AnsiReplaceStr(Application.ExeName,'exe','htm');
+  S2:=ExtractFilePath(Application.ExeName);
+
+//ShellExecute( testform.ParentWindow, PChar('open'),PChar('f:\SolarStudio1\SolarStudio1.htm'),PChar(''),'F:\SolarStudio1', sw_ShowNormal );
+  ShellExecute( MainForm.ParentWindow, PChar('open'),PChar(S1),PChar(''),PChar(S2), sw_ShowNormal );
+
+end;
+
 procedure TMainForm.RTFLabel1Click(Sender: TObject);
 begin
  //Label58.Caption:=RTFLabel1.RichText;
@@ -5831,6 +5851,11 @@ if (PasswordForm.ModalResult=MROK) or (PasswordForm.ShowModal=MROK) then begin
      QKLIENTI.Prior;
    end;
   end;
+end;
+
+function TMainForm.GetStudioWorkType(): Integer;
+begin
+    result:= Internet.FieldValues['SUBJECT'];
 end;
 
 end.
