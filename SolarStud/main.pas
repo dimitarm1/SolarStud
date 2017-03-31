@@ -580,7 +580,6 @@ type
     Label88: TLabel;
     LMDLImage25: TLMDLImage;
     LMDLImage26: TLMDLImage;
-    LMDLImage132: TLMDLImage;
     LMDLImage140: TLMDLImage;
     LMDLImage139: TLMDLImage;
     Label90: TLabel;
@@ -723,6 +722,8 @@ type
     DataSource24: TDataSource;
     Label120: TLabel;
     DBComboBox2: TDBComboBox;
+    Label170: TLabel;
+    ProtokolFilterEdit: TEdit;
     procedure Label1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
@@ -926,6 +927,7 @@ type
     procedure PopalniCeniTableButton2Click(Sender: TObject);
     function FormHelp(Command: Word; Data: Integer;
       var CallHelp: Boolean): Boolean;
+    procedure ProtokolFilterEditChange(Sender: TObject);
 
   private
 
@@ -1505,11 +1507,24 @@ begin
     DBLUCombo1.Text :=  DateToStrBg(Date);
     DayTotal.Active:=False;
     DayTotal.SQL.Text := ' SELECT * FROM Plashtania p LEFT OUTER join STOKI s ON Plashtania.STOKA=STOKI.STOKAKOD'+
-                         ' WHERE DATA = :DATA_COMBO_SELECTED ORDER BY :ORDERPARAM DESC';
+                         ' WHERE DATA = :DATA_COMBO_SELECTED ';
+    if(ProtokolFilterEdit.Text = ' ') then
+    begin
+      DayTotal.SQL.Text:= DayTotal.SQL.Text + ' and SOLARIUM >= 0 ORDER BY :ORDERPARAM DESC';
+    end
+    else
+    if(ProtokolFilterEdit.Text = '') then
+    begin
+      DayTotal.SQL.Text:= DayTotal.SQL.Text + ' ORDER BY :ORDERPARAM DESC';
+    end
+    else
+    begin
+      DayTotal.SQL.Text:= DayTotal.SQL.Text + ' and LOWER(STOKAIME) LIKE "%' + AnsiLowerCase(ProtokolFilterEdit.Text) + '%" ORDER BY :ORDERPARAM DESC';
+    end;
     DayTotal.ParamByName('DATA_COMBO_SELECTED').AsDate:=Date;
-//    DayTotal.ParamByName('ORDERPARAM').AsString:=' STOKA ';
+    DayTotal.ParamByName('ORDERPARAM').AsString:='RECORDID';
     DayTotal.Active:=True;
-    ReorderSQLDataSet( DayTotal, 'STOKA');
+   // ReorderSQLDataSet( DayTotal, 'STOKA');
    end;
 
    if   (AdvPageControl1.ActivePageIndex=1) then
@@ -3167,6 +3182,31 @@ procedure TMainForm.PrintDayReportClick(Sender: TObject);
 begin
 
    Form3.QuickRep3.Preview;
+end;
+
+procedure TMainForm.ProtokolFilterEditChange(Sender: TObject);
+begin
+      DayTotal.Active:=False;
+    DayTotal.SQL.Text := ' SELECT * FROM Plashtania p LEFT OUTER join STOKI s ON Plashtania.STOKA=STOKI.STOKAKOD'+
+                         ' WHERE DATA = :DATA_COMBO_SELECTED ';
+    if(ProtokolFilterEdit.Text = ' ') then
+    begin
+      DayTotal.SQL.Text:= DayTotal.SQL.Text + ' and SOLARIUM >= 0 ORDER BY :ORDERPARAM DESC';
+    end
+    else
+    if(ProtokolFilterEdit.Text <> '') then
+    begin
+      DayTotal.SQL.Text:= DayTotal.SQL.Text + ' and LOWER(STOKAIME) LIKE "%' + AnsiLowerCase(ProtokolFilterEdit.Text) + '%" ORDER BY :ORDERPARAM DESC';
+    end
+    else
+    begin
+      DayTotal.SQL.Text:= DayTotal.SQL.Text + ' ORDER BY :ORDERPARAM DESC';
+    end;
+
+    DayTotal.ParamByName('DATA_COMBO_SELECTED').AsString:=DBLUCombo1.Text;
+
+    DayTotal.ParamByName('ORDERPARAM').AsString:='RECORDID';
+    DayTotal.Active:=True;
 end;
 
 procedure TMainForm.QklientiAfterRefresh;

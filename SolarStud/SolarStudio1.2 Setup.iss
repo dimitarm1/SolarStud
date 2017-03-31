@@ -6,8 +6,8 @@
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{20BE3B2F-6275-48B2-8277-E59C73537CFF}
-AppName=SolarStudio1.2 Build 18-11-2016
-AppVerName=SolarStudio 1.2 Build 18-11-2016
+AppName=SolarStudio1.2 Build 31-03-2017
+AppVerName=SolarStudio 1.2 Build 31-03-2017
 AppPublisher=D.M.
 AppPublisherURL=http://www.example.com/
 AppSupportURL=http://www.example.com/
@@ -48,7 +48,7 @@ Source: "Language-bg.ini"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Language-en.ini"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Manual.htm"; DestDir: "{app}"; Flags: ignoreversion
 Source: "set_com2.bat"; DestDir: "{app}"; Flags: ignoreversion
-Source: "solarStudio1.htm"; DestDir: "{app}"; Flags: ignoreversion
+Source: "solarStudio1.2.htm"; DestDir: "{app}"; Flags: ignoreversion
 Source: "SolarStudio1.2.ico"; DestDir: "{app}"; Flags: ignoreversion
 Source: "SolarStudio1.2.ini"; DestDir: "{app}"; Flags: ignoreversion
 Source: "SolarStudio1.2.ico"; DestDir: "{app}"; Flags: ignoreversion
@@ -71,6 +71,7 @@ Name: "{commondesktop}\SolarStudio1"; Filename: "{app}\StartSolarStudio1.bat"; T
 Filename: "{app}\pl2303_dirver.exe";
 Filename: "{app}\acr38\Setup.exe";
 Filename: "{app}\StartSolarStudio1.bat"; Description: "{cm:LaunchProgram,SolarStudio1}"; Flags: postinstall skipifsilent runminimized
+
 
 
 

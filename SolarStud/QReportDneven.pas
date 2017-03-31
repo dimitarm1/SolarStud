@@ -51,11 +51,14 @@ type
     QRDBText14: TQRDBText;
     QRDBText15: TQRDBText;
     QRLabel19: TQRLabel;
+    QRLabel21: TQRLabel;
+    QRLabel20: TQRLabel;
     procedure QuickRep3AfterPreview(Sender: TObject);
     procedure QuickRep3StartPage(Sender: TCustomQuickRep);
     procedure DetailBand1BeforePrint(Sender: TQRCustomBand;
       var PrintBand: Boolean);
     procedure QRExpr1Print(sender: TObject; var Value: string);
+    procedure QRBand1BeforePrint(Sender: TQRCustomBand; var PrintBand: Boolean);
   private
     { Private declarations }
   public
@@ -70,6 +73,26 @@ implementation
  var
   sum_total: string;
 {$R *.dfm}
+
+procedure TForm3.QRBand1BeforePrint(Sender: TQRCustomBand;
+  var PrintBand: Boolean);
+begin
+  QRLabel20.Caption :=  MainForm.ProtokolFilterEdit.Text;
+  if(MainForm.ProtokolFilterEdit.Text = '') then
+  begin
+    QRLabel21.Font.Color := clWhite;
+  end
+  else
+  if(MainForm.ProtokolFilterEdit.Text = ' ') then
+  begin
+    QRLabel21.Font.Color := clBlack;
+    QRLabel20.Caption := ' само солариуми';
+  end
+  else
+  begin
+    QRLabel21.Font.Color := clBlack;
+  end;
+end;
 
 procedure TForm3.QRExpr1Print(sender: TObject; var Value: string);
 begin

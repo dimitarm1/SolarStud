@@ -13,7 +13,7 @@ object Form3: TForm3
   OldCreateOrder = False
   Scaled = False
   PixelsPerInch = 96
-  TextHeight = 13
+  TextHeight = 14
   object QuickRep3: TQuickRep
     Left = -8
     Top = 0
@@ -109,9 +109,9 @@ object Form3: TForm3
         Frame.DrawRight = False
         Size.Values = (
           52.916666666666670000
-          280.458333333333400000
-          42.333333333333340000
-          463.020833333333400000)
+          280.458333333333300000
+          42.333333333333330000
+          463.020833333333300000)
         Alignment = taLeftJustify
         AlignToBand = False
         AutoSize = True
@@ -202,9 +202,9 @@ object Form3: TForm3
         Frame.DrawRight = False
         Size.Values = (
           44.979166666666670000
-          886.354166666666900000
+          886.354166666666700000
           132.291666666666700000
-          66.145833333333340000)
+          66.145833333333330000)
         Alignment = taRightJustify
         AlignToBand = False
         AutoSize = True
@@ -327,7 +327,7 @@ object Form3: TForm3
         Size.Values = (
           44.979166666666670000
           1693.333333333333000000
-          42.333333333333340000
+          42.333333333333330000
           121.708333333333300000)
         Alignment = taLeftJustify
         AlignToBand = False
@@ -350,7 +350,7 @@ object Form3: TForm3
         Size.Values = (
           44.979166666666670000
           1524.000000000000000000
-          42.333333333333340000
+          42.333333333333330000
           145.520833333333300000)
         Alignment = taLeftJustify
         AlignToBand = False
@@ -376,7 +376,7 @@ object Form3: TForm3
           44.979166666666670000
           21.166666666666670000
           132.291666666666700000
-          82.020833333333340000)
+          82.020833333333330000)
         Alignment = taLeftJustify
         AlignToBand = False
         AutoSize = True
@@ -587,7 +587,7 @@ object Form3: TForm3
           44.979166666666670000
           1653.645833333333000000
           132.291666666666700000
-          82.020833333333340000)
+          82.020833333333330000)
         Alignment = taRightJustify
         AlignToBand = False
         AutoSize = True
@@ -673,7 +673,7 @@ object Form3: TForm3
           39.687500000000000000
           889.000000000000000000
           2.645833333333333000
-          66.145833333333340000)
+          66.145833333333330000)
         Alignment = taLeftJustify
         AlignToBand = False
         AutoSize = True
@@ -1144,7 +1144,7 @@ object Form3: TForm3
         Size.Values = (
           44.979166666666670000
           1693.333333333333000000
-          42.333333333333340000
+          42.333333333333330000
           121.708333333333300000)
         Alignment = taLeftJustify
         AlignToBand = False
@@ -1167,7 +1167,7 @@ object Form3: TForm3
         Size.Values = (
           44.979166666666670000
           1524.000000000000000000
-          42.333333333333340000
+          42.333333333333330000
           145.520833333333300000)
         Alignment = taLeftJustify
         AlignToBand = False
@@ -1191,6 +1191,7 @@ object Form3: TForm3
       Frame.DrawLeft = False
       Frame.DrawRight = False
       AlignToBottom = False
+      BeforePrint = QRBand1BeforePrint
       Color = clWhite
       TransparentBand = False
       ForceNewColumn = False
@@ -1296,6 +1297,62 @@ object Form3: TForm3
         Transparent = False
         WordWrap = True
         FontSize = 12
+      end
+      object QRLabel21: TQRLabel
+        Left = 8
+        Top = 14
+        Width = 71
+        Height = 20
+        Frame.Color = clBlack
+        Frame.DrawTop = False
+        Frame.DrawBottom = False
+        Frame.DrawLeft = False
+        Frame.DrawRight = False
+        Size.Values = (
+          52.916666666666670000
+          21.166666666666670000
+          37.041666666666670000
+          187.854166666666700000)
+        Alignment = taLeftJustify
+        AlignToBand = False
+        AutoSize = True
+        AutoStretch = False
+        Caption = #1060#1080#1083#1090#1098#1088':'
+        Color = clWhite
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -16
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+        Transparent = False
+        WordWrap = True
+        FontSize = 12
+      end
+      object QRLabel20: TQRLabel
+        Left = 81
+        Top = 16
+        Width = 186
+        Height = 18
+        Frame.Color = clBlack
+        Frame.DrawTop = False
+        Frame.DrawBottom = False
+        Frame.DrawLeft = False
+        Frame.DrawRight = False
+        Size.Values = (
+          47.625000000000000000
+          214.312500000000000000
+          42.333333333333330000
+          492.125000000000000000)
+        Alignment = taLeftJustify
+        AlignToBand = False
+        AutoSize = False
+        AutoStretch = False
+        Caption = 'QRLabel20'
+        Color = clWhite
+        Transparent = False
+        WordWrap = True
+        FontSize = 10
       end
     end
   end
