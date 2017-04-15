@@ -714,6 +714,8 @@ end;
 procedure SLE4442ShowCardInPaiment();
 var
     q: TABSQuery;
+    q2: TABSQuery;
+    res: Integer;
 begin
     if not ((MainForm.AdvPageControl1.ActivePage = MainForm.AdvTabSheet16) and
         (MainForm.SDELKA.RecordCount > 0)) then
@@ -735,13 +737,20 @@ begin
             MainForm.KARTICHIP.FieldValues['SUMA'] := 0;
             MainForm.KARTICHIP.Post;
         end;
-        MainForm.QKlienti.Active := False;
-        MainForm.QKlienti.SQL.Clear;
-        MainForm.QKlienti.SQL.Add('SELECT * FROM klienti WHERE NOMER = ' +
-            IntToStr(CardNomer));
-        MainForm.QKlienti.Active := True;
-        if MainForm.Qklienti.RecordCount > 0 then
+        q2 := TABSQuery.Create(MainForm);
+        q2.Databasename := 'sol1';
+        q2.ReadOnly := False;
+        q2.RequestLive := TRUE;
+        q2.SQL.SetText(PChar('SELECT * FROM klienti WHERE NOMER = ' +
+            IntToStr(CardNomer)));
+        q2.open;
+        if q2.RecordCount > 0 then
         begin
+            MainForm.QKlienti.Active := False;
+            MainForm.QKlienti.SQL.Clear;
+            MainForm.QKlienti.SQL.Add('SELECT * FROM klienti WHERE NOMER = ' +
+                IntToStr(CardNomer));
+            MainForm.QKlienti.Active := True;
             ShowKlInfo;
             if not IsChipCard then
             begin
@@ -765,30 +774,36 @@ begin
         end
         else if not IsChipCard then
         begin
-            Card.Balans := 0;
-            MainForm.Table3.Append;
-            MainForm.Table3.FieldValues['NOMER'] := CardNomer;
-            MainForm.Table3.FieldValues['FIRMA'] := 0;
-            MainForm.Table3.FieldValues['IME'] := GetMessage('M66') +
-                IntTostr(CardNomer); //'Нов клиент №'
-            MainForm.Table3.Post;
-            MainForm.Table3.Last;
-            Application.MessageBox(PChar('Клиент №' + IntTostr(CardNomer) +
-                ' беше добавен към списъка'), PChar('Нов клиент'), MB_OK);
-            MainForm.QKlienti.Active := False;
-            MainForm.QKlienti.Active := True;
-            MainForm.Qklienti.Locate('NOMER', CardNomer, []);
-            if MainForm.KARTICHIP.RecordCount = 0 then
-                MainForm.KARTICHIP.Append
-            else
-                MainForm.KARTICHIP.Edit;
-            MainForm.KARTICHIP.FieldValues['DISCOUNT'] := 0;
-            MainForm.KARTICHIP.FieldValues['COUNTER'] := -1; // Нов клиент - Нова карта
-            MainForm.KARTICHIP.post;
-            MainForm.Timer3.enabled := True;
+            res := Application.MessageBox(PChar('Желаете ли да добавите Клиент №' + IntTostr(CardNomer) +
+                ' към списъка с клиенти'), PChar('Нов клиент'), MB_YESNO);
+            if(res = 6) then
+            begin
+                Card.Balans := 0;
+                MainForm.Table3.Append;
+                MainForm.Table3.FieldValues['NOMER'] := CardNomer;
+                MainForm.Table3.FieldValues['FIRMA'] := 0;
+                MainForm.Table3.FieldValues['IME'] := GetMessage('M66') +
+                    IntTostr(CardNomer); //'Нов клиент №'
+                MainForm.Table3.Post;
+                MainForm.Table3.Last;
+                Application.MessageBox(PChar('Клиент №' + IntTostr(CardNomer) +
+                    ' беше добавен към списъка'), PChar('Нов клиент'), MB_OK);
+                MainForm.QKlienti.Active := False;
+                MainForm.QKlienti.Active := True;
+                MainForm.Qklienti.Locate('NOMER', CardNomer, []);
+                if MainForm.KARTICHIP.RecordCount = 0 then
+                    MainForm.KARTICHIP.Append
+                else
+                    MainForm.KARTICHIP.Edit;
+                MainForm.KARTICHIP.FieldValues['DISCOUNT'] := 0;
+                MainForm.KARTICHIP.FieldValues['COUNTER'] := -1; // Нов клиент - Нова карта
+                MainForm.KARTICHIP.post;
+                MainForm.Timer3.enabled := True;
+            end;
         end;
         Mainform.BonusLabel.Caption := FloatToStr(DiscountPrize);
         q.Free;
+        q2.Free;
     end;
 end;
 

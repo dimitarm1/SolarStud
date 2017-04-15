@@ -2318,7 +2318,7 @@ var
  _Q4: TABSQuery;
  stoka: Integer;
 begin
- SDELKANOMER:=0;
+ //SDELKANOMER:=0;
  with MainForm do
   begin
    PriceCard := -1;
