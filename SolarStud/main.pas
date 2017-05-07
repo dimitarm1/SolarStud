@@ -4478,6 +4478,7 @@ begin
     Edit1.Text:='0';
     LMDMemo1.Text:='Няма плащане';
     SLE4442Init();
+    Label137.Font.Color := clRed;
 end;
 
 procedure TMainForm.PlannerMaskDatePicker2Change(Sender: TObject);
@@ -4713,6 +4714,7 @@ begin
     QKlienti.SQL.SetText(PChar('SELECT * FROM klienti ' + SQLText + ' ORDER BY IME DESC'));
     CardNomer:=0;
     QKlienti.Active:=True;
+    Label137.Font.Color := clRed;
 end;
 
 procedure TMainForm.N1Click(Sender: TObject);
@@ -4924,7 +4926,7 @@ var
 	Result2: Integer;
     HasCard: Boolean;
 begin  //Зареждане
-	if  not (QKlienti.RecordCount = 1) then Exit;
+	if  not (QKlienti.RecordCount = 1) and not IsReader  then Exit;
     if KARTICHIP.FieldValues['ENDDATE'] > 0 then Exit;
 	Card.NewCard:=(Card.CardNomer=-1);
 	HasCard  := Card.ClientNomer > 0;
