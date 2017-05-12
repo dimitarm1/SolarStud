@@ -1792,21 +1792,21 @@ begin
   if (SolariumTime[SolariumNo].Pretime>0) then
        begin
        IOByte:=64+128 +SolariumTime[SolariumNo].Pretime;
-       if ((TimerTime1 mod temp3)=0) then
+       if (((TimerTime1 - SolariumNo) mod temp3)=0) then
         SolariumTime[SolariumNo].Pretime:=SolariumTime[SolariumNo].Pretime-1;
        end
    else
      if (SolariumTime[SolariumNo].MainTime>0) then
        begin
        IOByte:=64 + SolariumTime[SolariumNo].MainTime;
-       if ((TimerTime1 mod temp3)=0) then
+       if (((TimerTime1 - SolariumNo) mod temp3)=0) then
         SolariumTime[SolariumNo].MainTime:=SolariumTime[SolariumNo].MainTime-1;
        end
     else
     if (SolariumTime[SolariumNo].CoolTime>0) then
      begin
       IOByte:=128 +SolariumTime[SolariumNo].CoolTime;
-      if ((TimerTime1 mod temp3)=0) then
+      if (((TimerTime1 - SolariumNo) mod temp3)=0) then
       SolariumTime[SolariumNo].CoolTime:=SolariumTime[SolariumNo].CoolTime-1;
      end;
     IOCount:=1;
@@ -2219,6 +2219,7 @@ begin
   Edit5.Visible:=true;
   Edit5.SetFocus;
   Label91.Visible := (PasswordForm.ModalResult = MROK) or IsDemo2 ;
+  Kabina11.Caption:=SOLARIUMI.FieldByName('OPISANIE1').AsString;
  end;
  if TimerTime1=13 then
   begin
@@ -2230,7 +2231,10 @@ begin
 //    Label143.Caption:=DateToStr(Date);
     Label144.Caption:=TimeToStr(Time);
    end;
- if TimerTime1>1000 then TimerTime1:=501;
+ if TimerTime1>1000 then
+ begin
+     TimerTime1:=501;
+ end;
 end;
 
 
@@ -2782,8 +2786,7 @@ var
  ParvaKartaPlateno:Byte;
  i                :Byte;
  _Q               :TABSQuery;
- Price            :Real;
- sender1          :TObject; 
+ sender1          :TObject;
 begin
 sender1:= sender;
 if sender1 = sender then;
@@ -2799,9 +2802,7 @@ if sender1 = sender then;
  PaidCard:=Roundto(PaidCard,-2);
  PaidChipCard:=Roundto(PaidChipCard,-2);
  PaidCash:=Roundto(PaidCash,-2);
- if PaidChipCard>0 then Price:= PriceCard
-   else Price:=PriceCash;
- if Price-(PaidCard+ToBePaidCash+PaidChipCard)<0.03 then
+ if PriceCash - (PaidCard*(PriceCash/PriceCard) + ToBePaidCash + PaidChipCard*(PriceCash/PriceCard))<0.03 then
   if PaidChipCard>0 then
    begin
      SLE4442ReadCardInfo();
@@ -2835,7 +2836,7 @@ if sender1 = sender then;
      end
      else
     end;
-  if  Price-(PaidCard+ToBePaidCash+PaidChipCard)<0.02 then
+  if  PriceCash - (PaidCard*(PriceCash/PriceCard) + ToBePaidCash + PaidChipCard*(PriceCash/PriceCard))<0.02 then
   begin
    LastTime[(IndexSol-1)]:=TimeSet;
    CabineSetTime[ (IndexSol-1)]:= TimeSet;
@@ -2886,7 +2887,7 @@ if sender1 = sender then;
      Plashtania.FieldValues['DATA']:=Date;
 //     if (PaidCash>0) and (VipDiscount+DiscountPrize>0) then
      Plashtania.FieldValues['DISCOUNT']:=VipDiscount+DiscountPrize;
-     Plashtania.FieldValues['CENA']:=Price;
+     Plashtania.FieldValues['CENA']:=PriceCash;
      if (_Q.RecordCount>0) and (not (IsChipCard)) and (CardNomer>0) then
        begin
         _Q.Edit;
@@ -2986,7 +2987,7 @@ procedure TMainForm.FormKeyPress(Sender: TObject; var Key: Char);
 var
 len: integer;
 begin
- If (AdvPageControl1.ActivePageIndex in [18,15,3]) then begin
+ If (AdvPageControl1.ActivePageIndex in [18,15,3,1]) then begin
    if (Key = #10)or (Key = #13) then   begin
      LMDMemo1.Lines.Add(KeyBuff);
      Key := #0;
@@ -3002,7 +3003,12 @@ begin
      else if (Length(BarCodReaderBuff)>5) then  begin
        try
          CardNomer:=StrToInt(Rightstr(BarCodReaderBuff,9));
-         label25.Caption:=IntToStr(CardNomer);
+          if(AdvPageControl1.ActivePage = AdvTabSheet2) then
+          begin
+            AdvPageControl1.ActivePage := AdvTabSheet19;
+            AddStokaButtonClick(2);
+          end;
+       //  label25.Caption:=IntToStr(CardNomer);
          Timer3.Enabled:=true;
        except;
        end;
@@ -3037,7 +3043,7 @@ begin
       Perform(wm_NextDlgCtl,0,0);
     end;
    TimerTime1 := TimerTime1-(TimerTime1 mod 10);
-   KeyBuff:=KeyBuff+Key;
+   //KeyBuff:=KeyBuff+Key;
    Kabina11.Caption:=KeyBuff;
    if KeyBuff='1234' then
    begin
@@ -3240,11 +3246,16 @@ end;
 
 procedure TMainForm.Label110Click(Sender: TObject);
 begin
- MinMax.active:=false;
- MinMax.SQL.Text:='Select max(RECORDID) from plashtania';
- MinMax.active:=true;
- if MinMax.Fields.Count>0 then
- SDELKANOMER:=MinMax.Fields.Fields[0].AsInteger;
+ Plashtania.Last();
+// MinMax.active:=false;
+// MinMax.SQL.Text:='Select max(RECORDID) from plashtania';
+// MinMax.active:=true;
+// if MinMax.Fields.Count>0 then
+// SDELKANOMER:=MinMax.Fields.Fields[0].AsInteger;
+ if(  Plashtania.RecNo > 0) then
+   SDELKANOMER:=Plashtania.FieldValues['RECORDID']
+ else
+   SDELKANOMER:=0;
  sol1.FlushBuffers;
  PaidCash:=0;
  PaidCard:=0;
@@ -3281,7 +3292,7 @@ procedure TMainForm.PayCashButtonClick(Sender: TObject);
 var
   DecPart: integer;
 begin
- ToBePaidCash:=PriceCash - (PaidCard+PaidChipCard);
+ ToBePaidCash:=PriceCash - (PaidCard*(PriceCash/PriceCard)+PaidChipCard*(PriceCash/PriceCard));
  if VipDiscount+DiscountPrize<100 then
  PaidCash:=ToBePaidCash-(ToBePaidCash*VipDiscount/100) -(ToBePaidCash*DiscountPrize/100)
 else PaidCash:=0;
@@ -4105,11 +4116,9 @@ var
     KartiBroi: Integer;
     Result1  : String;
     Ostatak  : Real;
-    Price    : Real;
 begin
     with MainForm do
     begin
-        if PaidChipCard>0 then Price := PriceCard else Price :=PriceCash;
         LMDMemo1.Text:='';
         i:=0;
         KartiBroi    :=QKarti.RecordCount;
@@ -4125,7 +4134,6 @@ begin
             end;
             i:=i+1;
         end;
-        if (PaidChipCard > 0) or (PaidCard > 0) then Price := PriceCard else Price :=PriceCash;
         //LMDMemo1.Lines.Add('Общо карти - '+ConvertCurr1(PosPaid*SOLARIUMI.FieldValues['MINUTINA1']*
         LMDMemo1.Lines.Add(GetMessage('M19')+' '+ConvertCurr1(PosPaid*SOLARIUMI.FieldValues['MINUTINA1']*
         SOLARIUMI.FieldValues['CENA'])+GetMessage('M20'));
@@ -4140,9 +4148,13 @@ begin
         LMDMemo1.Lines.Add(GetMessage('M22')+' '+ConvertCurr1(PaidCash));
         // LMDMemo1.Lines.Add('В брой - '+ConvertCurr1(PaidCash));
         LMDMemo1.Lines.Add('-----------');
-        LMDMemo1.Lines.Add(GetMessage('M23')+' '+ConvertCurr1(Price-(PaidCard+ToBePaidCash+PaidChipCard)));
+         if PriceCard = PriceCash then
+        LMDMemo1.Lines.Add(GetMessage('M23')+' ' + ConvertCurr1(PriceCash -
+             (PaidCard*(PriceCash/PriceCard)+
+             ToBePaidCash+PaidChipCard*(PriceCash/PriceCard))));
+        //LMDMemo1.Lines.Add(GetMessage('M23')+' '+ConvertCurr1(Price-(PaidCard+ToBePaidCash+PaidChipCard)));
         //LMDMemo1.Lines.Add('Остава - '+ConvertCurr1(Price-(PaidCard+PaidCash+PaidChipCard)));
-        if Price-(PaidCard+ToBePaidCash+PaidChipCard)<0.02 then PaymentOKLabel.Visible:=true;
+        if (PriceCash -(PaidCard*(PriceCash/PriceCard)+ToBePaidCash+PaidChipCard*(PriceCash/PriceCard))<0.02) then PaymentOKLabel.Visible:=true;
         FmtStr(Result1,'%4.2f',[(PaidChipCard)]);
         Ostatak:= (Card.Balans - (PaidChipCard))/SOLARIUMI.FieldValues['CENA'];
         FmtStr(Result1,'%4.2f',[Ostatak]);
@@ -5820,9 +5832,11 @@ if Key>#31 then
 end;
 
 procedure TMainForm.Timer3Timer(Sender: TObject);
+var tmp: Integer;
 begin
-Timer3.Enabled:=false;
-SLE4442ShowCardInPaiment();
+  Timer3.Enabled:=false;
+  if  AdvPageControl1.ActivePageIndex in [3,15,18] then
+        SLE4442ShowCardInPaiment();
   if (AdvPageControl1.ActivePageIndex in [3]) then CalcPaid;
 end;
 

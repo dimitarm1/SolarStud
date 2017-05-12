@@ -763,10 +763,14 @@ begin
             abc3 := (q.FieldValues['COUNTER'] + 1);
             abc4 := MainForm.Internet.FieldValues['DISCOUNT_COUNT'];
             abc2 := q.FieldValues['KLIENTNOMER'];
-            abc1 := abc3 mod abc4;
-            if abc1 = 0 then
+            if(abc4 <> 0) then
+            begin
+                abc1 := abc3 mod abc4;
+                if abc1 = 0 then
                 DiscountPrize :=
                     MainForm.Internet.FieldValues['DISCOUNT_PERCENT'];
+            end;
+
             VipDiscount := q.FieldValues['DISCOUNT'];
             if VipDiscount > 0.1 then
                 DiscountPrize := 0;
@@ -817,7 +821,6 @@ var
     Result2: Integer;
     _Q: TABSQuery;
 begin
-
     _Q := TABSQuery.Create(nil);
     _Q.Databasename := 'sol1';
     _Q.ReadOnly := False;
