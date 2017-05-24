@@ -1,9 +1,9 @@
 object Form2: TForm2
   Left = 192
   Top = 107
-  Width = 696
-  Height = 480
   Caption = 'Form2'
+  ClientHeight = 446
+  ClientWidth = 688
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -24,7 +24,6 @@ object Form2: TForm2
     Frame.DrawBottom = False
     Frame.DrawLeft = False
     Frame.DrawRight = False
-    DataSet = MainForm.Table1
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -13
@@ -274,7 +273,6 @@ object Form2: TForm2
         AutoSize = True
         AutoStretch = False
         Color = clWhite
-        DataSet = MainForm.Table1
         DataField = 'SOLARIUM'
         Transparent = False
         WordWrap = True
@@ -300,7 +298,6 @@ object Form2: TForm2
         AutoSize = False
         AutoStretch = False
         Color = clWhite
-        DataSet = MainForm.Table1
         DataField = 'OPISANIE1'
         Transparent = False
         WordWrap = True
@@ -326,7 +323,6 @@ object Form2: TForm2
         AutoSize = True
         AutoStretch = False
         Color = clWhite
-        DataSet = MainForm.Table1
         DataField = 'OPISANIE2'
         Transparent = False
         WordWrap = True
@@ -352,7 +348,6 @@ object Form2: TForm2
         AutoSize = False
         AutoStretch = False
         Color = clWhite
-        DataSet = MainForm.Table1
         DataField = 'OPISANIE3'
         Transparent = False
         WordWrap = True
@@ -378,7 +373,6 @@ object Form2: TForm2
         AutoSize = False
         AutoStretch = False
         Color = clWhite
-        DataSet = MainForm.Table1
         DataField = 'OPISANIE4'
         Transparent = False
         WordWrap = True
@@ -504,7 +498,6 @@ object Form2: TForm2
         AutoSize = False
         AutoStretch = False
         Color = clWhite
-        DataSet = MainForm.Table1
         DataField = 'CENA'
         Transparent = False
         WordWrap = True
@@ -530,7 +523,6 @@ object Form2: TForm2
         AutoSize = False
         AutoStretch = False
         Color = clWhite
-        DataSet = MainForm.Table1
         DataField = 'VREME'
         Transparent = False
         WordWrap = True
@@ -556,7 +548,6 @@ object Form2: TForm2
         AutoSize = False
         AutoStretch = False
         Color = clWhite
-        DataSet = MainForm.Table1
         DataField = 'MIVREME'
         Transparent = False
         WordWrap = True
@@ -582,7 +573,6 @@ object Form2: TForm2
         AutoSize = False
         AutoStretch = False
         Color = clWhite
-        DataSet = MainForm.Table1
         DataField = 'PREDVVREME'
         Transparent = False
         WordWrap = True
@@ -658,7 +648,6 @@ object Form2: TForm2
         AutoSize = False
         AutoStretch = False
         Color = clWhite
-        DataSet = MainForm.Table1
         DataField = 'OHLAZDANE'
         Transparent = False
         WordWrap = True
@@ -684,7 +673,6 @@ object Form2: TForm2
         AutoSize = False
         AutoStretch = False
         Color = clWhite
-        DataSet = MainForm.Table1
         DataField = 'LICEVICHAS'
         Transparent = False
         WordWrap = True
@@ -735,7 +723,6 @@ object Form2: TForm2
         AutoSize = False
         AutoStretch = False
         Color = clWhite
-        DataSet = MainForm.Table1
         DataField = 'LAMPICHAS'
         Transparent = False
         WordWrap = True
@@ -786,7 +773,6 @@ object Form2: TForm2
         AutoSize = False
         AutoStretch = False
         Color = clWhite
-        DataSet = MainForm.Table1
         DataField = 'LICEVICHAS'
         Transparent = False
         WordWrap = True

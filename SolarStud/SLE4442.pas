@@ -123,7 +123,7 @@ var
     indx: integer;
 begin
 
-    DisplayOut(2, 0, 'Get ATR');     // Select Card type
+    DisplayOut(2, 0, 'Get ATR'); // Select Card type
     ClearBuffers();
     SendLen := 6;
     RecvLen := 6;
@@ -174,7 +174,7 @@ begin
                     if (Trim(tmpStr) <> '90 00') then
                     begin
                         DisplayOut(1, 0, 'Return bytes are not acceptable.');
-                        retCode:= SCARD_F_UNKNOWN_ERROR;
+                        retCode := SCARD_F_UNKNOWN_ERROR;
                     end;
                 end;
             1:
@@ -184,7 +184,7 @@ begin
                     if (Trim(tmpStr) <> '90 00') then
                     begin
                         DisplayOut(1, 0, 'Return bytes are not acceptable.');
-                        retCode:= SCARD_F_UNKNOWN_ERROR;
+                        retCode := SCARD_F_UNKNOWN_ERROR;
                     end
                     else
                     begin
@@ -201,7 +201,7 @@ begin
                     if (Trim(tmpStr) <> '90 00') then
                     begin
                         DisplayOut(1, 0, 'Return bytes are not acceptable.');
-                        retCode:= SCARD_F_UNKNOWN_ERROR;
+                        retCode := SCARD_F_UNKNOWN_ERROR;
                     end
                     else
                     begin
@@ -439,7 +439,7 @@ begin
     SendBuff[1] := $B1;
     SendBuff[2] := $00;
     SendBuff[3] := $00;
-//    SendBuff[4] := $00;
+    //    SendBuff[4] := $00;
     SendBuff[4] := $04;
     SendLen := 5;
     RecvLen := 6;
@@ -763,12 +763,12 @@ begin
             abc3 := (q.FieldValues['COUNTER'] + 1);
             abc4 := MainForm.Internet.FieldValues['DISCOUNT_COUNT'];
             abc2 := q.FieldValues['KLIENTNOMER'];
-            if(abc4 <> 0) then
+            if (abc4 <> 0) then
             begin
                 abc1 := abc3 mod abc4;
                 if abc1 = 0 then
-                DiscountPrize :=
-                    MainForm.Internet.FieldValues['DISCOUNT_PERCENT'];
+                    DiscountPrize :=
+                        MainForm.Internet.FieldValues['DISCOUNT_PERCENT'];
             end;
 
             VipDiscount := q.FieldValues['DISCOUNT'];
@@ -778,9 +778,10 @@ begin
         end
         else if not IsChipCard then
         begin
-            res := Application.MessageBox(PChar('Желаете ли да добавите Клиент №' + IntTostr(CardNomer) +
+            res := Application.MessageBox(PChar('Желаете ли да добавите Клиент №'
+                + IntTostr(CardNomer) +
                 ' към списъка с клиенти'), PChar('Нов клиент'), MB_YESNO);
-            if(res = 6) then
+            if (res = 6) then
             begin
                 Card.Balans := 0;
                 MainForm.Table3.Append;
@@ -800,7 +801,8 @@ begin
                 else
                     MainForm.KARTICHIP.Edit;
                 MainForm.KARTICHIP.FieldValues['DISCOUNT'] := 0;
-                MainForm.KARTICHIP.FieldValues['COUNTER'] := -1; // Нов клиент - Нова карта
+                MainForm.KARTICHIP.FieldValues['COUNTER'] := -1;
+                    // Нов клиент - Нова карта
                 MainForm.KARTICHIP.post;
                 MainForm.Timer3.enabled := True;
             end;
@@ -1025,7 +1027,8 @@ begin
         DisplayOut(0, 0, 'Connection is already active.');
         Exit;
     end;
-    if (not StrUtils.ContainsText(readerName, 'CCID')) and (not StrUtils.ContainsText(readerName, 'OMNIKEY'))then
+    if (not StrUtils.ContainsText(readerName, 'CCID')) and (not
+        StrUtils.ContainsText(readerName, 'OMNIKEY')) then
     begin
 
         // 1. Direct Connection
