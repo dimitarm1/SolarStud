@@ -33,7 +33,7 @@ uses Windows, SysUtils, DateUtils, Classes, Graphics, Forms, Controls, Menus,
     LMDLImage, ABSTypes, LMDDBMaskEdit, LMDDBEdit, LMDCustomControl, Wwdotdot,
     Wwdbcomb, Planner, PlanSimpleEdit, PlanItemEdit, DBPlanner, AdvEdBtn,
     PlannerDatePicker, LMDCustomListComboBox, LMDListComboBox,
-        LMDDBListComboBox,
+    LMDDBListComboBox,
     RzCmboBx, Wwdbigrd, RzEdit, RzDBEdit;
 
 type
@@ -1134,7 +1134,7 @@ begin
         try
             MainForm.sol1.Open;
         except Application.MessageBox(PChar(GetMessage('M1')),
-            PChar(GetMessage('M2')), MB_OK);
+                PChar(GetMessage('M2')), MB_OK);
             // except  Application.MessageBox('Грешка в базата данни - Възстановете от архивно копие!', 'ГРЕШКА', MB_OK);
         end;
         _Q.SQL.SetText(PChar('UPDATE KLIENTI SET FIRMA=0' +
@@ -1806,14 +1806,14 @@ begin
             IOResult := WriteFile(hDevice, DataSent, 1, IOCount, nil);
             sleep(2);
             IOResult := ReadFile(hDevice, IOByte, 1, IOCount, nil);
-                // get old main time
+            // get old main time
             Data1 := 128 + Chanel * 8 + 3; //  Set cool time
             IOResult := WriteFile(hDevice, Data1, 1, IOCount, nil);
             sleep(2);
             IOResult := WriteFile(hDevice, CoolTime, 1, IOCount, nil);
             sleep(4);
             IOResult := ReadFile(hDevice, IOByte, 1, IOCount, nil);
-                // Get checksum?
+            // Get checksum?
             if IOResult and (IOByte = CheckSum) then
                 IOResult := WriteFile(hDevice, CheckSum, 1, IOCount, nil);
             sleep(100);
@@ -1824,7 +1824,7 @@ begin
             IOByte := IOByte div 64;
             if IOResult and (IOByte <> 0) and
                 ((DataSent = 0) or (PreTime > 0) or ((IOByte = 1) and (DataSent
-                    > 0))) then
+                > 0))) then
             begin
                 retry := 22;
             end
@@ -1932,44 +1932,56 @@ begin
                     begin
                         case SolariumNo of //'Остават'       'мин.'
                             0: MainForm.Kabina1minuti.Caption :=
-                                GetMessage('M80') + ' ' + IntToStr(CabineTime[0]) +
-                                ' ' + GetMessage('M81');
+                                GetMessage('M80') + ' ' + IntToStr(CabineTime[0])
+                                    +
+                                    ' ' + GetMessage('M81');
                             1: MainForm.Kabina2minuti.Caption :=
-                                GetMessage('M80') + ' ' + IntToStr(CabineTime[1]) +
-                                ' ' + GetMessage('M81');
+                                GetMessage('M80') + ' ' + IntToStr(CabineTime[1])
+                                    +
+                                    ' ' + GetMessage('M81');
                             2: MainForm.Kabina3minuti.Caption :=
-                                GetMessage('M80') + ' ' + IntToStr(CabineTime[2]) +
-                                ' ' + GetMessage('M81');
+                                GetMessage('M80') + ' ' + IntToStr(CabineTime[2])
+                                    +
+                                    ' ' + GetMessage('M81');
                             3: MainForm.Kabina4minuti.Caption :=
-                                GetMessage('M80') + ' ' + IntToStr(CabineTime[3]) +
-                                ' ' + GetMessage('M81');
+                                GetMessage('M80') + ' ' + IntToStr(CabineTime[3])
+                                    +
+                                    ' ' + GetMessage('M81');
                             4: MainForm.Kabina5minuti.Caption :=
-                                GetMessage('M80') + ' ' + IntToStr(CabineTime[4]) +
-                                ' ' + GetMessage('M81');
+                                GetMessage('M80') + ' ' + IntToStr(CabineTime[4])
+                                    +
+                                    ' ' + GetMessage('M81');
                             5: MainForm.Kabina6minuti.Caption :=
-                                GetMessage('M80') + ' ' + IntToStr(CabineTime[5]) +
-                                ' ' + GetMessage('M81');
+                                GetMessage('M80') + ' ' + IntToStr(CabineTime[5])
+                                    +
+                                    ' ' + GetMessage('M81');
                         end;
                         //added for second form
                         case SolariumNo of
-                            0: Main2.Kabina1minuti.Caption := GetMessage('M80') +
+                            0: Main2.Kabina1minuti.Caption := GetMessage('M80')
+                                +
                                 ' ' + IntToStr(CabineTime[0]) + ' ' +
-                                GetMessage('M81');
-                            1: Main2.Kabina2minuti.Caption := GetMessage('M80') +
+                                    GetMessage('M81');
+                            1: Main2.Kabina2minuti.Caption := GetMessage('M80')
+                                +
                                 ' ' + IntToStr(CabineTime[1]) + ' ' +
-                                GetMessage('M81');
-                            2: Main2.Kabina3minuti.Caption := GetMessage('M80') +
+                                    GetMessage('M81');
+                            2: Main2.Kabina3minuti.Caption := GetMessage('M80')
+                                +
                                 ' ' + IntToStr(CabineTime[2]) + ' ' +
-                                GetMessage('M81');
-                            3: Main2.Kabina4minuti.Caption := GetMessage('M80') +
+                                    GetMessage('M81');
+                            3: Main2.Kabina4minuti.Caption := GetMessage('M80')
+                                +
                                 ' ' + IntToStr(CabineTime[3]) + ' ' +
-                                GetMessage('M81');
-                            4: Main2.Kabina5minuti.Caption := GetMessage('M80') +
+                                    GetMessage('M81');
+                            4: Main2.Kabina5minuti.Caption := GetMessage('M80')
+                                +
                                 ' ' + IntToStr(CabineTime[4]) + ' ' +
-                                GetMessage('M81');
-                            5: Main2.Kabina6minuti.Caption := GetMessage('M80') +
+                                    GetMessage('M81');
+                            5: Main2.Kabina6minuti.Caption := GetMessage('M80')
+                                +
                                 ' ' + IntToStr(CabineTime[5]) + ' ' +
-                                GetMessage('M81');
+                                    GetMessage('M81');
                         end;
                         // end added
                         case SolariumNo of
@@ -2032,17 +2044,17 @@ begin
             CabineErrCounter[SolariumNo] := 0;
             MainForm.Timer1.Enabled := False;
             StrBuff := '';
-                //('Солариум '+IntToStr(SolariumNo+1)+' ненадейно се нулрира по време на работа! Да го заредя ли отново?');
-            { if Application.MessageBox(PChar(StrBuff),PChar('Неочакван рестарт'),MB_OKCANCEL)=IDOK then
-              begin
-               IndexSol:=SolariumNo+1;
-               SendCmd(5);
-               CabineStartTime[SolariumNo]:=now;
-              end
-              else
-                begin  LastTime[SolariumNo]:=0;
-                  CabineStartTime[SolariumNo]:=0;
-                end;    }
+            //('Солариум '+IntToStr(SolariumNo+1)+' ненадейно се нулрира по време на работа! Да го заредя ли отново?');
+        { if Application.MessageBox(PChar(StrBuff),PChar('Неочакван рестарт'),MB_OKCANCEL)=IDOK then
+          begin
+           IndexSol:=SolariumNo+1;
+           SendCmd(5);
+           CabineStartTime[SolariumNo]:=now;
+          end
+          else
+            begin  LastTime[SolariumNo]:=0;
+              CabineStartTime[SolariumNo]:=0;
+            end;    }
             MainForm.Timer1.Enabled := True;
         end;
         if Update then
@@ -2124,7 +2136,7 @@ begin
         sleep(2); // Validate start
         Data1 := 85;
         IOResult := WriteFile(hDevice, Data1, 1, IOCount, nil);
-            // 0x55 to validate start
+        // 0x55 to validate start
     end
     else
     begin
@@ -2387,7 +2399,8 @@ begin
         Edit5.Visible := true;
         Edit5.SetFocus;
         Label91.Visible := (PasswordForm.ModalResult = MROK) or IsDemo2;
-        Kabina11.Caption := Main2.Kabina11.Caption; //SOLARIUMI.FieldByName('OPISANIE1').AsString;
+        Kabina11.Caption := Main2.Kabina11.Caption;
+            //SOLARIUMI.FieldByName('OPISANIE1').AsString;
     end;
     if TimerTime1 = 13 then
     begin
@@ -2533,7 +2546,8 @@ begin
                 stoka := -_Q4.FieldByName('STOKA').AsInteger;
                 _Q4.Active := False;
                 _Q4.SQL.Text := 'SELECT * from TABLICA_CENI where SOLARIUM = ' +
-                    IntToStr(MainForm.SOLARIUMI.RecNo + 100) + ' and MINUTA = ' +
+                    IntToStr(MainForm.SOLARIUMI.RecNo + 100) + ' and MINUTA = '
+                        +
                     IntToStr(stoka);
                 _Q4.Active := true;
                 if (_Q4.RecordCount > 0) then
@@ -2632,7 +2646,7 @@ begin
         FillValues1();
         if SOLARIUMI.FieldValues['SAOBSHTAVA'] and
             ((SOLARIUMI.FieldValues['LICEVICHAS'] < 0) or
-                (SOLARIUMI.FieldValues['LAMPICHAS'] < 0)) then
+            (SOLARIUMI.FieldValues['LAMPICHAS'] < 0)) then
             Application.MessageBox('Лампите са за смяна!!', 'ПРЕДУПРЕЖДЕНИЕ',
                 MB_OK);
         AdvTabSheet5Show(MainForm);
@@ -3085,8 +3099,8 @@ begin
                 and (Plashtania.FieldValues['DATA'] = Date)
                 and (Plashtania.FieldValues['BROI'] = CabineSetTime[(IndexSol -
                     1)]) and
-                    (MinutesBetween(StrToTime(Plashtania.FieldValues['CHAS']),
-                    (Time)) < 5)) then
+                (MinutesBetween(StrToTime(Plashtania.FieldValues['CHAS']),
+                (Time)) < 5)) then
             begin
                 PosSelected := 0;
                 ParvaKartaPlatena := 0;
@@ -3157,7 +3171,7 @@ begin
                 if (PaidChipCard > 0) then
                 begin
                     Plashtania.FieldValues['OTCHIPKARTA'] := Card.ClientNomer;
-                        // Temporary Value
+                    // Temporary Value
                     Plashtania.FieldValues['KARTASUMA'] := PaidChipCard;
                     Plashtania.FieldValues['STUDIOCODE'] := Card.StudioNomer;
                     Plashtania.FieldValues['KLIENTNOMER'] :=
@@ -3444,7 +3458,7 @@ procedure TMainForm.DobaviStokaBtnClick(Sender: TObject);
 begin
     case StokiteTab.ActivePageIndex of
         0: KartiAsStokiMenu.Popup(DobaviStokaBtn.Left +
-            Round(DobaviStokaBtn.Width / 2),
+                Round(DobaviStokaBtn.Width / 2),
                 DobaviStokaBtn.Top + Round(DobaviStokaBtn.Height / 2));
         1: AddStokaButtonClick(3);
 
@@ -3595,7 +3609,7 @@ begin
     QKarti.Active := False;
     QKarti.SQL.SetText(PChar('SELECT * FROM kartiall WHERE klientdetail = ' +
         IntToStr2(QKlienti.FieldValues['NOMER']) +
-            ' ORDER BY KARTANOMER DESC'));
+        ' ORDER BY KARTANOMER DESC'));
     QKarti.Active := True;
     //RefillForm.DBEdit2.ReadOnly:=true;
 end;
@@ -3954,7 +3968,7 @@ begin
     Table3.Post;
     Table3.Last;
     QKlienti.Active := False;
-    QKlienti.SQL.SetText(PChar('SELECT * FROM klienti ORDER BY NOMER DESC'));
+    QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join KARTICHIP c on k.NOMER = c.KLIENTNOMER WHERE k.NOMER >-1 ORDER BY k.nomer DESC'));
     QKlienti.Active := True;
     // RefillForm.DBEdit2.ReadOnly:=false;
     RefillForm.ShowModal;
@@ -3963,7 +3977,7 @@ begin
     QKarti.Active := False;
     QKarti.SQL.SetText(PChar('SELECT * FROM kartiall WHERE klientdetail = ' +
         IntToStr2(QKlienti.FieldValues['NOMER']) +
-            ' ORDER BY KARTANOMER DESC'));
+        ' ORDER BY KARTANOMER DESC'));
     QKarti.Active := True;
 end;
 
@@ -3993,7 +4007,7 @@ begin
     Stoka := Kasagrid.DataSource.DataSet.FieldValues['STOKAKOD'];
     if (KARTICHIP.RecordCount > 0) and
         (varType(Kasagrid.DataSource.DataSet.FieldValues['STOKACENACARD']) <>
-            varNull) and
+        varNull) and
         (Card.Balans > 0) then
         CenaCard := Kasagrid.DataSource.DataSet.FieldValues['STOKACENACARD']
     else
@@ -4055,7 +4069,7 @@ begin
     PaidChipCard := 0;
     DiscountFirmi := Integer((QKLIENTI.RecordCount = 1) and
         (QKLIENTI.FieldValues['FIRMA'] > 0)) *
-            Internet.FieldValues['DISCOUNT_PERCENT_FIRMI'];
+        Internet.FieldValues['DISCOUNT_PERCENT_FIRMI'];
     if (Card.Balans >= SumaCard) and IsChipCard then
     begin
         PaidChipCard := SumaCard
@@ -4191,7 +4205,7 @@ begin
         QKarti.SQL.SetText(PChar('SELECT * FROM kartiall WHERE klientdetail = '
             +
             IntToStr2(QKlienti.FieldValues['NOMER']) +
-                ' AND (POSESHTENIA > 0) AND (STARTDATE >= CURRENT_DATE) ORDER BY KARTANOMER'));
+            ' AND (POSESHTENIA > 0) AND (STARTDATE >= CURRENT_DATE) ORDER BY KARTANOMER'));
         QKarti.Active := True;
         if (QKarti.RecordCount > 0) then
         begin
@@ -4453,7 +4467,7 @@ begin
                 LMDMemo1.Lines.Add(GetMessage('M42') + ' ' +
                     ADVComboBox2.Items[i] + ' - ' +
                     ConvertCurr1(PoseshteniaPaid[i] *
-                        SOLARIUMI.FieldValues['MINUTINA1'] *
+                    SOLARIUMI.FieldValues['MINUTINA1'] *
                     SOLARIUMI.FieldValues['CENA']) + GetMessage('M20')); //'лв.'
             end;
             i := i + 1;
@@ -4574,7 +4588,7 @@ begin // Delete klient
                 QKarti.Active := False;
                 QKarti.SQL.SetText(PChar('SELECT * FROM kartiall WHERE klientdetail = ' +
                     IntToStr2(QKlienti.FieldValues['NOMER']) +
-                        ' ORDER BY KARTANOMER DESC'));
+                    ' ORDER BY KARTANOMER DESC'));
                 QKarti.Active := True;
                 QKarti.First;
                 while not QKarti.Eof do
@@ -4588,7 +4602,7 @@ begin // Delete klient
                 QKlienti.Edit;
                 QKlienti.FieldValues['NOMER'] := -((YearOf(now) - 2000) * 10000
                     + MonthOf(now) * 100 + DayOf(now));
-                    // To preserve data for klients
+                // To preserve data for klients
                 QKlienti.Post;
                 Plashtania.ReadOnly := False;
                 Plashtania.Edit;
@@ -4598,12 +4612,12 @@ begin // Delete klient
                 Plashtania.FieldValues['OTCHIPKARTA'] := Klient;
                 Plashtania.FieldValues['CHAS'] := TimeToStr(Time);
                 Plashtania.Post;
-                    // Create empty record to register "Deletion" operation
+                // Create empty record to register "Deletion" operation
                 R := STOKI.Locate('STOKAKOD', 0, []);
                 if not R then
                 begin
                     AddStokaButtonClick(5);
-                        //Добавяне на код за изтриване на клиент
+                    //Добавяне на код за изтриване на клиент
                 end;
             end
         end
@@ -4661,24 +4675,24 @@ begin
         'IME'))) then
     begin
         QKlienti.Active := False;
-        QKlienti.SQL.SetText(PChar('SELECT * FROM klienti ' + SQLText +
+        QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join KARTICHIP c on k.NOMER = c.KLIENTNOMER  ' + SQLText +
             ' ORDER BY IME DESC'));
     end;
     if (AFieldName = 'NOMER') then
     begin
         QKlienti.Active := False;
         if AnsiContainsText(QKlienti.SQL.Text, 'DESC') then
-            QKlienti.SQL.SetText(PChar('SELECT * FROM klienti ' + SQLText +
+            QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join KARTICHIP c on k.NOMER = c.KLIENTNOMER ' + SQLText +
                 ' ORDER BY NOMER DESC'))
         else
-            QKlienti.SQL.SetText(PChar('SELECT * FROM klienti ' + SQLText +
+            QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join KARTICHIP c on k.NOMER = c.KLIENTNOMER ' + SQLText +
                 ' ORDER BY NOMER ASC'));
     end;
     if (AFieldName = 'BALANS') and (not (AnsiContainsText(QKlienti.SQL.Text,
         'BALANS'))) then
     begin
         QKlienti.Active := False;
-        QKlienti.SQL.SetText(PChar('SELECT * FROM klienti ' + SQLText +
+        QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join KARTICHIP c on k.NOMER = c.KLIENTNOMER ' + SQLText +
             ' ORDER BY BALANS DESC'));
     end;
     if AnsiContainsText(QKlienti.SQL.Text, 'DESC') then
@@ -4705,7 +4719,7 @@ begin
         Ime := Edit10.Text;
     Ime := AnsiLowerCase(Ime);
     QKlienti.Active := False;
-    SQLText := 'SELECT * FROM klienti WHERE LOWER(IME) LIKE "' + (Ime) + '%"';
+    SQLText := 'SELECT * FROM klienti k left outer join KARTICHIP c on k.NOMER = c.KLIENTNOMER WHERE LOWER(IME) LIKE "' + (Ime) + '%"';
     if not (ShowAllKlientsCb.Checked) then
         SQLText := SQLText + ' and NOMER >-1 ';
     QKlienti.SQL.SetText(PChar(SQLText + ' ORDER BY IME'));
@@ -4728,16 +4742,16 @@ begin
     QKarti.Active := False;
     QKarti.SQL.SetText(PChar('SELECT * FROM kartiall WHERE klientdetail = ' +
         '"' + IntToStr2(QKlienti.FieldValues['NOMER']) + '"' +
-            ' ORDER BY KARTANOMER'));
+        ' ORDER BY KARTANOMER'));
     QKarti.Active := True;
     if (varType(KARTICHIP.FieldValues['SUMA']) <> varNull) then
         suma := KARTICHIP.FieldValues['SUMA'] / Solariumi.FieldValues['CENA']
     else
         suma := 0;
-//    if suma > 2 then
-//        Label157.Caption := '~' + IntToStr2(suma) + ' минути'
-//    else
-//        Label157.Caption := '';
+    //    if suma > 2 then
+    //        Label157.Caption := '~' + IntToStr2(suma) + ' минути'
+    //    else
+    //        Label157.Caption := '';
 end;
 
 procedure TMainForm.Edit7Change(Sender: TObject);
@@ -4756,10 +4770,10 @@ begin
     if not (ShowAllKlientsCb.Checked) then
         SQLText := ' and NOMER >-1 ';
     if QKarti.FieldValues['klientdetail'] > 0 then
-        QKlienti.SQL.SetText(PChar('SELECT * FROM klienti WHERE NOMER = ' +
+        QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join KARTICHIP c on k.NOMER = c.KLIENTNOMER WHERE NOMER = ' +
             IntToStr2(QKarti.FieldValues['klientdetail']) + ''))
     else
-        QKlienti.SQL.SetText(PChar('SELECT * FROM klienti ' + SQLText +
+        QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join KARTICHIP c on k.NOMER = c.KLIENTNOMER ' + SQLText +
             ' ORDER BY NOMER DESC'));
     QKlienti.Active := True;
     wwDBGrid6RowChanged(Sender);
@@ -4776,14 +4790,14 @@ begin
         if QKarti.RecordCount > 0 then
         begin
             QKlienti.Active := False;
-            QKlienti.SQL.SetText(PChar('SELECT * FROM klienti WHERE NOMER = ' +
+            QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join KARTICHIP c on k.NOMER = c.KLIENTNOMER WHERE NOMER = ' +
                 IntToStr2(QKarti.FieldValues['klientdetail']) + ''));
             QKlienti.Active := True;
         end
         else
         begin
             QKlienti.Active := False;
-            QKlienti.SQL.SetText(PChar('SELECT * FROM klienti WHERE NOMER = 0'));
+            QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join KARTICHIP c on k.NOMER = c.KLIENTNOMER WHERE NOMER = 0'));
             QKlienti.Active := True;
         end;
     end;
@@ -4795,14 +4809,14 @@ begin
         if QKarti.RecordCount > 0 then
         begin
             QKlienti.Active := False;
-            QKlienti.SQL.SetText(PChar('SELECT * FROM klienti WHERE NOMER = ' +
+            QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join KARTICHIP c on k.NOMER = c.KLIENTNOMER WHERE NOMER = ' +
                 IntToStr2(QKarti.FieldValues['klientdetail']) + ''));
             QKlienti.Active := True;
         end
         else
         begin
             QKlienti.Active := False;
-            QKlienti.SQL.SetText(PChar('SELECT * FROM klienti WHERE NOMER = 0'));
+            QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join KARTICHIP c on k.NOMER = c.KLIENTNOMER WHERE NOMER = 0'));
             QKlienti.Active := True;
         end;
     end;
@@ -4965,15 +4979,15 @@ begin
         if (PriceCash > 0) or (PriceCard > 0) then
         begin
             if (KARTICHIP.FieldValues['ENDDATE'] > 0) and
-                (KARTICHIP.FieldValues['ENDDATE'] < DateOf(Now)) and not IsChipCard
-                then
+                (KARTICHIP.FieldValues['ENDDATE'] < DateOf(Now)) and not
+                    IsChipCard then
             begin
                 Application.MessageBox(PChar('Валидността на картата е изтекла!'), PChar(''), MB_OK);
                 exit;
             end;
             if (KARTICHIP.FieldValues['STARTTIME'] > 0) and
-                (KARTICHIP.FieldValues['STARTTIME'] < TimeOf(Now)) and not IsChipCard
-                then
+                (KARTICHIP.FieldValues['STARTTIME'] < TimeOf(Now)) and not
+                    IsChipCard then
             begin
                 Application.MessageBox(PChar('Картата не може да бъде ползвана сега!'), PChar(''), MB_OK);
                 exit;
@@ -5088,10 +5102,10 @@ begin
     if not ShowAllKlientsCb.Checked then
         SQLText := ' WHERE NOMER >-1 ';
     if QKarti.FieldValues['klientdetail'] > 0 then
-        QKlienti.SQL.SetText(PChar('SELECT * FROM klienti WHERE NOMER = ' +
+        QKlienti.SQL.SetText(PChar('SSELECT * FROM klienti k left outer join KARTICHIP c on k.NOMER = c.KLIENTNOMER WHERE NOMER = ' +
             IntToStr2(QKarti.FieldValues['klientdetail']) + ''))
     else
-        QKlienti.SQL.SetText(PChar('SELECT * FROM klienti ' + SQLText +
+        QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join KARTICHIP c on k.NOMER = c.KLIENTNOMER ' + SQLText +
             ' ORDER BY NOMER DESC'));
     QKlienti.Active := True;
     wwDBGrid6RowChanged(Sender);
@@ -5115,7 +5129,7 @@ begin
         SQLText := ' WHERE NOMER > -1 ';
     AdvPageControl1.ActivePage := AdvTabsheet19;
     QKlienti.Active := False;
-    QKlienti.SQL.SetText(PChar('SELECT * FROM klienti ' + SQLText +
+    QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join KARTICHIP c on k.NOMER = c.KLIENTNOMER ' + SQLText +
         ' ORDER BY IME DESC'));
     CardNomer := 0;
     QKlienti.Active := True;
@@ -5460,8 +5474,8 @@ begin //Зареждане
                 begin
                     Application.MessageBox(PChar('Сумата за клиента от локалната база данни '
                         + ConvertCurr1(KARTICHIP.FieldValues['SUMA']) +
-                            ' ще бъде добавена към Чип картата'),
-                            PChar('Добавяне на сума'), MB_OK);
+                        ' ще бъде добавена към Чип картата'),
+                        PChar('Добавяне на сума'), MB_OK);
                     KARTICHIP.edit;
                     KARTICHIP.FieldValues['SUMA'] := 0;
                     KARTICHIP.post;
@@ -5654,7 +5668,7 @@ begin
     Table3.FieldValues['BALANS'] := 0;
     Table3.FieldValues['FIRMA'] := 0;
     Table3.FieldValues['IME'] := GetMessage('M66') + IntTostr(maxnomer + 1);
-        //'Нов клиент №'
+    //'Нов клиент №'
     Table3.Post;
     Table3.Last;
     QKlienti.Active := False;
@@ -5774,7 +5788,7 @@ begin
                     'SELECT SUM(STOKA) AS STOKA1, COUNT (*)' +
                     'AS BROI1, MIN (SOLARIUM) AS SOLARIUM1, CAST(MIN (SOLARIUM) as STRING) AS WEEKDAY FROM PLASHTANIA WHERE' +
                     '(SOLARIUM > 0) AND (DATA BETWEEN "' +
-                        MainForm.PlannerMaskDatePicker1.Text +
+                    MainForm.PlannerMaskDatePicker1.Text +
                     '" AND "' + MainForm.PlannerMaskDatePicker2.Text + '")';
                 MainForm.Chart1.BottomAxis.Labels := False;
             end;
@@ -5783,9 +5797,9 @@ begin
                 MainForm.QStatistika.SQL.Text := 'SELECT  COUNT (*)' +
                     'AS BROI1,SOLARIUM  AS SOLARIUM1,  CAST(SUM (STOKA) as STRING) AS WEEKDAY FROM PLASHTANIA WHERE' +
                     '(SOLARIUM > 0) AND (DATA BETWEEN "' +
-                        MainForm.PlannerMaskDatePicker1.Text +
+                    MainForm.PlannerMaskDatePicker1.Text +
                     '" AND "' + MainForm.PlannerMaskDatePicker2.Text +
-                        '") GROUP by SOLARIUM';
+                    '") GROUP by SOLARIUM';
                 MainForm.Chart1.BottomAxis.Labels := False;
             end;
         3: //Общо за периода посещения като сума лева
@@ -5794,7 +5808,7 @@ begin
                     +
                     'AS CURRENCY) AS BROI1, MIN (SOLARIUM) AS SOLARIUM1,  CAST(MIN (SOLARIUM) as STRING) AS WEEKDAY FROM PLASHTANIA WHERE' +
                     '(SOLARIUM > 0) AND (DATA BETWEEN "' +
-                        MainForm.PlannerMaskDatePicker1.Text +
+                    MainForm.PlannerMaskDatePicker1.Text +
                     '" AND "' + MainForm.PlannerMaskDatePicker2.Text + '") ';
                 MainForm.Chart1.BottomAxis.Labels := False;
             end;
@@ -5805,9 +5819,9 @@ begin
                     +
                     'AS CURRENCY) AS BROI1, SOLARIUM AS SOLARIUM1,  CAST(MIN (SOLARIUM) as STRING) AS WEEKDAY FROM PLASHTANIA WHERE' +
                     '(SOLARIUM > 0) AND (DATA BETWEEN "' +
-                        MainForm.PlannerMaskDatePicker1.Text +
+                    MainForm.PlannerMaskDatePicker1.Text +
                     '" AND "' + MainForm.PlannerMaskDatePicker2.Text +
-                        '") GROUP BY SOLARIUM';
+                    '") GROUP BY SOLARIUM';
                 MainForm.Chart1.BottomAxis.Labels := False;
             end;
 
@@ -5817,7 +5831,7 @@ begin
                     'SELECT ROUND (SUM(CAST(BROI as float)/60) ,2) ' +
                     'AS BROI1, MIN (SOLARIUM) AS SOLARIUM1,  CAST(MIN (SOLARIUM) as STRING) AS WEEKDAY FROM PLASHTANIA WHERE' +
                     '(SOLARIUM > 0) AND (PLASHTANIA.DATA BETWEEN "' +
-                        MainForm.PlannerMaskDatePicker1.Text +
+                    MainForm.PlannerMaskDatePicker1.Text +
                     '" AND "' + MainForm.PlannerMaskDatePicker2.Text + '")';
                 MainForm.Chart1.BottomAxis.Labels := False;
             end;
@@ -5828,9 +5842,9 @@ begin
                     '  SELECT   ROUND (SUM(CAST(BROI as float)/60) ,2) ' +
                     'AS BROI1,SOLARIUM AS SOLARIUM1, CAST(SUM (STOKA) as STRING) AS WEEKDAY FROM PLASHTANIA WHERE' +
                     '(SOLARIUM > 0) AND (PLASHTANIA.DATA BETWEEN "' +
-                        MainForm.PlannerMaskDatePicker1.Text +
+                    MainForm.PlannerMaskDatePicker1.Text +
                     '" AND "' + MainForm.PlannerMaskDatePicker2.Text +
-                        '") GROUP BY SOLARIUM';
+                    '") GROUP BY SOLARIUM';
                 MainForm.Chart1.BottomAxis.Labels := False;
             end;
 
@@ -5840,9 +5854,9 @@ begin
                     'AS BROI1, STOKA AS SOLARIUM1, S.WEEKDAY FROM PLASHTANIA P LEFT OUTER JOIN ' +
                     '(SELECT STOKAKOD, STOKAIME AS WEEKDAY FROM STOKI ) S ON P.STOKA = S.STOKAKOD WHERE' +
                     '(STOKA > 0) AND (DATA BETWEEN "' +
-                        MainForm.PlannerMaskDatePicker1.Text +
+                    MainForm.PlannerMaskDatePicker1.Text +
                     '" AND "' + MainForm.PlannerMaskDatePicker2.Text +
-                        '") GROUP BY STOKA, WEEKDAY ';
+                    '") GROUP BY STOKA, WEEKDAY ';
                 MainForm.Chart1.BottomAxis.Labels := False;
             end;
         8: //Общо за периода козметика като сума лева
@@ -5852,9 +5866,9 @@ begin
                     'AS CURRENCY) AS BROI1, STOKA AS SOLARIUM1, S.WEEKDAY FROM PLASHTANIA P LEFT OUTER JOIN ' +
                     '(SELECT STOKAKOD, STOKAIME AS WEEKDAY FROM STOKI ) S ON P.STOKA = S.STOKAKOD WHERE' +
                     '(STOKA > 0) AND (DATA BETWEEN "' +
-                        MainForm.PlannerMaskDatePicker1.Text +
+                    MainForm.PlannerMaskDatePicker1.Text +
                     '" AND "' + MainForm.PlannerMaskDatePicker2.Text +
-                        '") GROUP BY STOKA, WEEKDAY ';
+                    '") GROUP BY STOKA, WEEKDAY ';
                 MainForm.Chart1.BottomAxis.Labels := False;
             end;
 
@@ -5864,9 +5878,9 @@ begin
                     'AS BROI1, STOKA AS SOLARIUM1, S.WEEKDAY FROM PLASHTANIA P LEFT OUTER JOIN ' +
                     '(SELECT STOKAKOD, STOKAIME AS WEEKDAY FROM STOKI ) S ON P.STOKA = S.STOKAKOD WHERE' +
                     '(STOKA <-1) AND (DATA BETWEEN "' +
-                        MainForm.PlannerMaskDatePicker1.Text +
+                    MainForm.PlannerMaskDatePicker1.Text +
                     '" AND "' + MainForm.PlannerMaskDatePicker2.Text +
-                        '") GROUP BY STOKA, WEEKDAY ';
+                    '") GROUP BY STOKA, WEEKDAY ';
                 MainForm.Chart1.BottomAxis.Labels := False;
             end;
         10: //Работа на солариумите по ден от периода
@@ -5875,9 +5889,9 @@ begin
                     'SELECT DATA, ROUND (SUM(CAST(BROI as float)/60) ,2) AS BROI1' +
                     ', (SOLARIUM - SOLARIUM) AS SOLARIUM1,  TOSTRING(DATA,"DD/M") AS WEEKDAY FROM PLASHTANIA WHERE '
                     + '(SOLARIUM > 0) AND (DATA BETWEEN "' +
-                        MainForm.PlannerMaskDatePicker1.Text +
+                    MainForm.PlannerMaskDatePicker1.Text +
                     '" AND "' + MainForm.PlannerMaskDatePicker2.Text +
-                        '") GROUP BY  WEEKDAY, DATA, SOLARIUM1 order by data';
+                    '") GROUP BY  WEEKDAY, DATA, SOLARIUM1 order by data';
                 MainForm.Chart1.BottomAxis.Labels := True;
             end;
         11: //Работа на солариумите по ден от периода по солариум
@@ -5886,9 +5900,9 @@ begin
                     'SELECT  ROUND (SUM(CAST(BROI as float)/60) ,2) AS BROI1' +
                     ', SOLARIUM AS SOLARIUM1,  TOSTRING(DATA,"DD/M") AS WEEKDAY FROM PLASHTANIA WHERE '
                     + '(SOLARIUM > 0) AND (DATA BETWEEN "' +
-                        MainForm.PlannerMaskDatePicker1.Text +
+                    MainForm.PlannerMaskDatePicker1.Text +
                     '" AND "' + MainForm.PlannerMaskDatePicker2.Text +
-                        '") group by data, solarium';
+                    '") group by data, solarium';
                 MainForm.Chart1.BottomAxis.Labels := True;
             end;
         12: //Работа на солариумите по ден от седмица общо в лева
@@ -5900,14 +5914,14 @@ begin
                 MainForm.PlannerMaskDatePicker2.Date :=
                     MainForm.PlannerMaskDatePicker2.Date +
                     (DayOfWeek(MainForm.PlannerMaskDatePicker2.Date) -
-                        DayOfWeek(MainForm.PlannerMaskDatePicker1.Date));
+                    DayOfWeek(MainForm.PlannerMaskDatePicker1.Date));
                 MainForm.QStatistika.SQL.Text :=
                     'SELECT   CAST (SUM (SUMABROI) AS CURRENCY) ' +
                     'AS BROI1, CAST(TOSTRING(DATA,"DW") AS INTEGER) AS SOLARIUM1, TOSTRING(DATA,"DW") AS WEEKDAY FROM PLASHTANIA WHERE '
                     + '(SOLARIUM > 0) AND (DATA BETWEEN "' +
-                        MainForm.PlannerMaskDatePicker1.Text +
+                    MainForm.PlannerMaskDatePicker1.Text +
                     '" AND "' + MainForm.PlannerMaskDatePicker2.Text +
-                        '") group by wEEKDAY, solarium1';
+                    '") group by wEEKDAY, solarium1';
                 MainForm.Chart1.BottomAxis.Labels := True;
             end;
         13: //Работа на солариумите по ден от седмицата общо в часове
@@ -5919,14 +5933,14 @@ begin
                 MainForm.PlannerMaskDatePicker2.Date :=
                     MainForm.PlannerMaskDatePicker2.Date +
                     (DayOfWeek(MainForm.PlannerMaskDatePicker2.Date) -
-                        DayOfWeek(MainForm.PlannerMaskDatePicker1.Date));
+                    DayOfWeek(MainForm.PlannerMaskDatePicker1.Date));
                 MainForm.QStatistika.SQL.Text :=
                     'SELECT  ROUND (SUM(CAST(BROI as float)/60) ,2) ' +
                     'AS BROI1, CAST(TOSTRING(DATA,"DW") AS INTEGER) AS SOLARIUM1, TOSTRING(DATA,"DW") AS WEEKDAY FROM PLASHTANIA WHERE '
                     + '(SOLARIUM > 0) AND (DATA BETWEEN "' +
-                        MainForm.PlannerMaskDatePicker1.Text +
+                    MainForm.PlannerMaskDatePicker1.Text +
                     '" AND "' + MainForm.PlannerMaskDatePicker2.Text +
-                        '") group by wEEKDAY, solarium1';
+                    '") group by wEEKDAY, solarium1';
                 MainForm.Chart1.BottomAxis.Labels := True;
             end;
         14: //Работа на солариумите по ден от седмица по солариум в лева
@@ -5938,14 +5952,14 @@ begin
                 MainForm.PlannerMaskDatePicker2.Date :=
                     MainForm.PlannerMaskDatePicker2.Date +
                     (DayOfWeek(MainForm.PlannerMaskDatePicker2.Date) -
-                        DayOfWeek(MainForm.PlannerMaskDatePicker1.Date));
+                    DayOfWeek(MainForm.PlannerMaskDatePicker1.Date));
                 MainForm.QStatistika.SQL.Text :=
                     'SELECT  CAST (SUM(SUMABROI) AS CURRENCY) ' +
                     'AS BROI1, SOLARIUM AS SOLARIUM1,  TOSTRING(DATA,"DW") AS WEEKDAY FROM PLASHTANIA WHERE '
                     + '(SOLARIUM > 0) AND (DATA BETWEEN "' +
-                        MainForm.PlannerMaskDatePicker1.Text +
+                    MainForm.PlannerMaskDatePicker1.Text +
                     '" AND "' + MainForm.PlannerMaskDatePicker2.Text +
-                        '") group by wEEKDAY,  solarium1';
+                    '") group by wEEKDAY,  solarium1';
                 MainForm.Chart1.BottomAxis.Labels := True;
             end;
         15: //Работа на солариумите по ден от седмицата общо брой посещения
@@ -5957,13 +5971,13 @@ begin
                 MainForm.PlannerMaskDatePicker2.Date :=
                     MainForm.PlannerMaskDatePicker2.Date +
                     (DayOfWeek(MainForm.PlannerMaskDatePicker2.Date) -
-                        DayOfWeek(MainForm.PlannerMaskDatePicker1.Date));
+                    DayOfWeek(MainForm.PlannerMaskDatePicker1.Date));
                 MainForm.QStatistika.SQL.Text := 'SELECT  COUNT (*)' +
                     'AS BROI1, CAST(TOSTRING(DATA,"DW") AS INTEGER) AS SOLARIUM1, TOSTRING(DATA,"DW") AS WEEKDAY FROM PLASHTANIA WHERE '
                     + '(SOLARIUM > 0) AND (DATA BETWEEN "' +
-                        MainForm.PlannerMaskDatePicker1.Text +
+                    MainForm.PlannerMaskDatePicker1.Text +
                     '" AND "' + MainForm.PlannerMaskDatePicker2.Text +
-                        '") group by wEEKDAY, solarium1';
+                    '") group by wEEKDAY, solarium1';
                 MainForm.Chart1.BottomAxis.Labels := True;
             end;
         16: //Работа на солариумите по ден от седмицата по солариум в часове
@@ -5975,14 +5989,14 @@ begin
                 MainForm.PlannerMaskDatePicker2.Date :=
                     MainForm.PlannerMaskDatePicker2.Date +
                     (DayOfWeek(MainForm.PlannerMaskDatePicker2.Date) -
-                        DayOfWeek(MainForm.PlannerMaskDatePicker1.Date));
+                    DayOfWeek(MainForm.PlannerMaskDatePicker1.Date));
                 MainForm.QStatistika.SQL.Text :=
                     'SELECT  ROUND (SUM(CAST(BROI as float)/60) ,2) ' +
                     'AS BROI1, SOLARIUM AS SOLARIUM1,  TOSTRING(DATA,"DW") AS WEEKDAY FROM PLASHTANIA WHERE '
                     + '(SOLARIUM > 0) AND (DATA BETWEEN "' +
-                        MainForm.PlannerMaskDatePicker1.Text +
+                    MainForm.PlannerMaskDatePicker1.Text +
                     '" AND "' + MainForm.PlannerMaskDatePicker2.Text +
-                        '") group by wEEKDAY, solarium';
+                    '") group by wEEKDAY, solarium';
                 MainForm.Chart1.BottomAxis.Labels := True;
             end;
         17: //Работа на солариумите по ден от седмицата по солариуми бр. посещения
@@ -5994,13 +6008,13 @@ begin
                 MainForm.PlannerMaskDatePicker2.Date :=
                     MainForm.PlannerMaskDatePicker2.Date +
                     (DayOfWeek(MainForm.PlannerMaskDatePicker2.Date) -
-                        DayOfWeek(MainForm.PlannerMaskDatePicker1.Date));
+                    DayOfWeek(MainForm.PlannerMaskDatePicker1.Date));
                 MainForm.QStatistika.SQL.Text := 'SELECT  COUNT (*)' +
                     'AS BROI1, SOLARIUM AS SOLARIUM1,  TOSTRING(DATA,"DW") AS WEEKDAY FROM PLASHTANIA WHERE '
                     + '(SOLARIUM > 0) AND (DATA BETWEEN "' +
-                        MainForm.PlannerMaskDatePicker1.Text +
+                    MainForm.PlannerMaskDatePicker1.Text +
                     '" AND "' + MainForm.PlannerMaskDatePicker2.Text +
-                        '") group by wEEKDAY,  solarium';
+                    '") group by wEEKDAY,  solarium';
                 MainForm.Chart1.BottomAxis.Labels := True;
             end;
         18: //Работа на солариумите по часове
@@ -6009,9 +6023,9 @@ begin
                     'SELECT  ROUND (SUM(CAST(BROI as float)/60) ,2) ' +
                     'AS BROI1,SOLARIUM AS SOLARIUM1,  TOSTRING(CHAS,"HH24") AS WEEKDAY FROM PLASHTANIA WHERE' +
                     '(SOLARIUM > 0) AND (DATA BETWEEN "' +
-                        MainForm.PlannerMaskDatePicker1.Text +
+                    MainForm.PlannerMaskDatePicker1.Text +
                     '" AND "' + MainForm.PlannerMaskDatePicker2.Text +
-                        '") group by wEEKDAY , solarium ORDER BY WEEKDAY';
+                    '") group by wEEKDAY , solarium ORDER BY WEEKDAY';
                 MainForm.Chart1.BottomAxis.Labels := True;
             end;
         19: //Работа на солариумите по месеци
@@ -6029,9 +6043,9 @@ begin
                     'SELECT  ROUND (SUM(CAST(BROI as float)/60) ,2) ' +
                     'AS BROI1,SOLARIUM AS SOLARIUM1,  TOSTRING(DATA,"YYYY/MM")  AS WEEKDAY FROM PLASHTANIA WHERE' +
                     '(SOLARIUM > 0) AND (DATA BETWEEN "' +
-                        MainForm.PlannerMaskDatePicker1.Text +
+                    MainForm.PlannerMaskDatePicker1.Text +
                     '" AND "' + MainForm.PlannerMaskDatePicker2.Text +
-                        '") group by wEEKDAY, solarium ORDER BY WEEKDAY';
+                    '") group by wEEKDAY, solarium ORDER BY WEEKDAY';
                 MainForm.Chart1.BottomAxis.Labels := True;
             end;
     end;
