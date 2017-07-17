@@ -3,8 +3,8 @@ object RefillForm: TRefillForm
   Top = 107
   HorzScrollBar.Visible = False
   Caption = #1047#1072#1088#1077#1078#1076#1072#1085#1077
-  ClientHeight = 244
-  ClientWidth = 494
+  ClientHeight = 288
+  ClientWidth = 499
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -20,7 +20,7 @@ object RefillForm: TRefillForm
     Left = 0
     Top = 0
     Width = 502
-    Height = 249
+    Height = 289
     Bevel.Mode = bmCustom
     ForceTransparent = True
     ImageList = MainForm.LMDImageList4
@@ -44,7 +44,7 @@ object RefillForm: TRefillForm
     Left = 343
     Top = 17
     Width = 143
-    Height = 210
+    Height = 248
   end
   object Shape1: TShape
     Left = 354
@@ -66,7 +66,7 @@ object RefillForm: TRefillForm
   end
   object Label2: TLabel
     Left = 24
-    Top = 181
+    Top = 213
     Width = 140
     Height = 22
     Caption = #1062#1077#1085#1072' '#1085#1072' '#1082#1072#1088#1090#1072#1090#1072
@@ -80,7 +80,7 @@ object RefillForm: TRefillForm
   end
   object Label5: TLabel
     Left = 24
-    Top = 209
+    Top = 241
     Width = 219
     Height = 22
     Caption = #1057#1091#1084#1072' '#1079#1072#1088#1077#1076#1077#1085#1072' '#1074' '#1082#1072#1088#1090#1072#1090#1072
@@ -94,7 +94,7 @@ object RefillForm: TRefillForm
   end
   object DBText2: TDBText
     Left = 229
-    Top = 177
+    Top = 213
     Width = 101
     Height = 26
     Alignment = taRightJustify
@@ -110,7 +110,7 @@ object RefillForm: TRefillForm
   end
   object DBText1: TDBText
     Left = 239
-    Top = 209
+    Top = 241
     Width = 91
     Height = 26
     Alignment = taRightJustify
@@ -140,7 +140,7 @@ object RefillForm: TRefillForm
   end
   object Label4: TLabel
     Left = 88
-    Top = 109
+    Top = 153
     Width = 134
     Height = 22
     Caption = #1042#1080#1076' '#1085#1072' '#1082#1072#1088#1090#1072#1090#1072':'
@@ -152,6 +152,20 @@ object RefillForm: TRefillForm
     ParentFont = False
     Transparent = True
     Visible = False
+  end
+  object Label6: TLabel
+    Left = 29
+    Top = 125
+    Width = 81
+    Height = 22
+    Caption = #1058#1077#1083#1077#1092#1086#1085
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clBlack
+    Font.Height = -19
+    Font.Name = 'Arial'
+    Font.Style = []
+    ParentFont = False
+    Transparent = True
   end
   object Panel1: TPanel
     Left = 360
@@ -214,7 +228,7 @@ object RefillForm: TRefillForm
   end
   object DBLUCombo2: TDBLUCombo
     Left = 24
-    Top = 137
+    Top = 181
     Width = 297
     Height = 26
     Color = clWindow
@@ -287,6 +301,21 @@ object RefillForm: TRefillForm
     ParentFont = False
     TabOrder = 5
     Version = '1.2.0.0'
+  end
+  object DBEdit2: TDBEdit
+    Left = 116
+    Top = 121
+    Width = 206
+    Height = 26
+    DataField = 'TELEFON'
+    DataSource = MainForm.DataSource2
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'MS Sans Serif'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 6
   end
   object Timer1: TTimer
     Enabled = False

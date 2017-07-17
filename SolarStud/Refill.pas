@@ -30,6 +30,8 @@ type
         Label4: TLabel;
         MaskEdit2: TMaskEditEx;
         LMDLImage91: TLMDLImage;
+    DBEdit2: TDBEdit;
+    Label6: TLabel;
         procedure Panel2Click(Sender: TObject);
         procedure Panel1Click(Sender: TObject);
         procedure FormShow(Sender: TObject);
