@@ -391,6 +391,12 @@ begin
         DBVer := 4;
     end;
 
+      ExecSQL(' ALTER TABLE KARTICHIP ADD (              ' +
+            ' IF NOT EXISTS TYPE INTEGER DEFAULT 0, ' +
+            ' IF NOT EXISTS TYPE2 INTEGER DEFAULT 0,  ' +
+            ' IF NOT EXISTS SUMA2 CURRENCY DEFAULT 0   )');
+
+
     ExecSQL(' ALTER TABLE STOKI ADD (                            ' +
         ' IF NOT EXISTS VALIDNOST_KARTI INTEGER) ');
     ExecSQL(' ALTER TABLE KARTICHIP MODIFY (                            ' +

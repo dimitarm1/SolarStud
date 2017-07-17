@@ -1044,6 +1044,7 @@ var
     RS_232_Timeouts: _COMMTIMEOUTS;
     PriceCash: Real;
     PriceCard: Real;
+    PriceCard2: Real;
     PaidCash: Real;
     ToBePaidCash: Real;
     VipDiscount: Real;
@@ -1051,6 +1052,7 @@ var
     CardNomer: Integer;
     PaidCard: Real;
     PaidChipCard: Real;
+    PaidChipCard2: Real;
     Pos1: Byte;
     ComPortName: string;
     Backuped: Boolean;
@@ -4495,12 +4497,12 @@ begin
         if PriceCard = PriceCash then
             LMDMemo1.Lines.Add(GetMessage('M23') + ' ' + ConvertCurr1(PriceCash
                 -
-                (PaidCard * (PriceCash / PriceCard) +
+                (PaidCard * (PriceCash / PriceCard) +   PaidChipCard2 * (PriceCash / PriceCard2)+
                 ToBePaidCash + PaidChipCard * (PriceCash / PriceCard))));
         //LMDMemo1.Lines.Add(GetMessage('M23')+' '+ConvertCurr1(Price-(PaidCard+ToBePaidCash+PaidChipCard)));
         //LMDMemo1.Lines.Add('Остава - '+ConvertCurr1(Price-(PaidCard+PaidCash+PaidChipCard)));
         if (PriceCash - (PaidCard * (PriceCash / PriceCard) + ToBePaidCash +
-            PaidChipCard * (PriceCash / PriceCard)) < 0.02) then
+            PaidChipCard * (PriceCash / PriceCard) +  PaidChipCard2 * (PriceCash / PriceCard2)) < 0.02) then
             PaymentOKLabel.Visible := true;
         FmtStr(Result1, '%4.2f', [(PaidChipCard)]);
         Ostatak := (Card.Balans - (PaidChipCard)) /
@@ -4508,7 +4510,7 @@ begin
         FmtStr(Result1, '%4.2f', [Ostatak]);
         Label72.Caption := '' + Result1 + GetMessage('M28') + ' / ';
         //Label72.Caption:=''+ Result1+'минути / ';
-        Ostatak := (Card.Balans - (PaidChipCard));
+        Ostatak := (Card.Balans - (PaidChipCard) - PaidChipCard2);
         FmtStr(Result1, '%4.2f', [Ostatak]);
         Label72.Caption := Label72.Caption + '' + Result1 + GetMessage('M29');
         //Label72.Caption:=Label72.Caption + ''+ Result1+'лв.';
