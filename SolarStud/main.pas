@@ -726,6 +726,7 @@ type
         DBComboBox2: TDBComboBox;
         Label170: TLabel;
         ProtokolFilterEdit: TEdit;
+    LMDButton4: TLMDButton;
         procedure Label1Click(Sender: TObject);
         procedure FormCreate(Sender: TObject);
         procedure Timer1Timer(Sender: TObject);
@@ -937,6 +938,7 @@ type
         function FormHelp(Command: Word; Data: Integer;
             var CallHelp: Boolean): Boolean;
         procedure ProtokolFilterEditChange(Sender: TObject);
+    procedure LMDButton4Click(Sender: TObject);
 
     private
 
@@ -5589,6 +5591,67 @@ end;
 procedure TMainForm.LMDButton2Click(Sender: TObject);
 begin
     LMDButton5Click(Sender);
+end;
+
+procedure TMainForm.LMDButton4Click(Sender: TObject);
+var
+    maxnomer: integer;
+    nomer: integer;
+    L: Boolean;
+    _Q: TABSQuery;
+    _Q2: TABSQuery;
+    SQLText: string;
+    TMPDate: TDateTime;
+    sum: currency;
+begin
+    _Q := TABSQuery.Create(nil);
+    _Q.Databasename := 'sol1';
+    _Q.ReadOnly := False;
+    _Q.RequestLive := True;
+    _Q2 := TABSQuery.Create(nil);
+    _Q2.Databasename := 'sol1';
+    _Q2.ReadOnly := False;
+    _Q2.RequestLive := True;
+    maxnomer := 0;
+    nomer := 0;
+
+    L := False;
+    TMPDate := EncodeDate(2016,09,09);
+    _Q.SQL.SetText(PChar('select * from PLASHTANIA where DATA < "10.09.2016"'));
+    _Q.Open;
+    _Q2.SQL.SetText(PChar('select * from PLASHTANIA where DATA < "10.09.2016"'));
+    _Q2.Open;
+    while TMPDate < Now do begin
+        sum := 0;
+        while(sum < 60) do begin
+            if( varType(_Q.FieldValues['CENA']) <> varNull ) then
+            begin
+                sum := sum + _Q.FieldValues['CENA'];
+                _Q2.Append;
+                _Q2.FieldValues['DATA'] := DateToStr(TMPDate);
+                _Q2.FieldValues['CHAS'] := _Q.FieldValues['CHAS'];
+                _Q2.FieldValues['SOLARIUM'] := _Q.FieldValues['SOLARIUM'];
+                _Q2.FieldValues['STOKA'] := _Q.FieldValues['STOKA'];
+                _Q2.FieldValues['BROI'] := _Q.FieldValues['BROI'];
+                _Q2.FieldValues['CENA'] := _Q.FieldValues['CENA'];
+                _Q2.FieldValues['DISCOUNT'] := _Q.FieldValues['DISCOUNT'];
+                _Q2.FieldValues['SUMABROI'] := _Q.FieldValues['SUMABROI'];
+                _Q2.FieldValues['RECORDID'] := _Q.FieldValues['RECORDID'];
+                _Q2.FieldValues['OTKARTA'] := _Q.FieldValues['OTKARTA'];
+                _Q2.FieldValues['POSESHTENIA'] := _Q.FieldValues['POSESHTENIA'];
+                _Q2.FieldValues['OTCHIPKARTA'] := _Q.FieldValues['OTCHIPKARTA'];
+                _Q2.FieldValues['KARTASUMA'] := _Q.FieldValues['KARTASUMA'];
+                _Q2.FieldValues['STUDIOCODE'] := _Q.FieldValues['STUDIOCODE'];
+                _Q2.FieldValues['STATUS'] := _Q.FieldValues['STATUS'];
+                _Q2.FieldValues['KLIENTNOMER'] := _Q.FieldValues['KLIENTNOMER'];
+                _Q2.Post;
+            end;
+            _Q.Next;
+        end;
+        TMPDate := IncDay(TMPDate);
+    end;
+    _Q.Free;
+    _Q2.Free;
 end;
 
 procedure TMainForm.N4Click(Sender: TObject);
