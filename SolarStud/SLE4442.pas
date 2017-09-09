@@ -717,7 +717,7 @@ var
     q2: TABSQuery;
     res: Integer;
 begin
-    if not ((MainForm.AdvPageControl1.ActivePage = MainForm.AdvTabSheet16) and
+    if not ((MainForm.AdvPageControl1.ActivePageIndex = 15) and
         (MainForm.SDELKA.RecordCount > 0)) then
     begin
         q := TABSQuery.Create(MainForm);

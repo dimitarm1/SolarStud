@@ -30,11 +30,11 @@ uses Windows, SysUtils, DateUtils, Classes, Graphics, Forms, Controls, Menus,
     RzLabel, LMDStorBase, LMDStorINIVault, MainForm2, LMDStorFormHook,
     LMDStorPropertiesStorage, OleCtrls, inifiles,
     LMDCustomNImage, LMDNImage, LMDBaseImage, LMDCustomLImage,
-    LMDLImage, ABSTypes, LMDDBMaskEdit, LMDDBEdit, LMDCustomControl, Wwdotdot,
+    LMDLImage, ABSTypes, LMDDBMaskEdit, LMDDBEdit, Wwdotdot,
     Wwdbcomb, Planner, PlanSimpleEdit, PlanItemEdit, DBPlanner, AdvEdBtn,
     PlannerDatePicker, LMDCustomListComboBox, LMDListComboBox,
     LMDDBListComboBox,
-    RzCmboBx, Wwdbigrd, RzEdit, RzDBEdit;
+    RzCmboBx, Wwdbigrd, RzEdit, RzDBEdit, LMDCustomControl;
 
 type
     TSLE4442Card = packed record
@@ -172,23 +172,23 @@ type
         SOLARIUMI: TABSTable;
         Table3: TABSTable;
         AdvPageControl1: TAdvPageControl;
-        AdvTabSheet1: TAdvTabSheet;
-        AdvTabSheet2: TAdvTabSheet;
-        AdvTabSheet3: TAdvTabSheet;
-        AdvTabSheet4: TAdvTabSheet;
-        AdvTabSheet5: TAdvTabSheet;
-        AdvTabSheet6: TAdvTabSheet;
-        AdvTabSheet7: TAdvTabSheet;
-        AdvTabSheet8: TAdvTabSheet;
-        AdvTabSheet9: TAdvTabSheet;
-        AdvTabSheet10: TAdvTabSheet;
-        AdvTabSheet11: TAdvTabSheet;
-        AdvTabSheet12: TAdvTabSheet;
-        AdvTabSheet13: TAdvTabSheet;
-        AdvTabSheet14: TAdvTabSheet;
-        AdvTabSheet15: TAdvTabSheet;
-        AdvTabSheet16: TAdvTabSheet;
-        AdvTabSheet17: TAdvTabSheet;
+    LogoEkran1: TAdvTabSheet;
+    OsnovenEkran2: TAdvTabSheet;
+    FirmiISluziteli3: TAdvTabSheet;
+    IzborNaPlashtane4: TAdvTabSheet;
+    IzborNaVreme5: TAdvTabSheet;
+    Menu6: TAdvTabSheet;
+    SolariumiNastroiki7: TAdvTabSheet;
+    SolariumiInfo8: TAdvTabSheet;
+    SolariumiCeni9: TAdvTabSheet;
+    NachalnoUstanoviavane10: TAdvTabSheet;
+    Arhivirane11: TAdvTabSheet;
+    Statistika12: TAdvTabSheet;
+    Protokol13: TAdvTabSheet;
+    OsnovniNastroiki14: TAdvTabSheet;
+    DrugiNastroiki15: TAdvTabSheet;
+    MenuKasa16: TAdvTabSheet;
+    ManuStoki17: TAdvTabSheet;
         Label96: TLabel;
         LMDDBCheckBox1: TLMDDBCheckBox;
         Label30: TLabel;
@@ -232,7 +232,7 @@ type
         Label122: TLabel;
         KARTIALL1: TABSTable;
         DataSource10: TDataSource;
-        AdvTabSheet18: TAdvTabSheet;
+    KlubniKarti18: TAdvTabSheet;
         Image58: TImage;
         wwDBGrid6: TwwDBGrid;
         wwDBGrid7: TwwDBGrid;
@@ -332,7 +332,7 @@ type
         Label74: TLabel;
         Label134: TLabel;
         Label135: TLabel;
-        AdvTabSheet19: TAdvTabSheet;
+    ChipKarti19: TAdvTabSheet;
         wwDBGrid5: TwwDBGrid;
         NovKlientButton: TLMDButton;
         Label136: TLabel;
@@ -656,7 +656,7 @@ type
         LMDLImage22: TLMDLImage;
         Label163: TLabel;
         FirmaCombo: TRzDBLookupComboBox;
-        AdvTabSheet23: TAdvTabSheet;
+    Grafik23: TAdvTabSheet;
         Image7: TImage;
         LMDLImage23: TLMDLImage;
         Label164: TLabel;
@@ -780,12 +780,12 @@ type
         procedure Label111Click(Sender: TObject);
         procedure Label16Click(Sender: TObject);
         procedure LMDButton7Click(Sender: TObject);
-        procedure AdvTabSheet2Show(Sender: TObject);
-        procedure AdvTabSheet7Show(Sender: TObject);
+        procedure OsnovenEkran2Show(Sender: TObject);
+        procedure SolariumiNastroiki7Show(Sender: TObject);
         procedure LMDButton5Click(Sender: TObject);
-        procedure AdvTabSheet18Show(Sender: TObject);
+        procedure KlubniKarti18Show(Sender: TObject);
         procedure wwDBGrid6Exit(Sender: TObject);
-        procedure AdvTabSheet16Show(Sender: TObject);
+        procedure MenuKasa16Show(Sender: TObject);
         procedure wwDBGrid6TitleButtonClick(Sender: TObject;
             AFieldName: string);
         procedure Edit6Change(Sender: TObject);
@@ -795,7 +795,7 @@ type
             AFieldName: string);
         procedure wwDBGrid7RowChanged(Sender: TObject);
         procedure Edit5Change(Sender: TObject);
-        procedure AdvTabSheet4Show(Sender: TObject);
+        procedure IzborNaPlashtane4Show(Sender: TObject);
         procedure PlannerMaskDatePicker2Change(Sender: TObject);
         procedure Label17Click(Sender: TObject);
         procedure AdvComboBox2Change(Sender: TObject);
@@ -835,25 +835,25 @@ type
         procedure LMDButton14Click(Sender: TObject);
         procedure NuliraneChipCartaButtonClick(Sender: TObject);
         procedure ZarezdaneButtonClick(Sender: TObject);
-        procedure AdvTabSheet17Show(Sender: TObject);
+        procedure ManuStoki17Show(Sender: TObject);
         procedure N3Click(Sender: TObject);
         procedure LMDButton1MouseDown(Sender: TObject; Button: TMouseButton;
             Shift: TShiftState; X, Y: Integer);
         procedure N4Click(Sender: TObject);
         procedure N5Click(Sender: TObject);
-        procedure AdvTabSheet19Show(Sender: TObject);
+        procedure ChipKarti19Show(Sender: TObject);
         procedure NovKlientButtonClick(Sender: TObject);
         procedure Label144Click(Sender: TObject);
         procedure AddressComboBoxDropDown(Sender: TObject);
         procedure BcloseClick(Sender: TObject);
         procedure RzCheckBox1Click(Sender: TObject);
-        procedure AdvTabSheet8Show(Sender: TObject);
+        procedure SolariumiInfo8Show(Sender: TObject);
         procedure LMDButton15Click(Sender: TObject);
         procedure Timer2Timer(Sender: TObject);
         procedure BHelpClick(Sender: TObject);
-        procedure AdvTabSheet9Show(Sender: TObject);
+        procedure SolariumiCeni9Show(Sender: TObject);
         procedure ComboBox1Change(Sender: TObject);
-        procedure AdvTabSheet13Show(Sender: TObject);
+        procedure Protokol13Show(Sender: TObject);
         procedure PaymentOKLabelMouseDown(Sender: TObject; Button: TMouseButton;
             Shift: TShiftState; X, Y: Integer);
         procedure PaymentOKLabelMouseUp(Sender: TObject; Button: TMouseButton;
@@ -873,7 +873,7 @@ type
             SelDate: TDateTime);
         procedure PlannerMaskDatePicker2DaySelect(Sender: TObject;
             SelDate: TDateTime);
-        procedure AdvTabSheet12Show(Sender: TObject);
+        procedure Statistika12Show(Sender: TObject);
         procedure DBComboBox4Change(Sender: TObject);
         procedure DBComboBox5Change(Sender: TObject);
         procedure Edit6KeyPress(Sender: TObject; var Key: Char);
@@ -903,7 +903,7 @@ type
         procedure Label165Click(Sender: TObject);
         procedure Label166Click(Sender: TObject);
         procedure PlannerDatePicker1Change(Sender: TObject);
-        procedure AdvTabSheet23Show(Sender: TObject);
+        procedure Grafik23Show(Sender: TObject);
         procedure Planner2HeaderDblClick(Sender: TObject; SectionIndex:
             Integer);
         procedure Planner1HeaderDblClick(Sender: TObject; SectionIndex:
@@ -927,9 +927,9 @@ type
         procedure wwDBGrid11TitleButtonClick(Sender: TObject; AFieldName:
             string);
         procedure KasaGridTitleButtonClick(Sender: TObject; AFieldName: string);
-        procedure AdvTabSheet19Hide(Sender: TObject);
-        procedure AdvTabSheet16Hide(Sender: TObject);
-        procedure AdvTabSheet4Hide(Sender: TObject);
+        procedure ChipKarti19Hide(Sender: TObject);
+        procedure MenuKasa16Hide(Sender: TObject);
+        procedure IzborNaPlashtane4Hide(Sender: TObject);
         procedure StokaEditBtnClick(Sender: TObject);
         procedure AdvTabSheet21Show(Sender: TObject);
         procedure StokiteTabChange(Sender: TObject);
@@ -2190,8 +2190,8 @@ begin
     except
     end;
     // if (f1=nil) or (f2=nil) then show_message:=False;
-    FileName1 := '\SolarStudio1\data\solarbas.ABS';
-    FileName2 := '\SolarStudio1\data\solarbas_' + IntToStr(YearOf(Date)) + '_' +
+    FileName1 := LeftStr(Application.ExeName, 2) + '\SolarStudio1\data\solarbas.abs';
+    FileName2 := LeftStr(Application.ExeName, 2) + '\SolarStudio1\data\solarbas_' + IntToStr(YearOf(Date)) + '_' +
         IntToStr(MonthOf(Date)) + '_' + IntToStr(DayOf(Date)) + '.abs';
     CopyStatus := CopyFIle(PChar(FileName1), PChar(FileName2), False);
     if show_message then
@@ -2247,7 +2247,7 @@ begin
     begin
         dateofd := dateof(now);
         Plashtania.First;
-        AdvPageControl1.ActivePage := AdvTabSheet2;
+        AdvPageControl1.ActivePageIndex := 1;
         UpdatePageControl(0);
         initFlash();
         Main2.Visible := True;
@@ -2278,7 +2278,7 @@ begin
         TimerTime1 := 3;
         // config_uart(1);
 
-        AdvPageControl1.ActivePage := AdvTabSheet10;
+        AdvPageControl1.ActivePageIndex := 9;
         SOLARIUMI.First;
         while (not SOLARIUMI.Eof) do
         begin
@@ -2632,7 +2632,7 @@ procedure LocateSolarium;
 begin
     with MainForm do
     begin
-        AdvPageControl1.ActivePage := AdvTabsheet5;
+        AdvPageControl1.ActivePageIndex := 4;
         case IndexSol of
             1: Image20.Picture := Imagesol1.Picture;
             2: Image20.Picture := Imagesol2.Picture;
@@ -2671,50 +2671,50 @@ begin
     // if MainForm.Label21.color=clblack then
     begin
         SOLARIUMI.First;
-        AdvPageControl1.ActivePage := AdvTabSheet9;
+        AdvPageControl1.ActivePageIndex := 8;
     end;
 end;
 
 procedure TMainForm.Label31Click(Sender: TObject);
 begin
-    AdvPageControl1.ActivePage := AdvTabSheet8;
+    AdvPageControl1.ActivePageIndex := 7;
 end;
 
 procedure TMainForm.Label33Click(Sender: TObject);
 begin
-    AdvPageControl1.ActivePage := AdvTabSheet9;
+    AdvPageControl1.ActivePageIndex := 8;
 end;
 
 procedure TMainForm.Label40Click(Sender: TObject);
 begin
     if (PasswordForm.Edit1.Text = 'master1234') then
     begin
-        AdvPageControl1.ActivePage := AdvTabSheet7;
+        AdvPageControl1.ActivePageIndex := 6;
     end
 end;
 
 procedure TMainForm.Label47Click(Sender: TObject);
 begin
-    AdvPageControl1.ActivePage := AdvTabSheet9;
+    AdvPageControl1.ActivePageIndex := 8;
 end;
 
 procedure TMainForm.Label48Click(Sender: TObject);
 begin
     if (PasswordForm.Edit1.Text = 'master1234') then
     begin
-        AdvPageControl1.ActivePage := AdvTabSheet7;
+        AdvPageControl1.ActivePageIndex := 6;
     end
 end;
 
 procedure TMainForm.Label49Click(Sender: TObject);
 begin
-    AdvPageControl1.ActivePage := AdvTabSheet2;
+    AdvPageControl1.ActivePageIndex := 1;
     UpdatePageControl(0);
 end;
 
 procedure TMainForm.Label22Click(Sender: TObject);
 begin
-    AdvPageControl1.ActivePage := AdvTabSheet2;
+    AdvPageControl1.ActivePageIndex := 1;
     SOLARIUMI.Edit;
     SOLARIUMI.Post;
     SOLARIUMI.Refresh;
@@ -2725,7 +2725,7 @@ procedure TMainForm.Label10Click(Sender: TObject);
 var
     i: Integer;
 begin
-    AdvPageControl1.ActivePage := AdvTabsheet4;
+    AdvPageControl1.ActivePageIndex := 3;
     PaymentOKLabel.Visible := false;
     MainForm.Gauge2.Visible := false;
     PaidCash := 0;
@@ -2746,7 +2746,7 @@ end;
 
 procedure TMainForm.CancelButtonClick(Sender: TObject);
 begin
-    AdvPageControl1.ActivePage := AdvTabsheet2;
+    AdvPageControl1.ActivePageIndex := 1;
     MainForm.Timer1.Enabled := true;
     UpdatePageControl(0);
 end;
@@ -2830,7 +2830,7 @@ begin
         //if Application. MessageBox('Наистина ли ще изтриете този солариум?', '',MB_YESNO)=6 then
     begin
         SOLARIUMI.Delete;
-        AdvTabSheet7Show(Sender);
+        SolariumiNastroiki7Show(Sender);
     end;
 end;
 
@@ -2911,7 +2911,7 @@ begin
     // sol1.Open;
     // OpenTables;
     Backuped := False;
-    AdvPageControl1.ActivePage := AdvTabsheet1;
+    AdvPageControl1.ActivePageIndex := 0;
     if FileExists('c:\Master.txt') then
     else
     begin
@@ -3226,7 +3226,7 @@ begin
                     SOLARIUMI.FieldValues['LICEVICHAS'] - (TimeSet / 60);
                 SOLARIUMI.Post;
             end;
-            AdvPageControl1.ActivePage := AdvTabsheet2;
+            AdvPageControl1.ActivePageIndex := 1;
             UpdatePageControl(1);
         end
         else
@@ -3276,9 +3276,9 @@ begin
             begin
                 try
                     CardNomer := StrToInt(Rightstr(BarCodReaderBuff, 9));
-                    if (AdvPageControl1.ActivePage = AdvTabSheet2) then
+                    if (AdvPageControl1.ActivePageIndex = 1) then
                     begin
-                        AdvPageControl1.ActivePage := AdvTabSheet19;
+                        AdvPageControl1.ActivePageIndex := 18;
                         AddStokaButtonClick(2);
                     end;
                     //  label25.Caption:=IntToStr(CardNomer);
@@ -3328,7 +3328,7 @@ begin
             PasswordForm.ShowModal;
             if PasswordForm.ModalResult = mrOK then
             begin
-                AdvPageControl1.ActivePage := AdvTabsheet6;
+                AdvPageControl1.ActivePageIndex := 5;
                 MainForm.personal1.First;
 
                 if ((PasswordForm.Edit1.Text =
@@ -3366,13 +3366,13 @@ begin
         PlannerMaskDatePicker1.Date := Plashtania.FieldValues['data'];
         Plashtania.Last;
         PlannerMaskDatePicker2.Date := Plashtania.FieldValues['data'];
-        AdvPageControl1.ActivePage := AdvTabsheet12;
+        AdvPageControl1.ActivePageIndex := 11;
     end;
 end;
 
 procedure TMainForm.Label68Click(Sender: TObject);
 begin
-    AdvPageControl1.ActivePage := AdvTabsheet2;
+    AdvPageControl1.ActivePageIndex := 1;
     UpdatePageControl(0);
 end;
 
@@ -3380,7 +3380,7 @@ procedure TMainForm.Label91Click(Sender: TObject);
 begin
     Table3.Active := True;
 
-    AdvPageControl1.ActivePage := AdvTabsheet13;
+    AdvPageControl1.ActivePageIndex := 12;
     DayTotal.Active := false;
     DayTotal.Active := true;
     UpdatePageControl(1);
@@ -3401,7 +3401,7 @@ begin
     KARTIALL1.MasterSource := DataSource2;
     Table3.Active := True;
     KARTIALL1.Active := True;
-    AdvPageControl1.ActivePage := AdvTabsheet18;
+    AdvPageControl1.ActivePageIndex := 17;
 end;
 
 procedure TMainForm.Label94Click(Sender: TObject);
@@ -3413,7 +3413,7 @@ end;
 
 procedure TMainForm.SettingsEndButtonClick(Sender: TObject);
 begin
-    AdvPageControl1.ActivePage := AdvTabsheet6;
+    AdvPageControl1.ActivePageIndex := 5;
     if STOKITE.State in [dsEdit, dsInsert] then
         STOKITE.Post;
     if Internet.State in [dsEdit, dsInsert] then
@@ -3432,7 +3432,7 @@ end;
 procedure TMainForm.Label23Click(Sender: TObject);
 begin
     if MainForm.Label21.color = clblack then
-        AdvPageControl1.ActivePage := AdvTabsheet15;
+        AdvPageControl1.ActivePageIndex := 14;
 
 end;
 
@@ -3558,7 +3558,7 @@ begin
     CardNomer := 0;
     QKlienti.Active := True;
     sol1.StartTransaction;
-    AdvPageControl1.ActivePage := AdvTabsheet16;
+    AdvPageControl1.ActivePageIndex := 15;
     USLUGITE.Active := False;
     USLUGITE.Active := TRUE;
     STOKITE.Active := false;
@@ -3992,7 +3992,7 @@ begin
         PoseshteniaPaid[i] := 0;
     PosPaid := 0;
     BroiKartiPaid := 0;
-    AdvPageControl1.ActivePage := AdvTabsheet18;
+    AdvPageControl1.ActivePageIndex := 17;
 end;
 
 procedure TMainForm.LMDShapeButton1Click(Sender: TObject);
@@ -4169,7 +4169,7 @@ begin
     end;
     sol1.Commit(True);
     STOKITE.Active := false;
-    AdvPageControl1.ActivePage := AdvTabsheet2;
+    AdvPageControl1.ActivePageIndex := 1;
 end;
 
 procedure TMainForm.Label111Click(Sender: TObject);
@@ -4177,7 +4177,7 @@ begin
     Sol1.Rollback;
     Sol1.FlushBuffers;
     STOKITE.Active := false;
-    AdvPageControl1.ActivePage := AdvTabsheet2;
+    AdvPageControl1.ActivePageIndex := 1;
 end;
 
 procedure TMainForm.EndButtonCardClick(Sender: TObject);
@@ -4190,7 +4190,7 @@ var
 begin
     if (PriceCash > 0) or (PriceCard > 0) then
     begin
-        AdvPageControl1.ActivePage := AdvTabsheet4;
+        AdvPageControl1.ActivePageIndex := 3;
         // if Length(KartaSearchBox.Text)=0 then exit;
         if (QKarti.RecordCount > 0) then
         begin
@@ -4246,7 +4246,7 @@ begin
             Label149.Visible := False;
     end
     else
-        AdvPageControl1.ActivePage := AdvTabsheet2;
+        AdvPageControl1.ActivePageIndex := 1;
 end;
 
 procedure TMainForm.PreCalcPaiment(Sender: TObject);
@@ -4295,7 +4295,7 @@ end;
 
 procedure TMainForm.Label162Click(Sender: TObject);
 begin
-    AdvPageControl1.ActivePage := AdvTabsheet19;
+    AdvPageControl1.ActivePageIndex := 18;
 end;
 
 procedure TMainForm.Label165Click(Sender: TObject);
@@ -4310,7 +4310,7 @@ end;
 
 procedure TMainForm.Label16Click(Sender: TObject);
 begin
-    AdvPageControl1.ActivePage := AdvTabsheet17;
+    AdvPageControl1.ActivePageIndex := 16;
 end;
 
 procedure TMainForm.LMDButton7Click(Sender: TObject);
@@ -4342,7 +4342,7 @@ begin
     StokaEditBtn.Visible := true;
 end;
 
-procedure TMainForm.AdvTabSheet23Show(Sender: TObject);
+procedure TMainForm.Grafik23Show(Sender: TObject);
 var
     I: Integer;
 begin
@@ -4436,7 +4436,7 @@ begin
     PlannerDatePicker1Change(Sender);
 end;
 
-procedure TMainForm.AdvTabSheet2Show(Sender: TObject);
+procedure TMainForm.OsnovenEkran2Show(Sender: TObject);
 begin
     KeyBuff := '';
     UpdatePageControl(0);
@@ -4515,7 +4515,7 @@ begin
     end;
 end;
 
-procedure TMainForm.AdvTabSheet7Show(Sender: TObject);
+procedure TMainForm.SolariumiNastroiki7Show(Sender: TObject);
 var
     f1, f2: TField;
 begin
@@ -4597,13 +4597,19 @@ begin // Delete klient
                 end;
                 _Q.SQL.SetText(PChar('select * from KARTICHIP where KLIENTNOMER = ' + IntToStr(QKLIENTI.FieldValues['NOMER'])));
                 _Q.Open;
-                if _Q.RecordCount > 0 then
-                    _Q.Delete;
-                QKlienti.Edit;
-                QKlienti.FieldValues['NOMER'] := -((YearOf(now) - 2000) * 10000
+                if _Q.RecordCount > 0 then _Q.Delete;
+                QKlienti.Active := False;
+                _Q.Close;
+                _Q.SQL.SetText(PChar('select * from KLIENTI where NOMER = ' + IntToStr(Klient)));
+                _Q.Open;
+
+                _Q.Edit;
+                _Q.FieldValues['NOMER'] := -((YearOf(now) - 2000) * 10000
                     + MonthOf(now) * 100 + DayOf(now));
                 // To preserve data for klients
-                QKlienti.Post;
+                _Q.Post;
+                _Q.Close;
+                QKlienti.Active := True;
                 Plashtania.ReadOnly := False;
                 Plashtania.Edit;
                 Plashtania.Append;
@@ -4629,7 +4635,7 @@ begin // Delete klient
     _Q.Free;
 end;
 
-procedure TMainForm.AdvTabSheet18Show(Sender: TObject);
+procedure TMainForm.KlubniKarti18Show(Sender: TObject);
 begin
     QKarti.Active := True;
     QKlienti.Active := True;
@@ -4643,12 +4649,12 @@ begin
         QKlienti.Post;
 end;
 
-procedure TMainForm.AdvTabSheet16Hide(Sender: TObject);
+procedure TMainForm.MenuKasa16Hide(Sender: TObject);
 begin
     SLE4442Deinit();
 end;
 
-procedure TMainForm.AdvTabSheet16Show(Sender: TObject);
+procedure TMainForm.MenuKasa16Show(Sender: TObject);
 begin
     Memo1.Clear;
     Memo1.Lines.Add('Сума:');
@@ -4857,12 +4863,12 @@ begin
     Edit5.Text := '';
 end;
 
-procedure TMainForm.AdvTabSheet4Hide(Sender: TObject);
+procedure TMainForm.IzborNaPlashtane4Hide(Sender: TObject);
 begin
     SLE4442Deinit();
 end;
 
-procedure TMainForm.AdvTabSheet4Show(Sender: TObject);
+procedure TMainForm.IzborNaPlashtane4Show(Sender: TObject);
 begin
     //AdvComboBox1.ItemIndex:=0;
     LMDMemo1.SetFocus;
@@ -4880,7 +4886,7 @@ end;
 procedure TMainForm.Label17Click(Sender: TObject);
 begin
     if MainForm.Label21.color = clblack then
-        AdvPageControl1.ActivePage := AdvTabsheet14;
+        AdvPageControl1.ActivePageIndex := 13;
 end;
 
 procedure TMainForm.AdvComboBox2Change(Sender: TObject);
@@ -5003,7 +5009,7 @@ begin
             begin
                 PLASHTANIA.Last;
                 Date := DateOf(Now);
-                while (PLASHTANIA.FieldValues['DATA'] = Date) do
+                while (PLASHTANIA.FieldValues['DATA'] = Date) and (PLASHTANIA.RecNo > 1) do
                 begin
                     if ((PLASHTANIA.FieldValues['SOLARIUM'] > -1) and
                         (PLASHTANIA.FieldValues['OTCHIPKARTA'] =
@@ -5064,7 +5070,7 @@ begin
     //        //  FmtStr(Result1,'%4.2f',[PaidChipCard]);
     //    end
     //    else
-    AdvPageControl1.ActivePage := AdvTabsheet2;
+    AdvPageControl1.ActivePageIndex := 1;
 end;
 
 procedure TMainForm.KartaSearchBoxKeyPress(Sender: TObject; var Key: Char);
@@ -5127,7 +5133,7 @@ var
 begin
     if not ShowAllKlientsCb.Checked then
         SQLText := ' WHERE NOMER > -1 ';
-    AdvPageControl1.ActivePage := AdvTabsheet19;
+    AdvPageControl1.ActivePageIndex := 18;
     QKlienti.Active := False;
     QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join KARTICHIP c on k.NOMER = c.KLIENTNOMER ' + SQLText +
         ' ORDER BY IME DESC'));
@@ -5138,7 +5144,7 @@ end;
 
 procedure TMainForm.N1Click(Sender: TObject);
 begin
-    AdvPageControl1.ActivePage := AdvTabsheet18;
+    AdvPageControl1.ActivePageIndex := 17;
 end;
 
 procedure TMainForm.Label92MouseDown(Sender: TObject; Button: TMouseButton;
@@ -5557,11 +5563,11 @@ end;
 
 procedure TMainForm.Label143Click(Sender: TObject);
 begin
-    AdvPageControl1.ActivePage := AdvTabsheet3;
+    AdvPageControl1.ActivePageIndex := 2;
     wwDBGrid12RowChanged(nil);
 end;
 
-procedure TMainForm.AdvTabSheet17Show(Sender: TObject);
+procedure TMainForm.ManuStoki17Show(Sender: TObject);
 begin
     Karti.Active := False;
     Karti.SQL.SetText(PChar('SELECT * FROM STOKI WHERE STOKAKOD < 0'));
@@ -5602,12 +5608,12 @@ begin
     AddStokaButtonClick(0);
 end;
 
-procedure TMainForm.AdvTabSheet19Hide(Sender: TObject);
+procedure TMainForm.ChipKarti19Hide(Sender: TObject);
 begin
     SLE4442Deinit();
 end;
 
-procedure TMainForm.AdvTabSheet19Show(Sender: TObject);
+procedure TMainForm.ChipKarti19Show(Sender: TObject);
 begin
     if (GetStudioWorkType() < 3) then
     begin
@@ -5717,7 +5723,7 @@ end;
 
 procedure TMainForm.Label144Click(Sender: TObject);
 begin
-    AdvPageControl1.ActivePage := AdvTabsheet23;
+    AdvPageControl1.ActivePageIndex := 22;
 end;
 
 procedure TMainForm.AddressComboBoxDropDown(Sender: TObject);
@@ -6070,7 +6076,7 @@ begin
     LoadChart;}
 end;
 
-procedure TMainForm.AdvTabSheet8Show(Sender: TObject);
+procedure TMainForm.SolariumiInfo8Show(Sender: TObject);
 begin
     ImageName := SOLARIUMI.FieldByName('PICTURE').AsString;
     if FileExists(ImageName) then
@@ -6177,7 +6183,7 @@ begin
 
 end;
 
-procedure TMainForm.AdvTabSheet9Show(Sender: TObject);
+procedure TMainForm.SolariumiCeni9Show(Sender: TObject);
 begin
     Label117.Caption := IntToStr(SOLARIUMI.RecNo);
     QCeni.Active := False;
@@ -6196,7 +6202,7 @@ begin
     Qklienti.RecNo := ComboBox2.ItemIndex + 1;
 end;
 
-procedure TMainForm.AdvTabSheet13Show(Sender: TObject);
+procedure TMainForm.Protokol13Show(Sender: TObject);
 begin
     DayTotal.Last;
     if PasswordForm.ModalResult = MROK then
@@ -6240,7 +6246,7 @@ begin
     // if MainForm.Label21.color=clblack then
     begin
         Image32.Picture := image50.Picture;
-        AdvPageControl1.ActivePage := AdvTabsheet11;
+        AdvPageControl1.ActivePageIndex := 10;
     end;
 end;
 
@@ -6256,7 +6262,7 @@ begin
         MainForm.Timer1.Enabled := false;
         MainForm.sol1.FlushBuffers;
         MainForm.sol1.Close;
-        FileName2 := '\SolarStudio1\data\solarbas.ABS';
+        FileName2 := LeftStr(Application.ExeName, 2) + '\SolarStudio1\data\solarbas.ABS';
         FileName1 := OpenDialog1.Files.Strings[0];
         CopyStatus := CopyFIle(PChar(FileName1), PChar(FileName2), False);
         if CopyStatus then
@@ -6368,7 +6374,7 @@ begin
     PlannerMaskDatePicker2Change(Sender);
 end;
 
-procedure TMainForm.AdvTabSheet12Show(Sender: TObject);
+procedure TMainForm.Statistika12Show(Sender: TObject);
 begin
     ComboBox1.Clear;
     ComboBox1.Text := GetMessage('M63');
