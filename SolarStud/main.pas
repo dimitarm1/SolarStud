@@ -2515,7 +2515,7 @@ begin
     with MainForm do
     begin
         PriceCard := -1;
-        SOLARIUMI.RecNo := IndexSol;
+        if(IndexSol > 0) then  SOLARIUMI.RecNo := IndexSol;
         if TimeSet > 99 then
             TimeSet := 99;
         if TimeSet > 9 then
@@ -4503,8 +4503,8 @@ begin
             PaidChipCard * (PriceCash / PriceCard)) < 0.02) then
             PaymentOKLabel.Visible := true;
         FmtStr(Result1, '%4.2f', [(PaidChipCard)]);
-        Ostatak := (Card.Balans - (PaidChipCard)) /
-            SOLARIUMI.FieldValues['CENA'];
+        Ostatak := (Card.Balans - (PaidChipCard)) /   (PriceCard/TimeSet);
+//            SOLARIUMI.FieldValues['CENA'];
         FmtStr(Result1, '%4.2f', [Ostatak]);
         Label72.Caption := '' + Result1 + GetMessage('M28') + ' / ';
         //Label72.Caption:=''+ Result1+'минути / ';
