@@ -726,6 +726,7 @@ type
         DBComboBox2: TDBComboBox;
         Label170: TLabel;
         ProtokolFilterEdit: TEdit;
+    Label171: TLabel;
         procedure Label1Click(Sender: TObject);
         procedure FormCreate(Sender: TObject);
         procedure Timer1Timer(Sender: TObject);
@@ -937,6 +938,7 @@ type
         function FormHelp(Command: Word; Data: Integer;
             var CallHelp: Boolean): Boolean;
         procedure ProtokolFilterEditChange(Sender: TObject);
+    procedure Label171Click(Sender: TObject);
 
     private
 
@@ -4881,6 +4883,66 @@ end;
 procedure TMainForm.PlannerMaskDatePicker2Change(Sender: TObject);
 begin
     LoadChart(ComboBox1.ItemIndex);
+end;
+
+procedure TMainForm.Label171Click(Sender: TObject);
+var
+  I: Integer;
+  ime: string;
+  familia: string;
+  telefon: string;
+  address: string;
+  selectedFile: string;
+  linetext: string;
+  dlg: TSaveDialog;
+  myFile : TextFile;
+  sl: TStringList;
+begin
+  sl := TStringList.Create;
+  selectedFile := '';
+  dlg := TSaveDialog.Create(nil);
+  try
+    dlg.InitialDir := 'C:\';
+    dlg.Filter := 'CSV files (*.csv)|*.csv';
+    if dlg.Execute(Handle) then
+      selectedFile := dlg.FileName;
+  finally
+    dlg.Free;
+  end;
+
+  if selectedFile <> '' then
+  begin
+      familia:= ' ';
+      AssignFile(myFile, selectedFile);
+      ReWrite(myFile);
+      linetext:= 'Name,Given Name,Additional Name,Family Name,Yomi Name,Given Name Yomi,';
+      linetext:= linetext + 'Additional Name Yomi,Family Name Yomi,Name Prefix,Name Suffix,Initials,Nickname,Short Name,Maiden Name,Birthday,';
+      linetext:= linetext + 'Gender,Location,Billing Information,Directory Server,Mileage,Occupation,Hobby,Sensitivity,Priority,Subject,Notes,Group Membership,E-mail 1 - Type,E-mail 1 - Value,Phone 1 - Type,Phone 1 - Value';
+      WriteLn(myFile, linetext);
+      Qklienti.First();
+      while not Qklienti.Eof do
+      begin
+        if (varType(Qklienti.FieldValues['IME']) <> varNull) then
+            ime:= Qklienti.FieldValues['IME']
+            else  ime:= '';
+        sl.DelimitedText := ime;
+        if sl.count > 1 then
+        begin
+            familia := sl[1];
+            ime := sl[0]
+        end;
+        if (varType(Qklienti.FieldValues['TELEFON']) <> varNull) then
+            telefon:= Qklienti.FieldValues['TELEFON']
+            else  telefon:= '';
+        if (varType(Qklienti.FieldValues['ADRES']) <> varNull) then
+            address:= Qklienti.FieldValues['ADRES']
+            else  address:= '';
+        WriteLn(myFile, ime + ',' + ime +  ',,' + familia  + ',,,,,,,,,,,,,,,,,,,,,,,,* SolarStudio1.2,*,'+ address +',Mobile,' + telefon);
+        Qklienti.Next();
+      end;
+      CloseFile(myFile);
+  end;
+  sl.Free;
 end;
 
 procedure TMainForm.Label17Click(Sender: TObject);

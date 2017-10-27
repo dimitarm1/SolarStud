@@ -12,8 +12,6 @@ object ImageForm: TImageForm
   Color = clBtnFace
   ParentFont = True
   OldCreateOrder = True
-  ExplicitWidth = 320
-  ExplicitHeight = 240
   PixelsPerInch = 96
   TextHeight = 13
   object Bevel1: TBevel
