@@ -4915,9 +4915,9 @@ begin
       familia:= ' ';
       AssignFile(myFile, selectedFile);
       ReWrite(myFile);
-      linetext:= 'Name,Given Name,Additional Name,Family Name,Yomi Name,Given Name Yomi,';
-      linetext:= linetext + 'Additional Name Yomi,Family Name Yomi,Name Prefix,Name Suffix,Initials,Nickname,Short Name,Maiden Name,Birthday,';
-      linetext:= linetext + 'Gender,Location,Billing Information,Directory Server,Mileage,Occupation,Hobby,Sensitivity,Priority,Subject,Notes,Group Membership,E-mail 1 - Type,E-mail 1 - Value,Phone 1 - Type,Phone 1 - Value';
+      linetext:= 'Name,Given Name,Additional Name,Family Name,Yomi Name,Given Name Yomi,Additional Name Yomi,Family Name Yomi,Name Prefix,Name Suffix,Initials,Nickname,Short Name,Maiden Name,Birthday,Gender,Location,';
+      linetext:= linetext + 'Billing Information,Directory Server,Mileage,Occupation,Hobby,Sensitivity,Priority,Subject,Notes,Group Membership,';
+      linetext:= linetext + 'E-mail 1 - Type,E-mail 1 - Value,E-mail 2 - Type,E-mail 2 - Value,Phone 1 - Type,Phone 1 - Value,Website 1 - Type,Website 1 - Value';
       WriteLn(myFile, linetext);
       Qklienti.First();
       while not Qklienti.Eof do
@@ -4937,7 +4937,7 @@ begin
         if (varType(Qklienti.FieldValues['ADRES']) <> varNull) then
             address:= Qklienti.FieldValues['ADRES']
             else  address:= '';
-        WriteLn(myFile, ime + ',' + ime +  ',,' + familia  + ',,,,,,,,,,,,,,,,,,,,,,,,* SolarStudio1.2,*,'+ address +',Mobile,' + telefon);
+        WriteLn(myFile, ime + ',' + ime +  ',,' + familia  + ',,,,,,,,,,,,,,,,,,,,,,,* SolarStudio,,,,'+ address +',Mobile,' + telefon + ',,');
         Qklienti.Next();
       end;
       CloseFile(myFile);

@@ -1,2 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<BorlandProject/>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2017.10.27 22:58:27.015.pas,D:\SolarStud\SolarStud\ImageWin.pas=D:\SolarStud\SolarStud\FileDialog.pas</Transaction>
+    <Transaction>2017.10.27 22:58:27.015.dfm,D:\SolarStud\SolarStud\ImageWin.dfm=D:\SolarStud\SolarStud\FileDialog.dfm</Transaction>
+    <Transaction>2017.10.27 22:58:58.765.pas,D:\SolarStud\SolarStud\FileDialog.pas=D:\SolarStud\SolarStud\ImegeWin.pas</Transaction>
+    <Transaction>2017.10.27 22:58:58.765.dfm,D:\SolarStud\SolarStud\FileDialog.dfm=D:\SolarStud\SolarStud\ImegeWin.dfm</Transaction>
+    <Transaction>2017.10.27 23:11:27.937.pas,D:\SolarStud\SolarStud\ImegeWin.pas=D:\SolarStud\SolarStud\ImageWin.pas</Transaction>
+    <Transaction>2017.10.27 23:11:27.937.dfm,D:\SolarStud\SolarStud\ImegeWin.dfm=D:\SolarStud\SolarStud\ImageWin.dfm</Transaction>
+  </Transactions>
+</BorlandProject>
