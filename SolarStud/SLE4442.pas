@@ -906,8 +906,9 @@ begin
                         _Q.Post;
                     end;
                 end;
-                Ostatak := (Card.Balans) /
-                    MainForm.SOLARIUMI.FieldValues['CENA'];
+//                Ostatak := (Card.Balans) /
+//                    MainForm.SOLARIUMI.FieldValues['CENA'];
+                       Ostatak := (Card.Balans - (PaidChipCard)) /   (PriceCard/TimeSet);
                 FmtStr(Result, '%4.2f', [Ostatak]);
                 MainForm.Label72.Caption := '' + Result + GetMessage('M85');
                 //'минути / ';

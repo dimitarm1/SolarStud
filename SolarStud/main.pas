@@ -1036,6 +1036,7 @@ var
     MainTime: Byte;
     ImageName: string;
     IsChipCard: Boolean;
+    TimeSet: Byte;
     LocalFormat: TFormatSettings;
     MainForm: TMainForm;
     OtchetFileName: string;
@@ -1092,7 +1093,6 @@ var
 var
     StatusColors: array[0..6] of TColor;
     hDevice: HWND;
-    TimeSet: Byte;
     KeyBuff: ShortString = '';
     BarCodReaderBuff: ShortString = '';
     KeyCount: Byte;
