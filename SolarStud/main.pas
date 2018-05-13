@@ -723,10 +723,10 @@ type
         PopalniCeniTableButton2: TRzButton;
         DataSource24: TDataSource;
         Label120: TLabel;
-        DBComboBox2: TDBComboBox;
         Label170: TLabel;
         ProtokolFilterEdit: TEdit;
     Label171: TLabel;
+    TipNaRabotaCombo: TComboBox;
         procedure Label1Click(Sender: TObject);
         procedure FormCreate(Sender: TObject);
         procedure Timer1Timer(Sender: TObject);
@@ -939,6 +939,7 @@ type
             var CallHelp: Boolean): Boolean;
         procedure ProtokolFilterEditChange(Sender: TObject);
     procedure Label171Click(Sender: TObject);
+    procedure TipNaRabotaComboChange(Sender: TObject);
 
     private
 
@@ -1008,6 +1009,7 @@ const
     // bits 6 & 7 according to wished trigger level (see above)
 
 var
+    TipNaRabotaIndex : integer;
     Q1: TabsQuery;
     tempCounter: Integer; //********* for debug
     SolariumTime: array[0..6] of TSolariumTime;
@@ -1070,7 +1072,7 @@ var
     FormMoveStartX: Integer;
     IsDemoMode: Boolean;
     IsDemo2: Boolean;
-    IniFile: TIniFile;
+    MainIniFile: TIniFile;
     UseNativeStart: Boolean;
     //  WOverlaped: POverlaped;
 
@@ -1362,63 +1364,72 @@ var
     DemoString: string;
     UseNativeStartStr: string;
 begin
-    IniFile := TIniFile.Create(ChangeFileExt(Application.ExeName, '.ini'));
-    ComPortName := IniFile.ReadString('System', 'ComPort', 'COM20');
+    MainIniFile := TIniFile.Create(ChangeFileExt(Application.ExeName, '.ini'));
+    ComPortName := MainIniFile.ReadString('System', 'ComPort', 'COM20');
     if ComPortName = 'COM20' then
         //this is because KeyExists function is not working
     begin
-        IniFile.DeleteKey('System', 'ComPort');
-        IniFile.WriteString('System', 'ComPort', 'COM2');
-        IniFile.UpdateFile;
+        MainIniFile.DeleteKey('System', 'ComPort');
+        MainIniFile.WriteString('System', 'ComPort', 'COM2');
+        MainIniFile.UpdateFile;
     end;
-    ComPortName := IniFile.ReadString('System', 'ComPort', 'COM2');
+    ComPortName := MainIniFile.ReadString('System', 'ComPort', 'COM2');
     Macro := 'mode ' + ComPortName + ' 1200,n,8,,';
     Macro := 'set_com2.bat ' + ComPortName;
     StrPCopy(Cmd, Macro);
     WinExec(Cmd, SW_SHOW);
     WinExec(PChar('Delotc.bat'), SW_SHOWMINIMIZED);
 
-    PlannerStep := IniFile.ReadString('System', 'PlannerStep', 'NoValue');
+    PlannerStep := MainIniFile.ReadString('System', 'PlannerStep', 'NoValue');
     if PlannerStep = 'NoValue' then
         //this is because KeyExists function is not working
     begin
-        IniFile.DeleteKey('System', 'PlannerStep');
-        IniFile.WriteString('System', 'PlannerStep',
+        MainIniFile.DeleteKey('System', 'PlannerStep');
+        MainIniFile.WriteString('System', 'PlannerStep',
             IntToStr(MainForm.Planner1.Display.DisplayUnit));
-        IniFile.UpdateFile;
+        MainIniFile.UpdateFile;
     end;
     MainForm.Planner1.Display.DisplayUnit :=
-        StrToInt(IniFile.ReadString('System', 'PlannerStep',
+        StrToInt(MainIniFile.ReadString('System', 'PlannerStep',
         IntToStr(MainForm.Planner1.Display.DisplayUnit)));
     MainForm.Planner2.Display.DisplayUnit :=
         MainForm.Planner1.Display.DisplayUnit;
     MainForm.Planner3.Display.DisplayUnit :=
         MainForm.Planner1.Display.DisplayUnit;
 
-    DemoString := IniFile.ReadString('System', 'Demo', 'NoValue');
+    DemoString := MainIniFile.ReadString('System', 'Demo', 'NoValue');
     if DemoString = 'NoValue' then
         //this is because KeyExists function is not working
     begin
-        IniFile.DeleteKey('System', 'Demo');
-        IniFile.WriteString('System', 'Demo', 'False');
-        IniFile.UpdateFile;
+        MainIniFile.DeleteKey('System', 'Demo');
+        MainIniFile.WriteString('System', 'Demo', 'False');
+        MainIniFile.UpdateFile;
         IsDemo2 := false;
     end
     else if (DemoString = 'True') or (DemoString = 'true') then
         IsDemo2 := true;
 
-    UseNativeStartStr := IniFile.ReadString('System', 'UseNativeStart',
+    UseNativeStartStr := MainIniFile.ReadString('System', 'UseNativeStart',
         'NoValue');
     if UseNativeStartStr = 'NoValue' then
         //this is because KeyExists function is not working
     begin
-        IniFile.DeleteKey('System', 'UseNativeStart');
-        IniFile.WriteString('System', 'UseNativeStart', 'False');
-        IniFile.UpdateFile;
+        MainIniFile.DeleteKey('System', 'UseNativeStart');
+        MainIniFile.WriteString('System', 'UseNativeStart', 'False');
+        MainIniFile.UpdateFile;
         UseNativeStart := false;
     end
     else if (UseNativeStartStr = 'True') or (UseNativeStartStr = 'true') then
         UseNativeStart := true;
+    TipNaRabotaIndex := MainIniFile.ReadInteger('System', 'TipNaRabotaIndex', 20);
+    if TipNaRabotaIndex = 20 then
+        //this is because KeyExists function is not working
+    begin
+      MainIniFile.DeleteKey('System', 'TipNaRabotaIndex');
+      MainIniFile.WriteString('System', 'TipNaRabotaIndex', '1');
+      MainIniFile.UpdateFile;
+      TipNaRabotaIndex := 1;
+    end;
 end;
 
 procedure initFlash();
@@ -3414,6 +3425,7 @@ begin
 end;
 
 procedure TMainForm.SettingsEndButtonClick(Sender: TObject);
+
 begin
     AdvPageControl1.ActivePageIndex := 5;
     if STOKITE.State in [dsEdit, dsInsert] then
@@ -3424,6 +3436,15 @@ begin
         Solariumi.Post;
     if STOKITE_SKLAD.State in [dsEdit, dsInsert] then
         STOKITE_SKLAD.Post;
+    if TipNaRabotaCombo.Tag = 1 then // Changed
+    begin
+      TipNaRabotaCombo.Tag := 0;
+      MainIniFile.DeleteKey('System', 'TipNaRabotaIndex');
+      MainIniFile.WriteInteger('System', 'TipNaRabotaIndex', TipNaRabotaCombo.ItemIndex);
+      MainIniFile.UpdateFile;
+      TipNaRabotaIndex := TipNaRabotaCombo.ItemIndex;
+    end;
+    
 end;
 
 procedure TMainForm.Label30Click(Sender: TObject);
@@ -5521,9 +5542,9 @@ begin //Зареждане
     Karti.Active := True;
     if (sol1.InTransaction) then
     begin
-        Application.MessageBox(PChar('Базата данни е в транзакция. Това не би трябвало да се случва... Моля рапортувайте тази грешка на автора'), PChar('Вътрешна грешка'), MB_OK);
-
-        sol1.Rollback;
+        //Application.MessageBox(PChar('Базата данни е в транзакция. Това не би трябвало да се случва... Моля рапортувайте тази грешка на автора'), PChar('Вътрешна грешка'), MB_OK);
+//        sol1.Rollback;
+        sol1.Commit;
     end;
     sol1.StartTransaction;
 
@@ -5679,7 +5700,7 @@ procedure TMainForm.ChipKarti19Show(Sender: TObject);
 begin
     if (GetStudioWorkType() < 3) then
     begin
-        NovKlientButton.Visible := false;
+      //  NovKlientButton.Visible := false;
     end;
     QKlienti.Active := True;
     Label137.Caption := GetMessage('M67'); //'Няма карта';
@@ -5766,6 +5787,10 @@ begin
         if not IsReader then
             _Q.FieldValues['SUMA'] := _Q.FieldValues['SUMA'] +
                 KARTI.FieldValues['SUMA'];
+        if (GetStudioWorkType() = 1) or (GetStudioWorkType() = 4)then
+           _Q.FieldValues['ONCE_PERDAY'] := TRUE
+        else
+           _Q.FieldValues['ONCE_PERDAY'] := FALSE;
         _Q.Post;
         if QKlienti.RecNo > 1 then
         begin
@@ -6264,7 +6289,8 @@ begin
     Qklienti.RecNo := ComboBox2.ItemIndex + 1;
 end;
 
-procedure TMainForm.Protokol13Show(Sender: TObject);
+
+Procedure TMainForm.Protokol13Show(Sender: TObject);
 begin
     DayTotal.Last;
     if PasswordForm.ModalResult = MROK then
@@ -6514,6 +6540,11 @@ begin
     Timer6.Enabled := false
 end;
 
+procedure TMainForm.TipNaRabotaComboChange(Sender: TObject);
+begin
+  TipNaRabotaCombo.Tag := 1;
+end;
+
 procedure TMainForm.TrackBar1Change(Sender: TObject);
 begin
     Planner1.Display.DisplayScale := TrackBar1.Position;
@@ -6586,7 +6617,7 @@ end;
 
 function TMainForm.GetStudioWorkType(): Integer;
 begin
-    result := DBComboBox2.ItemIndex;
+    result := TipNaRabotaIndex;
 end;
 
 end.

@@ -735,6 +735,10 @@ begin
             MainForm.KARTICHIP.FieldValues['COUNTER'] := 0;
             MainForm.KARTICHIP.FieldValues['DISCOUNT'] := 0;
             MainForm.KARTICHIP.FieldValues['SUMA'] := 0;
+            if (MainForm.GetStudioWorkType() = 1) or (MainForm.GetStudioWorkType() = 4)then
+               MainForm.KARTICHIP.FieldValues['ONCE_PERDAY'] := TRUE
+            else
+               MainForm.KARTICHIP.FieldValues['ONCE_PERDAY'] := FALSE;
             MainForm.KARTICHIP.Post;
         end;
         q2 := TABSQuery.Create(MainForm);
