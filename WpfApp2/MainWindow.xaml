@@ -4,13 +4,16 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp2"
+        xmlns:mdi="clr-namespace:WPF.MDI;assembly=WPF.MDI"
+        Title="SolarPower" 
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="800">
+        Height="600" Width="800">
     <Window.Resources>
-       
+
 
     </Window.Resources>
-    <Grid>
+
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
@@ -18,25 +21,31 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="100"/>
         </Grid.ColumnDefinitions>
-        <DataGrid Name="DataGrid1" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" MouseLeftButtonDown="DataGrid_MouseLeftButtonDown">
-            <DataGrid.Background>
+
+        <mdi:MdiContainer Grid.Column="0" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" Name="Container"  >
+            <mdi:MdiContainer.Background>
                 <ImageBrush ImageSource="/showimagewater.jpg"/>
-            </DataGrid.Background>
-        </DataGrid>
+            </mdi:MdiContainer.Background>
+            <mdi:MdiChild > 
+                <DataGrid Name="DataGrid1" MouseLeftButtonDown="DataGrid_MouseLeftButtonDown">
+                   
+                </DataGrid>
+            </mdi:MdiChild>
+        </mdi:MdiContainer>
         <Grid Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Grid.Background>
                 <ImageBrush ImageSource="/tileable_wood_texture.png" TileMode="Tile" ViewportUnits="Absolute" Viewport="0,0,202,282"/>
             </Grid.Background>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/> 
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <WrapPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="4"  Grid.Row="2" VerticalAlignment="Stretch" >
                 <Button Content="Button" Height="35" ToolTip="Info">
                     <Button.Template>
                         <ControlTemplate>
-                            <Image Source="/Button base.png" >
+                            <Image Source="/Button gear.png" >
                                 <Image.RenderTransform>
                                     <ScaleTransform  x:Name="ripple" ScaleX="1" ScaleY="1" CenterX="15" CenterY="15" />
                                 </Image.RenderTransform>
@@ -293,7 +302,7 @@
                     </Button.Template>
                 </Button>
                 <Button Width="100" Height="35" OverridesDefaultStyle="False"  Focusable="False">dfdfdf</Button>
-               
+
             </WrapPanel>
             <StackPanel  Grid.Row="0">
                 <local:UserControl1 Margin="5,0" Text="Solarium1" ImageSource="/Button Info-01.png"/>

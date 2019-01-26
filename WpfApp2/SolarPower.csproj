@@ -152,5 +152,14 @@
   <ItemGroup>
     <Resource Include="Button base.png" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WPF.MDI\WPF.MDI.csproj">
+      <Project>{be1ed569-5e0b-4df0-8964-33ad2aae4c4a}</Project>
+      <Name>WPF.MDI</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Button gear.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
