@@ -36,7 +36,7 @@
                 <Button Content="Button" Height="35" ToolTip="Info">
                     <Button.Template>
                         <ControlTemplate>
-                            <Image Source="/Button Info-01.png" >
+                            <Image Source="/Button base.png" >
                                 <Image.RenderTransform>
                                     <ScaleTransform  x:Name="ripple" ScaleX="1" ScaleY="1" CenterX="15" CenterY="15" />
                                 </Image.RenderTransform>

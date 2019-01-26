@@ -1,0 +1,38 @@
+﻿<Window x:Class="Example.Main"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mdi="clr-namespace:WPF.MDI;assembly=WPF.MDI"
+    Title="WPF.MDI Example" Height="362" Width="684" WindowState="Maximized">
+    <DockPanel>
+        <mdi:MdiContainer Name="Container">
+            <mdi:MdiContainer.Menu>
+                <Menu DockPanel.Dock="Top">
+                    <MenuItem Header="Add">
+                        <MenuItem Header="Normal Window" Click="AddWindow_Click" />
+                        <MenuItem Header="Fixed Window" Click="AddFixedWindow_Click" />
+                        <MenuItem Header="Scroll Window" Click="AddScrollWindow_Click" />
+                    </MenuItem>
+                    <MenuItem Header="Theme">
+                        <MenuItem Header="Generic" Name="Generic" ToolTip="Generic Visual Studio designer theme" Click="Generic_Click" />
+                        <MenuItem Header="Luna" Name="Luna" ToolTip="Blue Windows XP theme" Click="Luna_Click" />
+                        <MenuItem Header="Aero" Name="Aero" ToolTip="Windows Vista/7 theme"  Click="Aero_Click" />
+                    </MenuItem>
+                    <MenuItem Header="Windows" x:Name="WindowsMenu" x:FieldModifier="private" />
+                </Menu>
+            </mdi:MdiContainer.Menu>
+            <mdi:MdiChild Title="Empty Window Using XAML" />
+            <mdi:MdiChild Name="Window1" Title="Window Using XAML" Position="20,15" Icon="OriginalLogo.png">
+                <StackPanel>
+                    <Button Name="DisableMinimize" Height="20" Click="DisableMinimize_Click">Disable Minimize</Button>
+                    <Button Name="EnableMinimize" Height="20" Click="EnableMinimize_Click">Enable Minimize</Button>
+                    <Button Name="DisableMaximize" Height="20" Click="DisableMaximize_Click">Disable Maximize</Button>
+                    <Button Name="EnableMaximize" Height="20" Click="EnableMaximize_Click">Enable Maximize</Button>
+                    <Button Name="DisableClose" Height="20" Click="DisableClose_Click">Disable Close</Button>
+                    <Button Name="EnableClose" Height="20" Click="EnableClose_Click">Enable Close</Button>
+                    <Button Name="ShowIcon" Height="20" Click="ShowIcon_Click">Show Icon</Button>
+                    <Button Name="HideIcon" Height="20" Click="HideIcon_Click">Hide Icon</Button>
+                </StackPanel>
+            </mdi:MdiChild>
+        </mdi:MdiContainer>
+    </DockPanel>
+</Window>
