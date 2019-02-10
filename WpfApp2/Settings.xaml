@@ -1,0 +1,29 @@
+﻿<Grid x:Class="WpfApp2.Settings"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp2"
+        mc:Ignorable="d"
+        xmlns:mdi="clr-namespace:WPF.MDI;assembly=WPF.MDI"
+        HorizontalAlignment="Stretch"   VerticalAlignment="Stretch">
+
+    <TabControl HorizontalAlignment="Stretch"   VerticalAlignment="Stretch" >
+        <TabItem Header="Солариуми">
+            <Grid Background="#FFE5E5E5"/>
+        </TabItem>
+        <TabItem Header="Потребители">
+            <Grid Background="#FFE5E5E5"/>
+        </TabItem>
+        <TabItem Header="Стоки">
+            <Grid Background="#FFE5E5E5"/>
+        </TabItem>
+        <TabItem Header="Карти">
+            <Grid Background="#FFE5E5E5"/>
+        </TabItem>
+        <TabItem Header="Цени">
+            <Grid Background="#FFE5E5E5"/>
+        </TabItem>
+    </TabControl>
+
+</Grid>
