@@ -10,7 +10,56 @@
 
     <TabControl HorizontalAlignment="Stretch"   VerticalAlignment="Stretch" >
         <TabItem Header="Солариуми">
-            <Grid Background="#FFE5E5E5"/>
+            <Grid Background="#FFE5E5E5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="7*"></ColumnDefinition>
+                    <ColumnDefinition Width="30*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="7*"></RowDefinition>
+                    <RowDefinition Height="7*"></RowDefinition>
+                    <RowDefinition Height="7*"></RowDefinition>
+                    <RowDefinition Height="30*"></RowDefinition>
+                    <RowDefinition Height="15"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Label Grid.Column="0"  Grid.Row="0" Content="Име:"/>
+                <TextBox Grid.Column="1" Grid.Row="0" Name="Solarium_Name"/>
+                <Label Grid.Column="0"  Grid.Row="1" Content="IP:"/>
+                <TextBox Grid.Column="1" Grid.Row="1" Name="Solarium_IP"/>
+                <Label Grid.Column="0"  Grid.Row="2" Content="COM:"/>
+                <TextBox Grid.Column="1" Grid.Row="2" Name="Solarium_COM_Port"/>
+                <Viewbox Grid.ColumnSpan="2" Grid.Row="3">
+                    <Border Background="White" BorderThickness="1" BorderBrush="DarkBlue" >
+                        <Image MinHeight="30" MinWidth="30"  Name="SolariumImage"  Source="/showimagewater.jpg" Cursor="Hand" MouseLeftButtonDown="OnSolariumImageClick"/>
+                    </Border>
+                </Viewbox>
+                <TextBlock Grid.ColumnSpan="2" Grid.Row="4"  HorizontalAlignment="Center">
+                    <Hyperlink NavigateUri="{Binding Path}" >
+                        <TextBlock Text="[1]"/>
+                    </Hyperlink>
+                    <Hyperlink NavigateUri="{Binding Path}">
+                        <TextBlock Text="[2]"/>
+                    </Hyperlink>
+                     <Hyperlink NavigateUri="{Binding Path}">
+                        <TextBlock Text="[3]"/>
+                    </Hyperlink>
+                     <Hyperlink NavigateUri="{Binding Path}">
+                        <TextBlock Text="[4]"/>
+                    </Hyperlink>
+                     <Hyperlink NavigateUri="{Binding Path}">
+                        <TextBlock Text="[5]"/>
+                    </Hyperlink>
+                     <Hyperlink NavigateUri="{Binding Path}">
+                        <TextBlock Text="[6]"/>
+                    </Hyperlink>
+                     <Hyperlink NavigateUri="{Binding Path}">
+                        <TextBlock Text="[7]"/>
+                    </Hyperlink>
+                     <Hyperlink NavigateUri="{Binding Path}">
+                        <TextBlock Text="[8]"/>
+                    </Hyperlink>
+                </TextBlock>
+            </Grid>
         </TabItem>
         <TabItem Header="Потребители">
             <Grid Background="#FFE5E5E5"/>

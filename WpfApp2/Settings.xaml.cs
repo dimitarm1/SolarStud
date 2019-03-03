@@ -11,6 +11,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.IO;
+using Microsoft.Win32;
 
 namespace WpfApp2
 {
@@ -22,6 +24,14 @@ namespace WpfApp2
         public Settings()
         {
             InitializeComponent();
+        }
+
+        private void OnSolariumImageClick(object sender, MouseButtonEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Image files (*.jpg, *.jpeg, *.jpe, *.jfif, *.png) | *.jpg; *.jpeg; *.jpe; *.jfif; *.png";
+            if (openFileDialog.ShowDialog() == true)
+                (sender as Image).Source = new BitmapImage( new Uri(openFileDialog.FileName));
         }
     }
 }

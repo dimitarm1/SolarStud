@@ -29,11 +29,11 @@ namespace WpfApp2
         {
           
             InitializeComponent();
-        
+            CheckDatabase();
             //"C:\Program Files\MySQL\MySQL Server 8.0\bin\mysqld" --defaults-file="C:\ProgramData\MySQL\MySQL Server 8.0\my.ini"
             //connection = new MySqlConnection("server=localhost;user id=admin;password=ae22fc8f;persistsecurityinfo=True;database=esolarex;allowuservariables=True");
             //connection = new MySqlConnection("server=195.201.243.232;user id=httpssit_admin;password=PaSsWoRd128;persistsecurityinfo=True;database=esolarex;allowuservariables=True");
-         
+
         }
 
         private void DataGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -43,15 +43,15 @@ namespace WpfApp2
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            connection = Connection("localhost", "admin", "admin");
-            adapter = new MySqlDataAdapter("SELECT * from user", connection);
-            connection.Open();
-            DataTable dt = new DataTable("user");
-            //DataSet ds = new DataSet();
-            adapter.Fill(dt);
-            //adapter.Fill(dt, "user");
-            //DataGrid1.DataContext = ds;
-            DataGrid1.ItemsSource = dt.DefaultView;
+            //connection = Connection("localhost", "admin", "admin");
+            //adapter = new MySqlDataAdapter("SELECT * from user", connection);
+            //connection.Open();
+            //DataTable dt = new DataTable("user");
+            ////DataSet ds = new DataSet();
+            //adapter.Fill(dt);
+            ////adapter.Fill(dt, "user");
+            ////DataGrid1.DataContext = ds;
+            //DataGrid1.ItemsSource = dt.DefaultView;
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)

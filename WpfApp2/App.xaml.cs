@@ -39,10 +39,12 @@ namespace WpfApp2
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            process = new Process();
-            process.StartInfo.FileName = "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin\\mysqld";
-            process.StartInfo.WorkingDirectory = "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin";
-            process.StartInfo.Arguments = "--defaults-file=\"C:\\ProgramData\\MySQL\\MySQL Server 8.0\\my.ini\"";
+            System.Diagnostics.Process process = new System.Diagnostics.Process();
+            System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
+            startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+            startInfo.FileName = "bin\\mysqld.exe";
+            startInfo.Arguments = "--console --skip-grant-tables";
+            process.StartInfo = startInfo;
             process.Start();
         }
     }

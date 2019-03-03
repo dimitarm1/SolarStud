@@ -26,11 +26,11 @@
             <mdi:MdiContainer.Background>
                 <ImageBrush ImageSource="/showimagewater.jpg"/>
             </mdi:MdiContainer.Background>
-            <mdi:MdiChild > 
+            <!--<mdi:MdiChild > 
                 <DataGrid Name="DataGrid1" MouseLeftButtonDown="DataGrid_MouseLeftButtonDown">
                    
                 </DataGrid>
-            </mdi:MdiChild>
+            </mdi:MdiChild>-->
         </mdi:MdiContainer>
         <Grid Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Grid.Background>
