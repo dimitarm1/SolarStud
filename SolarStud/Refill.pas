@@ -188,8 +188,8 @@ begin
         MainForm.Qklienti.Edit;
         if not (MainForm.Qklienti.FieldValues['BALANS'] > 0) then
             MainForm.Qklienti.FieldValues['BALANS'] := 0;
-        MainForm.Qklienti.FieldValues['BALANS'] :=
-            MainForm.Qklienti.FieldValues['BALANS'] + Cena;
+//        MainForm.Qklienti.FieldValues['BALANS'] :=
+//            MainForm.Qklienti.FieldValues['BALANS'] + Cena;
         MainForm.Plashtania.Append;
         MainForm.plashtania.FieldValues['STOKA'] := Stoka;
         MainForm.plashtania.FieldValues['SUMABROI'] := Cena;

@@ -5462,9 +5462,12 @@ begin //Зареждане
         Exit;
     if KARTICHIP.FieldValues['ENDDATE'] > 0 then
         Exit;
-    QKlienti.Active := False;
-    QKlienti.Active := True;
-    Qklienti.Locate('NOMER', CardNomer, []);
+    if( CardNomer <> 0) then
+    begin
+        QKlienti.Active := False;
+        QKlienti.Active := True;
+        Qklienti.Locate('NOMER', CardNomer, []);
+    end;
     if not IsReader then
         Card.NewCard := KARTICHIP.FieldValues['COUNTER'] = -1
     else
