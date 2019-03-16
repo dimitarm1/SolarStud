@@ -105,3 +105,4 @@ Filename: "{app}\StartSolarStudio1.bat"; Description: "{cm:LaunchProgram,SolarSt
 
 
 
+
