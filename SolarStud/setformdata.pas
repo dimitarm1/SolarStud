@@ -58,6 +58,295 @@ uses MAIN, MainForm2;
 
 procedure set6main();
 begin
+
+      with MainForm.ImagePress1 do 
+    begin
+      Left := 31;
+      Top := 54;
+      Width := 220;
+      Height := 221;
+    end;
+    with MainForm.Kabina21 do 
+    begin
+      Left := 313;
+      Top := 70;
+      Width := 169;
+      Height := 25;
+    end;
+    with MainForm.Kabina11 do 
+    begin
+      Left := 54;
+      Top := 70;
+      Width := 169;
+      Height := 25;
+    end;
+    with MainForm.Kabina12 do 
+    begin
+      Left := 54;
+      Top := 88;
+      Width := 169;
+      Height := 25;
+    end;
+    with MainForm.Imagesol1 do 
+    begin
+      Left := 66;
+      Top := 112;
+      Width := 149;
+      Height := 97;
+    end;
+    with MainForm.StatusShape1 do 
+    begin
+      Left := 108;
+      Top := 130;
+      Width := 65;
+      Height := 65;
+    end;
+    with MainForm.Kabina1minuti do 
+    begin
+      Left := 58;
+      Top := 212;
+      Width := 161;
+      Height := 22;
+    end;
+    with MainForm.Kabina1cena do 
+    begin
+      Left := 56;
+      Top := 232;
+      Width := 161;
+      Height := 22;
+    end;
+    with MainForm.Kabina22 do 
+    begin
+      Left := 313;
+      Top := 88;
+      Width := 169;
+      Height := 25;
+    end;
+    with MainForm.Imagesol2 do 
+    begin
+      Left := 323;
+      Top := 114;
+      Width := 149;
+      Height := 97;
+    end;
+    with MainForm.StatusShape2 do 
+    begin
+      Left := 365;
+      Top := 130;
+      Width := 65;
+      Height := 65;
+    end;
+    with MainForm.Kabina2minuti do 
+    begin
+      Left := 311;
+      Top := 212;
+      Width := 161;
+      Height := 22;
+    end;
+    with MainForm.Kabina2cena do 
+    begin
+      Left := 311;
+      Top := 232;
+      Width := 161;
+      Height := 22;
+    end;
+    with MainForm.Imagepress3 do 
+    begin
+      Left := 541;
+      Top := 53;
+      Width := 220;
+      Height := 221;
+    end;
+    with MainForm.Kabina31 do 
+    begin
+      Left := 574;
+      Top := 70;
+      Width := 169;
+      Height := 25;
+    end;
+    with MainForm.Kabina32 do 
+    begin
+      Left := 574;
+      Top := 88;
+      Width := 169;
+      Height := 25;
+    end;
+    with MainForm.Imagesol3 do 
+    begin
+      Left := 579;
+      Top := 117;
+      Width := 149;
+      Height := 97;
+    end;
+    with MainForm.StatusShape3 do 
+    begin
+      Left := 622;
+      Top := 130;
+      Width := 65;
+      Height := 65;
+    end;
+    with MainForm.Kabina3cena do 
+    begin
+      Left := 545;
+      Top := 225;
+      Width := 206;
+      Height := 36;
+    end;
+    with MainForm.Kabina3minuti do 
+    begin
+      Left := 572;
+      Top := 213;
+      Width := 161;
+      Height := 22;
+    end;
+    with MainForm.Imagepress4 do 
+    begin
+      Left := 29;
+      Top := 301;
+      Width := 220;
+      Height := 221;
+    end;
+    with MainForm.Kabina41 do 
+    begin
+      Left := 54;
+      Top := 318;
+      Width := 169;
+      Height := 25;
+    end;
+    with MainForm.Kabina42 do 
+    begin
+      Left := 54;
+      Top := 336;
+      Width := 169;
+      Height := 25;
+    end;
+    with MainForm.Imagesol4 do 
+    begin
+      Left := 66;
+      Top := 360;
+      Width := 149;
+      Height := 97;
+    end;
+    with MainForm.StatusShape4 do 
+    begin
+      Left := 108;
+      Top := 378;
+      Width := 65;
+      Height := 65;
+    end;
+    with MainForm.Kabina4minuti do 
+    begin
+      Left := 58;
+      Top := 457;
+      Width := 161;
+      Height := 22;
+    end;
+    with MainForm.Kabina4cena do 
+    begin
+      Left := 58;
+      Top := 476;
+      Width := 161;
+      Height := 22;
+    end;
+    with MainForm.Imagepress5 do 
+    begin
+      Left := 287;
+      Top := 298;
+      Width := 220;
+      Height := 221;
+    end;
+    with MainForm.Kabina51 do 
+    begin
+      Left := 313;
+      Top := 318;
+      Width := 169;
+      Height := 25;
+    end;
+    with MainForm.Kabina52 do 
+    begin
+      Left := 313;
+      Top := 336;
+      Width := 169;
+      Height := 25;
+    end;
+    with MainForm.Imagesol5 do 
+    begin
+      Left := 323;
+      Top := 360;
+      Width := 149;
+      Height := 97;
+    end;
+    with MainForm.StatusShape5 do 
+    begin
+      Left := 365;
+      Top := 378;
+      Width := 65;
+      Height := 65;
+    end;
+    with MainForm.Kabina5minuti do 
+    begin
+      Left := 312;
+      Top := 457;
+      Width := 161;
+      Height := 22;
+    end;
+    with MainForm.Kabina5cena do 
+    begin
+      Left := 312;
+      Top := 476;
+      Width := 161;
+      Height := 22;
+    end;
+    with MainForm.Imagepress6 do 
+    begin
+      Left := 545;
+      Top := 300;
+      Width := 220;
+      Height := 221;
+    end;
+    with MainForm.Kabina61 do 
+    begin
+      Left := 573;
+      Top := 318;
+      Width := 169;
+      Height := 25;
+    end;
+    with MainForm.Kabina62 do 
+    begin
+      Left := 573;
+      Top := 336;
+      Width := 169;
+      Height := 25;
+    end;
+    with MainForm.Imagesol6 do 
+    begin
+      Left := 580;
+      Top := 362;
+      Width := 149;
+      Height := 97;
+    end;
+    with MainForm.StatusShape6 do 
+    begin
+      Left := 622;
+      Top := 378;
+      Width := 65;
+      Height := 65;
+    end;
+    with MainForm.Kabina6minuti do 
+    begin
+      Left := 571;
+      Top := 458;
+      Width := 161;
+      Height := 22;
+    end;
+    with MainForm.Kabina6cena do 
+    begin
+      Left := 569;
+      Top := 476;
+      Width := 161;
+      Height := 22;
+    end;
+
     MainForm.Kabina11.Visible := true;
     MainForm.Kabina12.Visible := true;
     MainForm.Kabina1cena.Visible := true;

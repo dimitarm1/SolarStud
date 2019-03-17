@@ -379,9 +379,9 @@ type
         Label85: TLabel;
         Label86: TLabel;
         Label87: TLabel;
-        No4: TLabel;
-        No5: TLabel;
-        No6: TLabel;
+    No5: TLabel;
+    No6: TLabel;
+    No7: TLabel;
         No1: TLabel;
         No2: TLabel;
         No3: TLabel;
@@ -725,8 +725,20 @@ type
         Label120: TLabel;
         Label170: TLabel;
         ProtokolFilterEdit: TEdit;
-    Label171: TLabel;
-    TipNaRabotaCombo: TComboBox;
+        Label171: TLabel;
+        TipNaRabotaCombo: TComboBox;
+        LMDLImage132: TLMDLImage;
+        Image9: TImage;
+        Label172: TLabel;
+        No4: TLabel;
+        LMDLImage148: TLMDLImage;
+        Label173: TLabel;
+        LMDLImage149: TLMDLImage;
+        Image13: TImage;
+        Label174: TLabel;
+        No8: TLabel;
+        LMDLImage151: TLMDLImage;
+        Label176: TLabel;
         procedure Label1Click(Sender: TObject);
         procedure FormCreate(Sender: TObject);
         procedure Timer1Timer(Sender: TObject);
@@ -1012,7 +1024,7 @@ var
     TipNaRabotaIndex : integer;
     Q1: TabsQuery;
     tempCounter: Integer; //********* for debug
-    SolariumTime: array[0..6] of TSolariumTime;
+    SolariumTime: array[0..8] of TSolariumTime;
     StatusChar: array[0..1] of string;
     IndexSol: Byte;
     Card: TSLE4442Card;
@@ -1093,7 +1105,7 @@ var
     TimeKeyPress: TDateTime;
 
 var
-    StatusColors: array[0..6] of TColor;
+    StatusColors: array[0..8] of TColor;
     hDevice: HWND;
     KeyBuff: ShortString = '';
     BarCodReaderBuff: ShortString = '';
@@ -2256,7 +2268,7 @@ begin
     end;
     MainForm.dbtext11.DataField := 'LAMPILASTDATE';
     MainForm.dbtext12.DataField := 'LICEVILASTDATE';
-    if TimerTime1 = 13 then
+    if TimerTime1 = 15 then
     begin
         dateofd := dateof(now);
         Plashtania.First;
@@ -2313,9 +2325,9 @@ begin
     begin
         init_uart(1);
     end;
-    if (TimerTime1 < 13) and (TimerTime1 > 3) then
+    if (TimerTime1 < 15) and (TimerTime1 > 3) then
     begin
-        if TimerTime < 10 then
+        if TimerTime < 12 then
         begin
             SolariumTime[TimerTime - 3].Pretime := 0;
             SolariumTime[TimerTime - 3].MainTime := 0;
@@ -2371,25 +2383,41 @@ begin
                 4:
                     begin
                         if FileExists(ImageName) then
-                            Image37.Picture.LoadFromFile(ImageName);
-                        Label78.Caption := StatusChar[IOCount];
+                            Image9.Picture.LoadFromFile(ImageName);
+                        Label173.Caption := StatusChar[IOCount];
                         No4.Caption :=
                             SOLARIUMI.FieldByName('OPISANIE2').AsString;
                     end;
                 5:
                     begin
                         if FileExists(ImageName) then
-                            Image38.Picture.LoadFromFile(ImageName);
-                        Label79.Caption := StatusChar[IOCount];
+                            Image37.Picture.LoadFromFile(ImageName);
+                        Label78.Caption := StatusChar[IOCount];
                         No5.Caption :=
                             SOLARIUMI.FieldByName('OPISANIE2').AsString;
                     end;
                 6:
                     begin
                         if FileExists(ImageName) then
+                            Image38.Picture.LoadFromFile(ImageName);
+                        Label79.Caption := StatusChar[IOCount];
+                        No6.Caption :=
+                            SOLARIUMI.FieldByName('OPISANIE2').AsString;
+                    end;
+                7:
+                    begin
+                        if FileExists(ImageName) then
                             Image39.Picture.LoadFromFile(ImageName);
                         Label80.Caption := StatusChar[IOCount];
-                        No6.Caption :=
+                        No7.Caption :=
+                            SOLARIUMI.FieldByName('OPISANIE2').AsString;
+                    end;
+                8:
+                    begin
+                        if FileExists(ImageName) then
+                            Image13.Picture.LoadFromFile(ImageName);
+                        Label176.Caption := StatusChar[IOCount];
+                        No8.Caption :=
                             SOLARIUMI.FieldByName('OPISANIE2').AsString;
                     end;
             end;
@@ -2397,9 +2425,9 @@ begin
         else
             ; //Image42.Picture:=Imagepress1.Picture;
         SOLARIUMI.Next;
-        Gauge1.Progress := (TimerTime1 - 3) * 16;
-        if TimerTime1 = 9 then
-            TimerTime1 := 12
+        Gauge1.Progress := (TimerTime1 - 3) * 14;
+        if TimerTime1 = 11 then
+            TimerTime1 := 13
     end;
 
     //case CabineStatus[0] of
@@ -2415,12 +2443,12 @@ begin
         Kabina11.Caption := Main2.Kabina11.Caption;
             //SOLARIUMI.FieldByName('OPISANIE1').AsString;
     end;
-    if TimerTime1 = 13 then
+    if TimerTime1 = 15 then
     begin
         equalscreens();
         Timer1.Interval := 50;
     end;
-    if (AdvPageControl1.ActivePageIndex = 1) and (TimerTime1 > 13) then
+    if (AdvPageControl1.ActivePageIndex = 1) and (TimerTime1 > 15) then
     begin
         ReadStatus;
         //    Label143.Caption:=DateToStr(Date);
@@ -2791,6 +2819,12 @@ begin
     if (Sender = Imagepress6) or (Sender = ImageSol6) or (Sender = StatusShape6)
         then
         IndexSol := 6;
+    if (Sender = Imagepress6) or (Sender = ImageSol6) or (Sender = StatusShape6)
+        then
+        IndexSol := 7;
+    if (Sender = Imagepress6) or (Sender = ImageSol6) or (Sender = StatusShape6)
+        then
+        IndexSol := 8;
     if Button = mbRight then
     begin
         MainForm.Timer1.Enabled := False;
