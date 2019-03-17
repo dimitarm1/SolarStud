@@ -739,6 +739,20 @@ type
         No8: TLabel;
         LMDLImage151: TLMDLImage;
         Label176: TLabel;
+    Imagepress7: TLMDLImage;
+    Kabina71: TLabel;
+    Kabina72: TLabel;
+    StatusShape7: TShape;
+    Imagesol7: TImage;
+    Kabina7minuti: TLabel;
+    Kabina7cena: TLabel;
+    Imagepress8: TLMDLImage;
+    Kabina81: TLabel;
+    Kabina82: TLabel;
+    Imagesol8: TImage;
+    StatusShape8: TShape;
+    Kabina8minuti: TLabel;
+    Kabina8cena: TLabel;
         procedure Label1Click(Sender: TObject);
         procedure FormCreate(Sender: TObject);
         procedure Timer1Timer(Sender: TObject);
@@ -1233,7 +1247,7 @@ begin
         _Q.InMemory := false;
         _Q.Active := true;
         _Q.readonly := False;
-        if _Q.RecordCount < 60 then
+        if _Q.RecordCount < 600 then
         begin
             CENA1 := 0;
             for i1 := 0 to 16 do
@@ -1727,6 +1741,49 @@ begin
                 //Kabina6cena.Caption  :=CurrToStr(SOLARIUMI.FieldByName('CENA').AsVariant * SOLARIUMI.FieldByName('MIVREME').AsVariant)+' '+GetMessage('M29');//' лева';
                 CabineChanel[5] := SOLARIUMI.FieldByName('ADDRESS').AsInteger;
             end;
+            SOLARIUMI.RecNo := 7;
+            if i = 0 then
+            begin
+                ImageName := SOLARIUMI.FieldByName('PICTURE').AsString;
+                if FileExists(ImageName) then
+                    Imagesol7.Picture.LoadFromFile(ImageName);
+                //   else Imagesol6.Picture:=Imagepress1.Picture;
+                Kabina71.Caption := SOLARIUMI.FieldByName('OPISANIE1').AsString;
+                Kabina72.Caption := SOLARIUMI.FieldByName('OPISANIE2').AsString;
+            end;
+            if not (CabineStatus[6] in [1..3]) then
+            begin
+                Kabina7minuti.Caption :=
+                    SOLARIUMI.FieldByName('OPISANIE3').AsString;
+                Kabina7cena.Caption :=
+                    SOLARIUMI.FieldByName('OPISANIE4').AsString;
+                //Kabina6minuti.Caption:=SOLARIUMI.FieldByName('MIVREME').AsString + ' '+GetMessage('M28');//' минути';
+                //Kabina6cena.Caption  :=CurrToStr(SOLARIUMI.FieldByName('CENA').AsVariant * SOLARIUMI.FieldByName('MIVREME').AsVariant)+' '+GetMessage('M29');//' лева';
+                CabineChanel[6] := SOLARIUMI.FieldByName('ADDRESS').AsInteger;
+            end;
+            SOLARIUMI.RecNo := 8;
+            if i = 0 then
+            begin
+                ImageName := SOLARIUMI.FieldByName('PICTURE').AsString;
+                if FileExists(ImageName) then
+                    Imagesol8.Picture.LoadFromFile(ImageName);
+                //   else Imagesol6.Picture:=Imagepress1.Picture;
+                Kabina81.Caption := SOLARIUMI.FieldByName('OPISANIE1').AsString;
+                Kabina82.Caption := SOLARIUMI.FieldByName('OPISANIE2').AsString;
+            end;
+            if not (CabineStatus[7] in [1..3]) then
+            begin
+                Kabina8minuti.Caption :=
+                    SOLARIUMI.FieldByName('OPISANIE3').AsString;
+                Kabina8cena.Caption :=
+                    SOLARIUMI.FieldByName('OPISANIE4').AsString;
+                //Kabina6minuti.Caption:=SOLARIUMI.FieldByName('MIVREME').AsString + ' '+GetMessage('M28');//' минути';
+                //Kabina6cena.Caption  :=CurrToStr(SOLARIUMI.FieldByName('CENA').AsVariant * SOLARIUMI.FieldByName('MIVREME').AsVariant)+' '+GetMessage('M29');//' лева';
+                CabineChanel[7] := SOLARIUMI.FieldByName('ADDRESS').AsInteger;
+            end;
+
+
+
         end;
     end;
     Main2.Kabina1minuti.Caption := MainForm.Kabina1minuti.Caption;
@@ -2016,6 +2073,8 @@ begin
                             3: MainForm.Kabina4Cena.Caption := '';
                             4: MainForm.Kabina5Cena.Caption := '';
                             5: MainForm.Kabina6Cena.Caption := '';
+                            6: MainForm.Kabina7Cena.Caption := '';
+                            7: MainForm.Kabina8Cena.Caption := '';
                         end;
                     end;
             end;
@@ -2099,6 +2158,10 @@ begin
                         StatusColors[CabineStatus[SolariumNo]];
                     5: MainForm.StatusShape6.Brush.Color :=
                         StatusColors[CabineStatus[SolariumNo]];
+                    6: MainForm.StatusShape7.Brush.Color :=
+                        StatusColors[CabineStatus[SolariumNo]];
+                    7: MainForm.StatusShape8.Brush.Color :=
+                        StatusColors[CabineStatus[SolariumNo]];
                 end;
                 case SolariumNo of
                     0: MainForm.StatusShape1.Visible := True;
@@ -2107,6 +2170,8 @@ begin
                     3: MainForm.StatusShape4.Visible := True;
                     4: MainForm.StatusShape5.Visible := True;
                     5: MainForm.StatusShape6.Visible := True;
+                    6: MainForm.StatusShape7.Visible := True;
+                    7: MainForm.StatusShape8.Visible := True;
                 end;
             end
             else
@@ -2117,6 +2182,8 @@ begin
                     3: MainForm.StatusShape4.Visible := False;
                     4: MainForm.StatusShape5.Visible := False;
                     5: MainForm.StatusShape6.Visible := False;
+                    6: MainForm.StatusShape7.Visible := False;
+                    7: MainForm.StatusShape8.Visible := False;
                 end;
             //     MainForm.StatusShape1.refresh; MainForm.StatusShape2.refresh; MainForm.StatusShape3.refresh;
              //    MainForm.StatusShape4.refresh; MainForm.StatusShape5.refresh; MainForm.StatusShape6.refresh;
@@ -2681,6 +2748,8 @@ begin
             4: Image20.Picture := Imagesol4.Picture;
             5: Image20.Picture := Imagesol5.Picture;
             6: Image20.Picture := Imagesol6.Picture;
+            7: Image20.Picture := Imagesol7.Picture;
+            8: Image20.Picture := Imagesol8.Picture;
         end;
         SOLARIUMI.RecNo := IndexSol;
         TimeSet := SOLARIUMI.FieldByName('MIVREME').AsInteger;
@@ -2819,10 +2888,10 @@ begin
     if (Sender = Imagepress6) or (Sender = ImageSol6) or (Sender = StatusShape6)
         then
         IndexSol := 6;
-    if (Sender = Imagepress6) or (Sender = ImageSol6) or (Sender = StatusShape6)
+    if (Sender = Imagepress6) or (Sender = ImageSol7) or (Sender = StatusShape7)
         then
         IndexSol := 7;
-    if (Sender = Imagepress6) or (Sender = ImageSol6) or (Sender = StatusShape6)
+    if (Sender = Imagepress6) or (Sender = ImageSol8) or (Sender = StatusShape8)
         then
         IndexSol := 8;
     if Button = mbRight then
@@ -2882,6 +2951,8 @@ begin
 end;
 
 procedure TMainForm.Image27Click(Sender: TObject);
+var i2: integer;
+    cena1: currency;
 begin
     SOLARIUMI.Next;
     ImageName := SOLARIUMI.FieldByName('PICTURE').AsString;
@@ -2899,6 +2970,18 @@ begin
     QCeni.SQL.Text := ('select * from TABLICA_CENI where SOLARIUM = ' +
         IntToStr(SOLARIUMI.RecNo + 100));
     QCeni.Active := True;
+    if(QCeni.RecordCount < 10)  then
+    begin
+        cena1 := Solariumi.FieldValues['CENA'];
+        for i2 := 0 to 10 do
+        begin
+           QCeni.Append;
+           QCeni.FieldValues['SOLARIUM'] := SOLARIUMI.RecNo + 100;
+           QCeni.FieldValues['MINUTA'] := i2;
+           QCeni.FieldValues['CENA'] := cena1;
+           QCeni.Post;
+        end;
+    end;
 end;
 
 procedure TMainForm.Image26Click(Sender: TObject);
@@ -2941,8 +3024,8 @@ begin
     StatistikaSQL := 'SELECT * FROM PLASHTANIA ';
     QStatistika.SQL.Text := StatistikaSQL;
     Solariums := SOLARIUMI.RecordCount;
-    if Solariums > 6 then
-        Solariums := 6;
+    if Solariums > 8 then
+        Solariums := 8;
     if Solariums < 2 then
         Solariums := 2;
     ViewByKlient := True;
@@ -3024,6 +3107,8 @@ begin
         4: set4main;
         5: set5main;
         6: set6main;
+        7: set7main;
+        8: set8main;
     end;
 
     StatusColors[0] := clGray;

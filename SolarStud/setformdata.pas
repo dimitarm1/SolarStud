@@ -43,6 +43,8 @@ var
     label1: TLabel;
     label2: TLabel2;
 
+procedure set8main();
+procedure set7main();
 procedure set6main();
 procedure set3main();
 procedure set2main();
@@ -56,22 +58,516 @@ implementation
 uses MAIN, MainForm2;
 {$R *.dfm}
 
+procedure set8main();
+begin
+
+  
+
+    MainForm.Kabina11.Visible := true;
+    MainForm.Kabina12.Visible := true;
+    MainForm.Kabina1cena.Visible := true;
+    MainForm.Kabina1minuti.Visible := true;
+
+    MainForm.Kabina21.Visible := true;
+    MainForm.Kabina22.Visible := true;
+    MainForm.Kabina2cena.Visible := true;
+    MainForm.Kabina2minuti.Visible := true;
+
+    MainForm.Kabina31.Visible := true;
+    MainForm.Kabina32.Visible := true;
+    MainForm.Kabina3cena.Visible := true;
+    MainForm.Kabina3minuti.Visible := true;
+
+    MainForm.Kabina41.Visible := true;
+    MainForm.Kabina42.Visible := true;
+    MainForm.Kabina4cena.Visible := true;
+    MainForm.Kabina4minuti.Visible := true;
+
+    MainForm.Kabina51.Visible := true;
+    MainForm.Kabina52.Visible := true;
+    MainForm.Kabina5cena.Visible := true;
+    MainForm.Kabina5minuti.Visible := true;
+
+    MainForm.Kabina61.Visible := true;
+    MainForm.Kabina62.Visible := true;
+    MainForm.Kabina6cena.Visible := true;
+    MainForm.Kabina6minuti.Visible := true;
+
+    MainForm.Kabina71.Visible := true;
+    MainForm.Kabina72.Visible := true;
+    MainForm.Kabina7cena.Visible := true;
+    MainForm.Kabina7minuti.Visible := true;
+
+    MainForm.Kabina81.Visible := true;
+    MainForm.Kabina82.Visible := true;
+    MainForm.Kabina8cena.Visible := true;
+    MainForm.Kabina8minuti.Visible := true;
+end;
+
+
+
+procedure set7main();
+begin
+    with MainForm.ImagePress1 do 
+    begin
+      Left := 38;
+      Top := 103;
+      Width := 172;
+      Height := 172;
+    end;
+    with MainForm.Kabina11 do 
+    begin
+      Left := 63;
+      Top := 115;
+      Width := 120;
+      Height := 21;
+    end;
+    with MainForm.Kabina12 do 
+    begin
+      Left := 64;
+      Top := 127;
+      Width := 117;
+      Height := 25;
+    end;
+    with MainForm.Imagesol1 do 
+    begin
+      Left := 67;
+      Top := 150;
+      Width := 115;
+      Height := 78;
+    end;
+    with MainForm.StatusShape1 do 
+    begin
+      Left := 98;
+      Top := 163;
+      Width := 52;
+      Height := 52;
+    end;
+    with MainForm.Kabina1minuti do 
+    begin
+      Left := 61;
+      Top := 225;
+      Width := 124;
+      Height := 22;
+    end;
+    with MainForm.Kabina1cena do 
+    begin
+      Left := 71;
+      Top := 239;
+      Width := 108;
+      Height := 22;
+    end;
+    with MainForm.Imagepress2 do 
+    begin
+      Left := 215;
+      Top := 103;
+      Width := 172;
+      Height := 172;
+    end;
+    with MainForm.Kabina21 do 
+    begin
+      Left := 242;
+      Top := 113;
+      Width := 117;
+      Height := 25;
+    end;
+    with MainForm.Kabina22 do 
+    begin
+      Left := 243;
+      Top := 127;
+      Width := 115;
+      Height := 25;
+    end;
+    with MainForm.Imagesol2 do 
+    begin
+      Left := 243;
+      Top := 150;
+      Width := 115;
+      Height := 78;
+    end;
+    with MainForm.StatusShape2 do 
+    begin
+      Left := 274;
+      Top := 163;
+      Width := 52;
+      Height := 52;
+    end;
+    with MainForm.Kabina2minuti do 
+    begin
+      Left := 241;
+      Top := 225;
+      Width := 117;
+      Height := 22;
+    end;
+    with MainForm.Kabina2cena do 
+    begin
+      Left := 246;
+      Top := 239;
+      Width := 109;
+      Height := 22;
+    end;
+    with MainForm.Imagepress3 do 
+    begin
+      Left := 392;
+      Top := 103;
+      Width := 172;
+      Height := 172;
+    end;
+    with MainForm.Kabina31 do 
+    begin
+      Left := 428;
+      Top := 113;
+      Width := 99;
+      Height := 25;
+    end;
+    with MainForm.Kabina32 do 
+    begin
+      Left := 427;
+      Top := 127;
+      Width := 102;
+      Height := 25;
+    end;
+    with MainForm.Imagesol3 do 
+    begin
+      Left := 421;
+      Top := 150;
+      Width := 115;
+      Height := 78;
+    end;
+    with MainForm.StatusShape3 do 
+    begin
+      Left := 452;
+      Top := 163;
+      Width := 52;
+      Height := 52;
+    end;
+    with MainForm.Kabina3minuti do 
+    begin
+      Left := 419;
+      Top := 225;
+      Width := 121;
+      Height := 22;
+    end;
+    with MainForm.Kabina3cena do 
+    begin
+      Left := 427;
+      Top := 239;
+      Width := 111;
+      Height := 23;
+    end;
+    with MainForm.Imagepress4 do 
+    begin
+      Left := 570;
+      Top := 103;
+      Width := 172;
+      Height := 172;
+    end;
+    with MainForm.Kabina41 do 
+    begin
+      Left := 608;
+      Top := 110;
+      Width := 98;
+      Height := 31;
+    end;
+    with MainForm.Kabina42 do 
+    begin
+      Left := 599;
+      Top := 127;
+      Width := 116;
+      Height := 25;
+    end;
+    with MainForm.Imagesol4 do 
+    begin
+      Left := 599;
+      Top := 150;
+      Width := 115;
+      Height := 78;
+    end;
+    with MainForm.StatusShape4 do 
+    begin
+      Left := 630;
+      Top := 163;
+      Width := 52;
+      Height := 52;
+    end;
+    with MainForm.Kabina4minuti do 
+    begin
+      Left := 596;
+      Top := 225;
+      Width := 122;
+      Height := 22;
+    end;
+    with MainForm.Kabina4cena do 
+    begin
+      Left := 604;
+      Top := 239;
+      Width := 107;
+      Height := 22;
+    end;
+    with MainForm.Imagepress5 do 
+    begin
+      Left := 38;
+      Top := 294;
+      Width := 172;
+      Height := 172;
+    end;
+    with MainForm.Kabina52 do 
+    begin
+      Left := 67;
+      Top := 321;
+      Width := 114;
+      Height := 21;
+    end;
+    with MainForm.Kabina51 do 
+    begin
+      Left := 74;
+      Top := 305;
+      Width := 100;
+      Height := 25;
+    end;
+    with MainForm.Imagesol5 do 
+    begin
+      Left := 67;
+      Top := 341;
+      Width := 115;
+      Height := 78;
+    end;
+    with MainForm.StatusShape5 do 
+    begin
+      Left := 98;
+      Top := 354;
+      Width := 52;
+      Height := 52;
+    end;
+    with MainForm.Kabina5minuti do 
+    begin
+      Left := 67;
+      Top := 416;
+      Width := 115;
+      Height := 22;
+    end;
+    with MainForm.Kabina5cena do 
+    begin
+      Left := 65;
+      Top := 430;
+      Width := 117;
+      Height := 22;
+    end;
+    with MainForm.Imagepress6 do 
+    begin
+      Left := 215;
+      Top := 294;
+      Width := 172;
+      Height := 172;
+    end;
+    with MainForm.Kabina61 do 
+    begin
+      Left := 247;
+      Top := 305;
+      Width := 107;
+      Height := 25;
+    end;
+    with MainForm.Kabina62 do 
+    begin
+      Left := 243;
+      Top := 319;
+      Width := 116;
+      Height := 25;
+    end;
+    with MainForm.Imagesol6 do 
+    begin
+      Left := 243;
+      Top := 341;
+      Width := 115;
+      Height := 78;
+    end;
+    with MainForm.StatusShape6 do 
+    begin
+      Left := 274;
+      Top := 354;
+      Width := 52;
+      Height := 52;
+    end;
+    with MainForm.Kabina6minuti do 
+    begin
+      Left := 241;
+      Top := 416;
+      Width := 120;
+      Height := 22;
+    end;
+    with MainForm.Kabina6cena do 
+    begin
+      Left := 243;
+      Top := 430;
+      Width := 115;
+      Height := 22;
+    end;
+    with MainForm.Imagepress7 do 
+    begin
+      Left := 392;
+      Top := 294;
+      Width := 172;
+      Height := 172;
+    end;
+    with MainForm.Kabina71 do 
+    begin
+      Left := 425;
+      Top := 305;
+      Width := 107;
+      Height := 25;
+    end;
+    with MainForm.Kabina72 do 
+    begin
+      Left := 422;
+      Top := 319;
+      Width := 113;
+      Height := 25;
+    end;
+    with MainForm.Imagesol7 do
+    begin
+      Left := 421;
+      Top := 341;
+      Width := 115;
+      Height := 78;
+    end;
+    with MainForm.StatusShape7 do 
+    begin
+      Left := 452;
+      Top := 354;
+      Width := 52;
+      Height := 52;
+    end;
+    with MainForm.Kabina7minuti do 
+    begin
+      Left := 423;
+      Top := 416;
+      Width := 113;
+      Height := 22;
+    end;
+    with MainForm.Kabina7cena do 
+    begin
+      Left := 424;
+      Top := 430;
+      Width := 110;
+      Height := 22;
+    end;
+    with MainForm.Imagepress8 do 
+    begin
+      Left := 570;
+      Top := 294;
+      Width := 172;
+      Height := 172;
+    end;
+    with MainForm.Kabina81 do 
+    begin
+      Left := 601;
+      Top := 308;
+      Width := 107;
+      Height := 19;
+    end;
+    with MainForm.Kabina82 do 
+    begin
+      Left := 599;
+      Top := 322;
+      Width := 114;
+      Height := 19;
+    end;
+    with MainForm.Imagesol8 do 
+    begin
+      Left := 599;
+      Top := 341;
+      Width := 115;
+      Height := 78;
+    end;
+    with MainForm.StatusShape8 do 
+    begin
+      Left := 630;
+      Top := 354;
+      Width := 52;
+      Height := 52;
+    end;
+    with MainForm.Kabina8minuti do 
+    begin
+      Left := 600;
+      Top := 416;
+      Width := 116;
+      Height := 22;
+    end;
+    with MainForm.Kabina8cena do 
+    begin
+      Left := 601;
+      Top := 430;
+      Width := 110;
+      Height := 22;
+    end;
+
+
+
+    MainForm.Kabina11.Visible := true;
+    MainForm.Kabina12.Visible := true;
+    MainForm.Kabina1cena.Visible := true;
+    MainForm.Kabina1minuti.Visible := true;
+
+    MainForm.Kabina21.Visible := true;
+    MainForm.Kabina22.Visible := true;
+    MainForm.Kabina2cena.Visible := true;
+    MainForm.Kabina2minuti.Visible := true;
+
+    MainForm.Kabina31.Visible := true;
+    MainForm.Kabina32.Visible := true;
+    MainForm.Kabina3cena.Visible := true;
+    MainForm.Kabina3minuti.Visible := true;
+
+    MainForm.Kabina41.Visible := true;
+    MainForm.Kabina42.Visible := true;
+    MainForm.Kabina4cena.Visible := true;
+    MainForm.Kabina4minuti.Visible := true;
+
+    MainForm.Kabina51.Visible := true;
+    MainForm.Kabina52.Visible := true;
+    MainForm.Kabina5cena.Visible := true;
+    MainForm.Kabina5minuti.Visible := true;
+
+    MainForm.Kabina61.Visible := true;
+    MainForm.Kabina62.Visible := true;
+    MainForm.Kabina6cena.Visible := true;
+    MainForm.Kabina6minuti.Visible := true;
+
+    MainForm.Kabina71.Visible := true;
+    MainForm.Kabina72.Visible := true;
+    MainForm.Kabina7cena.Visible := true;
+    MainForm.Kabina7minuti.Visible := true;
+
+    MainForm.Kabina81.Visible := false;
+    MainForm.Kabina82.Visible := false;
+    MainForm.Kabina8cena.Visible := false;
+    MainForm.Kabina8minuti.Visible := false;
+
+    MainForm.Imagepress8.Visible := False;
+    MainForm.Imagesol8.Visible := False;
+end;
+
+
+
+
+
 procedure set6main();
 begin
 
-      with MainForm.ImagePress1 do 
+      with MainForm.ImagePress1 do
     begin
       Left := 31;
       Top := 54;
       Width := 220;
       Height := 221;
     end;
-    with MainForm.Kabina21 do 
+    with MainForm.Kabina21 do
     begin
       Left := 313;
       Top := 70;
       Width := 169;
       Height := 25;
+      Font.Height := -16;
     end;
     with MainForm.Kabina11 do 
     begin
@@ -79,15 +575,17 @@ begin
       Top := 70;
       Width := 169;
       Height := 25;
+      Font.Height := -16;
     end;
-    with MainForm.Kabina12 do 
+    with MainForm.Kabina12 do
     begin
       Left := 54;
       Top := 88;
       Width := 169;
       Height := 25;
+      Font.Height := -16;
     end;
-    with MainForm.Imagesol1 do 
+    with MainForm.Imagesol1 do
     begin
       Left := 66;
       Top := 112;
@@ -107,6 +605,7 @@ begin
       Top := 212;
       Width := 161;
       Height := 22;
+      Font.Height := -16;
     end;
     with MainForm.Kabina1cena do 
     begin
@@ -114,13 +613,34 @@ begin
       Top := 232;
       Width := 161;
       Height := 22;
+      Font.Height := -16;
     end;
+     with MainForm.Imagepress2 do 
+    begin
+      Left := 287;
+      Top := 54;
+      Width := 220;
+      Height := 221;
+    end;
+    with MainForm.Kabina21 do 
+    begin
+      Left := 313;
+      Top := 70;
+      Width := 169;
+      Height := 25;
+      Font.Height := -16;
+    end;
+
+
+
+
     with MainForm.Kabina22 do 
     begin
       Left := 313;
       Top := 88;
       Width := 169;
       Height := 25;
+      Font.Height := -16;
     end;
     with MainForm.Imagesol2 do 
     begin
@@ -142,6 +662,7 @@ begin
       Top := 212;
       Width := 161;
       Height := 22;
+      Font.Height := -16;
     end;
     with MainForm.Kabina2cena do 
     begin
@@ -149,6 +670,7 @@ begin
       Top := 232;
       Width := 161;
       Height := 22;
+      Font.Height := -16;
     end;
     with MainForm.Imagepress3 do 
     begin
@@ -163,6 +685,7 @@ begin
       Top := 70;
       Width := 169;
       Height := 25;
+      Font.Height := -16;
     end;
     with MainForm.Kabina32 do 
     begin
@@ -170,6 +693,7 @@ begin
       Top := 88;
       Width := 169;
       Height := 25;
+      Font.Height := -16;
     end;
     with MainForm.Imagesol3 do 
     begin
@@ -191,6 +715,7 @@ begin
       Top := 225;
       Width := 206;
       Height := 36;
+      Font.Height := -16;
     end;
     with MainForm.Kabina3minuti do 
     begin
@@ -198,6 +723,7 @@ begin
       Top := 213;
       Width := 161;
       Height := 22;
+      Font.Height := -16;
     end;
     with MainForm.Imagepress4 do 
     begin
@@ -212,6 +738,7 @@ begin
       Top := 318;
       Width := 169;
       Height := 25;
+      Font.Height := -16;
     end;
     with MainForm.Kabina42 do 
     begin
@@ -219,6 +746,7 @@ begin
       Top := 336;
       Width := 169;
       Height := 25;
+      Font.Height := -16;
     end;
     with MainForm.Imagesol4 do 
     begin
@@ -240,6 +768,7 @@ begin
       Top := 457;
       Width := 161;
       Height := 22;
+      Font.Height := -16;
     end;
     with MainForm.Kabina4cena do 
     begin
@@ -261,6 +790,7 @@ begin
       Top := 318;
       Width := 169;
       Height := 25;
+      Font.Height := -16;
     end;
     with MainForm.Kabina52 do 
     begin
@@ -268,6 +798,7 @@ begin
       Top := 336;
       Width := 169;
       Height := 25;
+      Font.Height := -16;
     end;
     with MainForm.Imagesol5 do 
     begin
@@ -289,6 +820,7 @@ begin
       Top := 457;
       Width := 161;
       Height := 22;
+      Font.Height := -16;
     end;
     with MainForm.Kabina5cena do 
     begin
@@ -296,6 +828,7 @@ begin
       Top := 476;
       Width := 161;
       Height := 22;
+      Font.Height := -16;
     end;
     with MainForm.Imagepress6 do 
     begin
@@ -310,6 +843,7 @@ begin
       Top := 318;
       Width := 169;
       Height := 25;
+      Font.Height := -16;
     end;
     with MainForm.Kabina62 do 
     begin
@@ -317,6 +851,7 @@ begin
       Top := 336;
       Width := 169;
       Height := 25;
+      Font.Height := -16;
     end;
     with MainForm.Imagesol6 do 
     begin
@@ -338,6 +873,7 @@ begin
       Top := 458;
       Width := 161;
       Height := 22;
+      Font.Height := -16;
     end;
     with MainForm.Kabina6cena do 
     begin
@@ -345,6 +881,7 @@ begin
       Top := 476;
       Width := 161;
       Height := 22;
+      Font.Height := -16;
     end;
 
     MainForm.Kabina11.Visible := true;
@@ -376,6 +913,20 @@ begin
     MainForm.Kabina62.Visible := true;
     MainForm.Kabina6cena.Visible := true;
     MainForm.Kabina6minuti.Visible := true;
+
+    MainForm.Kabina71.Visible := false;
+    MainForm.Kabina72.Visible := false;
+    MainForm.Kabina7cena.Visible := false;
+    MainForm.Kabina7minuti.Visible := false;
+
+    MainForm.Kabina81.Visible := false;
+    MainForm.Kabina82.Visible := false;
+    MainForm.Kabina8cena.Visible := false;
+    MainForm.Kabina8minuti.Visible := false;
+    MainForm.Imagepress7.Visible := False;
+    MainForm.Imagesol7.Visible := False;
+    MainForm.Imagepress8.Visible := False;
+    MainForm.Imagesol8.Visible := False;
 end;
 
 procedure equalStatus(Status1: TShape; Status2: TShape);
@@ -694,6 +1245,20 @@ begin
         Imagesol6.Visible := False;
         // Image2.picture:=Image61.Picture;
     end;
+    
+    MainForm.Kabina71.Visible := false;
+    MainForm.Kabina72.Visible := false;
+    MainForm.Kabina7cena.Visible := false;
+    MainForm.Kabina7minuti.Visible := false;
+
+    MainForm.Kabina81.Visible := false;
+    MainForm.Kabina82.Visible := false;
+    MainForm.Kabina8cena.Visible := false;
+    MainForm.Kabina8minuti.Visible := false;
+    MainForm.Imagepress7.Visible := False;
+    MainForm.Imagesol7.Visible := False;
+    MainForm.Imagepress8.Visible := False;
+    MainForm.Imagesol8.Visible := False;
 end;
 
 procedure set4main();
@@ -977,6 +1542,20 @@ begin
         Imagesol6.Visible := False;
 
     end;
+    
+    MainForm.Kabina71.Visible := false;
+    MainForm.Kabina72.Visible := false;
+    MainForm.Kabina7cena.Visible := false;
+    MainForm.Kabina7minuti.Visible := false;
+
+    MainForm.Kabina81.Visible := false;
+    MainForm.Kabina82.Visible := false;
+    MainForm.Kabina8cena.Visible := false;
+    MainForm.Kabina8minuti.Visible := false;
+    MainForm.Imagepress7.Visible := False;
+    MainForm.Imagesol7.Visible := False;
+    MainForm.Imagepress8.Visible := False;
+    MainForm.Imagesol8.Visible := False;
 end;
 
 procedure set2main();
@@ -1139,6 +1718,21 @@ begin
         Imagepress6.Visible := False;
         Imagesol6.Visible := False;
     end;
+    
+    MainForm.Kabina71.Visible := false;
+    MainForm.Kabina72.Visible := false;
+    MainForm.Kabina7cena.Visible := false;
+    MainForm.Kabina7minuti.Visible := false;
+
+    MainForm.Kabina81.Visible := false;
+    MainForm.Kabina82.Visible := false;
+    MainForm.Kabina8cena.Visible := false;
+    MainForm.Kabina8minuti.Visible := false;
+
+    MainForm.Imagepress7.Visible := False;
+    MainForm.Imagesol7.Visible := False;
+    MainForm.Imagepress8.Visible := False;
+    MainForm.Imagesol8.Visible := False;
 
 end;
 
@@ -1480,6 +2074,20 @@ begin
         Imagepress6.Visible := False;
         Imagesol6.Visible := False;
     end;
+    
+    MainForm.Kabina71.Visible := false;
+    MainForm.Kabina72.Visible := false;
+    MainForm.Kabina7cena.Visible := false;
+    MainForm.Kabina7minuti.Visible := false;
+
+    MainForm.Kabina81.Visible := false;
+    MainForm.Kabina82.Visible := false;
+    MainForm.Kabina8cena.Visible := false;
+    MainForm.Kabina8minuti.Visible := false;
+    MainForm.Imagepress7.Visible := False;
+    MainForm.Imagesol7.Visible := False;
+    MainForm.Imagepress8.Visible := False;
+    MainForm.Imagesol8.Visible := False;
 end;
 
 end.
