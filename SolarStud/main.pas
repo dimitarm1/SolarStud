@@ -34,7 +34,8 @@ uses Windows, SysUtils, DateUtils, Classes, Graphics, Forms, Controls, Menus,
     Wwdbcomb, Planner, PlanSimpleEdit, PlanItemEdit, DBPlanner, AdvEdBtn,
     PlannerDatePicker, LMDCustomListComboBox, LMDListComboBox,
     LMDDBListComboBox,
-    RzCmboBx, Wwdbigrd, RzEdit, RzDBEdit, LMDCustomControl;
+    RzCmboBx, Wwdbigrd, RzEdit, RzDBEdit, LMDCustomControl, LMDPNGImage,
+  IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP;
 
 type
     TSLE4442Card = packed record
@@ -422,7 +423,6 @@ type
         Image64: TLMDLImage;
         Image69: TLMDLImage;
         Image21: TLMDLImage;
-        Image128: TImage;
         LMDImageList3: TLMDImageList;
         LMDImageList4: TLMDImageList;
         LMDLImage5: TLMDLImage;
@@ -727,6 +727,7 @@ type
         ProtokolFilterEdit: TEdit;
     Label171: TLabel;
     TipNaRabotaCombo: TComboBox;
+    Label172: TLabel;
         procedure Label1Click(Sender: TObject);
         procedure FormCreate(Sender: TObject);
         procedure Timer1Timer(Sender: TObject);
@@ -2185,6 +2186,18 @@ begin
     end;
     MainForm.Timer1.Enabled := True;
     UpdatePageControl(1);
+end;
+
+function GetURLAsString(const aURL: string): string;
+var
+  lHTTP: TIdHTTP;
+begin
+  lHTTP := TIdHTTP.Create;
+  try
+    Result := lHTTP.Get(aURL);
+  finally
+    lHTTP.Free;
+  end;
 end;
 
 procedure Backup(show_message: boolean);
