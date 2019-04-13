@@ -1546,7 +1546,7 @@ begin
     // some more processing...
 
     CB_RS232.DCBlength := SizeOf(CB_RS232); // sizeof(DCB)
-    CB_RS232.BaudRate := 1200; // current baud rate
+    CB_RS232.BaudRate := 9600; //1200; // current baud rate
     CB_RS232.Flags := $31; //$31;
     CB_RS232.wReserved := 0; // not currently used
     CB_RS232.XonLim := 1; // transmit XON threshold
@@ -1886,14 +1886,14 @@ begin
             IOResult := WriteFile(hDevice, Data1, 1, IOCount, nil);
             sleep(2);
             IOResult := WriteFile(hDevice, DataSent, 1, IOCount, nil);
-            sleep(2);
+            sleep(200);//DEBUG 2
             IOResult := ReadFile(hDevice, IOByte, 1, IOCount, nil);
             // get old main time
             Data1 := 128 + Chanel * 8 + 3; //  Set cool time
             IOResult := WriteFile(hDevice, Data1, 1, IOCount, nil);
             sleep(2);
             IOResult := WriteFile(hDevice, CoolTime, 1, IOCount, nil);
-            sleep(4);
+            sleep(200); //DEBUG 4
             IOResult := ReadFile(hDevice, IOByte, 1, IOCount, nil);
             // Get checksum?
             if IOResult and (IOByte = CheckSum) then
@@ -1901,7 +1901,7 @@ begin
             sleep(100);
             Data1 := 128 + Chanel * 8; // Get status command for selected chanel
             IOResult := WriteFile(hDevice, Data1, 1, IOCount, nil);
-            sleep(5);
+            sleep(200); //DEBUG 5
             IOResult := ReadFile(hDevice, IOByte, 1, IOCount, nil);
             IOByte := IOByte div 64;
             if IOResult and (IOByte <> 0) and
@@ -2035,6 +2035,14 @@ begin
                                     ' ' + GetMessage('M81');
                             5: MainForm.Kabina6minuti.Caption :=
                                 GetMessage('M80') + ' ' + IntToStr(CabineTime[5])
+                                    +
+                                    ' ' + GetMessage('M81');
+                            6: MainForm.Kabina7minuti.Caption :=
+                                GetMessage('M80') + ' ' + IntToStr(CabineTime[6])
+                                    +
+                                    ' ' + GetMessage('M81');
+                            7: MainForm.Kabina8minuti.Caption :=
+                                GetMessage('M80') + ' ' + IntToStr(CabineTime[7])
                                     +
                                     ' ' + GetMessage('M81');
                         end;
@@ -2513,7 +2521,7 @@ begin
     if TimerTime1 = 15 then
     begin
         equalscreens();
-        Timer1.Interval := 50;
+        Timer1.Interval := 350; //DEBUG 50;
     end;
     if (AdvPageControl1.ActivePageIndex = 1) and (TimerTime1 > 15) then
     begin
@@ -5949,7 +5957,7 @@ begin
         Data1 := 128 + i * 8; // Get status command for selected chanel
         IOResult := WriteFile(hDevice, Data1, 1, IOCount, 0);
         IOByte := 0;
-        sleep(20);
+        sleep(200); //DEBUG 20 
         IOResult := ReadFile(hDevice, IOByte, 1, IOCount, 0);
 
         if IOCount > 0 then
