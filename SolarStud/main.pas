@@ -1084,6 +1084,7 @@ var
     PaidChipCard: Real;
     Pos1: Byte;
     ComPortName: string;
+    BaudRate: Integer;
     Backuped: Boolean;
     IsReader: Boolean;
     LastKey: string;
@@ -1399,6 +1400,15 @@ begin
         MainIniFile.WriteString('System', 'ComPort', 'COM2');
         MainIniFile.UpdateFile;
     end;
+    BaudRate:= StrToInt(MainIniFile.ReadString('System', 'BaudRate', '4200'));
+    if BaudRate = 4200 then
+        //this is because KeyExists function is not working
+    begin
+        MainIniFile.DeleteKey('System', 'BaudRate');
+        MainIniFile.WriteString('System', 'BaudRate', '1200');
+        MainIniFile.UpdateFile;
+        BaudRate:= 1200;
+    end;
     ComPortName := MainIniFile.ReadString('System', 'ComPort', 'COM2');
     Macro := 'mode ' + ComPortName + ' 1200,n,8,,';
     Macro := 'set_com2.bat ' + ComPortName;
@@ -1546,7 +1556,7 @@ begin
     // some more processing...
 
     CB_RS232.DCBlength := SizeOf(CB_RS232); // sizeof(DCB)
-    CB_RS232.BaudRate := 9600; //1200; // current baud rate
+    CB_RS232.BaudRate := BaudRate; //1200; // current baud rate
     CB_RS232.Flags := $31; //$31;
     CB_RS232.wReserved := 0; // not currently used
     CB_RS232.XonLim := 1; // transmit XON threshold
@@ -1886,14 +1896,16 @@ begin
             IOResult := WriteFile(hDevice, Data1, 1, IOCount, nil);
             sleep(2);
             IOResult := WriteFile(hDevice, DataSent, 1, IOCount, nil);
-            sleep(200);//DEBUG 2
+            if(BaudRate = 1200) then sleep(2)
+            else  sleep(200);//DEBUG 2
             IOResult := ReadFile(hDevice, IOByte, 1, IOCount, nil);
             // get old main time
             Data1 := 128 + Chanel * 8 + 3; //  Set cool time
             IOResult := WriteFile(hDevice, Data1, 1, IOCount, nil);
             sleep(2);
             IOResult := WriteFile(hDevice, CoolTime, 1, IOCount, nil);
-            sleep(200); //DEBUG 4
+            if(BaudRate = 1200) then sleep(4)
+            else  sleep(200);//DEBUG 4
             IOResult := ReadFile(hDevice, IOByte, 1, IOCount, nil);
             // Get checksum?
             if IOResult and (IOByte = CheckSum) then
@@ -1901,7 +1913,8 @@ begin
             sleep(100);
             Data1 := 128 + Chanel * 8; // Get status command for selected chanel
             IOResult := WriteFile(hDevice, Data1, 1, IOCount, nil);
-            sleep(200); //DEBUG 5
+            if(BaudRate = 1200) then sleep(5)
+            else  sleep(200);//DEBUG 5
             IOResult := ReadFile(hDevice, IOByte, 1, IOCount, nil);
             IOByte := IOByte div 64;
             if IOResult and (IOByte <> 0) and
@@ -2521,7 +2534,8 @@ begin
     if TimerTime1 = 15 then
     begin
         equalscreens();
-        Timer1.Interval := 350; //DEBUG 50;
+        if(BaudRate = 1200) then   Timer1.Interval := 50
+        else Timer1.Interval := 350; //DEBUG 50;
     end;
     if (AdvPageControl1.ActivePageIndex = 1) and (TimerTime1 > 15) then
     begin
@@ -2644,7 +2658,11 @@ begin
 
         IsOK := Q1.Locate('SOLARIUM;MINUTA', VarArrayOf([IndexSol, TimeSet]),
             []);
-        PriceCash := Q1.FieldValues['CENA'];
+        try
+          PriceCash := Q1.FieldValues['CENA'];
+        except
+          PriceCash := 0;
+        end;
         Temp := Q1.RecNo;
         if IsOK then
             PriceCash := PriceCash + 0.0000001;
@@ -2668,7 +2686,11 @@ begin
                 _Q4.Active := true;
                 if (_Q4.RecordCount > 0) then
                 begin
-                    PriceCard := TimeSet * _Q4.FieldByName('CENA').AsVariant;
+                    try
+                      PriceCard := TimeSet * _Q4.FieldByName('CENA').AsVariant;
+                    except
+                      PriceCard := -1;
+                    end;
                 end;
             end;
             _Q4.Close;
@@ -2676,7 +2698,11 @@ begin
         end;
         if (PriceCard = -1) then
         begin
+          try
             PriceCard := TimeSet * SOLARIUMI.FieldByName('CENA').AsVariant;
+          except
+            PriceCard := 0;
+          end;
         end;
 
         { if  (Qklienti.FieldValues['nomer']>0) and
@@ -3178,6 +3204,7 @@ begin
     sender1 := sender;
     if sender1 = sender then
         ;
+    if(sol1.InTransaction) then sol1.Commit(true);    
     sol1.StartTransaction;
     _Q := nil;
     _Q := TABSQuery.Create(nil);
@@ -3227,10 +3254,11 @@ begin
             end
             else
         end;
+    if(PriceCard = 0) then PriceCard := 0.0001;
     if PriceCash - (PaidCard * (PriceCash / PriceCard) + ToBePaidCash +
         PaidChipCard * (PriceCash / PriceCard)) < 0.02 then
     begin
-        LastTime[(IndexSol - 1)] := TimeSet;
+//        LastTime[(IndexSol - 1)] := TimeSet;
         CabineSetTime[(IndexSol - 1)] := TimeSet;
         SendData(TimeSet, IndexSol, true);
         if Retry > 21 then
@@ -3707,6 +3735,7 @@ begin
     QKlienti.SQL.SetText(PChar('SELECT * FROM klienti where nomer = 999990 ORDER BY IME DESC'));
     CardNomer := 0;
     QKlienti.Active := True;
+    if(sol1.InTransaction) then sol1.Commit(true);
     sol1.StartTransaction;
     AdvPageControl1.ActivePageIndex := 15;
     USLUGITE.Active := False;
@@ -5957,7 +5986,8 @@ begin
         Data1 := 128 + i * 8; // Get status command for selected chanel
         IOResult := WriteFile(hDevice, Data1, 1, IOCount, 0);
         IOByte := 0;
-        sleep(200); //DEBUG 20 
+        if(BaudRate = 1200) then sleep(200)
+        else sleep(200); //DEBUG 20
         IOResult := ReadFile(hDevice, IOByte, 1, IOCount, 0);
 
         if IOCount > 0 then
@@ -6353,6 +6383,7 @@ begin
             QKLIENTI.Next;
         end;
         Nomer := Nomer + 1;
+        if(sol1.InTransaction) then sol1.commit(true);
         sol1.StartTransaction;
         try
             QKLIENTI.Append;
