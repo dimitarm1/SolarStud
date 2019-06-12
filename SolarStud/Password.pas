@@ -25,10 +25,12 @@ type
     procedure Edit1KeyPress(Sender: TObject; var Key: Char);
     procedure OKImgClick (Sender: TObject);
     procedure CancelImgClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
   public
     { Public declarations }
+    IsMaster: boolean;
   end;
 
 var
@@ -42,17 +44,34 @@ procedure Function1(Key: Char);
 begin
  if Key=chr(13) then
  begin
-  if (PasswordForm.Edit1.Text='master1234') or (MainForm.personal1.Locate('parola',PasswordForm.Edit1.Text,[]))then PasswordForm.ModalResult:=mrOK;
+    MainForm.personal1.First;
+    if ((PasswordForm.Edit1.Text = MainForm.personal1.FieldValues['parola']) or
+        (PasswordForm.Edit1.Text = 'master1234')) then
+    begin
+      PasswordForm.ModalResult:=mrOK;
+      PasswordForm.IsMaster:= true;
+    end
+    else if (MainForm.personal1.Locate('parola',PasswordForm.Edit1.Text,[]))then
+    begin
+      PasswordForm.ModalResult:=mrOK;
+      PasswordForm.IsMaster:= false;
+    end;
  end;
   if Key=chr(27) then
      begin
       PasswordForm.Edit1.Text:=''  ;
       PasswordForm.Close;
+      PasswordForm.IsMaster:= false;
      end;
 end;
 procedure TPasswordForm.Edit1KeyPress(Sender: TObject; var Key: Char);
 begin
  function1(Key);
+end;
+
+procedure TPasswordForm.FormCreate(Sender: TObject);
+begin
+  IsMaster:= false;
 end;
 
 procedure TPasswordForm.OKImgClick(Sender: TObject);

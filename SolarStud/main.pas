@@ -2813,6 +2813,7 @@ end;
 procedure TMainForm.Label13Click(Sender: TObject);
 begin
     // if MainForm.Label21.color=clblack then
+    if(PasswordForm.IsMaster = true) then
     begin
         SOLARIUMI.First;
         AdvPageControl1.ActivePageIndex := 8;
@@ -2831,7 +2832,7 @@ end;
 
 procedure TMainForm.Label40Click(Sender: TObject);
 begin
-    if (PasswordForm.Edit1.Text = 'master1234') then
+    if(PasswordForm.IsMaster = true) then
     begin
         AdvPageControl1.ActivePageIndex := 6;
     end
@@ -2844,7 +2845,7 @@ end;
 
 procedure TMainForm.Label48Click(Sender: TObject);
 begin
-    if (PasswordForm.Edit1.Text = 'master1234') then
+    if(PasswordForm.IsMaster = true) then
     begin
         AdvPageControl1.ActivePageIndex := 6;
     end
@@ -3497,24 +3498,23 @@ begin
             if PasswordForm.ModalResult = mrOK then
             begin
                 AdvPageControl1.ActivePageIndex := 5;
-                MainForm.personal1.First;
-
-                if ((PasswordForm.Edit1.Text =
-                    MainForm.personal1.FieldValues['parola']) or
-                    (PasswordForm.Edit1.Text = 'master1234')) then
+                if( PasswordForm.IsMaster = true) then
                 begin
                     Label21.color := clBlack;
                     Label17.color := clBlack;
                     Label23.color := clBlack;
-                    Label14.color := clBlack;
+//                    Label14.color := clBlack;
+                    Label13.color := clBlack;
+                    Label16.color := clBlack;
                 end
                 else
                 begin
                     Label21.color := clGray;
                     Label17.color := clGray;
                     Label23.color := clGray;
-                    // Label13.color:=clGray;
-                    Label14.color := clGray;
+                    Label13.color := clGray;
+//                    Label14.color := clGray;
+                    Label16.color := clGray;
                 end;
             end
             else
@@ -3609,9 +3609,9 @@ end;
 
 procedure TMainForm.Label23Click(Sender: TObject);
 begin
-    if MainForm.Label21.color = clblack then
+    //if MainForm.Label21.color = clblack then
+    if(PasswordForm.IsMaster = true) then
         AdvPageControl1.ActivePageIndex := 14;
-
 end;
 
 procedure TMainForm.DBLUCombo11Change(Sender: TObject);
@@ -4489,7 +4489,8 @@ end;
 
 procedure TMainForm.Label16Click(Sender: TObject);
 begin
-    AdvPageControl1.ActivePageIndex := 16;
+    if(PasswordForm.IsMaster = true) then
+      AdvPageControl1.ActivePageIndex := 16;
 end;
 
 procedure TMainForm.LMDButton7Click(Sender: TObject);
@@ -4632,6 +4633,7 @@ var
     Result1: string;
     Ostatak: Real;
 begin
+try
     with MainForm do
     begin
         LMDMemo1.Text := '';
@@ -4692,6 +4694,9 @@ begin
         Label72.Caption := Label72.Caption + '' + Result1 + GetMessage('M29');
         //Label72.Caption:=Label72.Caption + ''+ Result1+'лв.';
     end;
+  except
+      // DEBUG!!! Za da niama garmezi
+  end;
 end;
 
 procedure TMainForm.SolariumiNastroiki7Show(Sender: TObject);
@@ -5124,7 +5129,8 @@ end;
 
 procedure TMainForm.Label17Click(Sender: TObject);
 begin
-    if MainForm.Label21.color = clblack then
+//    if MainForm.Label21.color = clblack then
+    if(PasswordForm.IsMaster = true) then
         AdvPageControl1.ActivePageIndex := 13;
 end;
 
@@ -5864,7 +5870,7 @@ begin
     QKlienti.Active := True;
     Label137.Caption := GetMessage('M67'); //'Няма карта';
     Label137.Font.Color := clRed;
-    if (PasswordForm.ModalResult = MROK) then
+    if (PasswordForm.IsMaster = true) then
     begin
         PercentEdit.enabled := true;
         SumaEdit.enabled := true;
@@ -6493,6 +6499,7 @@ end;
 procedure TMainForm.Label21Click(Sender: TObject);
 begin
     // if MainForm.Label21.color=clblack then
+    if(PasswordForm.IsMaster = true) then
     begin
         Image32.Picture := image50.Picture;
         AdvPageControl1.ActivePageIndex := 10;

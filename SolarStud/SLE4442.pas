@@ -774,8 +774,9 @@ begin
                     DiscountPrize :=
                         MainForm.Internet.FieldValues['DISCOUNT_PERCENT'];
             end;
-
-            VipDiscount := q.FieldValues['DISCOUNT'];
+            if varType(q.FieldValues['DISCOUNT'])
+                    <> varNull then VipDiscount := q.FieldValues['DISCOUNT']
+            else VipDiscount := 0;
             if VipDiscount > 0.1 then
                 DiscountPrize := 0;
 

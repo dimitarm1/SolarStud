@@ -6,13 +6,13 @@
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{20BE3B2F-6275-48B2-8277-E59C73537CFF}
-AppName=SolarStudio1.2 Build 13-04-2019
-AppVerName=SolarStudio 1.2 Build 13-04-2019
+AppName=SolarStudio1.2 Build 12-06-2019
+AppVerName=SolarStudio 1.2 Build 12-06-2019
 AppPublisher=D.M.
 AppPublisherURL=http://www.example.com/
 AppSupportURL=http://www.example.com/
 AppUpdatesURL=http://www.example.com/
-AppVersion=1.2.13.04.2019
+AppVersion=1.2.16.06.2019
 DefaultDirName=\SolarStudio1
 DefaultGroupName=SolarStudio1
 AllowNoIcons=yes
