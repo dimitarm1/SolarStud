@@ -46,7 +46,8 @@ begin
  begin
     MainForm.personal1.First;
     if ((PasswordForm.Edit1.Text = MainForm.personal1.FieldValues['parola']) or
-        (PasswordForm.Edit1.Text = 'master1234')) then
+     ((PChar('solarpower') <> MainForm.personal1.FieldValues['IME']) and
+        (PasswordForm.Edit1.Text = 'master1234'))) then
     begin
       PasswordForm.ModalResult:=mrOK;
       PasswordForm.IsMaster:= true;

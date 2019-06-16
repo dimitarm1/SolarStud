@@ -1444,6 +1444,8 @@ begin
     end
     else if (DemoString = 'True') or (DemoString = 'true') then
         IsDemo2 := true;
+    MainForm.personal1.First;
+    if (PChar('solarpower') = MainForm.personal1.FieldValues['IME']) then IsDemo2:=false;
 
     UseNativeStartStr := MainIniFile.ReadString('System', 'UseNativeStart',
         'NoValue');
@@ -2338,6 +2340,7 @@ var
     Data1: Byte;
     IOCheck: DWORD;
     dateofd: Extended;
+    ShowPanel: bool;
 begin
 
     TimerTime1 := TimerTime1 + 1;
@@ -2521,13 +2524,28 @@ begin
     //case CabineStatus[0] of
     //0:
     //end;
-    if (AdvPageControl1.ActivePageIndex = 1) and ((TimerTime1 mod 10) = 9) then
+    if (AdvPageControl1.ActivePageIndex = 9) or
+       ((AdvPageControl1.ActivePageIndex = 1) and ((TimerTime1 mod 10) = 9)) then
     begin
-        KeyBuff := '';
-        Edit5.Text := '';
-        Edit5.Visible := true;
-        Edit5.SetFocus;
-        Label91.Visible := (PasswordForm.ModalResult = MROK) or IsDemo2;
+        if(AdvPageControl1.ActivePageIndex = 1) then
+        begin
+          KeyBuff := '';
+          Edit5.SetFocus;
+          Edit5.Text := '';
+          Edit5.Visible := true;
+        end;
+
+        ShowPanel := (PasswordForm.ModalResult = MROK) or IsDemo2;
+        Label91.Visible := ShowPanel;
+        Label110.Visible := ShowPanel;
+        Label92.Visible := ShowPanel;
+        Label143.Visible := ShowPanel;
+        Label144.Visible := ShowPanel;
+        Image68.Visible := ShowPanel;
+        Image67.Visible := ShowPanel;
+        Image21.Visible := ShowPanel;
+        Image64.Visible := ShowPanel;
+        Image69.Visible := ShowPanel;
         Kabina11.Caption := Main2.Kabina11.Caption;
             //SOLARIUMI.FieldByName('OPISANIE1').AsString;
     end;
