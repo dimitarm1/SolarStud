@@ -34,7 +34,7 @@ uses Windows, SysUtils, DateUtils, Classes, Graphics, Forms, Controls, Menus,
     Wwdbcomb, Planner, PlanSimpleEdit, PlanItemEdit, DBPlanner, AdvEdBtn,
     PlannerDatePicker, LMDCustomListComboBox, LMDListComboBox,
     LMDDBListComboBox,
-    RzCmboBx, Wwdbigrd, RzEdit, RzDBEdit, LMDCustomControl;
+    RzCmboBx, Wwdbigrd, RzEdit, RzDBEdit, LMDCustomControl, madExceptVcl;
 
 type
     TSLE4442Card = packed record
@@ -753,6 +753,7 @@ type
     StatusShape8: TShape;
     Kabina8minuti: TLabel;
     Kabina8cena: TLabel;
+    MadExceptionHandler1: TMadExceptionHandler;
         procedure Label1Click(Sender: TObject);
         procedure FormCreate(Sender: TObject);
         procedure Timer1Timer(Sender: TObject);
@@ -966,7 +967,6 @@ type
         procedure ProtokolFilterEditChange(Sender: TObject);
     procedure Label171Click(Sender: TObject);
     procedure TipNaRabotaComboChange(Sender: TObject);
-
     private
 
         { Private declarations }
@@ -5832,6 +5832,8 @@ begin
     AdvPageControl1.ActivePageIndex := 2;
     wwDBGrid12RowChanged(nil);
 end;
+
+
 
 procedure TMainForm.ManuStoki17Show(Sender: TObject);
 begin

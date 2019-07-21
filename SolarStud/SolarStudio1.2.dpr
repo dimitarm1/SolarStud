@@ -1,6 +1,11 @@
 program SolarStudio1_2;
 
 uses
+  madExcept,
+  madLinkDisAsm,
+  madListHardware,
+  madListProcesses,
+  madListModules,
   Forms,
   classes,
   Messages,
