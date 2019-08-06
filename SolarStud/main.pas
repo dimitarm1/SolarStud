@@ -2654,8 +2654,6 @@ end;
 
 procedure FillValues1();
 var
-    IsOK: Boolean;
-    Temp: Integer;
     _Q4: TABSQuery;
     stoka: Integer;
 begin
@@ -2674,16 +2672,16 @@ begin
         if not Q1.Active then
             Q1.Open;
 
-        IsOK := Q1.Locate('SOLARIUM;MINUTA', VarArrayOf([IndexSol, TimeSet]),
-            []);
-        try
-          PriceCash := Q1.FieldValues['CENA'];
-        except
+        if Q1.Locate('SOLARIUM;MINUTA', VarArrayOf([IndexSol, TimeSet]),[]) then begin
+          try
+            PriceCash := Q1.FieldValues['CENA'];
+          except
+            PriceCash := 0;
+          end;
+        end
+        else  begin
           PriceCash := 0;
         end;
-        Temp := Q1.RecNo;
-        if IsOK then
-            PriceCash := PriceCash + 0.0000001;
         if (Qklienti.FieldValues['nomer'] > 0) then
         begin
             _Q4 := TABSQuery.Create(nil);
@@ -3237,6 +3235,7 @@ begin
     PaidCard := Roundto(PaidCard, -2);
     PaidChipCard := Roundto(PaidChipCard, -2);
     PaidCash := Roundto(PaidCash, -2);
+
     if PriceCash - (PaidCard * (PriceCash / PriceCard) + ToBePaidCash +
         PaidChipCard * (PriceCash / PriceCard)) < 0.03 then
         if PaidChipCard > 0 then
@@ -3270,12 +3269,10 @@ begin
                 PaidChipCard := 0;
                 sol1.Rollback;
                 exit;
-            end
-            else
-        end;
-    if(PriceCard = 0) then PriceCard := 0.0001;
+            end;
+      end;
     if PriceCash - (PaidCard * (PriceCash / PriceCard) + ToBePaidCash +
-        PaidChipCard * (PriceCash / PriceCard)) < 0.02 then
+        PaidChipCard * (PriceCash / PriceCard)) < 0.03 then
     begin
 //        LastTime[(IndexSol - 1)] := TimeSet;
         CabineSetTime[(IndexSol - 1)] := TimeSet;
