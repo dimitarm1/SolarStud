@@ -235,7 +235,7 @@ begin
         Label4.Caption := 'минути';
         nomer := 0;
         maxnomer := 0;
-        if card.StudioNomer > 0 then
+        if (card.StudioNomer > 0) or (MainForm.Internet.FieldValues['StudioNomer'] = 0) then
         begin
             if card.StudioNomer = MainForm.Internet.FieldValues['StudioNomer']
                 then
