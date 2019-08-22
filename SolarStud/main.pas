@@ -1168,6 +1168,18 @@ begin
                 PChar(GetMessage('M2')), MB_OK);
             // except  Application.MessageBox('Грешка в базата данни - Възстановете от архивно копие!', 'ГРЕШКА', MB_OK);
         end;
+        _Q.SQL.SetText(PChar('SELECT * FROM KLIENTI'));
+        _Q.Open();
+        if _Q.FieldDefs.IndexOf('FIRMA') < 0 then
+        begin
+            _Q.Close();
+            _Q.SQL.SetText(PChar('alter table klienti add  (FIRMA INTEGER,' +
+                         ' RANG CHAR(1) DEFAULT "S",' +
+                         ' NOMER2 SMALLINT, ' +
+                         'INDEX FIRMA (FIRMA))'));
+            _Q.ExecSQL;
+            _Q.Close();
+        end;
         _Q.SQL.SetText(PChar('UPDATE KLIENTI SET FIRMA=0' +
             ' WHERE (firma IS NULL) and NOT(NOMER is NULL)'));
         _Q.ExecSQL;

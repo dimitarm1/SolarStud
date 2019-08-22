@@ -880,6 +880,12 @@ begin
                         end;
 
                     end;
+                end
+                else
+                begin
+                   MainForm.QKlienti.Active := False;
+                   MainForm.QKlienti.SQL.SetText(PChar('SELECT * FROM klienti WHERE NOMER = 999999999'));
+                   MainForm.QKlienti.Active := True;
                 end;
                 MainForm.Label71.Visible := True;
                 MainForm.Label72.Visible := True;

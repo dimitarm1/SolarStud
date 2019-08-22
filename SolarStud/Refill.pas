@@ -269,7 +269,7 @@ begin
            // MainForm.CHIPKARTI.Post;
             //Card.CardNomer:= MainForm.CHIPKARTI.FieldValues['KARTANOMER'];
             //Edit1.Text:='Нова';
-            MaskEdit2.Text := IntToStr2(MainForm.Qklienti.FieldValues['nomer']);
+            MaskEdit2.Text := IntToStr(Card.CardNomer); //IntToStr2(MainForm.Qklienti.FieldValues['nomer']);
             Edit1.Text := MaskEdit2.Text;
         end;
     end;
