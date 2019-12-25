@@ -34,7 +34,8 @@ uses Windows, SysUtils, DateUtils, Classes, Graphics, Forms, Controls, Menus,
     Wwdbcomb, Planner, PlanSimpleEdit, PlanItemEdit, DBPlanner, AdvEdBtn,
     PlannerDatePicker, LMDCustomListComboBox, LMDListComboBox,
     LMDDBListComboBox,
-    RzCmboBx, Wwdbigrd, RzEdit, RzDBEdit, LMDCustomControl, madExceptVcl;
+    RzCmboBx, Wwdbigrd, RzEdit, RzDBEdit, LMDCustomControl, madExceptVcl,
+  LMDPNGImage;
 
 type
     TSLE4442Card = packed record
