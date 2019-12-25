@@ -968,6 +968,13 @@ type
         procedure ProtokolFilterEditChange(Sender: TObject);
     procedure Label171Click(Sender: TObject);
     procedure TipNaRabotaComboChange(Sender: TObject);
+    procedure LogoEkran1Show(Sender: TObject);
+    procedure DrugiNastroiki15Show(Sender: TObject);
+    procedure FirmiISluziteli3Show(Sender: TObject);
+    procedure IzborNaVreme5Show(Sender: TObject);
+    procedure Menu6Show(Sender: TObject);
+    procedure NachalnoUstanoviavane10Show(Sender: TObject);
+    procedure OsnovniNastroiki14Show(Sender: TObject);
     private
 
         { Private declarations }
@@ -3673,6 +3680,11 @@ begin
 
 end;
 
+procedure TMainForm.DrugiNastroiki15Show(Sender: TObject);
+begin
+  Image52.Picture := Image1.Picture;
+end;
+
 procedure TMainForm.PrintDayReportClick(Sender: TObject);
 begin
 
@@ -4267,6 +4279,18 @@ begin
     end;
 end;
 
+procedure TMainForm.LogoEkran1Show(Sender: TObject);
+begin
+  if(FileExists('images\\screens\background.jpg')) then
+  begin
+    try
+      Image1.Picture.LoadFromFile('images\\screens\background.jpg');
+    finally
+
+    end;
+  end;
+end;
+
 procedure TMainForm.calcKasaPaid;
 var
     DiscountFirmi: integer;
@@ -4554,7 +4578,7 @@ procedure TMainForm.Grafik23Show(Sender: TObject);
 var
     I: Integer;
 begin
-
+    Image7.Picture := Image1.Picture;
     USLUGITE.Active := false;
     USLUGITE.Active := true;
     Planner1.Sidebar.Font.Size := 4;
@@ -4646,12 +4670,18 @@ end;
 
 procedure TMainForm.OsnovenEkran2Show(Sender: TObject);
 begin
+    Image2.Picture := Image1.Picture;
     KeyBuff := '';
     UpdatePageControl(0);
     PriceCard := 0;
     PriceCash := 0;
     Edit5.SetFocus;
     PriceCard := 0;
+end;
+
+procedure TMainForm.OsnovniNastroiki14Show(Sender: TObject);
+begin
+  Image51.Picture := Image1.Picture;
 end;
 
 procedure CalcPaid;
@@ -4731,6 +4761,7 @@ procedure TMainForm.SolariumiNastroiki7Show(Sender: TObject);
 var
     f1, f2: TField;
 begin
+Image11.Picture := Image1.Picture;
     f1 := SOLARIUMI.FindField('LICEVILASTDATE');
     f2 := SOLARIUMI.FindField('LAMPILASTDATE');
     if f1 = nil then
@@ -4849,6 +4880,7 @@ end;
 
 procedure TMainForm.KlubniKarti18Show(Sender: TObject);
 begin
+    Image58.Picture := Image1.Picture;
     QKarti.Active := True;
     QKlienti.Active := True;
     wwDBGrid6.Columns[1].ReadOnly := not (PasswordForm.ModalResult = mrOK);
@@ -4861,6 +4893,11 @@ begin
         QKlienti.Post;
 end;
 
+procedure TMainForm.Menu6Show(Sender: TObject);
+begin
+  Image10.Picture := Image1.Picture;
+end;
+
 procedure TMainForm.MenuKasa16Hide(Sender: TObject);
 begin
     SLE4442Deinit();
@@ -4868,6 +4905,7 @@ end;
 
 procedure TMainForm.MenuKasa16Show(Sender: TObject);
 begin
+    Image55.Picture := Image1.Picture;  
     Memo1.Clear;
     Memo1.Lines.Add('Сума:');
     Memo1.Lines.Add('В брой:');
@@ -5082,12 +5120,18 @@ end;
 
 procedure TMainForm.IzborNaPlashtane4Show(Sender: TObject);
 begin
+    Image4.Picture := Image1.Picture;
     //AdvComboBox1.ItemIndex:=0;
     LMDMemo1.SetFocus;
     Edit1.Text := '0';
     LMDMemo1.Text := 'Няма плащане';
     SLE4442Init();
     Label137.Font.Color := clRed;
+end;
+
+procedure TMainForm.IzborNaVreme5Show(Sender: TObject);
+begin
+  Image5.Picture := Image1.Picture;
 end;
 
 procedure TMainForm.PlannerMaskDatePicker2Change(Sender: TObject);
@@ -5847,6 +5891,7 @@ end;
 
 procedure TMainForm.ManuStoki17Show(Sender: TObject);
 begin
+    Image56.Picture := Image1.Picture;
     Karti.Active := False;
     Karti.SQL.SetText(PChar('SELECT * FROM STOKI WHERE STOKAKOD < 0'));
     Karti.Active := True;
@@ -5886,6 +5931,11 @@ begin
     AddStokaButtonClick(0);
 end;
 
+procedure TMainForm.NachalnoUstanoviavane10Show(Sender: TObject);
+begin
+  Image19.Picture := Image1.Picture;
+end;
+
 procedure TMainForm.ChipKarti19Hide(Sender: TObject);
 begin
     SLE4442Deinit();
@@ -5893,6 +5943,7 @@ end;
 
 procedure TMainForm.ChipKarti19Show(Sender: TObject);
 begin
+    Image12.Picture := Image1.Picture;
     if (GetStudioWorkType() < 3) then
     begin
       //  NovKlientButton.Visible := false;
@@ -6361,6 +6412,7 @@ end;
 
 procedure TMainForm.SolariumiInfo8Show(Sender: TObject);
 begin
+    Image15.Picture := Image1.Picture;
     ImageName := SOLARIUMI.FieldByName('PICTURE').AsString;
     if FileExists(ImageName) then
         Image16.Picture.LoadFromFile(ImageName);
@@ -6469,6 +6521,7 @@ end;
 
 procedure TMainForm.SolariumiCeni9Show(Sender: TObject);
 begin
+    Image17.Picture := Image1.Picture;
     Label117.Caption := IntToStr(SOLARIUMI.RecNo);
     QCeni.Active := False;
     QCeni.SQL.Text := ('select * from TABLICA_CENI where SOLARIUM = ' +
@@ -6489,6 +6542,7 @@ end;
 
 Procedure TMainForm.Protokol13Show(Sender: TObject);
 begin
+    Image50.Picture := Image1.Picture;
     DayTotal.Last;
     if PasswordForm.ModalResult = MROK then
         DBLUCombo1.Visible := true
@@ -6531,7 +6585,7 @@ begin
     // if MainForm.Label21.color=clblack then
     if(PasswordForm.IsMaster = true) then
     begin
-        Image32.Picture := image50.Picture;
+        Image32.Picture := image1.Picture;
         AdvPageControl1.ActivePageIndex := 10;
     end;
 end;
@@ -6594,6 +6648,11 @@ begin
     if QKLIENTI.State in [dsEdit, dsInsert] then
         QKLIENTI.Post;
 
+end;
+
+procedure TMainForm.FirmiISluziteli3Show(Sender: TObject);
+begin
+  Image6.Picture := Image1.Picture;
 end;
 
 procedure TMainForm.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -6662,6 +6721,7 @@ end;
 
 procedure TMainForm.Statistika12Show(Sender: TObject);
 begin
+    Image33.Picture := Image1.Picture;
     ComboBox1.Clear;
     ComboBox1.Text := GetMessage('M63');
     ComboBox1.Items.Add(GetMessage('M43'));
