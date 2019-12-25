@@ -755,6 +755,7 @@ type
     Kabina8minuti: TLabel;
     Kabina8cena: TLabel;
     MadExceptionHandler1: TMadExceptionHandler;
+    BMinimize: TButton;
         procedure Label1Click(Sender: TObject);
         procedure FormCreate(Sender: TObject);
         procedure Timer1Timer(Sender: TObject);
@@ -975,6 +976,7 @@ type
     procedure Menu6Show(Sender: TObject);
     procedure NachalnoUstanoviavane10Show(Sender: TObject);
     procedure OsnovniNastroiki14Show(Sender: TObject);
+    procedure BMinimizeClick(Sender: TObject);
     private
 
         { Private declarations }
@@ -2935,6 +2937,11 @@ end;
 procedure TMainForm.BitBtn6Click(Sender: TObject);
 begin
     PasswordForm.ShowModal;
+end;
+
+procedure TMainForm.BMinimizeClick(Sender: TObject);
+begin
+  Application.Minimize();
 end;
 
 procedure TMainForm.Imagepress1_MouseDown(Sender: TObject; Button: TMouseButton;
