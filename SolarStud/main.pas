@@ -168,7 +168,6 @@ type
         Label95: TLabel;
         DataSource2: TDataSource;
         Label8: TLMDLEDLabel;
-        Label9: TLMDLEDLabel;
         sol1: TABSDatabase;
         SOLARIUMI: TABSTable;
         Table3: TABSTable;
@@ -220,7 +219,6 @@ type
         Label108: TLabel;
         Label109: TLabel;
         Spravka1: TABSQuery;
-        Label110: TLabel;
         STOKI: TABSTable;
         KARTI: TABSQuery;
         DataSource6: TDataSource;
@@ -290,8 +288,6 @@ type
         Qklienti: TABSQuery;
         Qkarti: TABSQuery;
         Edit6: TEdit;
-        Label143: TLabel;
-        Label144: TLabel;
         DBLUCombo1: TPlannerMaskDatePicker;
         Edit5: TEdit;
         Kabina42: TLabel;
@@ -315,14 +311,12 @@ type
         Label70: TLabel;
         Bevel2: TBevel;
         Label71: TLabel;
-        Label72: TLabel;
         Label73: TLabel;
         DBEdit4: TDBEdit;
         Label93: TLabel;
         Label118: TLabel;
         DBEdit7: TDBEdit;
         DBEdit6: TDBEdit;
-        DBText4: TDBText;
         Label131: TLabel;
         DBComboBox6: TDBComboBox;
         Label132: TLabel;
@@ -418,11 +412,8 @@ type
         Imagepress5: TLMDLImage;
         Imagepress6: TLMDLImage;
         LMDImageList2: TLMDImageList;
-        Image68: TLMDLImage;
         Image67: TLMDLImage;
         Image64: TLMDLImage;
-        Image69: TLMDLImage;
-        Image21: TLMDLImage;
         Image128: TImage;
         LMDImageList3: TLMDImageList;
         LMDImageList4: TLMDImageList;
@@ -614,12 +605,8 @@ type
         Timer3: TTimer;
         maxday: TABSQuery;
         Plashtania: TABSQuery;
-        Label89: TLabel;
         Label145: TLabel;
-        Label159: TLabel;
         PosEdit: TLMDDBEdit;
-        SumaEdit: TLMDDBEdit;
-        PercentEdit: TLMDDBEdit;
         Image6: TImage;
         Label160: TLabel;
         LMDLImage141: TLMDLImage;
@@ -651,12 +638,10 @@ type
         DataSource19: TDataSource;
         wwDBGrid12: TwwDBGrid;
         DBNavigator2: TDBNavigator;
-        Label112: TLabel;
         RangCombo: TwwDBComboBox;
         wwDBGrid13: TwwDBGrid;
         LMDLImage22: TLMDLImage;
         Label163: TLabel;
-        FirmaCombo: TRzDBLookupComboBox;
     Grafik23: TAdvTabSheet;
         Image7: TImage;
         LMDLImage23: TLMDLImage;
@@ -693,7 +678,6 @@ type
         Label162: TLabel;
         CeniGrid: TwwDBGrid;
         LMDLImage24: TLMDLImage;
-        Label9A: TLMDLEDLabel;
         Label168: TLabel;
         PriceCardLabel4: TLMDLEDLabel;
         PriceCardLabel3: TLabel;
@@ -706,9 +690,7 @@ type
         TrackBar1: TTrackBar;
         LMDButton3: TLMDButton;
         PopalniCeniTableButton: TRzButton;
-        Label128: TLabel;
         ValidnostDate: TRzDBDateTimeEdit;
-        OncePerDayBox: TLMDDBCheckBox;
         Button111: TRzButton;
         ShowAllKlientsCb: TCheckBox;
         Label169: TLabel;
@@ -756,6 +738,8 @@ type
     Kabina8cena: TLabel;
     MadExceptionHandler1: TMadExceptionHandler;
     BMinimize: TButton;
+    Label72: TLabel;
+    DBText4: TDBText;
         procedure Label1Click(Sender: TObject);
         procedure FormCreate(Sender: TObject);
         procedure Timer1Timer(Sender: TObject);
@@ -2559,15 +2543,9 @@ begin
 
         ShowPanel := (PasswordForm.ModalResult = MROK) or IsDemo2;
         Label91.Visible := ShowPanel;
-        Label110.Visible := ShowPanel;
         Label92.Visible := ShowPanel;
-        Label143.Visible := ShowPanel;
-        Label144.Visible := ShowPanel;
-        Image68.Visible := ShowPanel;
         Image67.Visible := ShowPanel;
-        Image21.Visible := ShowPanel;
         Image64.Visible := ShowPanel;
-        Image69.Visible := ShowPanel;
         Kabina11.Caption := Main2.Kabina11.Caption;
             //SOLARIUMI.FieldByName('OPISANIE1').AsString;
     end;
@@ -2581,7 +2559,6 @@ begin
     begin
         ReadStatus;
         //    Label143.Caption:=DateToStr(Date);
-        Label144.Caption := TimeToStr(Time);
     end;
     if TimerTime1 > 1000 then
     begin
@@ -2750,10 +2727,7 @@ begin
                price:=Price - (Price *  Internet.FieldValues['DISCOUNT_PERCENT']/100);
          Price:=Price - (Price *  KARTICHIP.FieldValues['DISCOUNT']/100);
          Discount:= KARTICHIP.FieldValues['DISCOUNT']; }
-        Label9.Caption := ConvertCurr1(PriceCash);
-        Label9A.Caption := ConvertCurr1(PriceCard);
-        Label62.Caption := Label9.Caption;
-        PriceCardLabel4.Caption := Label9A.Caption;
+
         // Label63.Caption:=Label9.Caption;
         // Label64.Caption:='00.00';
     end;
@@ -5960,19 +5934,13 @@ begin
     Label137.Font.Color := clRed;
     if (PasswordForm.IsMaster = true) then
     begin
-        PercentEdit.enabled := true;
-        SumaEdit.enabled := true;
         PosEdit.enabled := true;
-        OncePerDayBox.enabled := true;
         ValidnostDate.enabled := true;
         ValidnostTime.enabled := true;
     end
     else
     begin
-        PercentEdit.enabled := false;
-        SumaEdit.enabled := false;
         PosEdit.enabled := false;
-        OncePerDayBox.enabled := false;
         ValidnostDate.enabled := false;
         ValidnostTime.enabled := false;
     end;
