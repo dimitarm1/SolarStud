@@ -338,7 +338,6 @@ type
         N1: TMenuItem;
         N2: TMenuItem;
         mMsg: TRichEdit;
-        LMDButton10: TLMDButton;
         LMDButton12: TLMDButton;
         LMDButton13: TLMDButton;
         LMDButton14: TLMDButton;
@@ -351,7 +350,6 @@ type
         Bclose: TButton;
         Chart1: TChart;
         QStatistika: TABSQuery;
-        LMDButton15: TLMDButton;
         RzURLLabel1: TRzURLLabel;
         Label64: TLabel;
         Timer2: TTimer;
@@ -544,9 +542,6 @@ type
         LMDLImage127: TLMDLImage;
         LMDLImage128: TLMDLImage;
         LMDLImage131: TLMDLImage;
-        LMDLImage34: TLMDLImage;
-        LMDLImage78: TLMDLImage;
-        LMDLImage79: TLMDLImage;
         LMDLImage106: TLMDLImage;
         LMDLImage107: TLMDLImage;
         Label88: TLabel;
@@ -1461,6 +1456,7 @@ begin
     MainForm.DBText7.Visible := False;
     MainForm.Label71.visible := False;
     MainForm.Label72.visible := False;
+    MainForm.Label9.visible := False;
     MainForm.Label156.Visible := False;
     MainForm.VipLabel.Visible := False;
     MainForm.Label158.Visible := False;
@@ -1484,6 +1480,7 @@ begin
     MainForm.DBText7.Visible := True;
     MainForm.Label71.visible := True;
     MainForm.Label72.visible := True;
+    MainForm.Label9.visible := True;
     MainForm.Label156.Visible := True;
     MainForm.Label155.Visible := True;
     MainForm.DBText13.Visible := True;
@@ -2319,7 +2316,7 @@ begin
 
     TimerTime1 := TimerTime1 + 1;
     // Label1.Caption:=IntToStr(TimerTime1);
-    if (AdvPageControl1.ActivePageIndex in [3, 15, 18]) then
+    if (AdvPageControl1.ActivePageIndex in [3, 4, 15, 18]) then
         SLE4442Timer3();
     if (AdvPageControl1.ActivePageIndex = 1) and (not Backuped) then
     begin
@@ -2649,7 +2646,7 @@ begin
         else  begin
           PriceCash := 0;
         end;
-        if (Qklienti.FieldValues['nomer'] > 0) then
+        if ((Qklienti.FieldValues['nomer'] > 0) and (Card.ConStatus > 0)) then
         begin
             _Q4 := TABSQuery.Create(nil);
             _Q4.DatabaseName := 'sol1';
@@ -2736,7 +2733,6 @@ begin
     else
         TimeSet := T;
     FillValues1();
-    CalcPaid();
 end;
 
 procedure TMainForm.Image9Click(Sender: TObject);
@@ -2852,23 +2848,44 @@ procedure TMainForm.Label10Click(Sender: TObject);
 var
     i: Integer;
 begin
-    AdvPageControl1.ActivePageIndex := 3;
-    PaymentOKLabel.Visible := false;
-    MainForm.Gauge2.Visible := false;
-    PaidCash := 0;
-    PaidCard := 0;
-    PaidChipCard := 0;
-    DiscountPrize := 0;
-    VipDiscount := 0;
-    CardNomer := 0;
-    BonusLabel.Caption := '0';
-    ToBePaidCash := 0;
-    for i := 0 to SizeOf(PoseshteniaPaid) do
-        PoseshteniaPaid[i] := 0;
-    PosPaid := 0;
-    BroiKartiPaid := 0;
-    HideKlInfo;
-    UpdatePageControl(1);
+    if((Card.ConStatus > 0) and (Card.ClientNomer > 0)) then
+    begin
+      PayChipCardClick( Sender);
+      if( ToBePaidCash > 0) then
+      begin
+        Application.MessageBox(PChar('Недостатъчни минути в картата!'),PChar('Warning'),MB_OK);
+      end
+      else
+      begin
+        PaymentOKLabelClick(sender);
+      end;
+    end
+    else
+    begin
+      CardNomer := 0;
+      PayCashButtonClick(Sender);
+      begin
+        PaymentOKLabelClick(sender);
+      end;
+    end;
+
+//    AdvPageControl1.ActivePageIndex := 3;
+//    PaymentOKLabel.Visible := false;
+//    MainForm.Gauge2.Visible := false;
+//    PaidCash := 0;
+//    PaidCard := 0;
+//    PaidChipCard := 0;
+//    DiscountPrize := 0;
+//    VipDiscount := 0;
+//    CardNomer := 0;
+//    BonusLabel.Caption := '0';
+//    ToBePaidCash := 0;
+//    for i := 0 to SizeOf(PoseshteniaPaid) do
+//        PoseshteniaPaid[i] := 0;
+//    PosPaid := 0;
+//    BroiKartiPaid := 0;
+//    HideKlInfo;
+//    UpdatePageControl(1);
 end;
 
 procedure TMainForm.CancelButtonClick(Sender: TObject);
@@ -3748,11 +3765,7 @@ var
 begin
     ToBePaidCash := PriceCash - (PaidCard * (PriceCash / PriceCard) +
         PaidChipCard * (PriceCash / PriceCard));
-    if VipDiscount + DiscountPrize < 100 then
-        PaidCash := ToBePaidCash - (ToBePaidCash * VipDiscount / 100) -
-            (ToBePaidCash * DiscountPrize / 100)
-    else
-        PaidCash := 0;
+    PaidCash := ToBePaidCash;
 
     Edit1.Text := ConvertCurr1(PaidCash);
     DecPart := Trunc(PaidCash * 100);
@@ -4320,6 +4333,7 @@ begin
             ADVComboBox1.Visible := True;
             ADVComboBox2.Visible := True;
             Label72.Visible := True;
+            Label9.visible := True;
             Label130.Visible := True;
             Label71.visible := True;
             Label119.Visible := True;
@@ -4369,33 +4383,33 @@ var
 begin
     PosPaid := 0;
     i := 0;
-    if AdvComboBox1.Visible then
-    begin
-        KartiBroi := QKarti.RecordCount;
-        while (i < KartiBroi) and (i < SizeOf(PoseshteniaPaid)) do
-        begin
-            if not (i = ADVComboBox2.ItemIndex) then
-                PosPaid := PoseshteniaPaid[i] + PosPaid;
-            i := i + 1;
-        end;
-        L := False;
-        Cena := SOLARIUMI.FieldValues['CENA'];
-        MainTime := SOLARIUMI.FieldValues['VREME'];
-        Klient := QKlienti.FieldValues['NOMER'];
-        Minutina1 := SOLARIUMI.FieldValues['MINUTINA1'];
-        KartaSuma := 0;
-        if (QKarti.Locate('KARTANOMER', StrToInt(AdvComboBox2.Text), [])) then
-            KartaSuma := QKarti.FieldValues['POSESHTENIA']
-        else
-            KartaSuma := 0;
-        if ADVComboBox1.ItemIndex > KartaSuma then
-            ADVComboBox1.ItemIndex := KartaSuma;
-        if (ADVComboBox1.ItemIndex + PosPaid) * Minutina1 > TimeSet then
-            ADVComboBox1.ItemIndex := (TimeSet div Minutina1) - PosPaid;
-        PoseshteniaPaid[ADVComboBox2.ItemIndex] := ADVComboBox1.ItemIndex;
-        PaidCard := (ADVComboBox1.ItemIndex + PosPaid) * Minutina1 * Cena;
-        PosPaid := ADVComboBox1.ItemIndex + PosPaid;
-    end;
+//    if AdvComboBox1.Visible then
+//    begin
+//        KartiBroi := QKarti.RecordCount;
+//        while (i < KartiBroi) and (i < SizeOf(PoseshteniaPaid)) do
+//        begin
+//            if not (i = ADVComboBox2.ItemIndex) then
+//                PosPaid := PoseshteniaPaid[i] + PosPaid;
+//            i := i + 1;
+//        end;
+//        L := False;
+//        Cena := SOLARIUMI.FieldValues['CENA'];
+//        MainTime := SOLARIUMI.FieldValues['VREME'];
+//        Klient := QKlienti.FieldValues['NOMER'];
+//        Minutina1 := SOLARIUMI.FieldValues['MINUTINA1'];
+//        KartaSuma := 0;
+//        if (QKarti.Locate('KARTANOMER', StrToInt(AdvComboBox2.Text), [])) then
+//            KartaSuma := QKarti.FieldValues['POSESHTENIA']
+//        else
+//            KartaSuma := 0;
+//        if ADVComboBox1.ItemIndex > KartaSuma then
+//            ADVComboBox1.ItemIndex := KartaSuma;
+//        if (ADVComboBox1.ItemIndex + PosPaid) * Minutina1 > TimeSet then
+//            ADVComboBox1.ItemIndex := (TimeSet div Minutina1) - PosPaid;
+//        PoseshteniaPaid[ADVComboBox2.ItemIndex] := ADVComboBox1.ItemIndex;
+//        PaidCard := (ADVComboBox1.ItemIndex + PosPaid) * Minutina1 * Cena;
+//        PosPaid := ADVComboBox1.ItemIndex + PosPaid;
+//    end;
     CalcPaid;
 end;
 
@@ -4620,12 +4634,8 @@ try
         Ostatak := (Card.Balans - (PaidChipCard)) /   (PriceCard/TimeSet);
 //            SOLARIUMI.FieldValues['CENA'];
         FmtStr(Result1, '%4.2f', [Ostatak]);
-        Label72.Caption := '' + Result1 + GetMessage('M28') + ' / ';
+        Label72.Caption := '' + Result1 + GetMessage('M28')
         //Label72.Caption:=''+ Result1+'минути / ';
-        Ostatak := (Card.Balans - (PaidChipCard));
-        FmtStr(Result1, '%4.2f', [Ostatak]);
-        Label72.Caption := Label72.Caption + '' + Result1 + GetMessage('M29');
-        //Label72.Caption:=Label72.Caption + ''+ Result1+'лв.';
     end;
   except
       // DEBUG!!! Za da niama garmezi
@@ -5009,6 +5019,13 @@ begin
   Image5.Picture := Image1.Picture;
   SLE4442Init();
   Label9.Caption := IntToStr(Card.ClientNomer);
+  if(card.ConStatus = 0) then
+  begin
+    Label72.Visible := false;
+    Label9.visible := False;
+  end;
+
+  FillValues1();
 end;
 
 procedure TMainForm.PlannerMaskDatePicker2Change(Sender: TObject);
@@ -5198,27 +5215,28 @@ begin
                 Application.MessageBox(PChar('Тази карта не може да бъде използвана в това студио!'), PChar(''), MB_OK);
                 exit;
             end;
-            if (KARTICHIP.FieldValues['ONCE_PERDAY'] = true) and
-                (Card.StudioNomer = Internet.FieldValues['STUDIONOMER']) then
-            begin
-                PLASHTANIA.Last;
-                Date := DateOf(Now);
-                while (PLASHTANIA.FieldValues['DATA'] = Date) and (PLASHTANIA.RecNo > 1) do
-                begin
-                    if ((PLASHTANIA.FieldValues['SOLARIUM'] > -1) and
-                        (PLASHTANIA.FieldValues['OTCHIPKARTA'] =
-                        KARTICHIP.FieldValues['KLIENTNOMER'])) then
-                    begin
-                        Application.MessageBox(PChar('Тази карта позволява само едно печене на ден!'), PChar(''), MB_OK);
-                        exit;
-                    end;
-                    PLASHTANIA.Prior;
-                end;
-            end;
+//            if (KARTICHIP.FieldValues['ONCE_PERDAY'] = true) and
+//                (Card.StudioNomer = Internet.FieldValues['STUDIONOMER']) then
+//            begin
+//                PLASHTANIA.Last;
+//                Date := DateOf(Now);
+//                while (PLASHTANIA.FieldValues['DATA'] = Date) and (PLASHTANIA.RecNo > 1) do
+//                begin
+//                    if ((PLASHTANIA.FieldValues['SOLARIUM'] > -1) and
+//                        (PLASHTANIA.FieldValues['OTCHIPKARTA'] =
+//                        KARTICHIP.FieldValues['KLIENTNOMER'])) then
+//                    begin
+//                        Application.MessageBox(PChar('Тази карта позволява само едно печене на ден!'), PChar(''), MB_OK);
+//                        exit;
+//                    end;
+//                    PLASHTANIA.Prior;
+//                end;
+//            end;
             PaidCash := 0;
             TobePaidCash := 0;
             Label71.visible := True;
             Label72.visible := True;
+            Label9.visible := True;
             if PriceCard = PriceCash then
                 PaidChipCard := PriceCard - (PaidCard + PaidCash)
             else

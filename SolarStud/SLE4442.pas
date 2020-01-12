@@ -936,6 +936,8 @@ begin
         begin
             MainForm.Label137.Caption := GetMessage('M83'); //'Няма Карта!';
             MainForm.Label137.Font.Color := clRed;
+            MainForm.Label9.Caption := '';
+            MainForm.Label72.Caption := '';
             VipDiscount := 0;
             DiscountPrize := 0;
             if PaidChipCard > 0 then

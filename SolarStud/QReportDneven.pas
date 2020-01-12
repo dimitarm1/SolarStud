@@ -22,8 +22,6 @@ type
     QRLabel3: TQRLabel;
     QRLabel4: TQRLabel;
     QRLabel5: TQRLabel;
-    QRDBText5: TQRDBText;
-    QRLabel7: TQRLabel;
     QRBand1: TQRBand;
     QRExpr1: TQRExpr;
     QRLabel9: TQRLabel;
@@ -42,9 +40,9 @@ type
     QRDBText13: TQRDBText;
     QRLabel16: TQRLabel;
     QRDBText15: TQRDBText;
-    QRLabel19: TQRLabel;
     QRLabel21: TQRLabel;
     QRLabel20: TQRLabel;
+    QRLabel6: TQRLabel;
     procedure QuickRep3AfterPreview(Sender: TObject);
     procedure QuickRep3StartPage(Sender: TCustomQuickRep);
     procedure DetailBand1BeforePrint(Sender: TQRCustomBand;

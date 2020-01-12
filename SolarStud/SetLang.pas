@@ -244,12 +244,10 @@ procedure SetLangText();
     NuliraneChipCartaButton.Caption:=GetButtonText('LMDB9');
 
     NovKlientButton.Caption:=GetButtonText('LMDB6');
-    LMDButton10.Caption:=GetButtonText('LMDB10');
     LMDButton12.Caption:=GetButtonText('LMDB12');
     LMDButton13.Caption:=GetButtonText('LMDB13');
     LMDButton14.Caption:=GetButtonText('LMDB14');
 //    LMDButton1.Caption:=GetButtonText('LMDB1');
-    LMDButton15.Caption:=GetButtonText('LMDB15');
 
     StatistikaBox1.Caption:=GetButtonText('SB1');
     LMDButton16.Caption:=GetButtonText('LMDB16');
@@ -371,7 +369,7 @@ procedure SetLangText();
     QRLabel4.Caption:= GetLabel('QRF3L4');
     QRLabel5.Caption:= GetLabel('QRF3L5');
 
-    QRLabel7.Caption:= GetLabel('QRF3L7');
+
 
     QRLabel9.Caption:= GetLabel('QRF3L9');
     QRLabel11.Caption:= GetLabel('QRF3L11');
@@ -595,12 +593,11 @@ procedure SaveLangText();
     //SaveButton('WWIB1', wwIButton1.Caption);
     SaveButton('LMDB9', NuliraneChipCartaButton.Caption);
     SaveButton('LMDB1', NovKlientButton.Caption);
-    SaveButton('LMDB10', LMDButton10.Caption);
     SaveButton('LMDB12', LMDButton12.Caption);
     SaveButton('LMDB13', LMDButton13.Caption);
     SaveButton('LMDB14', LMDButton14.Caption);
     //SaveButton('LMDB1', LMDButton1.Caption);
-    SaveButton('LMDB15', LMDButton15.Caption);
+
     //SaveButton('WWDBG1-0', wwDBGrid1.ControlType.Names[1]);
     //SaveButton('WWIB2', wwIButton2.Caption);
     //SaveButton('WWDBG10-0', wwDBGrid10.ControlType.Names[1]);
@@ -663,7 +660,7 @@ procedure SaveLangText();
      SaveLabel('QRF3L4',QRLabel4.Caption);
      SaveLabel('QRF3L5',QRLabel5.Caption);
 
-     SaveLabel('QRF3L7',QRLabel7.Caption);
+
 
      SaveLabel('QRF3L9',QRLabel9.Caption);
      SaveLabel('QRF3L11',QRLabel11.Caption);
