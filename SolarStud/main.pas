@@ -877,7 +877,6 @@ type
         procedure Timer4Timer(Sender: TObject);
         procedure PopalniCeniTableButtonClick(Sender: TObject);
         procedure AddStokaButtonClick(TipStoka: Integer);
-        procedure DobaviStokaBtnClick(Sender: TObject);
         procedure IztriiStokaBtnClick(Sender: TObject);
         procedure Label124Click(Sender: TObject);
         procedure wwDBGrid12RowChanged(Sender: TObject);
@@ -930,6 +929,8 @@ type
     procedure NachalnoUstanoviavane10Show(Sender: TObject);
     procedure OsnovniNastroiki14Show(Sender: TObject);
     procedure BMinimizeClick(Sender: TObject);
+    procedure DobaviStokaBtnMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
     private
 
         { Private declarations }
@@ -3615,9 +3616,14 @@ begin
     Qklienti.ReadOnly := False;
 end;
 
-procedure TMainForm.DobaviStokaBtnClick(Sender: TObject);
+procedure TMainForm.DobaviStokaBtnMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+  var
+    point1: TPoint;
 begin
-  KartiAsStokiMenu.Popup(213,530);
+   point1.X:=x; point1.Y:=y;
+   point1:=DobaviStokaBtn.ClientToScreen(point1);
+   KartiAsStokiMenu.Popup(Point1.X,Point1.Y);
 end;
 
 procedure TMainForm.DrugiNastroiki15Show(Sender: TObject);

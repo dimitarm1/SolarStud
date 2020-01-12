@@ -109,7 +109,7 @@ object Form1: TForm1
         Size.Values = (
           44.979166666666670000
           2.645833333333333000
-          82.020833333333340000
+          82.020833333333330000
           105.833333333333300000)
         Alignment = taLeftJustify
         AlignToBand = False
@@ -134,8 +134,8 @@ object Form1: TForm1
         Size.Values = (
           44.979166666666670000
           341.312500000000000000
-          82.020833333333340000
-          68.791666666666680000)
+          82.020833333333330000
+          68.791666666666670000)
         Alignment = taLeftJustify
         AlignToBand = False
         AutoSize = True
@@ -158,8 +158,8 @@ object Form1: TForm1
         Frame.DrawRight = False
         Size.Values = (
           44.979166666666670000
-          886.354166666666800000
-          82.020833333333340000
+          886.354166666666700000
+          82.020833333333330000
           137.583333333333300000)
         Alignment = taLeftJustify
         AlignToBand = False
@@ -184,7 +184,7 @@ object Form1: TForm1
         Size.Values = (
           44.979166666666670000
           1060.979166666667000000
-          82.020833333333340000
+          82.020833333333330000
           116.416666666666700000)
         Alignment = taLeftJustify
         AlignToBand = False
@@ -230,10 +230,10 @@ object Form1: TForm1
         Frame.DrawLeft = False
         Frame.DrawRight = False
         Size.Values = (
-          66.145833333333340000
-          656.166666666666800000
+          66.145833333333330000
+          656.166666666666700000
           0.000000000000000000
-          661.458333333333400000)
+          661.458333333333300000)
         Alignment = taLeftJustify
         AlignToBand = False
         AutoSize = True
@@ -363,7 +363,7 @@ object Form1: TForm1
         Frame.DrawRight = False
         Size.Values = (
           44.979166666666670000
-          883.708333333333400000
+          883.708333333333300000
           15.875000000000000000
           158.750000000000000000)
         Alignment = taLeftJustify
@@ -417,7 +417,7 @@ object Form1: TForm1
           44.979166666666670000
           2.645833333333333000
           55.562500000000000000
-          84.666666666666680000)
+          84.666666666666670000)
         Alignment = taLeftJustify
         AlignToBand = False
         AutoSize = True
@@ -446,7 +446,7 @@ object Form1: TForm1
         Frame.DrawRight = False
         Size.Values = (
           44.979166666666670000
-          320.145833333333400000
+          320.145833333333300000
           55.562500000000000000
           119.062500000000000000)
         Alignment = taLeftJustify
@@ -546,7 +546,7 @@ object Form1: TForm1
         AlignToBand = False
         AutoSize = False
         AutoStretch = True
-        Caption = #1086#1090' '#1095#1080#1087'-'#1082#1072#1088#1090#1072' '#1085#1103#1084#1072
+        Caption = #1086#1090' '#1074#1072#1091#1095#1077#1088' - '#1085#1103#1084#1072
         Color = clWhite
         Font.Charset = RUSSIAN_CHARSET
         Font.Color = clWindowText
@@ -561,7 +561,7 @@ object Form1: TForm1
       object QRLabel12: TQRLabel
         Left = 255
         Top = 6
-        Width = 52
+        Width = 68
         Height = 17
         Frame.Color = clBlack
         Frame.DrawTop = False
@@ -572,12 +572,12 @@ object Form1: TForm1
           44.979166666666670000
           674.687500000000000000
           15.875000000000000000
-          137.583333333333300000)
+          179.916666666666700000)
         Alignment = taLeftJustify
         AlignToBand = False
         AutoSize = True
         AutoStretch = False
-        Caption = #1055#1083#1072#1097#1072#1085#1080#1103
+        Caption = #1048#1085#1092#1086#1088#1084#1072#1094#1080#1103
         Color = clWhite
         Font.Charset = RUSSIAN_CHARSET
         Font.Color = clWindowText
@@ -624,7 +624,7 @@ object Form1: TForm1
         Size.Values = (
           44.979166666666670000
           1651.000000000000000000
-          42.333333333333340000
+          42.333333333333330000
           121.708333333333300000)
         Alignment = taLeftJustify
         AlignToBand = False

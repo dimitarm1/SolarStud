@@ -370,9 +370,9 @@ procedure SetLangText();
     QRLabel3.Caption:= GetLabel('QRF3L3');
     QRLabel4.Caption:= GetLabel('QRF3L4');
     QRLabel5.Caption:= GetLabel('QRF3L5');
-    QRLabel6.Caption:= GetLabel('QRF3L6');
+
     QRLabel7.Caption:= GetLabel('QRF3L7');
-    QRLabel8.Caption:= GetLabel('QRF3L8');
+
     QRLabel9.Caption:= GetLabel('QRF3L9');
     QRLabel11.Caption:= GetLabel('QRF3L11');
     QRLabel12.Caption:= GetLabel('QRF3L12');
@@ -662,9 +662,9 @@ procedure SaveLangText();
      SaveLabel('QRF3L3',QRLabel3.Caption);
      SaveLabel('QRF3L4',QRLabel4.Caption);
      SaveLabel('QRF3L5',QRLabel5.Caption);
-     SaveLabel('QRF3L6',QRLabel6.Caption);
+
      SaveLabel('QRF3L7',QRLabel7.Caption);
-     SaveLabel('QRF3L8',QRLabel8.Caption);
+
      SaveLabel('QRF3L9',QRLabel9.Caption);
      SaveLabel('QRF3L11',QRLabel11.Caption);
      SaveLabel('QRF3L12',QRLabel12.Caption);

@@ -22,12 +22,8 @@ type
     QRLabel3: TQRLabel;
     QRLabel4: TQRLabel;
     QRLabel5: TQRLabel;
-    QRLabel6: TQRLabel;
-    QRDBText4: TQRDBText;
     QRDBText5: TQRDBText;
     QRLabel7: TQRLabel;
-    QRLabel8: TQRLabel;
-    QRDBText6: TQRDBText;
     QRBand1: TQRBand;
     QRExpr1: TQRExpr;
     QRLabel9: TQRLabel;
@@ -45,10 +41,6 @@ type
     QRDBText12: TQRDBText;
     QRDBText13: TQRDBText;
     QRLabel16: TQRLabel;
-    QRLabel17: TQRLabel;
-    QRDBText10: TQRDBText;
-    QRLabel18: TQRLabel;
-    QRDBText14: TQRDBText;
     QRDBText15: TQRDBText;
     QRLabel19: TQRLabel;
     QRLabel21: TQRLabel;
