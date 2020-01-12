@@ -27,11 +27,11 @@ object RefillForm: TRefillForm
     Style = sbStretch
   end
   object Label1: TLabel
-    Left = 29
-    Top = 19
-    Width = 80
+    Left = 20
+    Top = 20
+    Width = 89
     Height = 22
-    Caption = #1050#1072#1088#1090#1072'  '#8470
+    Caption = #1042#1072#1091#1095#1077#1088' '#8470
     Font.Charset = RUSSIAN_CHARSET
     Font.Color = clBlack
     Font.Height = -19
@@ -64,47 +64,17 @@ object RefillForm: TRefillForm
     Pen.Style = psInsideFrame
     Pen.Width = 4
   end
-  object Label2: TLabel
-    Left = 24
-    Top = 213
-    Width = 140
-    Height = 22
-    Caption = #1062#1077#1085#1072' '#1085#1072' '#1082#1072#1088#1090#1072#1090#1072
-    Font.Charset = RUSSIAN_CHARSET
-    Font.Color = clBlack
-    Font.Height = -19
-    Font.Name = 'Arial'
-    Font.Style = []
-    ParentFont = False
-    Transparent = True
-  end
   object Label5: TLabel
     Left = 24
     Top = 241
-    Width = 219
+    Width = 175
     Height = 22
-    Caption = #1057#1091#1084#1072' '#1079#1072#1088#1077#1076#1077#1085#1072' '#1074' '#1082#1072#1088#1090#1072#1090#1072
+    Caption = #1052#1080#1085#1091#1090#1080' '#1074#1098#1074' '#1074#1072#1091#1095#1077#1088#1072
     Font.Charset = RUSSIAN_CHARSET
     Font.Color = clBlack
     Font.Height = -19
     Font.Name = 'Arial'
     Font.Style = []
-    ParentFont = False
-    Transparent = True
-  end
-  object DBText2: TDBText
-    Left = 229
-    Top = 213
-    Width = 101
-    Height = 26
-    Alignment = taRightJustify
-    DataField = 'STOKACENA'
-    DataSource = MainForm.DataSource6
-    Font.Charset = RUSSIAN_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -19
-    Font.Name = 'Arial'
-    Font.Style = [fsItalic]
     ParentFont = False
     Transparent = True
   end
@@ -141,9 +111,9 @@ object RefillForm: TRefillForm
   object Label4: TLabel
     Left = 88
     Top = 153
-    Width = 134
+    Width = 140
     Height = 22
-    Caption = #1042#1080#1076' '#1085#1072' '#1082#1072#1088#1090#1072#1090#1072':'
+    Caption = #1042#1080#1076' '#1085#1072' '#1074#1072#1091#1095#1077#1088#1072':'
     Font.Charset = RUSSIAN_CHARSET
     Font.Color = clBlack
     Font.Height = -19

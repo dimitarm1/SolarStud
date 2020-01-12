@@ -20,9 +20,7 @@ type
         Panel2: TPanel;
         Timer1: TTimer;
         DBEdit1: TDBEdit;
-        Label2: TLabel;
         Label5: TLabel;
-        DBText2: TDBText;
         Edit1: TMaskEditEx;
         DBText1: TDBText;
         DBLUCombo2: TDBLUCombo;

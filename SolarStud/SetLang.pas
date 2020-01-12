@@ -16,9 +16,12 @@ implementation
   uses main,  Password,QReportKlienti, Refill,
   QReportSolariumiNastroiki, QReportDneven,  Stoki,NotShalter;
    var i:integer;
+   Temp: string;
 procedure InitLang();
  begin
+  Temp := ExtractFilePath(application.ExeName)+'Language.ini';
   LangIniFile:=TIniFile.Create(ExtractFilePath(application.ExeName)+'Language.ini');
+  Temp := '';
  end;
 Procedure EndLang();
  begin
@@ -67,17 +70,11 @@ procedure SetLangText();
     Label11.Caption:=GetLabel('L11');
     Label12.Caption:=GetLabel('L12');
     Label13.Caption:=GetLabel('L13');
-    Label14.Caption:=GetLabel('L14');
-    Label15.Caption:=GetLabel('L15');
+
     Label16.Caption:=GetLabel('L16');
     Label17.Caption:=GetLabel('L17');
-    Label18.Caption:=GetLabel('L18');
-    Label19.Caption:=GetLabel('L19');
-    Label20.Caption:=GetLabel('L20');
     Label21.Caption:=GetLabel('L21');
     Label22.Caption:=GetLabel('L22');
-    Label23.Caption:=GetLabel('L23');
-    Label24.Caption:=GetLabel('L24');
     Label25.Caption:=GetLabel('L25');
     Label26.Caption:=GetLabel('L26');
     Label27.Caption:=GetLabel('L27');
@@ -179,7 +176,6 @@ procedure SetLangText();
     Label70.Caption:=GetLabel('L70');
     Label71.Caption:=GetLabel('L71');
     Label72.Caption:=GetLabel('L72');
-    Label73.Caption:=GetLabel('L73');
     Label93.Caption:=GetLabel('L93');
     Label118.Caption:=GetLabel('L118');
     Label131.Caption:=GetLabel('L131');
@@ -202,7 +198,6 @@ procedure SetLangText();
     //PopupMenu2: TPopupMenu;
     N3.Caption:= GetMenuItem('N3');
     N4.Caption:= GetMenuItem('N4');
-    N5.Caption:= GetMenuItem('N5');
    // PopupMenu3: TPopupMenu;
     Label64.Caption:=GetLabel('L64');
     Label81.Caption:=GetLabel('L81');
@@ -413,7 +408,7 @@ procedure SetLangText();
    with RefillForm do //Refill
     begin
     Label1.Caption:= GetLabel('RFL1');
-    Label2.Caption:= GetLabel('RFL2');
+
     Label5.Caption:= GetLabel('RFL5');
     Label3.Caption:= GetLabel('RFL3');
     Label4.Caption:= GetLabel('RFL4');
@@ -435,17 +430,10 @@ procedure SaveLangText();
     SaveLabel('L11',Label11.Caption);
     SaveLabel('L12',  Label12.Caption);
     SaveLabel('L13',  Label13.Caption);
-    SaveLabel('L14',  Label14.Caption);
-    SaveLabel('L15',  Label15.Caption);
     SaveLabel('L16',  Label16.Caption);
     SaveLabel('L17',  Label17.Caption);
-    SaveLabel('L18',  Label18.Caption);
-    SaveLabel('L19',  Label19.Caption);
-    SaveLabel('L20',  Label20.Caption);
     SaveLabel('L21',  Label21.Caption);
     SaveLabel('L22',  Label22.Caption);
-    SaveLabel('L23',  Label23.Caption);
-    SaveLabel('L24',  Label24.Caption);
     SaveLabel('L25',  Label25.Caption);
     SaveLabel('L26',  Label26.Caption);
     SaveLabel('L27',  Label27.Caption);
@@ -535,13 +523,11 @@ procedure SaveLangText();
     SaveLabel('L148',  Label148.Caption);
     SaveLabel('L149',  Label149.Caption);
     SaveLabel('L58',  Label58.Caption);
-    SaveLabel('L59',  Label59.Caption);
     SaveLabel('L60',  Label60.Caption);
     SaveLabel('L69',  Label69.Caption);
     SaveLabel('L70',  Label70.Caption);
     SaveLabel('L71',  Label71.Caption);
     SaveLabel('L72',  Label72.Caption);
-    SaveLabel('L73',  Label73.Caption);
     SaveLabel('L93',  Label93.Caption);
     SaveLabel('L118',  Label118.Caption);
     SaveLabel('L131',  Label131.Caption);
@@ -561,7 +547,6 @@ procedure SaveLangText();
     //PopupMenu2: TPopupMenu;
     SaveMenu('N3',  N3.Caption) ;
     SaveMenu('N4',  N4.Caption) ;
-    SaveMenu('N5',  N5.Caption) ;
    // PopupMenu3: TPopupMenu;
     SaveLabel('L64',  Label64.Caption);
     SaveLabel('L81',  Label81.Caption);
@@ -713,7 +698,6 @@ procedure SaveLangText();
    with RefillForm do //Refill
     begin
      SaveLabel('RFL1',Label1.Caption);
-     SaveLabel('RFL2',Label2.Caption);
      SaveLabel('RFL5',Label5.Caption);
      SaveLabel('RFL3',Label3.Caption);
      SaveLabel('RFL4',Label4.Caption);

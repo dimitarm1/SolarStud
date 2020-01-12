@@ -69,17 +69,10 @@ type
         Image11: TImage;
         Label12: TLabel;
         Label13: TLabel;
-        Label14: TLabel;
-        Label15: TLabel;
         Label16: TLabel;
         Label17: TLabel;
-        Label18: TLabel;
-        Label19: TLabel;
-        Label20: TLabel;
         Label21: TLabel;
         Label22: TLabel;
-        Label23: TLabel;
-        Label24: TLabel;
         Label25: TLabel;
         Label26: TLabel;
         Label27: TLabel;
@@ -303,7 +296,6 @@ type
         Label148: TLabel;
         Label149: TLabel;
         Label58: TLabel;
-        Label59: TLabel;
         Label60: TLabel;
         DataSource14: TDataSource;
         AdvComboBox2: TAdvComboBox;
@@ -311,8 +303,6 @@ type
         Label70: TLabel;
         Bevel2: TBevel;
         Label71: TLabel;
-        Label73: TLabel;
-        DBEdit4: TDBEdit;
         Label93: TLabel;
         Label118: TLabel;
         DBEdit7: TDBEdit;
@@ -356,7 +346,6 @@ type
         KartiAsStokiMenu: TPopupMenu;
         N3: TMenuItem;
         N4: TMenuItem;
-        N5: TMenuItem;
         PopupMenu3: TPopupMenu;
         AddressComboBox: TDBComboBox;
         Bclose: TButton;
@@ -449,7 +438,6 @@ type
         LMDLImage43: TLMDLImage;
         LMDLImage44: TLMDLImage;
         LMDLImage45: TLMDLImage;
-        LMDLImage47: TLMDLImage;
         LMDLImage48: TLMDLImage;
         LMDLImage49: TLMDLImage;
         LMDLImage50: TLMDLImage;
@@ -474,16 +462,9 @@ type
         LMDLImage69: TLMDLImage;
         LMDLImage71: TLMDLImage;
         LMDLImage72: TLMDLImage;
-        LMDLImage73: TLMDLImage;
-        LMDLImage74: TLMDLImage;
-        LMDLImage75: TLMDLImage;
         LMDLImage76: TLMDLImage;
-        LMDLImage77: TLMDLImage;
         LMDLImage84: TLMDLImage;
-        LMDLImage85: TLMDLImage;
         LMDLImage86: TLMDLImage;
-        LMDLImage87: TLMDLImage;
-        LMDLImage88: TLMDLImage;
         LMDLImage89: TLMDLImage;
         LMDLImage90: TLMDLImage;
         LMDLImage91: TLMDLImage;
@@ -560,9 +541,6 @@ type
         LMDLImage137: TLMDLImage;
         LMDLImage138: TLMDLImage;
         LMDLImage126: TLMDLImage;
-        LMDLImage1: TLMDLImage;
-        LMDLImage37: TLMDLImage;
-        LMDLImage38: TLMDLImage;
         LMDLImage127: TLMDLImage;
         LMDLImage128: TLMDLImage;
         LMDLImage131: TLMDLImage;
@@ -622,18 +600,13 @@ type
         Timer4: TTimer;
         DataSource17: TDataSource;
         QCeni: TABSQuery;
-        Label28: TLabel;
         StokiteTab: TAdvPageControl;
         AdvTabSheet20: TAdvTabSheet;
-        AdvTabSheet21: TAdvTabSheet;
-        AdvTabSheet22: TAdvTabSheet;
-        wwDBGrid4: TwwDBGrid;
         wwDBGrid3: TwwDBGrid;
         Label124: TLabel;
         DobaviStokaBtn: TLabel;
         USLUGITE: TABSQuery;
         DataSource18: TDataSource;
-        wwDBGrid11: TwwDBGrid;
         Firmite: TABSQuery;
         DataSource19: TDataSource;
         wwDBGrid12: TwwDBGrid;
@@ -676,7 +649,6 @@ type
         LMDSimpleLabel1: TLMDSimpleLabel;
         LMDSimpleLabel5: TLMDSimpleLabel;
         Label162: TLabel;
-        CeniGrid: TwwDBGrid;
         LMDLImage24: TLMDLImage;
         Label168: TLabel;
         PriceCardLabel4: TLMDLEDLabel;
@@ -689,7 +661,6 @@ type
         StatusShape6: TShape;
         TrackBar1: TTrackBar;
         LMDButton3: TLMDButton;
-        PopalniCeniTableButton: TRzButton;
         ValidnostDate: TRzDBDateTimeEdit;
         Button111: TRzButton;
         ShowAllKlientsCb: TCheckBox;
@@ -698,7 +669,6 @@ type
         ValidnostTime: TRzDBDateTimeEdit;
         Label157: TLabel;
         Image1: TImage;
-        Image8: TImage;
         STOKITE_SKLAD: TABSQuery;
         DataSource23: TDataSource;
         StokaEditBtn: TLabel;
@@ -739,7 +709,8 @@ type
     MadExceptionHandler1: TMadExceptionHandler;
     BMinimize: TButton;
     Label72: TLabel;
-    DBText4: TDBText;
+    Label9: TLabel;
+    Label28: TLabel;
         procedure Label1Click(Sender: TObject);
         procedure FormCreate(Sender: TObject);
         procedure Timer1Timer(Sender: TObject);
@@ -840,8 +811,6 @@ type
             Shift: TShiftState);
         procedure N2Click(Sender: TObject);
         procedure N1Click(Sender: TObject);
-        procedure Label92MouseDown(Sender: TObject; Button: TMouseButton;
-            Shift: TShiftState; X, Y: Integer);
         procedure DBCheckBox1Exit(Sender: TObject);
         procedure LMDButton10Click(Sender: TObject);
         procedure LMDButton12Click(Sender: TObject);
@@ -1489,7 +1458,6 @@ procedure HideKlInfo;
 begin
     MainForm.Label130.Visible := False;
     MainForm.DBText7.Visible := False;
-    MainForm.DBText4.Visible := False;
     MainForm.Label71.visible := False;
     MainForm.Label72.visible := False;
     MainForm.Label156.Visible := False;
@@ -1513,7 +1481,6 @@ begin
     MainForm.QklientiAfterRefresh;
     MainForm.Label130.Visible := True;
     MainForm.DBText7.Visible := True;
-    MainForm.DBText4.Visible := True;
     MainForm.Label71.visible := True;
     MainForm.Label72.visible := True;
     MainForm.Label156.Visible := True;
@@ -2768,6 +2735,7 @@ begin
     else
         TimeSet := T;
     FillValues1();
+    CalcPaid();
 end;
 
 procedure TMainForm.Image9Click(Sender: TObject);
@@ -2779,6 +2747,7 @@ begin
     if T <= SOLARIUMI.FieldValues['VREME'] then
         TimeSet := T;
     FillValues1();
+    CalcPaid();
 end;
 
 procedure LocateSolarium;
@@ -3518,7 +3487,6 @@ begin
                 begin
                     Label21.color := clBlack;
                     Label17.color := clBlack;
-                    Label23.color := clBlack;
 //                    Label14.color := clBlack;
                     Label13.color := clBlack;
                     Label16.color := clBlack;
@@ -3527,7 +3495,6 @@ begin
                 begin
                     Label21.color := clGray;
                     Label17.color := clGray;
-                    Label23.color := clGray;
                     Label13.color := clGray;
 //                    Label14.color := clGray;
                     Label16.color := clGray;
@@ -3650,15 +3617,7 @@ end;
 
 procedure TMainForm.DobaviStokaBtnClick(Sender: TObject);
 begin
-    case StokiteTab.ActivePageIndex of
-        0: KartiAsStokiMenu.Popup(DobaviStokaBtn.Left +
-                Round(DobaviStokaBtn.Width / 2),
-                DobaviStokaBtn.Top + Round(DobaviStokaBtn.Height / 2));
-        1: AddStokaButtonClick(3);
-
-        2: AddStokaButtonClick(4);
-    end;
-
+  KartiAsStokiMenu.Popup(213,530);
 end;
 
 procedure TMainForm.DrugiNastroiki15Show(Sender: TObject);
@@ -3842,7 +3801,7 @@ begin
                     STOKI.FieldValues['POSESHTENIA'] := -1;
                     STOKI.FieldValues['SUMA'] := Suma;
                     STOKI.FieldValues['STOKAKOD'] := -1;
-                    STOKI.FieldValues['STOKAIME'] := 'Депозит за карта';
+                    STOKI.FieldValues['STOKAIME'] := 'Пластика ваучер';
                     STOKI.FieldValues['STOKACENA'] := 0;
                     STOKI.FieldValues['STOKANASKLAD'] := 0;
                     STOKI.FieldValues['STOKATIP'] := 'D';
@@ -3851,32 +3810,10 @@ begin
                     KARTI.Locate('STOKAKOD', maxcode, []);
                 end
                 else
-                    Application.MessageBox(PChar('Вече има създаден депозит'),
+                    Application.MessageBox(PChar('Вече има създадена пластика'),
                         PChar(''));
             end;
-        1: //Клубни Карти
-            begin
-                _Q.SQL.SetText(PChar('select Min(STOKAKOD) as min1 from STOKI'));
-                _Q.Open;
-                try
-                    mincode := _Q.FieldValues['min1']
-                except
-                    mincode := -1;
-                end;
-                if mincode > -1 then
-                    mincode := -1;
-                STOKI.Append;
-                STOKI.FieldValues['STOKAKOD'] := mincode - 1;
-                STOKI.FieldValues['STOKAIME'] := 'Нова Клубна карта' +
-                    IntTostr(mincode - 1);
-                STOKI.FieldValues['STOKACENA'] := 0;
-                STOKI.FieldValues['STOKANASKLAD'] := 0;
-                STOKI.FieldValues['STOKATIP'] := 'K';
-                STOKI.Post;
-                KARTI.Refresh;
-                KARTI.Locate('STOKAKOD', maxcode, []);
-            end;
-        2: //Чип Карти
+        1: //Чип Карти
             begin
                 _Q.SQL.SetText(PChar('select Min(STOKAKOD) as min1 from STOKI'));
                 _Q.Open;
@@ -3897,54 +3834,6 @@ begin
                 STOKI.Post;
                 KARTI.Refresh;
                 KARTI.Locate('STOKAKOD', maxcode, []);
-            end;
-        3: //Козметика
-            begin
-                _Q.SQL.SetText(PChar('select Max(STOKAKOD) as max1 from STOKI'));
-                _Q.Open;
-                try
-                    maxcode := _Q.FieldValues['max1']
-                except
-                    maxcode := 0;
-                end;
-                if maxcode < 0 then
-                    maxcode := 0;
-                STOKI.Append;
-                STOKI.FieldValues['STOKAKOD'] := maxcode + 1;
-                STOKI.FieldValues['STOKAIME'] := 'Нова Козметика №' +
-                    IntTostr(maxcode + 1);
-                STOKI.FieldValues['STOKACENA'] := 0;
-                STOKI.FieldValues['STOKANASKLAD'] := 0;
-                STOKI.FieldValues['STOKATIP'] := 'S';
-                STOKI.Post;
-                STOKITE.Active := False;
-                STOKITE.Active := True;
-                STOKITE.Locate('STOKAKOD', maxcode, []);
-                STOKITE_SKLAD.Active := False;
-                STOKITE_SKLAD.Active := True;
-                STOKITE_SKLAD.Locate('STOKAKOD', maxcode, []);
-            end;
-        4: //Услуги
-            begin
-                _Q.SQL.SetText(PChar('select Max(STOKAKOD) as  max1 from STOKI'));
-                _Q.Open;
-                try
-                    maxcode := _Q.FieldValues['max1']
-                except
-                    maxcode := 0;
-                end;
-                if maxcode < 0 then
-                    maxcode := 0;
-                STOKI.Append;
-                STOKI.FieldValues['STOKAKOD'] := maxcode + 1;
-                STOKI.FieldValues['STOKAIME'] := 'Нова Услуга №' +
-                    IntTostr(maxcode + 1);
-                STOKI.FieldValues['STOKACENA'] := 0;
-                STOKI.FieldValues['STOKANASKLAD'] := 0;
-                STOKI.FieldValues['STOKATIP'] := 'U';
-                STOKI.Post;
-                USLUGITE.Refresh;
-                USLUGITE.Locate('STOKAKOD', maxcode, []);
             end;
         5: //Операция изтриване на клиент
             begin
@@ -4421,7 +4310,6 @@ begin
         QKarti.Active := True;
         if (QKarti.RecordCount > 0) then
         begin
-            DBtext4.Visible := True;
             DBtext7.Visible := True;
             ADVComboBox1.Visible := True;
             ADVComboBox2.Visible := True;
@@ -5113,6 +5001,8 @@ end;
 procedure TMainForm.IzborNaVreme5Show(Sender: TObject);
 begin
   Image5.Picture := Image1.Picture;
+  SLE4442Init();
+  Label9.Caption := IntToStr(Card.ClientNomer);
 end;
 
 procedure TMainForm.PlannerMaskDatePicker2Change(Sender: TObject);
@@ -5443,17 +5333,6 @@ end;
 procedure TMainForm.N1Click(Sender: TObject);
 begin
     AdvPageControl1.ActivePageIndex := 17;
-end;
-
-procedure TMainForm.Label92MouseDown(Sender: TObject; Button: TMouseButton;
-    Shift: TShiftState; X, Y: Integer);
-var
-    point1: TPoint;
-begin
-    point1.X := x;
-    point1.Y := y;
-    point1 := Label92.ClientToScreen(point1);
-    Label92.PopupMenu.Popup(Point1.X, Point1.Y);
 end;
 
 procedure TMainForm.DBCheckBox1Exit(Sender: TObject);
@@ -5883,7 +5762,7 @@ end;
 procedure TMainForm.N3Click(Sender: TObject);
 
 begin
-    AddStokaButtonClick(1);
+    AddStokaButtonClick(0);
 end;
 
 procedure TMainForm.LMDButton1MouseDown(Sender: TObject;
@@ -5903,7 +5782,7 @@ end;
 
 procedure TMainForm.N4Click(Sender: TObject);
 begin
-    AddStokaButtonClick(2);
+    AddStokaButtonClick(1);
 end;
 
 procedure TMainForm.N5Click(Sender: TObject);
@@ -6477,7 +6356,7 @@ begin
         Timer1.Enabled := True;
     end
     else
-        label64.Caption := leftstr('Solar studio 1.2', Timer2Time);
+        label64.Caption := leftstr('Solar Power', Timer2Time);
 end;
 
 procedure TMainForm.BHelpClick(Sender: TObject);

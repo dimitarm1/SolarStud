@@ -680,12 +680,12 @@ begin
         MainForm.mMsg.SelAttributes.Color := clBlack;
         PrintText := GetMessage('M38') + ' ' + Card.ClientName; //'Клиент:> '
         MainForm.mMsg.Lines.Add(PrintText);
-        MainForm.mMsg.SelAttributes.Color := clRed;
-        PrintText := GetMessage('M39') + ' '; // 'Сума в карта:> '
-        if not (Card.Balans < 0) then
-            PrintText := PrintText + FloatToStr(Card.Balans, LocalFormat) +
-                'лв.';
-        MainForm.mMsg.Lines.Add(PrintText);
+//        MainForm.mMsg.SelAttributes.Color := clRed;
+//        PrintText := GetMessage('M39') + ' '; // 'Сума в карта:> '
+//        if not (Card.Balans < 0) then
+//            PrintText := PrintText + FloatToStr(Card.Balans, LocalFormat) +
+//                'лв.';
+//        MainForm.mMsg.Lines.Add(PrintText);
         MainForm.mMsg.SelAttributes.Color := clPurple;
         PrintText := GetMessage('M40') + ' ' + Card.StudioName; //'Студио:> '
         MainForm.mMsg.Lines.Add(PrintText);
@@ -735,9 +735,9 @@ begin
             MainForm.KARTICHIP.FieldValues['COUNTER'] := 0;
             MainForm.KARTICHIP.FieldValues['DISCOUNT'] := 0;
             MainForm.KARTICHIP.FieldValues['SUMA'] := 0;
-            if (MainForm.GetStudioWorkType() = 1) or (MainForm.GetStudioWorkType() = 4)then
-               MainForm.KARTICHIP.FieldValues['ONCE_PERDAY'] := TRUE
-            else
+//            if (MainForm.GetStudioWorkType() = 1) or (MainForm.GetStudioWorkType() = 4)then
+//               MainForm.KARTICHIP.FieldValues['ONCE_PERDAY'] := TRUE
+//            else
                MainForm.KARTICHIP.FieldValues['ONCE_PERDAY'] := FALSE;
             MainForm.KARTICHIP.Post;
         end;
@@ -925,9 +925,10 @@ begin
                 FmtStr(Result, '%4.2f', [Ostatak]);
                 MainForm.Label72.Caption := '' + Result + GetMessage('M85');
                 //'минути / ';
-                FmtStr(Result, '%4.2f', [Card.Balans]);
-                MainForm.Label72.Caption := MainForm.Label72.Caption + '' +
-                    Result + GetMessage('29'); //'лв.';
+                MainForm.Label9.Caption := IntToStr(Card.ClientNomer);
+//                FmtStr(Result, '%4.2f', [Card.Balans]);
+//                MainForm.Label72.Caption := MainForm.Label72.Caption + '' +
+//                    Result + GetMessage('29'); //'лв.';
             end;
             Exit;
         end
