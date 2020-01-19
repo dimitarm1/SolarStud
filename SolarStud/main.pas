@@ -154,7 +154,6 @@ type
         Label78: TLabel;
         Label79: TLabel;
         Label80: TLabel;
-        Label91: TLabel;
         Label92: TLabel;
         Image50: TImage;
         Image51: TImage;
@@ -184,9 +183,6 @@ type
     ManuStoki17: TAdvTabSheet;
         Label96: TLabel;
         LMDDBCheckBox1: TLMDDBCheckBox;
-        Label30: TLabel;
-        Label56: TLabel;
-        Label97: TLabel;
         Image52: TImage;
         Label98: TLabel;
         LMDMapiSendMail1: TLMDMapiSendMail;
@@ -399,7 +395,6 @@ type
         Imagepress5: TLMDLImage;
         Imagepress6: TLMDLImage;
         LMDImageList2: TLMDImageList;
-        Image67: TLMDLImage;
         Image64: TLMDLImage;
         Image128: TImage;
         LMDImageList3: TLMDImageList;
@@ -706,6 +701,10 @@ type
     Label72: TLabel;
     Label9: TLabel;
     Label28: TLabel;
+    Edit2: TEdit;
+    Label14: TLabel;
+    Label91: TLabel;
+    Image67: TLMDLImage;
         procedure Label1Click(Sender: TObject);
         procedure FormCreate(Sender: TObject);
         procedure Timer1Timer(Sender: TObject);
@@ -2506,8 +2505,8 @@ begin
           Edit5.Visible := true;
         end;
 
-        ShowPanel := (PasswordForm.ModalResult = MROK) or IsDemo2;
-        Label91.Visible := ShowPanel;
+        ShowPanel := (PasswordForm.ModalResult = MROK) ;//or IsDemo2;
+//        Label91.Visible := ShowPanel;
         Label92.Visible := ShowPanel;
         Image67.Visible := ShowPanel;
         Image64.Visible := ShowPanel;
@@ -2698,6 +2697,36 @@ begin
     end;
 end;
 
+
+procedure SelectBarcodKlient();
+var
+  Ostatak: Real;
+  Result: String;
+begin
+    with MainForm do
+    begin
+      QKarti.Active := False;
+      if StrLen(PChar(Edit2.Text)) > 0 then
+          QKarti.SQL.SetText(PChar('SELECT * FROM kartiall WHERE KARTANOMER = ' +
+              Edit2.Text + ''))  ;
+      QKarti.Active := True;
+      QKlienti.Active := False;
+      if QKarti.FieldValues['klientdetail'] > 0 then
+      begin
+          QKlienti.SQL.SetText(PChar('SSELECT * FROM klienti k left outer join KARTICHIP c on k.NOMER = c.KLIENTNOMER WHERE NOMER = ' +
+              IntToStr2(QKarti.FieldValues['klientdetail']) + ''));
+          QKlienti.Active := True;
+          if(QKlienti.RecordCount > 0) then
+          begin
+                Ostatak := QKlienti.FieldValues['SUMA'] ;
+                FmtStr(Result, '%4.2f', [Ostatak]);
+                Label14.Caption := '' + Result + GetMessage('M85');
+          end;
+      end;
+    end;
+end;
+
+
 procedure TMainForm.Button1Click(Sender: TObject);
 begin
     FillValues1();
@@ -2848,10 +2877,9 @@ procedure TMainForm.Label10Click(Sender: TObject);
 var
     i: Integer;
 begin
-    if((Card.ConStatus > 0) and (Card.ClientNomer > 0)) then
-    begin
       PayChipCardClick( Sender);
-      if( ToBePaidCash > 0) then
+      PayCashButtonClick(Sender);
+      if(( ToBePaidCash > 0) and (IsChipCard and (Card.ClientNomer > 0))) then
       begin
         Application.MessageBox(PChar('Недостатъчни минути в картата!'),PChar('Warning'),MB_OK);
       end
@@ -2859,15 +2887,6 @@ begin
       begin
         PaymentOKLabelClick(sender);
       end;
-    end
-    else
-    begin
-      CardNomer := 0;
-      PayCashButtonClick(Sender);
-      begin
-        PaymentOKLabelClick(sender);
-      end;
-    end;
 
 //    AdvPageControl1.ActivePageIndex := 3;
 //    PaymentOKLabel.Visible := false;
@@ -3428,7 +3447,7 @@ procedure TMainForm.FormKeyPress(Sender: TObject; var Key: Char);
 var
     len: integer;
 begin
-    if (AdvPageControl1.ActivePageIndex in [18, 15, 3, 1]) then
+    if (AdvPageControl1.ActivePageIndex in [18, 15, 3, 1, 4]) then
     begin
         if (Key = #10) or (Key = #13) then
         begin
@@ -3447,11 +3466,15 @@ begin
             else if (Length(BarCodReaderBuff) > 5) then
             begin
                 try
-                    CardNomer := StrToInt(Rightstr(BarCodReaderBuff, 9));
+                    CardNomer := StrToInt(Rightstr(KeyBuff, 8));
                     if (AdvPageControl1.ActivePageIndex = 1) then
                     begin
                         AdvPageControl1.ActivePageIndex := 18;
                         AddStokaButtonClick(2);
+                    end;
+                    if (AdvPageControl1.ActivePageIndex = 4) then
+                    begin
+                      SelectBarcodKlient();
                     end;
                     //  label25.Caption:=IntToStr(CardNomer);
                     Timer3.Enabled := true;
@@ -5024,7 +5047,7 @@ begin
     Label72.Visible := false;
     Label9.visible := False;
   end;
-
+  Edit2.SetFocus();
   FillValues1();
 end;
 

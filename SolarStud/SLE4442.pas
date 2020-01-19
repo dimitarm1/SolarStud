@@ -764,22 +764,24 @@ begin
                 DiscountPrize := 0;
                 VipDiscount := 0;
             end;
-            abc3 := (q.FieldValues['COUNTER'] + 1);
-            abc4 := MainForm.Internet.FieldValues['DISCOUNT_COUNT'];
-            abc2 := q.FieldValues['KLIENTNOMER'];
-            if (abc4 <> 0) then
+            if(q.RecordCount > 0) then
             begin
-                abc1 := abc3 mod abc4;
-                if abc1 = 0 then
-                    DiscountPrize :=
-                        MainForm.Internet.FieldValues['DISCOUNT_PERCENT'];
+              abc3 := (q.FieldValues['COUNTER'] + 1);
+              abc4 := MainForm.Internet.FieldValues['DISCOUNT_COUNT'];
+              abc2 := q.FieldValues['KLIENTNOMER'];
+              if (abc4 <> 0) then
+              begin
+                  abc1 := abc3 mod abc4;
+                  if abc1 = 0 then
+                      DiscountPrize :=
+                          MainForm.Internet.FieldValues['DISCOUNT_PERCENT'];
+              end;
+              if varType(q.FieldValues['DISCOUNT'])
+                      <> varNull then VipDiscount := q.FieldValues['DISCOUNT']
+              else VipDiscount := 0;
+              if VipDiscount > 0.1 then
+                  DiscountPrize := 0;
             end;
-            if varType(q.FieldValues['DISCOUNT'])
-                    <> varNull then VipDiscount := q.FieldValues['DISCOUNT']
-            else VipDiscount := 0;
-            if VipDiscount > 0.1 then
-                DiscountPrize := 0;
-
         end
         else if not IsChipCard then
         begin
@@ -926,6 +928,8 @@ begin
                 MainForm.Label72.Caption := '' + Result + GetMessage('M85');
                 //'минути / ';
                 MainForm.Label9.Caption := IntToStr(Card.ClientNomer);
+                MainForm.Edit2.Visible := False;
+                MainForm.Label14.Visible := False;
 //                FmtStr(Result, '%4.2f', [Card.Balans]);
 //                MainForm.Label72.Caption := MainForm.Label72.Caption + '' +
 //                    Result + GetMessage('29'); //'лв.';
@@ -937,6 +941,8 @@ begin
             MainForm.Label137.Caption := GetMessage('M83'); //'Няма Карта!';
             MainForm.Label137.Font.Color := clRed;
             MainForm.Label9.Caption := '';
+            MainForm.Label14.Visible := True;
+            MainForm.Edit2.Visible := True;
             MainForm.Label72.Caption := '';
             VipDiscount := 0;
             DiscountPrize := 0;
