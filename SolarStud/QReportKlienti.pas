@@ -12,14 +12,8 @@ type
     QuickRep1: TQuickRep;
     QRBand1: TQRBand;
     QRLabel1: TQRLabel;
-    QRLabel2: TQRLabel;
-    QRLabel3: TQRLabel;
-    QRLabel4: TQRLabel;
     DetailBand1: TQRBand;
     QRDBText1: TQRDBText;
-    QRDBText2: TQRDBText;
-    QRDBText3: TQRDBText;
-    QRDBText4: TQRDBText;
     QRBand3: TQRBand;
     QRSysData1: TQRSysData;
     QRSysData2: TQRSysData;
@@ -30,7 +24,6 @@ type
     QRLabel5: TQRLabel;
     QRLabel6: TQRLabel;
     QRLabel7: TQRLabel;
-    QRLabel8: TQRLabel;
     QRLabel9: TQRLabel;
     QRLabel10: TQRLabel;
     QRLabel11: TQRLabel;
@@ -92,14 +85,14 @@ begin
     while i < MainForm.QKartiPaid.RecordCount do  begin
       if  MainForm.QKartiPaid.FieldValues['KARTASUMA']>0 then  begin
         QRLabel11.Caption:= QRLabel11.Caption + '  '+ DateToStr(MainForm.QKartiPaid.FieldValues['DATA'])+
-        ' - '+ ConvertCurr1(MainForm.QKartiPaid.FieldValues['KARTASUMA'])+'лв.';
+        ' - '+ ConvertCurr1(MainForm.QKartiPaid.FieldValues['KARTASUMA'])+'.';
         { if MainForm.QKartiPaid.FieldValues['KLIENTNOMER']<> NULL then QRLabel11.Caption:= QRLabel11.Caption
          +', служ.№ '+MainForm.QKartiPaid.FieldValues['KLIENTNOMER']}
       end else begin
         if MainForm.STOKI.Locate('STOKAKOD',MainForm.QKartiPaid.FieldValues['STOKA'],[]) then
           // MainForm.QKartiPaid.FieldValues['STOKA']=   kod_depozit then
           QRLabel11.Caption:= QRLabel11.Caption + '  '+ DateToStr(MainForm.QKartiPaid.FieldValues['DATA'])+
-           ' - *+'+ ConvertCurr1(MainForm.QKartiPaid.FieldValues['SUMABROI'])+'лв.* '
+           ' - *+'+ ConvertCurr1(MainForm.QKartiPaid.FieldValues['SUMABROI'])+'.* '
         else
         if MainForm.QkartiPaid.FieldValues['STOKA'] = 0 then  begin
            QRLabel11.Caption:= QRLabel11.Caption + '  '+ DateToStr(MainForm.QKartiPaid.FieldValues['DATA'])+
@@ -107,7 +100,7 @@ begin
         end
         else begin
           QRLabel11.Caption:= QRLabel11.Caption + '  '+ DateToStr(MainForm.QKartiPaid.FieldValues['DATA'])+
-           ' - <+'+ ConvertCurr1(MainForm.QKartiPaid.FieldValues['SUMABROI'])+'лв.> ' ;
+           ' - <+'+ ConvertCurr1(MainForm.QKartiPaid.FieldValues['SUMABROI'])+'.> ' ;
         end;
       end;
       i:=i+1;

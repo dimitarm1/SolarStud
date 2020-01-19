@@ -12,7 +12,6 @@ type
     QuickRep3: TQuickRep;
     PageHeaderBand1: TQRBand;
     DetailBand1: TQRBand;
-    QRLabel1: TQRLabel;
     PageFooterBand1: TQRBand;
     QRSysData2: TQRSysData;
     QRLabel2: TQRLabel;
@@ -36,19 +35,33 @@ type
     QRLabel14: TQRLabel;
     QRLabel15: TQRLabel;
     QRDBText11: TQRDBText;
-    QRDBText12: TQRDBText;
     QRDBText13: TQRDBText;
     QRLabel16: TQRLabel;
     QRDBText15: TQRDBText;
     QRLabel21: TQRLabel;
     QRLabel20: TQRLabel;
     QRLabel6: TQRLabel;
+    QRLabel7: TQRLabel;
+    QRLabel8: TQRLabel;
+    QRLabel17: TQRLabel;
+    QRLabel18: TQRLabel;
+    Sum_label1: TQRLabel;
+    Sum_label2: TQRLabel;
+    Sum_label3: TQRLabel;
+    Sum_label4: TQRLabel;
+    Sum_label5: TQRLabel;
+    Sum_label6: TQRLabel;
+    QRLabel1: TQRLabel;
     procedure QuickRep3AfterPreview(Sender: TObject);
     procedure QuickRep3StartPage(Sender: TCustomQuickRep);
     procedure DetailBand1BeforePrint(Sender: TQRCustomBand;
       var PrintBand: Boolean);
     procedure QRExpr1Print(sender: TObject; var Value: string);
     procedure QRBand1BeforePrint(Sender: TQRCustomBand; var PrintBand: Boolean);
+    procedure DetailBand1AfterPrint(Sender: TQRCustomBand;
+      BandPrinted: Boolean);
+    procedure PageHeaderBand1BeforePrint(Sender: TQRCustomBand;
+      var PrintBand: Boolean);
   private
     { Private declarations }
   public
@@ -57,6 +70,12 @@ type
 
 var
   Form3: TForm3;
+  Sum1: Integer;
+  Sum2: Integer;
+  Sum3: Integer;
+  Sum4: Integer;
+  Sum5: Integer;
+  Sum6: Integer;
 
 implementation
  uses main;
@@ -67,6 +86,7 @@ implementation
 procedure TForm3.QRBand1BeforePrint(Sender: TQRCustomBand;
   var PrintBand: Boolean);
 begin
+
   QRLabel20.Caption :=  MainForm.ProtokolFilterEdit.Text;
   if(MainForm.ProtokolFilterEdit.Text = '') then
   begin
@@ -82,6 +102,12 @@ begin
   begin
     QRLabel21.Font.Color := clBlack;
   end;
+  Sum_label1.Caption := IntToStr(Sum1);
+  Sum_label2.Caption := IntToStr(Sum2);
+  Sum_label3.Caption := IntToStr(Sum3);
+  Sum_label4.Caption := IntToStr(Sum4);
+  Sum_label5.Caption := IntToStr(Sum5);
+  Sum_label6.Caption := IntToStr(Sum6);
 end;
 
 procedure TForm3.QRExpr1Print(sender: TObject; var Value: string);
@@ -124,6 +150,26 @@ QRLabel16.Caption:= MainForm.DBLUCombo1.EditText;
 QRLabel16.Caption:= AnsiReplaceStr(QRLabel16.Caption,'/','-');
 end;
 
+procedure TForm3.DetailBand1AfterPrint(Sender: TQRCustomBand;
+  BandPrinted: Boolean);
+begin
+  if(not (QRDBText11.DataSet.FieldByName(QRDBText11.Caption).AsString = '')) then
+  begin
+    if(QRDBText1.DataSet.FieldByName(QRDBText1.Caption).AsString  = '1') then
+      Sum1 :=   Sum1 + StrToInt(QRDBText2.DataSet.FieldByName(QRDBText2.Caption).AsString);
+    if(QRDBText1.DataSet.FieldByName(QRDBText1.Caption).AsString  = '2') then
+      Sum2 :=   Sum2 + StrToInt(QRDBText2.DataSet.FieldByName(QRDBText2.Caption).AsString);
+    if(QRDBText1.DataSet.FieldByName(QRDBText1.Caption).AsString  = '3') then
+      Sum3 :=   Sum3 + StrToInt(QRDBText2.DataSet.FieldByName(QRDBText2.Caption).AsString);
+    if(QRDBText1.DataSet.FieldByName(QRDBText1.Caption).AsString  = '4') then
+      Sum4 :=   Sum4 + StrToInt(QRDBText2.DataSet.FieldByName(QRDBText2.Caption).AsString);
+    if(QRDBText1.DataSet.FieldByName(QRDBText1.Caption).AsString  = '5') then
+      Sum5 :=   Sum5 + StrToInt(QRDBText2.DataSet.FieldByName(QRDBText2.Caption).AsString);
+    if(QRDBText1.DataSet.FieldByName(QRDBText1.Caption).AsString  = '6') then
+      Sum6 :=   Sum6 + StrToInt(QRDBText2.DataSet.FieldByName(QRDBText2.Caption).AsString);
+  end;
+end;
+
 procedure TForm3.DetailBand1BeforePrint(Sender: TQRCustomBand;
   var PrintBand: Boolean);
 begin
@@ -149,6 +195,17 @@ if MainForm.DayTotal.FieldValues['SOLARIUM']>0 then
   QRDBText9.Width:=145;
   QRDBText7.Width:=41;
   end;
+end;
+
+procedure TForm3.PageHeaderBand1BeforePrint(Sender: TQRCustomBand;
+  var PrintBand: Boolean);
+begin
+ Sum1:=0;
+  Sum2:=0;
+  Sum3:=0;
+  Sum4:=0;
+  Sum5:=0;
+  Sum6:=0;
 end;
 
 end.

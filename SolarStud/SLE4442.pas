@@ -678,8 +678,8 @@ begin
         // 'Клиент номер:> '
         MainForm.mMsg.Lines.Add(PrintText);
         MainForm.mMsg.SelAttributes.Color := clBlack;
-        PrintText := GetMessage('M38') + ' ' + Card.ClientName; //'Клиент:> '
-        MainForm.mMsg.Lines.Add(PrintText);
+//        PrintText := GetMessage('M38') + ' ' + Card.ClientName; //'Клиент:> '
+//        MainForm.mMsg.Lines.Add(PrintText);
 //        MainForm.mMsg.SelAttributes.Color := clRed;
 //        PrintText := GetMessage('M39') + ' '; // 'Сума в карта:> '
 //        if not (Card.Balans < 0) then
@@ -857,7 +857,7 @@ begin
                 IsChipCard := True;
                 MainForm.NovKlientButton.Visible := TRUE;
 
-                MainForm.Label137.Caption := GetMessage('M84'); //'Има Карта!';
+//                MainForm.Label137.Caption := GetMessage('M84'); //'Има Карта!';
                 MainForm.Label137.Font.Color := clGreen;
                 SLE4442ReadCardInfo();
                 SLE4442ShowCardInfo();
@@ -938,7 +938,7 @@ begin
         end
         else
         begin
-            MainForm.Label137.Caption := GetMessage('M83'); //'Няма Карта!';
+//            MainForm.Label137.Caption := GetMessage('M83'); //'Няма Карта!';
             MainForm.Label137.Font.Color := clRed;
             MainForm.Label9.Caption := '';
             MainForm.Label14.Visible := True;

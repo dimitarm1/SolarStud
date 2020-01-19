@@ -121,81 +121,6 @@ object Form1: TForm1
         WordWrap = True
         FontSize = 10
       end
-      object QRLabel2: TQRLabel
-        Left = 129
-        Top = 31
-        Width = 26
-        Height = 17
-        Frame.Color = clBlack
-        Frame.DrawTop = False
-        Frame.DrawBottom = False
-        Frame.DrawLeft = False
-        Frame.DrawRight = False
-        Size.Values = (
-          44.979166666666670000
-          341.312500000000000000
-          82.020833333333330000
-          68.791666666666670000)
-        Alignment = taLeftJustify
-        AlignToBand = False
-        AutoSize = True
-        AutoStretch = False
-        Caption = #1048#1084#1077
-        Color = clWhite
-        Transparent = False
-        WordWrap = True
-        FontSize = 10
-      end
-      object QRLabel3: TQRLabel
-        Left = 335
-        Top = 31
-        Width = 52
-        Height = 17
-        Frame.Color = clBlack
-        Frame.DrawTop = False
-        Frame.DrawBottom = False
-        Frame.DrawLeft = False
-        Frame.DrawRight = False
-        Size.Values = (
-          44.979166666666670000
-          886.354166666666700000
-          82.020833333333330000
-          137.583333333333300000)
-        Alignment = taLeftJustify
-        AlignToBand = False
-        AutoSize = True
-        AutoStretch = False
-        Caption = #1058#1077#1083#1077#1092#1086#1085
-        Color = clWhite
-        Transparent = False
-        WordWrap = True
-        FontSize = 10
-      end
-      object QRLabel4: TQRLabel
-        Left = 401
-        Top = 31
-        Width = 44
-        Height = 17
-        Frame.Color = clBlack
-        Frame.DrawTop = False
-        Frame.DrawBottom = False
-        Frame.DrawLeft = False
-        Frame.DrawRight = False
-        Size.Values = (
-          44.979166666666670000
-          1060.979166666667000000
-          82.020833333333330000
-          116.416666666666700000)
-        Alignment = taLeftJustify
-        AlignToBand = False
-        AutoSize = True
-        AutoStretch = False
-        Caption = #1045'-'#1084#1077#1081#1083
-        Color = clWhite
-        Transparent = False
-        WordWrap = True
-        FontSize = 10
-      end
       object QRSysData1: TQRSysData
         Left = 624
         Top = 8
@@ -218,37 +143,6 @@ object Form1: TForm1
         Data = qrsDateTime
         Transparent = False
         FontSize = 10
-      end
-      object QRLabel8: TQRLabel
-        Left = 248
-        Top = 0
-        Width = 250
-        Height = 25
-        Frame.Color = clBlack
-        Frame.DrawTop = False
-        Frame.DrawBottom = False
-        Frame.DrawLeft = False
-        Frame.DrawRight = False
-        Size.Values = (
-          66.145833333333330000
-          656.166666666666700000
-          0.000000000000000000
-          661.458333333333300000)
-        Alignment = taLeftJustify
-        AlignToBand = False
-        AutoSize = True
-        AutoStretch = False
-        Caption = #1057#1055#1048#1057#1066#1050' '#1053#1040' '#1050#1051#1048#1045#1053#1058#1048#1058#1045
-        Color = clWhite
-        Font.Charset = RUSSIAN_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -21
-        Font.Name = 'Arial'
-        Font.Style = []
-        ParentFont = False
-        Transparent = False
-        WordWrap = True
-        FontSize = 16
       end
       object RecordCountLabel: TQRLabel
         Left = 571
@@ -321,84 +215,6 @@ object Form1: TForm1
         Color = clWhite
         DataSet = MainForm.Qklienti
         DataField = 'NOMER'
-        Transparent = False
-        WordWrap = True
-        FontSize = 10
-      end
-      object QRDBText2: TQRDBText
-        Left = 80
-        Top = 8
-        Width = 169
-        Height = 17
-        Frame.Color = clBlack
-        Frame.DrawTop = False
-        Frame.DrawBottom = False
-        Frame.DrawLeft = False
-        Frame.DrawRight = False
-        Size.Values = (
-          44.979166666666670000
-          211.666666666666700000
-          21.166666666666670000
-          447.145833333333300000)
-        Alignment = taLeftJustify
-        AlignToBand = False
-        AutoSize = False
-        AutoStretch = False
-        Color = clWhite
-        DataSet = MainForm.Qklienti
-        DataField = 'IME'
-        Transparent = False
-        WordWrap = True
-        FontSize = 10
-      end
-      object QRDBText3: TQRDBText
-        Left = 334
-        Top = 6
-        Width = 60
-        Height = 17
-        Frame.Color = clBlack
-        Frame.DrawTop = False
-        Frame.DrawBottom = False
-        Frame.DrawLeft = False
-        Frame.DrawRight = False
-        Size.Values = (
-          44.979166666666670000
-          883.708333333333300000
-          15.875000000000000000
-          158.750000000000000000)
-        Alignment = taLeftJustify
-        AlignToBand = False
-        AutoSize = True
-        AutoStretch = False
-        Color = clWhite
-        DataSet = MainForm.Qklienti
-        DataField = 'TELEFON'
-        Transparent = False
-        WordWrap = True
-        FontSize = 10
-      end
-      object QRDBText4: TQRDBText
-        Left = 400
-        Top = 6
-        Width = 233
-        Height = 17
-        Frame.Color = clBlack
-        Frame.DrawTop = False
-        Frame.DrawBottom = False
-        Frame.DrawLeft = False
-        Frame.DrawRight = False
-        Size.Values = (
-          44.979166666666670000
-          1058.333333333333000000
-          15.875000000000000000
-          616.479166666666800000)
-        Alignment = taLeftJustify
-        AlignToBand = False
-        AutoSize = False
-        AutoStretch = False
-        Color = clWhite
-        DataSet = MainForm.Qklienti
-        DataField = 'ADRES'
         Transparent = False
         WordWrap = True
         FontSize = 10
@@ -546,7 +362,7 @@ object Form1: TForm1
         AlignToBand = False
         AutoSize = False
         AutoStretch = True
-        Caption = #1086#1090' '#1074#1072#1091#1095#1077#1088' - '#1085#1103#1084#1072
+        Caption = 'No - '#1085#1103#1084#1072
         Color = clWhite
         Font.Charset = RUSSIAN_CHARSET
         Font.Color = clWindowText

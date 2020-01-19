@@ -318,7 +318,6 @@ type
         NovKlientButton: TLMDButton;
         Label136: TLabel;
         Label137: TLabel;
-        Label138: TLabel;
         Label139: TLabel;
         Label140: TLabel;
         Label141: TLabel;
@@ -399,9 +398,7 @@ type
         Image128: TImage;
         LMDImageList3: TLMDImageList;
         LMDImageList4: TLMDImageList;
-        LMDLImage5: TLMDLImage;
         LMDLImage6: TLMDLImage;
-        LMDLImage7: TLMDLImage;
         LMDLImage8: TLMDLImage;
         LMDLImage9: TLMDLImage;
         LMDImageList5: TLMDImageList;
@@ -573,8 +570,6 @@ type
         Timer3: TTimer;
         maxday: TABSQuery;
         Plashtania: TABSQuery;
-        Label145: TLabel;
-        PosEdit: TLMDDBEdit;
         Image6: TImage;
         Label160: TLabel;
         LMDLImage141: TLMDLImage;
@@ -668,7 +663,6 @@ type
         Label120: TLabel;
         Label170: TLabel;
         ProtokolFilterEdit: TEdit;
-        Label171: TLabel;
         TipNaRabotaCombo: TComboBox;
         LMDLImage132: TLMDLImage;
         Image9: TImage;
@@ -700,7 +694,6 @@ type
     BMinimize: TButton;
     Label72: TLabel;
     Label9: TLabel;
-    Label28: TLabel;
     Edit2: TEdit;
     Label14: TLabel;
     Label91: TLabel;
@@ -2508,7 +2501,7 @@ begin
         ShowPanel := (PasswordForm.ModalResult = MROK) ;//or IsDemo2;
 //        Label91.Visible := ShowPanel;
         Label92.Visible := ShowPanel;
-        Image67.Visible := ShowPanel;
+//        Image67.Visible := ShowPanel;
         Image64.Visible := ShowPanel;
         Kabina11.Caption := Main2.Kabina11.Caption;
             //SOLARIUMI.FieldByName('OPISANIE1').AsString;
@@ -3256,6 +3249,24 @@ begin
                 SLE4442Submit();
                 //SLE4442ReadCardInfo();
                 //Card.Balans:=TempBalans;
+                if(Card.ClientName <> '') then
+                begin
+                   Card.ClientName := '';
+                   if MainForm.STOKI.Locate('STOKATIP', 'D', []) then
+                   begin
+                      Plashtania.ReadOnly := False;
+                      Plashtania.Edit;
+                      Plashtania.Append;
+                      plashtania.FieldValues['BROI'] := 1;
+                      plashtania.FieldValues['DATA'] := Date;
+                      plashtania.FieldValues['CHAS'] := TimeToStr(Time);
+                      plashtania.FieldValues['OTCHIPKARTA'] := Card.ClientNomer;
+                      plashtania.FieldValues['STOKA'] :=  STOKI.FieldValues['STOKAKOD'];
+                      plashtania.FieldValues['SUMABROI'] := 0;
+                      Plashtania.Post;
+                   end;
+                end;
+
                 SLE4442WriteCardInfo();
                 SLE4442ReadCardInfo();
                 if abs(Card.Balans - TempBalans) > 0.5 then
@@ -3466,7 +3477,7 @@ begin
             else if (Length(BarCodReaderBuff) > 5) then
             begin
                 try
-                    CardNomer := StrToInt(Rightstr(KeyBuff, 8));
+                    CardNomer := StrToInt(Rightstr(KeyBuff, 7));
                     if (AdvPageControl1.ActivePageIndex = 1) then
                     begin
                         AdvPageControl1.ActivePageIndex := 18;
@@ -5047,7 +5058,8 @@ begin
     Label72.Visible := false;
     Label9.visible := False;
   end;
-  Edit2.SetFocus();
+  if(Edit2.Visible)  then
+    Edit2.SetFocus();
   FillValues1();
 end;
 
@@ -5860,13 +5872,13 @@ begin
     Label137.Font.Color := clRed;
     if (PasswordForm.IsMaster = true) then
     begin
-        PosEdit.enabled := true;
+//        PosEdit.enabled := true;
         ValidnostDate.enabled := true;
         ValidnostTime.enabled := true;
     end
     else
     begin
-        PosEdit.enabled := false;
+//        PosEdit.enabled := false;
         ValidnostDate.enabled := false;
         ValidnostTime.enabled := false;
     end;
@@ -6395,15 +6407,15 @@ end;
 procedure TMainForm.Timer2Timer(Sender: TObject);
 begin
     Timer2Time := Timer2Time + 1;
-    if Timer2Time > 16 then
-    begin
+//    if Timer2Time > 16 then
+//    begin
         Timer2.Enabled := False;
         Timer1.Interval := 1000;
         TimerTime1 := 0;
         Timer1.Enabled := True;
-    end
-    else
-        label64.Caption := leftstr('Solar Power', Timer2Time);
+//    end
+//    else
+//        label64.Caption := leftstr('Solar Power', Timer2Time);
 end;
 
 procedure TMainForm.BHelpClick(Sender: TObject);
