@@ -335,15 +335,15 @@ procedure SetLangText();
 
      with Form1 do // QReportKlienti
     begin
-     QRLabel1.Caption:=  GetLabel('QRF1L1');
+//     QRLabel1.Caption:=  GetLabel('QRF1L1');
 //     QRLabel2.Caption:= GetLabel('QRF1L2');
 //     QRLabel3.Caption:= GetLabel('QRF1L3');
 //     QRLabel4.Caption:=  GetLabel('QRF1L4');
      QRLabel5.Caption:= GetLabel('QRF1L5');
-     QRLabel6.Caption:= GetLabel('QRF1L6');
-     QRLabel7.Caption:= GetLabel('QRF1L7');
+//     QRLabel6.Caption:= GetLabel('QRF1L6');
+//     QRLabel7.Caption:= GetLabel('QRF1L7');
 //     QRLabel8.Caption:= GetLabel('QRF1L8');
-     QRLabel9.Caption:= GetLabel('QRF1L9');
+//     QRLabel9.Caption:= GetLabel('QRF1L9');
      QRLabel10.Caption:= GetLabel('QRF1L10');
       QRLabel11.Caption:= GetLabel('QRF1L11');
     end;
@@ -626,15 +626,15 @@ procedure SaveLangText();
    end;
    with Form1 do // QReportKlienti
     begin
-     SaveLabel('QRF1L1' ,QRLabel1.Caption ) ;
+//     SaveLabel('QRF1L1' ,QRLabel1.Caption ) ;
 //     SaveLabel('QRF1L2' ,QRLabel2.Caption ) ;
 //     SaveLabel('QRF1L3' ,QRLabel3.Caption ) ;
 //     SaveLabel('QRF1L4' ,QRLabel4.Caption ) ;
      SaveLabel('QRF1L5' ,QRLabel5.Caption ) ;
-     SaveLabel('QRF1L6' ,QRLabel6.Caption ) ;
-     SaveLabel('QRF1L7' ,QRLabel7.Caption ) ;
+//     SaveLabel('QRF1L6' ,QRLabel6.Caption ) ;
+//     SaveLabel('QRF1L7' ,QRLabel7.Caption ) ;
 //     SaveLabel('QRF1L8' ,QRLabel8.Caption ) ;
-     SaveLabel('QRF1L9' ,QRLabel9.Caption ) ;
+//     SaveLabel('QRF1L9' ,QRLabel9.Caption ) ;
      SaveLabel('QRF1L10',QRLabel10.Caption) ;
      SaveLabel('QRF1L11',QRLabel11.Caption) ;
     end;

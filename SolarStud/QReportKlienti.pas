@@ -11,26 +11,19 @@ type
   TForm1 = class(TForm)
     QuickRep1: TQuickRep;
     QRBand1: TQRBand;
-    QRLabel1: TQRLabel;
     DetailBand1: TQRBand;
     QRDBText1: TQRDBText;
     QRBand3: TQRBand;
-    QRSysData1: TQRSysData;
     QRSysData2: TQRSysData;
     QRSubDetail1: TQRSubDetail;
     QRDBText5: TQRDBText;
     QRDBText6: TQRDBText;
     QRDBText7: TQRDBText;
     QRLabel5: TQRLabel;
-    QRLabel6: TQRLabel;
-    QRLabel7: TQRLabel;
-    QRLabel9: TQRLabel;
     QRLabel10: TQRLabel;
     QRLabel11: TQRLabel;
     QRDBText8: TQRDBText;
-    QRLabel12: TQRLabel;
     QRLabel13: TQRLabel;
-    RecordCountLabel: TQRLabel;
     procedure DetailBand1BeforePrint(Sender: TQRCustomBand;
       var PrintBand: Boolean);
     procedure QRSubDetail1NeedData(Sender: TObject; var MoreData: Boolean);
@@ -126,7 +119,7 @@ end;
 procedure TForm1.QRBand1BeforePrint(Sender: TQRCustomBand;
   var PrintBand: Boolean);
 begin
-   RecordCountLabel.Caption := 'Общо редове: '+IntToStr(MainForm.Qklienti.RecordCount);
+//   RecordCountLabel.Caption := 'Общо редове: '+IntToStr(MainForm.Qklienti.RecordCount);
 end;
 
 procedure TForm1.QRSubDetail1BeforePrint(Sender: TQRCustomBand;
