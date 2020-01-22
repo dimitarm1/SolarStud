@@ -2638,7 +2638,7 @@ begin
         else  begin
           PriceCash := 0;
         end;
-        if ((Qklienti.FieldValues['nomer'] > 0) and (Card.ConStatus > 0)) then
+        if ((Qklienti.FieldValues['nomer'] > 0) and (Card.ErrCounter > 2)) then
         begin
             _Q4 := TABSQuery.Create(nil);
             _Q4.DatabaseName := 'sol1';
@@ -5613,6 +5613,11 @@ var
 begin //Зареждане
     if not (QKlienti.RecordCount = 1) and not IsReader then
         Exit;
+    if(QKlienti.RecordCount = 0) then
+    begin
+      NovKlientButtonClick(Sender);
+      Exit;
+    end;
     if KARTICHIP.FieldValues['ENDDATE'] > 0 then
         Exit;
     if( CardNomer <> 0) then

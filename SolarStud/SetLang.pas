@@ -363,7 +363,7 @@ procedure SetLangText();
     end;
    with   Form3 do //QReportDneven
     begin
-    QRLabel1.Caption:= GetLabel('QRF3L1');
+//    QRLabel1.Caption:= GetLabel('QRF3L1');
     QRLabel2.Caption:= GetLabel('QRF3L2');
     QRLabel3.Caption:= GetLabel('QRF3L3');
     QRLabel4.Caption:= GetLabel('QRF3L4');
@@ -654,7 +654,7 @@ procedure SaveLangText();
     end;
    with   Form3 do //QReportDneven
     begin
-     SaveLabel('QRF3L1',QRLabel1.Caption);
+//     SaveLabel('QRF3L1',QRLabel1.Caption);
      SaveLabel('QRF3L2',QRLabel2.Caption);
      SaveLabel('QRF3L3',QRLabel3.Caption);
      SaveLabel('QRF3L4',QRLabel4.Caption);

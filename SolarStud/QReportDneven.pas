@@ -51,7 +51,7 @@ type
     Sum_label4: TQRLabel;
     Sum_label5: TQRLabel;
     Sum_label6: TQRLabel;
-    QRLabel1: TQRLabel;
+    QRLabel25: TQRLabel;
     procedure QuickRep3AfterPreview(Sender: TObject);
     procedure QuickRep3StartPage(Sender: TCustomQuickRep);
     procedure DetailBand1BeforePrint(Sender: TQRCustomBand;
@@ -153,7 +153,7 @@ end;
 procedure TForm3.DetailBand1AfterPrint(Sender: TQRCustomBand;
   BandPrinted: Boolean);
 begin
-  if(not (QRDBText11.DataSet.FieldByName(QRDBText11.Caption).AsString = '')) then
+  if((QRDBText11.DataSet.FieldByName(QRDBText11.Caption).AsString = '')) then
   begin
     if(QRDBText1.DataSet.FieldByName(QRDBText1.Caption).AsString  = '1') then
       Sum1 :=   Sum1 + StrToInt(QRDBText2.DataSet.FieldByName(QRDBText2.Caption).AsString);

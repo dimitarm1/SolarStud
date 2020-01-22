@@ -1286,7 +1286,7 @@ object Form3: TForm3
         WordWrap = True
         FontSize = 12
       end
-      object QRLabel1: TQRLabel
+      object QRLabel25: TQRLabel
         Left = 8
         Top = 40
         Width = 177
