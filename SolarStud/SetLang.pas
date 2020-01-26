@@ -349,17 +349,17 @@ procedure SetLangText();
     end;
    with Form2 do //QReportSolariumNastroiki
     begin
-     QRLabel1.Caption:= GetLabel('QRF2L1');
-     QRLabel2.Caption:= GetLabel('QRF2L2');
-     QRLabel3.Caption:= GetLabel('QRF2L3');
-     QRLabel5.Caption:= GetLabel('QRF2L5');
-     QRLabel6.Caption:= GetLabel('QRF2L6');
-     QRLabel7.Caption:= GetLabel('QRF2L7');
-     QRLabel8.Caption:= GetLabel('QRF2L8');
-     QRLabel9.Caption:= GetLabel('QRF2L9');
-     QRLabel10.Caption:= GetLabel('QRF2L10');
-     QRLabel12.Caption:= GetLabel('QRF2L12');
-     QRLabel13.Caption:= GetLabel('QRF2L13');
+//     QRLabel1.Caption:= GetLabel('QRF2L1');
+//     QRLabel2.Caption:= GetLabel('QRF2L2');
+//     QRLabel3.Caption:= GetLabel('QRF2L3');
+//     QRLabel5.Caption:= GetLabel('QRF2L5');
+//     QRLabel6.Caption:= GetLabel('QRF2L6');
+//     QRLabel7.Caption:= GetLabel('QRF2L7');
+//     QRLabel8.Caption:= GetLabel('QRF2L8');
+//     QRLabel9.Caption:= GetLabel('QRF2L9');
+//     QRLabel10.Caption:= GetLabel('QRF2L10');
+//     QRLabel12.Caption:= GetLabel('QRF2L12');
+//     QRLabel13.Caption:= GetLabel('QRF2L13');
     end;
    with   Form3 do //QReportDneven
     begin

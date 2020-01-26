@@ -2640,7 +2640,7 @@ begin
         else  begin
           PriceCash := 0;
         end;
-        if ((Qklienti.FieldValues['nomer'] > 0) and (Card.ErrCounter > 2)) then
+        if (((Qklienti.FieldValues['nomer'] > 0) and (Card.ErrCounter > 2)) or (not IsChipCard and (CardNomer > 0))) then
         begin
             _Q4 := TABSQuery.Create(nil);
             _Q4.DatabaseName := 'sol1';
@@ -2715,6 +2715,7 @@ begin
           QKlienti.Active := True;
           if(QKlienti.RecordCount > 0) then
           begin
+               FillValues1;
                if(TimeSet > 0) and (PriceCard > 0) then
                        Ostatak := (QKlienti.FieldValues['SUMA']) /   (PriceCard/TimeSet)
                 else Ostatak := QKlienti.FieldValues['SUMA'];
@@ -3387,10 +3388,19 @@ begin
                 end;
                 if (PaidChipCard > 0) then
                 begin
-                    Plashtania.FieldValues['OTCHIPKARTA'] := Card.ClientNomer;
+                    if(IsChipCard) then
+                    begin
+                       Plashtania.FieldValues['OTCHIPKARTA'] := Card.ClientNomer;
+                       Plashtania.FieldValues['STUDIOCODE'] := Card.StudioNomer;
+                    end
+                    else
+                    begin
+                       Plashtania.FieldValues['OTCHIPKARTA'] := CardNomer;
+                       Plashtania.FieldValues['STUDIOCODE'] := Internet.FieldValues['STUDIONOMER'];
+                    end;
                     // Temporary Value
                     Plashtania.FieldValues['KARTASUMA'] := PaidChipCard;
-                    Plashtania.FieldValues['STUDIOCODE'] := Card.StudioNomer;
+
                     Plashtania.FieldValues['KLIENTNOMER'] :=
                         QKlienti.FieldValues['nomer2'];
                     plashtania.FieldValues['OTKARTA'] := CardType;
