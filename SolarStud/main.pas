@@ -3423,6 +3423,38 @@ begin
                 begin
                     //  Application.MessageBox(PChar('Неуспешно увеличаване на брояча на картата!'),PChar('Warning'),MB_OK);
                 end;
+                if (_Q.RecordCount > 0) and (not (IsChipCard)) and (CardNomer >
+                    0) and (QKLIENTI.RecordCount = 1) then
+                begin
+                  if(QKLIENTI.FieldValues['IME'] <> ' ') then
+                  begin
+                    if MainForm.STOKI.Locate('STOKATIP', 'D', []) then
+                    begin
+                       Plashtania.ReadOnly := False;
+                       Plashtania.Edit;
+                       Plashtania.Append;
+                       plashtania.FieldValues['BROI'] := 1;
+                       plashtania.FieldValues['DATA'] := Date;
+                       plashtania.FieldValues['CHAS'] := TimeToStr(Time);
+                       plashtania.FieldValues['OTCHIPKARTA'] := CardNomer;
+                       plashtania.FieldValues['OTKARTA'] := CardType;
+                       plashtania.FieldValues['STOKA'] :=  STOKI.FieldValues['STOKAKOD'];
+                       plashtania.FieldValues['SUMABROI'] := 0;
+                       Plashtania.FieldValues['STUDIOCODE'] := Internet.FieldValues['STUDIONOMER'];
+                       Plashtania.Post;
+                    end;
+                    _Q.Active := false;
+                    _Q.SQL.SetText(PChar('SELECT * FROM KLIENTI WHERE NOMER = ' +
+                        IntToStr(CardNomer)));
+                    _Q.Active := true;
+                    if(_Q.RecordCount > 0) then
+                    begin
+                      _Q.Edit;
+                      _Q.FieldValues['IME'] := ' ';
+                      _Q.Post;
+                    end;
+                  end;
+                end;
                 CabineRecord[IndexSol] :=
                     Plashtania.FieldByName('RECORDID').AsInteger;
                 if (BroiKartiPaid > 1) and AdvComboBox2.Visible then
