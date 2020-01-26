@@ -668,9 +668,9 @@ object Form3: TForm3
         FontSize = 8
       end
       object QRDBText13: TQRDBText
-        Left = 624
+        Left = 656
         Top = 0
-        Width = 97
+        Width = 41
         Height = 15
         Frame.Color = clBlack
         Frame.DrawTop = False
@@ -679,9 +679,9 @@ object Form3: TForm3
         Frame.DrawRight = False
         Size.Values = (
           39.687500000000000000
-          1651.000000000000000000
+          1735.666666666667000000
           0.000000000000000000
-          256.645833333333300000)
+          108.479166666666700000)
         Alignment = taLeftJustify
         AlignToBand = False
         AutoSize = False
@@ -732,9 +732,9 @@ object Form3: TForm3
         FontSize = 8
       end
       object QRDBText4: TQRDBText
-        Left = 579
+        Left = 592
         Top = 0
-        Width = 39
+        Width = 26
         Height = 15
         Frame.Color = clBlack
         Frame.DrawTop = False
@@ -743,9 +743,9 @@ object Form3: TForm3
         Frame.DrawRight = False
         Size.Values = (
           39.687500000000000000
-          1531.937500000000000000
+          1566.333333333333000000
           0.000000000000000000
-          103.187500000000000000)
+          68.791666666666670000)
         Alignment = taRightJustify
         AlignToBand = False
         AutoSize = False

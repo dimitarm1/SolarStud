@@ -2969,7 +2969,7 @@ begin
             SendCmd(4);
     end;
     if Button = mbLeft then
-        if CabineStatus[IndexSol - 1] = 0 then
+        if CabineStatus[IndexSol - 1] in [0,3] then
             LocateSolarium;
     MainForm.Timer1.Enabled := true;
 end;
@@ -3300,8 +3300,16 @@ begin
         PaidChipCard * (PriceCash / PriceCard)) < 0.03 then
     begin
 //        LastTime[(IndexSol - 1)] := TimeSet;
-        CabineSetTime[(IndexSol - 1)] := TimeSet;
-        SendData(TimeSet, IndexSol, true);
+        if(CabineStatus[IndexSol - 1] = 3) then
+        begin
+          CabineSetTime[(IndexSol - 1)] := TimeSet + LastTime[(IndexSol - 1)];
+        end
+        else
+        begin
+          CabineSetTime[(IndexSol - 1)] := TimeSet;
+        end;
+        LastTime[(IndexSol - 1)] := TimeSet;
+        SendData(CabineSetTime[(IndexSol - 1)], IndexSol, true);
         if Retry > 21 then
         begin
             if not ((Plashtania.Locate('RecordID', CabineRecord[IndexSol], []))
