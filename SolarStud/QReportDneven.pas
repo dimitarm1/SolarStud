@@ -52,6 +52,8 @@ type
     Sum_label5: TQRLabel;
     Sum_label6: TQRLabel;
     QRLabel25: TQRLabel;
+    QRDBText4: TQRDBText;
+    QRLabel1: TQRLabel;
     procedure QuickRep3AfterPreview(Sender: TObject);
     procedure QuickRep3StartPage(Sender: TCustomQuickRep);
     procedure DetailBand1BeforePrint(Sender: TQRCustomBand;

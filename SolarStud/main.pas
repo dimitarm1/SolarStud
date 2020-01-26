@@ -1026,6 +1026,7 @@ var
     RS_232_Timeouts: _COMMTIMEOUTS;
     PriceCash: Real;
     PriceCard: Real;
+    CardType: Integer;
     PaidCash: Real;
     ToBePaidCash: Real;
     VipDiscount: Real;
@@ -2616,6 +2617,7 @@ begin
     //SDELKANOMER:=0;
     with MainForm do
     begin
+        CardType := 0;
         PriceCard := -1;
         if(IndexSol > 0) then  SOLARIUMI.RecNo := IndexSol;
         if TimeSet > 99 then
@@ -2660,6 +2662,7 @@ begin
                 begin
                     try
                       PriceCard := TimeSet * _Q4.FieldByName('CENA').AsVariant;
+                      CardType := stoka
                     except
                       PriceCard := -1;
                     end;
@@ -2700,18 +2703,21 @@ begin
     begin
       QKarti.Active := False;
       if StrLen(PChar(Edit2.Text)) > 0 then
-          QKarti.SQL.SetText(PChar('SELECT * FROM kartiall WHERE KARTANOMER = ' +
+          QKarti.SQL.SetText(PChar('SELECT * FROM KARTICHIP WHERE KLIENTNOMER = ' +
               Edit2.Text + ''))  ;
       QKarti.Active := True;
       QKlienti.Active := False;
-      if QKarti.FieldValues['klientdetail'] > 0 then
+      if QKarti.RecordCount>0 then
       begin
-          QKlienti.SQL.SetText(PChar('SSELECT * FROM klienti k left outer join KARTICHIP c on k.NOMER = c.KLIENTNOMER WHERE NOMER = ' +
-              IntToStr2(QKarti.FieldValues['klientdetail']) + ''));
+          QKarti.Active := false;
+          QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join KARTICHIP c on k.NOMER = c.KLIENTNOMER WHERE NOMER = ' +
+              Edit2.Text + ''));
           QKlienti.Active := True;
           if(QKlienti.RecordCount > 0) then
           begin
-                Ostatak := QKlienti.FieldValues['SUMA'] ;
+               if(TimeSet > 0) and (PriceCard > 0) then
+                       Ostatak := (QKlienti.FieldValues['SUMA']) /   (PriceCard/TimeSet)
+                else Ostatak := QKlienti.FieldValues['SUMA'];
                 FmtStr(Result, '%4.2f', [Ostatak]);
                 Label14.Caption := '' + Result + GetMessage('M85');
           end;
@@ -3249,9 +3255,9 @@ begin
                 SLE4442Submit();
                 //SLE4442ReadCardInfo();
                 //Card.Balans:=TempBalans;
-                if(Card.ClientName <> '') then
+                if(Card.ClientName <> ' ') then
                 begin
-                   Card.ClientName := '';
+                   Card.ClientName := ' ';
                    if MainForm.STOKI.Locate('STOKATIP', 'D', []) then
                    begin
                       Plashtania.ReadOnly := False;
@@ -3261,6 +3267,7 @@ begin
                       plashtania.FieldValues['DATA'] := Date;
                       plashtania.FieldValues['CHAS'] := TimeToStr(Time);
                       plashtania.FieldValues['OTCHIPKARTA'] := Card.ClientNomer;
+                      plashtania.FieldValues['OTKARTA'] := CardType;
                       plashtania.FieldValues['STOKA'] :=  STOKI.FieldValues['STOKAKOD'];
                       plashtania.FieldValues['SUMABROI'] := 0;
                       Plashtania.Post;
@@ -3378,6 +3385,7 @@ begin
                     Plashtania.FieldValues['STUDIOCODE'] := Card.StudioNomer;
                     Plashtania.FieldValues['KLIENTNOMER'] :=
                         QKlienti.FieldValues['nomer2'];
+                    plashtania.FieldValues['OTKARTA'] := CardType;
                 end
                 else if (CardNomer > 0) then
                 begin
@@ -3477,7 +3485,7 @@ begin
             else if (Length(BarCodReaderBuff) > 5) then
             begin
                 try
-                    CardNomer := StrToInt(Rightstr(KeyBuff, 7));
+                    CardNomer := StrToInt(Rightstr(KeyBuff, 8));
                     if (AdvPageControl1.ActivePageIndex = 1) then
                     begin
                         AdvPageControl1.ActivePageIndex := 18;
@@ -5051,7 +5059,10 @@ end;
 procedure TMainForm.IzborNaVreme5Show(Sender: TObject);
 begin
   Image5.Picture := Image1.Picture;
+  CardNomer := 0;
   SLE4442Init();
+  Label14.Caption := '';
+  Edit2.Text := '';
   Label9.Caption := IntToStr(Card.ClientNomer);
   if(card.ConStatus = 0) then
   begin
@@ -5276,8 +5287,21 @@ begin
                 PaidChipCard := PriceCard - (PaidCard + PaidCash)
             else
                 PaidChipCard := PriceCard;
-            if (PaidChipCard) > Card.Balans then
-                PaidChipCard := Card.Balans;
+            if not IsChipCard  and (CardNomer > 0) then
+            begin
+              if KARTICHIP.FieldValues['SUMA'] < PaidChipCard then
+              begin
+                Application.MessageBox(PChar('Недостатъчни минути!'), PChar(''), MB_OK);
+                PaidChipCard:= 0;
+                exit;
+              end;
+            end
+            else
+            begin
+                if (PaidChipCard) > Card.Balans then
+                  PaidChipCard := Card.Balans;
+            end;
+
             FmtStr(Result1, '%4.2f', [(PaidChipCard)]);
             temp_discount := VipDiscount;
             VipDiscount := 0;

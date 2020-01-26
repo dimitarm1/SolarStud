@@ -922,7 +922,7 @@ begin
 //                Ostatak := (Card.Balans) /
 //                    MainForm.SOLARIUMI.FieldValues['CENA'];
                 if(TimeSet > 0) and (PriceCard > 0) then
-                       Ostatak := (Card.Balans - (PaidChipCard)) /   (PriceCard/TimeSet)
+                       Ostatak := (Card.Balans) /   (PriceCard/TimeSet)
                 else Ostatak := Card.Balans;
                 FmtStr(Result, '%4.2f', [Ostatak]);
                 MainForm.Label72.Caption := '' + Result + GetMessage('M85');
@@ -1019,6 +1019,11 @@ var
     indx: integer;
 begin
     IsChipCard := false;
+    Card.Balans := 0;
+    Card.ClientNomer := 0;
+    Card.ConStatus:= 0;
+    Card.ErrCounter := 0;
+    Card.CardNomer:= 0;
     // 1. Establish context and obtain hContext handle
     retCode := SCardEstablishContext(SCARD_SCOPE_USER,
         nil,

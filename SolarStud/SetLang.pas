@@ -382,13 +382,13 @@ procedure SetLangText();
     end;
    with form4 do //Stoki
     begin
-    QRLabel1.Caption:=  GetLabel('QRF4L1');
-    QRLabel2.Caption:= GetLabel('QRF4L2');
-    QRLabel3.Caption:= GetLabel('QRF4L3');
-    QRLabel4.Caption:= GetLabel('QRF4L4');
-    QRLabel5.Caption:= GetLabel('QRF4L5');
-    QRLabel6.Caption:= GetLabel('QRF4L6');
-    QRLabel7.Caption:=  GetLabel('QRF4L7');
+//    QRLabel1.Caption:=  GetLabel('QRF4L1');
+//    QRLabel2.Caption:= GetLabel('QRF4L2');
+//    QRLabel3.Caption:= GetLabel('QRF4L3');
+//    QRLabel4.Caption:= GetLabel('QRF4L4');
+//    QRLabel5.Caption:= GetLabel('QRF4L5');
+//    QRLabel6.Caption:= GetLabel('QRF4L6');
+//    QRLabel7.Caption:=  GetLabel('QRF4L7');
     end;
 
 
