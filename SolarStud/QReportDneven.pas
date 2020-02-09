@@ -20,12 +20,8 @@ type
     QRDBText3: TQRDBText;
     QRLabel3: TQRLabel;
     QRLabel4: TQRLabel;
-    QRLabel5: TQRLabel;
     QRBand1: TQRBand;
-    QRExpr1: TQRExpr;
-    QRLabel9: TQRLabel;
     QRDBText7: TQRDBText;
-    QRLabel11: TQRLabel;
     QRSysData3: TQRSysData;
     QRLabel12: TQRLabel;
     QRDBText8: TQRDBText;
@@ -54,6 +50,42 @@ type
     QRLabel25: TQRLabel;
     QRDBText4: TQRDBText;
     QRLabel1: TQRLabel;
+    Sum_label10: TQRLabel;
+    Sum_label11: TQRLabel;
+    Sum_label12: TQRLabel;
+    Sum_label13: TQRLabel;
+    Sum_label14: TQRLabel;
+    Sum_label15: TQRLabel;
+    Sum_label16: TQRLabel;
+    Sum_label17: TQRLabel;
+    Sum_label18: TQRLabel;
+    Sum_label19: TQRLabel;
+    Sum_label20: TQRLabel;
+    Sum_label21: TQRLabel;
+    Sum_label22: TQRLabel;
+    Sum_label23: TQRLabel;
+    Sum_label24: TQRLabel;
+    Sum_label25: TQRLabel;
+    Sum_label26: TQRLabel;
+    Sum_label27: TQRLabel;
+    QRLabel26: TQRLabel;
+    QRLabel5: TQRLabel;
+    QRLabel9: TQRLabel;
+    QRLabel11: TQRLabel;
+    QRLabel19: TQRLabel;
+    QRLabel22: TQRLabel;
+    QRLabel23: TQRLabel;
+    QRLabel24: TQRLabel;
+    QRLabel27: TQRLabel;
+    QRLabel28: TQRLabel;
+    QRLabel29: TQRLabel;
+    QRLabel30: TQRLabel;
+    QRLabel31: TQRLabel;
+    QRLabel32: TQRLabel;
+    QRLabel33: TQRLabel;
+    QRLabel34: TQRLabel;
+    QRLabel35: TQRLabel;
+    QRLabel36: TQRLabel;
     procedure QuickRep3AfterPreview(Sender: TObject);
     procedure QuickRep3StartPage(Sender: TCustomQuickRep);
     procedure DetailBand1BeforePrint(Sender: TQRCustomBand;
@@ -62,8 +94,7 @@ type
     procedure QRBand1BeforePrint(Sender: TQRCustomBand; var PrintBand: Boolean);
     procedure DetailBand1AfterPrint(Sender: TQRCustomBand;
       BandPrinted: Boolean);
-    procedure PageHeaderBand1BeforePrint(Sender: TQRCustomBand;
-      var PrintBand: Boolean);
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -78,6 +109,24 @@ var
   Sum4: Integer;
   Sum5: Integer;
   Sum6: Integer;
+  Sum10: Integer;
+  Sum11: Integer;
+  Sum12: Integer;
+  Sum13: Integer;
+  Sum14: Integer;
+  Sum15: Integer;
+  Sum16: Integer;
+  Sum17: Integer;
+  Sum18: Integer;
+  Sum19: Integer;
+  Sum20: Integer;
+  Sum21: Integer;
+  Sum22: Integer;
+  Sum23: Integer;
+  Sum24: Integer;
+  Sum25: Integer;
+  Sum26: Integer;
+  Sum27: Integer;
 
 implementation
  uses main;
@@ -110,6 +159,26 @@ begin
   Sum_label4.Caption := IntToStr(Sum4);
   Sum_label5.Caption := IntToStr(Sum5);
   Sum_label6.Caption := IntToStr(Sum6);
+
+  Sum_label10.Caption := IntToStr(Sum10);
+  Sum_label11.Caption := IntToStr(Sum11);
+  Sum_label12.Caption := IntToStr(Sum12);
+  Sum_label13.Caption := IntToStr(Sum13);
+  Sum_label14.Caption := IntToStr(Sum14);
+  Sum_label15.Caption := IntToStr(Sum15);
+  Sum_label16.Caption := IntToStr(Sum16);
+  Sum_label17.Caption := IntToStr(Sum17);
+  Sum_label18.Caption := IntToStr(Sum18);
+  Sum_label19.Caption := IntToStr(Sum19);
+  Sum_label20.Caption := IntToStr(Sum20);
+  Sum_label21.Caption := IntToStr(Sum21);
+  Sum_label22.Caption := IntToStr(Sum22);
+  Sum_label23.Caption := IntToStr(Sum23);
+  Sum_label24.Caption := IntToStr(Sum24);
+  Sum_label25.Caption := IntToStr(Sum25);
+  Sum_label26.Caption := IntToStr(Sum26);
+  Sum_label27.Caption := IntToStr(Sum27);
+
 end;
 
 procedure TForm3.QRExpr1Print(sender: TObject; var Value: string);
@@ -169,6 +238,45 @@ begin
       Sum5 :=   Sum5 + StrToInt(QRDBText2.DataSet.FieldByName(QRDBText2.Caption).AsString);
     if(QRDBText1.DataSet.FieldByName(QRDBText1.Caption).AsString  = '6') then
       Sum6 :=   Sum6 + StrToInt(QRDBText2.DataSet.FieldByName(QRDBText2.Caption).AsString);
+  end
+  else
+  begin
+    if(QRDBText7.DataSet.FieldByName(QRDBText7.Caption).AsString  = '-1') then
+      Sum10 :=   Sum10 + StrToInt(QRDBText2.DataSet.FieldByName(QRDBText2.Caption).AsString);
+    if(QRDBText7.DataSet.FieldByName(QRDBText7.Caption).AsString  = '-2') then
+      Sum11 :=   Sum11 + StrToInt(QRDBText2.DataSet.FieldByName(QRDBText2.Caption).AsString);
+    if(QRDBText7.DataSet.FieldByName(QRDBText7.Caption).AsString  = '-3') then
+      Sum12 :=   Sum12 + StrToInt(QRDBText2.DataSet.FieldByName(QRDBText2.Caption).AsString);
+    if(QRDBText7.DataSet.FieldByName(QRDBText7.Caption).AsString  = '-4') then
+      Sum13 :=   Sum13 + StrToInt(QRDBText2.DataSet.FieldByName(QRDBText2.Caption).AsString);
+    if(QRDBText7.DataSet.FieldByName(QRDBText7.Caption).AsString  = '-5') then
+      Sum14 :=   Sum14 + StrToInt(QRDBText2.DataSet.FieldByName(QRDBText2.Caption).AsString);
+    if(QRDBText7.DataSet.FieldByName(QRDBText7.Caption).AsString  = '-6') then
+      Sum15 :=   Sum15 + StrToInt(QRDBText2.DataSet.FieldByName(QRDBText2.Caption).AsString);
+    if(QRDBText7.DataSet.FieldByName(QRDBText7.Caption).AsString  = '-7') then
+      Sum16 :=   Sum16 + StrToInt(QRDBText2.DataSet.FieldByName(QRDBText2.Caption).AsString);
+    if(QRDBText7.DataSet.FieldByName(QRDBText7.Caption).AsString  = '-8') then
+      Sum17 :=   Sum17 + StrToInt(QRDBText2.DataSet.FieldByName(QRDBText2.Caption).AsString);
+    if(QRDBText7.DataSet.FieldByName(QRDBText7.Caption).AsString  = '-9') then
+      Sum18 :=   Sum18 + StrToInt(QRDBText2.DataSet.FieldByName(QRDBText2.Caption).AsString);
+    if(QRDBText7.DataSet.FieldByName(QRDBText7.Caption).AsString  = '-10') then
+      Sum19 :=   Sum19 + StrToInt(QRDBText2.DataSet.FieldByName(QRDBText2.Caption).AsString);
+    if(QRDBText7.DataSet.FieldByName(QRDBText7.Caption).AsString  = '-11') then
+      Sum20 :=   Sum20 + StrToInt(QRDBText2.DataSet.FieldByName(QRDBText2.Caption).AsString);
+    if(QRDBText7.DataSet.FieldByName(QRDBText7.Caption).AsString  = '-12') then
+      Sum21 :=   Sum21 + StrToInt(QRDBText2.DataSet.FieldByName(QRDBText2.Caption).AsString);
+    if(QRDBText7.DataSet.FieldByName(QRDBText7.Caption).AsString  = '-13') then
+      Sum22 :=   Sum22 + StrToInt(QRDBText2.DataSet.FieldByName(QRDBText2.Caption).AsString);
+    if(QRDBText7.DataSet.FieldByName(QRDBText7.Caption).AsString  = '-14') then
+      Sum23 :=   Sum23 + StrToInt(QRDBText2.DataSet.FieldByName(QRDBText2.Caption).AsString);
+    if(QRDBText7.DataSet.FieldByName(QRDBText7.Caption).AsString  = '-15') then
+      Sum24 :=   Sum24 + StrToInt(QRDBText2.DataSet.FieldByName(QRDBText2.Caption).AsString);
+    if(QRDBText7.DataSet.FieldByName(QRDBText7.Caption).AsString  = '-16') then
+      Sum25 :=   Sum25 + StrToInt(QRDBText2.DataSet.FieldByName(QRDBText2.Caption).AsString);
+    if(QRDBText7.DataSet.FieldByName(QRDBText7.Caption).AsString  = '-17') then
+      Sum26 :=   Sum26 + StrToInt(QRDBText2.DataSet.FieldByName(QRDBText2.Caption).AsString);
+    if(QRDBText7.DataSet.FieldByName(QRDBText7.Caption).AsString  = '-18') then
+      Sum27 :=   Sum27 + StrToInt(QRDBText2.DataSet.FieldByName(QRDBText2.Caption).AsString);
   end;
 end;
 
@@ -199,15 +307,26 @@ if MainForm.DayTotal.FieldValues['SOLARIUM']>0 then
   end;
 end;
 
-procedure TForm3.PageHeaderBand1BeforePrint(Sender: TQRCustomBand;
-  var PrintBand: Boolean);
+procedure TForm3.FormCreate(Sender: TObject);
 begin
- Sum1:=0;
+  Sum1:=0;
   Sum2:=0;
   Sum3:=0;
   Sum4:=0;
   Sum5:=0;
   Sum6:=0;
+  Sum10:=0;
+  Sum11:=0;
+  Sum12:=0;
+  Sum13:=0;
+  Sum14:=0;
+  Sum15:=0;
+  Sum16:=0;
+  Sum17:=0;
+  Sum18:=0;
+  Sum19:=0;
+  Sum20:=0;
+  Sum21:=0;
 end;
 
 end.

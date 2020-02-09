@@ -12,6 +12,7 @@ object Form3: TForm3
   Font.Style = []
   OldCreateOrder = False
   Scaled = False
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 14
   object QuickRep3: TQuickRep
@@ -87,7 +88,6 @@ object Form3: TForm3
       Frame.DrawLeft = False
       Frame.DrawRight = False
       AlignToBottom = False
-      BeforePrint = PageHeaderBand1BeforePrint
       Color = clWhite
       TransparentBand = False
       ForceNewColumn = False
@@ -149,37 +149,6 @@ object Form3: TForm3
         AutoSize = False
         AutoStretch = False
         Caption = #1063#1072#1089
-        Color = clWhite
-        Font.Charset = RUSSIAN_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-        Transparent = False
-        WordWrap = True
-        FontSize = 8
-      end
-      object QRLabel5: TQRLabel
-        Left = 335
-        Top = 50
-        Width = 25
-        Height = 17
-        Frame.Color = clBlack
-        Frame.DrawTop = False
-        Frame.DrawBottom = False
-        Frame.DrawLeft = False
-        Frame.DrawRight = False
-        Size.Values = (
-          44.979166666666670000
-          886.354166666666700000
-          132.291666666666700000
-          66.145833333333330000)
-        Alignment = taRightJustify
-        AlignToBand = False
-        AutoSize = True
-        AutoStretch = False
-        Caption = #1073#1088#1086#1081
         Color = clWhite
         Font.Charset = RUSSIAN_CHARSET
         Font.Color = clWindowText
@@ -856,102 +825,6 @@ object Form3: TForm3
       PreCaluculateBandHeight = False
       KeepOnOnePage = False
       BandType = rbSummary
-      object QRExpr1: TQRExpr
-        Left = 366
-        Top = 15
-        Width = 79
-        Height = 19
-        Frame.Color = clBlack
-        Frame.DrawTop = False
-        Frame.DrawBottom = False
-        Frame.DrawLeft = False
-        Frame.DrawRight = False
-        Size.Values = (
-          50.270833333333330000
-          968.375000000000000000
-          39.687500000000000000
-          209.020833333333300000)
-        Alignment = taLeftJustify
-        AlignToBand = False
-        AutoSize = False
-        AutoStretch = False
-        Font.Charset = RUSSIAN_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -16
-        Font.Name = 'Arial'
-        Font.Style = []
-        Color = clWhite
-        Master = QuickRep3
-        OnPrint = QRExpr1Print
-        ParentFont = False
-        ResetAfterPrint = True
-        Transparent = False
-        WordWrap = True
-        Expression = 'SUM(BROI)'
-        FontSize = 12
-      end
-      object QRLabel9: TQRLabel
-        Left = 248
-        Top = 15
-        Width = 115
-        Height = 20
-        Frame.Color = clBlack
-        Frame.DrawTop = False
-        Frame.DrawBottom = False
-        Frame.DrawLeft = False
-        Frame.DrawRight = False
-        Size.Values = (
-          52.916666666666670000
-          656.166666666666800000
-          39.687500000000000000
-          304.270833333333300000)
-        Alignment = taRightJustify
-        AlignToBand = False
-        AutoSize = False
-        AutoStretch = False
-        Caption = #1042#1089#1080#1095#1082#1086
-        Color = clWhite
-        Font.Charset = RUSSIAN_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -16
-        Font.Name = 'Arial'
-        Font.Style = [fsBold]
-        ParentFont = False
-        Transparent = False
-        WordWrap = True
-        FontSize = 12
-      end
-      object QRLabel11: TQRLabel
-        Left = 447
-        Top = 14
-        Width = 90
-        Height = 20
-        Frame.Color = clBlack
-        Frame.DrawTop = False
-        Frame.DrawBottom = False
-        Frame.DrawLeft = False
-        Frame.DrawRight = False
-        Size.Values = (
-          52.916666666666670000
-          1182.687500000000000000
-          37.041666666666670000
-          238.125000000000000000)
-        Alignment = taLeftJustify
-        AlignToBand = False
-        AutoSize = False
-        AutoStretch = False
-        Caption = #1073#1088'.'
-        Color = clWhite
-        Font.Charset = RUSSIAN_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -16
-        Font.Name = 'Arial'
-        Font.Style = [fsBold]
-        ParentFont = False
-        Transparent = False
-        WordWrap = True
-        FontSize = 12
-      end
       object QRLabel21: TQRLabel
         Left = 8
         Top = 14
@@ -1380,6 +1253,1122 @@ object Form3: TForm3
         WordWrap = True
         FontSize = 12
       end
+      object Sum_label10: TQRLabel
+        Left = 352
+        Top = 40
+        Width = 40
+        Height = 20
+        Frame.Color = clBlack
+        Frame.DrawTop = False
+        Frame.DrawBottom = False
+        Frame.DrawLeft = False
+        Frame.DrawRight = False
+        Size.Values = (
+          52.916666666666670000
+          931.333333333333300000
+          105.833333333333300000
+          105.833333333333300000)
+        Alignment = taRightJustify
+        AlignToBand = False
+        AutoSize = False
+        AutoStretch = False
+        Caption = 'SUM'
+        Color = clWhite
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -16
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+        Transparent = False
+        WordWrap = True
+        FontSize = 12
+      end
+      object Sum_label11: TQRLabel
+        Left = 352
+        Top = 65
+        Width = 40
+        Height = 20
+        Frame.Color = clBlack
+        Frame.DrawTop = False
+        Frame.DrawBottom = False
+        Frame.DrawLeft = False
+        Frame.DrawRight = False
+        Size.Values = (
+          52.916666666666670000
+          931.333333333333300000
+          171.979166666666700000
+          105.833333333333300000)
+        Alignment = taRightJustify
+        AlignToBand = False
+        AutoSize = False
+        AutoStretch = False
+        Caption = 'SUM'
+        Color = clWhite
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -16
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+        Transparent = False
+        WordWrap = True
+        FontSize = 12
+      end
+      object Sum_label12: TQRLabel
+        Left = 352
+        Top = 91
+        Width = 40
+        Height = 20
+        Frame.Color = clBlack
+        Frame.DrawTop = False
+        Frame.DrawBottom = False
+        Frame.DrawLeft = False
+        Frame.DrawRight = False
+        Size.Values = (
+          52.916666666666670000
+          931.333333333333300000
+          240.770833333333300000
+          105.833333333333300000)
+        Alignment = taRightJustify
+        AlignToBand = False
+        AutoSize = False
+        AutoStretch = False
+        Caption = 'SUM'
+        Color = clWhite
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -16
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+        Transparent = False
+        WordWrap = True
+        FontSize = 12
+      end
+      object Sum_label13: TQRLabel
+        Left = 352
+        Top = 117
+        Width = 40
+        Height = 20
+        Frame.Color = clBlack
+        Frame.DrawTop = False
+        Frame.DrawBottom = False
+        Frame.DrawLeft = False
+        Frame.DrawRight = False
+        Size.Values = (
+          52.916666666666670000
+          931.333333333333300000
+          309.562500000000000000
+          105.833333333333300000)
+        Alignment = taRightJustify
+        AlignToBand = False
+        AutoSize = False
+        AutoStretch = False
+        Caption = 'SUM'
+        Color = clWhite
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -16
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+        Transparent = False
+        WordWrap = True
+        FontSize = 12
+      end
+      object Sum_label14: TQRLabel
+        Left = 352
+        Top = 143
+        Width = 40
+        Height = 20
+        Frame.Color = clBlack
+        Frame.DrawTop = False
+        Frame.DrawBottom = False
+        Frame.DrawLeft = False
+        Frame.DrawRight = False
+        Size.Values = (
+          52.916666666666670000
+          931.333333333333300000
+          378.354166666666700000
+          105.833333333333300000)
+        Alignment = taRightJustify
+        AlignToBand = False
+        AutoSize = False
+        AutoStretch = False
+        Caption = 'SUM'
+        Color = clWhite
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -16
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+        Transparent = False
+        WordWrap = True
+        FontSize = 12
+      end
+      object Sum_label15: TQRLabel
+        Left = 352
+        Top = 169
+        Width = 40
+        Height = 20
+        Frame.Color = clBlack
+        Frame.DrawTop = False
+        Frame.DrawBottom = False
+        Frame.DrawLeft = False
+        Frame.DrawRight = False
+        Size.Values = (
+          52.916666666666670000
+          931.333333333333300000
+          447.145833333333300000
+          105.833333333333300000)
+        Alignment = taRightJustify
+        AlignToBand = False
+        AutoSize = False
+        AutoStretch = False
+        Caption = 'SUM'
+        Color = clWhite
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -16
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+        Transparent = False
+        WordWrap = True
+        FontSize = 12
+      end
+      object Sum_label22: TQRLabel
+        Left = 616
+        Top = 40
+        Width = 42
+        Height = 20
+        Frame.Color = clBlack
+        Frame.DrawTop = False
+        Frame.DrawBottom = False
+        Frame.DrawLeft = False
+        Frame.DrawRight = False
+        Size.Values = (
+          52.916666666666670000
+          1629.833333333333000000
+          105.833333333333300000
+          111.125000000000000000)
+        Alignment = taRightJustify
+        AlignToBand = False
+        AutoSize = False
+        AutoStretch = False
+        Caption = 'SUM'
+        Color = clWhite
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -16
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+        Transparent = False
+        WordWrap = True
+        FontSize = 12
+      end
+      object Sum_label23: TQRLabel
+        Left = 616
+        Top = 65
+        Width = 42
+        Height = 20
+        Frame.Color = clBlack
+        Frame.DrawTop = False
+        Frame.DrawBottom = False
+        Frame.DrawLeft = False
+        Frame.DrawRight = False
+        Size.Values = (
+          52.916666666666670000
+          1629.833333333333000000
+          171.979166666666700000
+          111.125000000000000000)
+        Alignment = taRightJustify
+        AlignToBand = False
+        AutoSize = False
+        AutoStretch = False
+        Caption = 'SUM'
+        Color = clWhite
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -16
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+        Transparent = False
+        WordWrap = True
+        FontSize = 12
+      end
+      object Sum_label24: TQRLabel
+        Left = 616
+        Top = 91
+        Width = 42
+        Height = 20
+        Frame.Color = clBlack
+        Frame.DrawTop = False
+        Frame.DrawBottom = False
+        Frame.DrawLeft = False
+        Frame.DrawRight = False
+        Size.Values = (
+          52.916666666666670000
+          1629.833333333333000000
+          240.770833333333300000
+          111.125000000000000000)
+        Alignment = taRightJustify
+        AlignToBand = False
+        AutoSize = False
+        AutoStretch = False
+        Caption = 'SUM'
+        Color = clWhite
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -16
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+        Transparent = False
+        WordWrap = True
+        FontSize = 12
+      end
+      object Sum_label25: TQRLabel
+        Left = 616
+        Top = 117
+        Width = 42
+        Height = 20
+        Frame.Color = clBlack
+        Frame.DrawTop = False
+        Frame.DrawBottom = False
+        Frame.DrawLeft = False
+        Frame.DrawRight = False
+        Size.Values = (
+          52.916666666666670000
+          1629.833333333333000000
+          309.562500000000000000
+          111.125000000000000000)
+        Alignment = taRightJustify
+        AlignToBand = False
+        AutoSize = False
+        AutoStretch = False
+        Caption = 'SUM'
+        Color = clWhite
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -16
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+        Transparent = False
+        WordWrap = True
+        FontSize = 12
+      end
+      object Sum_label26: TQRLabel
+        Left = 616
+        Top = 143
+        Width = 42
+        Height = 20
+        Frame.Color = clBlack
+        Frame.DrawTop = False
+        Frame.DrawBottom = False
+        Frame.DrawLeft = False
+        Frame.DrawRight = False
+        Size.Values = (
+          52.916666666666670000
+          1629.833333333333000000
+          378.354166666666700000
+          111.125000000000000000)
+        Alignment = taRightJustify
+        AlignToBand = False
+        AutoSize = False
+        AutoStretch = False
+        Caption = 'SUM'
+        Color = clWhite
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -16
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+        Transparent = False
+        WordWrap = True
+        FontSize = 12
+      end
+      object Sum_label27: TQRLabel
+        Left = 616
+        Top = 169
+        Width = 42
+        Height = 20
+        Frame.Color = clBlack
+        Frame.DrawTop = False
+        Frame.DrawBottom = False
+        Frame.DrawLeft = False
+        Frame.DrawRight = False
+        Size.Values = (
+          52.916666666666670000
+          1629.833333333333000000
+          447.145833333333300000
+          111.125000000000000000)
+        Alignment = taRightJustify
+        AlignToBand = False
+        AutoSize = False
+        AutoStretch = False
+        Caption = 'SUM'
+        Color = clWhite
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -16
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+        Transparent = False
+        WordWrap = True
+        FontSize = 12
+      end
+      object QRLabel26: TQRLabel
+        Left = 279
+        Top = 40
+        Width = 67
+        Height = 20
+        Frame.Color = clBlack
+        Frame.DrawTop = False
+        Frame.DrawBottom = False
+        Frame.DrawLeft = False
+        Frame.DrawRight = False
+        Size.Values = (
+          52.916666666666670000
+          738.187500000000000000
+          105.833333333333300000
+          177.270833333333300000)
+        Alignment = taRightJustify
+        AlignToBand = False
+        AutoSize = False
+        AutoStretch = False
+        Caption = #1072#1082#1074#1072#1082#1091#1083' 1'
+        Color = clWhite
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+        Transparent = False
+        WordWrap = True
+        FontSize = 10
+      end
+      object QRLabel5: TQRLabel
+        Left = 279
+        Top = 65
+        Width = 67
+        Height = 20
+        Frame.Color = clBlack
+        Frame.DrawTop = False
+        Frame.DrawBottom = False
+        Frame.DrawLeft = False
+        Frame.DrawRight = False
+        Size.Values = (
+          52.916666666666670000
+          738.187500000000000000
+          171.979166666666700000
+          177.270833333333300000)
+        Alignment = taRightJustify
+        AlignToBand = False
+        AutoSize = False
+        AutoStretch = False
+        Caption = #1072#1082#1074#1072#1082#1091#1083' 2'
+        Color = clWhite
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+        Transparent = False
+        WordWrap = True
+        FontSize = 10
+      end
+      object QRLabel9: TQRLabel
+        Left = 279
+        Top = 92
+        Width = 67
+        Height = 20
+        Frame.Color = clBlack
+        Frame.DrawTop = False
+        Frame.DrawBottom = False
+        Frame.DrawLeft = False
+        Frame.DrawRight = False
+        Size.Values = (
+          52.916666666666670000
+          738.187500000000000000
+          243.416666666666700000
+          177.270833333333300000)
+        Alignment = taRightJustify
+        AlignToBand = False
+        AutoSize = False
+        AutoStretch = False
+        Caption = #1072#1082#1074#1072#1082#1091#1083' 3'
+        Color = clWhite
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+        Transparent = False
+        WordWrap = True
+        FontSize = 10
+      end
+      object QRLabel11: TQRLabel
+        Left = 279
+        Top = 118
+        Width = 67
+        Height = 20
+        Frame.Color = clBlack
+        Frame.DrawTop = False
+        Frame.DrawBottom = False
+        Frame.DrawLeft = False
+        Frame.DrawRight = False
+        Size.Values = (
+          52.916666666666670000
+          738.187500000000000000
+          312.208333333333300000
+          177.270833333333300000)
+        Alignment = taRightJustify
+        AlignToBand = False
+        AutoSize = False
+        AutoStretch = False
+        Caption = #1072#1082#1074#1072#1082#1091#1083' 4'
+        Color = clWhite
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+        Transparent = False
+        WordWrap = True
+        FontSize = 10
+      end
+      object QRLabel19: TQRLabel
+        Left = 279
+        Top = 144
+        Width = 67
+        Height = 20
+        Frame.Color = clBlack
+        Frame.DrawTop = False
+        Frame.DrawBottom = False
+        Frame.DrawLeft = False
+        Frame.DrawRight = False
+        Size.Values = (
+          52.916666666666670000
+          738.187500000000000000
+          381.000000000000000000
+          177.270833333333300000)
+        Alignment = taRightJustify
+        AlignToBand = False
+        AutoSize = False
+        AutoStretch = False
+        Caption = #1072#1082#1074#1072#1082#1091#1083' 5'
+        Color = clWhite
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+        Transparent = False
+        WordWrap = True
+        FontSize = 10
+      end
+      object QRLabel22: TQRLabel
+        Left = 279
+        Top = 170
+        Width = 67
+        Height = 20
+        Frame.Color = clBlack
+        Frame.DrawTop = False
+        Frame.DrawBottom = False
+        Frame.DrawLeft = False
+        Frame.DrawRight = False
+        Size.Values = (
+          52.916666666666670000
+          738.187500000000000000
+          449.791666666666700000
+          177.270833333333300000)
+        Alignment = taRightJustify
+        AlignToBand = False
+        AutoSize = False
+        AutoStretch = False
+        Caption = #1072#1082#1074#1072#1082#1091#1083' 6'
+        Color = clWhite
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+        Transparent = False
+        WordWrap = True
+        FontSize = 10
+      end
     end
+  end
+  object Sum_label16: TQRLabel
+    Left = 520
+    Top = 178
+    Width = 49
+    Height = 20
+    Frame.Color = clBlack
+    Frame.DrawTop = False
+    Frame.DrawBottom = False
+    Frame.DrawLeft = False
+    Frame.DrawRight = False
+    Size.Values = (
+      52.916666666666670000
+      1375.833333333333000000
+      470.958333333333300000
+      129.645833333333300000)
+    Alignment = taRightJustify
+    AlignToBand = False
+    AutoSize = False
+    AutoStretch = False
+    Caption = 'SUM'
+    Color = clWhite
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'Arial'
+    Font.Style = [fsBold]
+    ParentFont = False
+    Transparent = False
+    WordWrap = True
+    FontSize = 12
+  end
+  object Sum_label17: TQRLabel
+    Left = 520
+    Top = 203
+    Width = 49
+    Height = 20
+    Frame.Color = clBlack
+    Frame.DrawTop = False
+    Frame.DrawBottom = False
+    Frame.DrawLeft = False
+    Frame.DrawRight = False
+    Size.Values = (
+      52.916666666666670000
+      1375.833333333333000000
+      537.104166666666700000
+      129.645833333333300000)
+    Alignment = taRightJustify
+    AlignToBand = False
+    AutoSize = False
+    AutoStretch = False
+    Caption = 'SUM'
+    Color = clWhite
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'Arial'
+    Font.Style = [fsBold]
+    ParentFont = False
+    Transparent = False
+    WordWrap = True
+    FontSize = 12
+  end
+  object Sum_label18: TQRLabel
+    Left = 520
+    Top = 229
+    Width = 49
+    Height = 20
+    Frame.Color = clBlack
+    Frame.DrawTop = False
+    Frame.DrawBottom = False
+    Frame.DrawLeft = False
+    Frame.DrawRight = False
+    Size.Values = (
+      52.916666666666670000
+      1375.833333333333000000
+      605.895833333333300000
+      129.645833333333300000)
+    Alignment = taRightJustify
+    AlignToBand = False
+    AutoSize = False
+    AutoStretch = False
+    Caption = 'SUM'
+    Color = clWhite
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'Arial'
+    Font.Style = [fsBold]
+    ParentFont = False
+    Transparent = False
+    WordWrap = True
+    FontSize = 12
+  end
+  object Sum_label19: TQRLabel
+    Left = 520
+    Top = 255
+    Width = 49
+    Height = 20
+    Frame.Color = clBlack
+    Frame.DrawTop = False
+    Frame.DrawBottom = False
+    Frame.DrawLeft = False
+    Frame.DrawRight = False
+    Size.Values = (
+      52.916666666666670000
+      1375.833333333333000000
+      674.687500000000000000
+      129.645833333333300000)
+    Alignment = taRightJustify
+    AlignToBand = False
+    AutoSize = False
+    AutoStretch = False
+    Caption = 'SUM'
+    Color = clWhite
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'Arial'
+    Font.Style = [fsBold]
+    ParentFont = False
+    Transparent = False
+    WordWrap = True
+    FontSize = 12
+  end
+  object Sum_label20: TQRLabel
+    Left = 520
+    Top = 281
+    Width = 49
+    Height = 20
+    Frame.Color = clBlack
+    Frame.DrawTop = False
+    Frame.DrawBottom = False
+    Frame.DrawLeft = False
+    Frame.DrawRight = False
+    Size.Values = (
+      52.916666666666670000
+      1375.833333333333000000
+      743.479166666666700000
+      129.645833333333300000)
+    Alignment = taRightJustify
+    AlignToBand = False
+    AutoSize = False
+    AutoStretch = False
+    Caption = 'SUM'
+    Color = clWhite
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'Arial'
+    Font.Style = [fsBold]
+    ParentFont = False
+    Transparent = False
+    WordWrap = True
+    FontSize = 12
+  end
+  object Sum_label21: TQRLabel
+    Left = 520
+    Top = 307
+    Width = 49
+    Height = 20
+    Frame.Color = clBlack
+    Frame.DrawTop = False
+    Frame.DrawBottom = False
+    Frame.DrawLeft = False
+    Frame.DrawRight = False
+    Size.Values = (
+      52.916666666666670000
+      1375.833333333333000000
+      812.270833333333300000
+      129.645833333333300000)
+    Alignment = taRightJustify
+    AlignToBand = False
+    AutoSize = False
+    AutoStretch = False
+    Caption = 'SUM'
+    Color = clWhite
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'Arial'
+    Font.Style = [fsBold]
+    ParentFont = False
+    Transparent = False
+    WordWrap = True
+    FontSize = 12
+  end
+  object QRLabel23: TQRLabel
+    Left = 447
+    Top = 178
+    Width = 67
+    Height = 20
+    Frame.Color = clBlack
+    Frame.DrawTop = False
+    Frame.DrawBottom = False
+    Frame.DrawLeft = False
+    Frame.DrawRight = False
+    Size.Values = (
+      52.916666666666670000
+      1182.687500000000000000
+      470.958333333333300000
+      177.270833333333300000)
+    Alignment = taRightJustify
+    AlignToBand = False
+    AutoSize = False
+    AutoStretch = False
+    Caption = #1072#1082#1074#1072#1082#1091#1083' 7'
+    Color = clWhite
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Arial'
+    Font.Style = [fsBold]
+    ParentFont = False
+    Transparent = False
+    WordWrap = True
+    FontSize = 10
+  end
+  object QRLabel24: TQRLabel
+    Left = 447
+    Top = 203
+    Width = 67
+    Height = 20
+    Frame.Color = clBlack
+    Frame.DrawTop = False
+    Frame.DrawBottom = False
+    Frame.DrawLeft = False
+    Frame.DrawRight = False
+    Size.Values = (
+      52.916666666666670000
+      1182.687500000000000000
+      537.104166666666700000
+      177.270833333333300000)
+    Alignment = taRightJustify
+    AlignToBand = False
+    AutoSize = False
+    AutoStretch = False
+    Caption = #1072#1082#1074#1072#1082#1091#1083' 8'
+    Color = clWhite
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Arial'
+    Font.Style = [fsBold]
+    ParentFont = False
+    Transparent = False
+    WordWrap = True
+    FontSize = 10
+  end
+  object QRLabel27: TQRLabel
+    Left = 447
+    Top = 230
+    Width = 67
+    Height = 20
+    Frame.Color = clBlack
+    Frame.DrawTop = False
+    Frame.DrawBottom = False
+    Frame.DrawLeft = False
+    Frame.DrawRight = False
+    Size.Values = (
+      52.916666666666670000
+      1182.687500000000000000
+      608.541666666666700000
+      177.270833333333300000)
+    Alignment = taRightJustify
+    AlignToBand = False
+    AutoSize = False
+    AutoStretch = False
+    Caption = #1072#1082#1074#1072#1082#1091#1083' 9'
+    Color = clWhite
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Arial'
+    Font.Style = [fsBold]
+    ParentFont = False
+    Transparent = False
+    WordWrap = True
+    FontSize = 10
+  end
+  object QRLabel28: TQRLabel
+    Left = 438
+    Top = 256
+    Width = 76
+    Height = 20
+    Frame.Color = clBlack
+    Frame.DrawTop = False
+    Frame.DrawBottom = False
+    Frame.DrawLeft = False
+    Frame.DrawRight = False
+    Size.Values = (
+      52.916666666666670000
+      1158.875000000000000000
+      677.333333333333300000
+      201.083333333333300000)
+    Alignment = taRightJustify
+    AlignToBand = False
+    AutoSize = False
+    AutoStretch = False
+    Caption = #1072#1082#1074#1072#1082#1091#1083' 10'
+    Color = clWhite
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Arial'
+    Font.Style = [fsBold]
+    ParentFont = False
+    Transparent = False
+    WordWrap = True
+    FontSize = 10
+  end
+  object QRLabel29: TQRLabel
+    Left = 438
+    Top = 282
+    Width = 76
+    Height = 20
+    Frame.Color = clBlack
+    Frame.DrawTop = False
+    Frame.DrawBottom = False
+    Frame.DrawLeft = False
+    Frame.DrawRight = False
+    Size.Values = (
+      52.916666666666670000
+      1158.875000000000000000
+      746.125000000000000000
+      201.083333333333300000)
+    Alignment = taRightJustify
+    AlignToBand = False
+    AutoSize = False
+    AutoStretch = False
+    Caption = #1072#1082#1074#1072#1082#1091#1083' 11'
+    Color = clWhite
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Arial'
+    Font.Style = [fsBold]
+    ParentFont = False
+    Transparent = False
+    WordWrap = True
+    FontSize = 10
+  end
+  object QRLabel30: TQRLabel
+    Left = 438
+    Top = 308
+    Width = 76
+    Height = 20
+    Frame.Color = clBlack
+    Frame.DrawTop = False
+    Frame.DrawBottom = False
+    Frame.DrawLeft = False
+    Frame.DrawRight = False
+    Size.Values = (
+      52.916666666666670000
+      1158.875000000000000000
+      814.916666666666700000
+      201.083333333333300000)
+    Alignment = taRightJustify
+    AlignToBand = False
+    AutoSize = False
+    AutoStretch = False
+    Caption = #1072#1082#1074#1072#1082#1091#1083' 12'
+    Color = clWhite
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Arial'
+    Font.Style = [fsBold]
+    ParentFont = False
+    Transparent = False
+    WordWrap = True
+    FontSize = 10
+  end
+  object QRLabel31: TQRLabel
+    Left = 575
+    Top = 177
+    Width = 75
+    Height = 20
+    Frame.Color = clBlack
+    Frame.DrawTop = False
+    Frame.DrawBottom = False
+    Frame.DrawLeft = False
+    Frame.DrawRight = False
+    Size.Values = (
+      52.916666666666670000
+      1521.354166666667000000
+      468.312500000000000000
+      198.437500000000000000)
+    Alignment = taRightJustify
+    AlignToBand = False
+    AutoSize = False
+    AutoStretch = False
+    Caption = #1072#1082#1074#1072#1082#1091#1083' 13'
+    Color = clWhite
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Arial'
+    Font.Style = [fsBold]
+    ParentFont = False
+    Transparent = False
+    WordWrap = True
+    FontSize = 10
+  end
+  object QRLabel32: TQRLabel
+    Left = 575
+    Top = 202
+    Width = 75
+    Height = 20
+    Frame.Color = clBlack
+    Frame.DrawTop = False
+    Frame.DrawBottom = False
+    Frame.DrawLeft = False
+    Frame.DrawRight = False
+    Size.Values = (
+      52.916666666666670000
+      1521.354166666667000000
+      534.458333333333300000
+      198.437500000000000000)
+    Alignment = taRightJustify
+    AlignToBand = False
+    AutoSize = False
+    AutoStretch = False
+    Caption = #1072#1082#1074#1072#1082#1091#1083' 14'
+    Color = clWhite
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Arial'
+    Font.Style = [fsBold]
+    ParentFont = False
+    Transparent = False
+    WordWrap = True
+    FontSize = 10
+  end
+  object QRLabel33: TQRLabel
+    Left = 575
+    Top = 228
+    Width = 75
+    Height = 20
+    Frame.Color = clBlack
+    Frame.DrawTop = False
+    Frame.DrawBottom = False
+    Frame.DrawLeft = False
+    Frame.DrawRight = False
+    Size.Values = (
+      52.916666666666670000
+      1521.354166666667000000
+      603.250000000000000000
+      198.437500000000000000)
+    Alignment = taRightJustify
+    AlignToBand = False
+    AutoSize = False
+    AutoStretch = False
+    Caption = #1072#1082#1074#1072#1082#1091#1083' 15'
+    Color = clWhite
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Arial'
+    Font.Style = [fsBold]
+    ParentFont = False
+    Transparent = False
+    WordWrap = True
+    FontSize = 10
+  end
+  object QRLabel34: TQRLabel
+    Left = 575
+    Top = 255
+    Width = 75
+    Height = 20
+    Frame.Color = clBlack
+    Frame.DrawTop = False
+    Frame.DrawBottom = False
+    Frame.DrawLeft = False
+    Frame.DrawRight = False
+    Size.Values = (
+      52.916666666666670000
+      1521.354166666667000000
+      674.687500000000000000
+      198.437500000000000000)
+    Alignment = taRightJustify
+    AlignToBand = False
+    AutoSize = False
+    AutoStretch = False
+    Caption = #1072#1082#1074#1072#1082#1091#1083' 16'
+    Color = clWhite
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Arial'
+    Font.Style = [fsBold]
+    ParentFont = False
+    Transparent = False
+    WordWrap = True
+    FontSize = 10
+  end
+  object QRLabel35: TQRLabel
+    Left = 575
+    Top = 281
+    Width = 75
+    Height = 20
+    Frame.Color = clBlack
+    Frame.DrawTop = False
+    Frame.DrawBottom = False
+    Frame.DrawLeft = False
+    Frame.DrawRight = False
+    Size.Values = (
+      52.916666666666670000
+      1521.354166666667000000
+      743.479166666666700000
+      198.437500000000000000)
+    Alignment = taRightJustify
+    AlignToBand = False
+    AutoSize = False
+    AutoStretch = False
+    Caption = #1072#1082#1074#1072#1082#1091#1083' 17'
+    Color = clWhite
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Arial'
+    Font.Style = [fsBold]
+    ParentFont = False
+    Transparent = False
+    WordWrap = True
+    FontSize = 10
+  end
+  object QRLabel36: TQRLabel
+    Left = 575
+    Top = 307
+    Width = 75
+    Height = 20
+    Frame.Color = clBlack
+    Frame.DrawTop = False
+    Frame.DrawBottom = False
+    Frame.DrawLeft = False
+    Frame.DrawRight = False
+    Size.Values = (
+      52.916666666666670000
+      1521.354166666667000000
+      812.270833333333300000
+      198.437500000000000000)
+    Alignment = taRightJustify
+    AlignToBand = False
+    AutoSize = False
+    AutoStretch = False
+    Caption = #1072#1082#1074#1072#1082#1091#1083' 18'
+    Color = clWhite
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Arial'
+    Font.Style = [fsBold]
+    ParentFont = False
+    Transparent = False
+    WordWrap = True
+    FontSize = 10
   end
 end

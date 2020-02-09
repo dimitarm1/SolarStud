@@ -925,6 +925,9 @@ type
         procedure calcKasaPaid;
         procedure ReorderSQLDataSet(Query: TABSQuery; AFieldName: string);
         function GetStudioWorkType(): Integer;
+        var
+         AutoLogOffTime : Integer;
+
         { Public declarations }
 
       //   procedure ChangeImageName();
@@ -2306,6 +2309,16 @@ var
     dateofd: Extended;
     ShowPanel: bool;
 begin
+    if (AutoLogOffTime < 280) then
+    begin
+       AutoLogOffTime := AutoLogOffTime +1;
+       if (AutoLogOffTime = 280) then
+       begin
+         PasswordForm.AccessLevel := 0;
+         PasswordForm.ModalResult := 0;
+         PasswordForm.Edit1.Text := '';
+       end;
+    end;
 
     TimerTime1 := TimerTime1 + 1;
     // Label1.Caption:=IntToStr(TimerTime1);
@@ -2820,7 +2833,7 @@ end;
 procedure TMainForm.Label13Click(Sender: TObject);
 begin
     // if MainForm.Label21.color=clblack then
-    if(PasswordForm.IsMaster = true) then
+    if(PasswordForm.AccessLevel = 3) then
     begin
         SOLARIUMI.First;
         AdvPageControl1.ActivePageIndex := 8;
@@ -2839,7 +2852,7 @@ end;
 
 procedure TMainForm.Label40Click(Sender: TObject);
 begin
-    if(PasswordForm.IsMaster = true) then
+    if(PasswordForm.AccessLevel = 3) then
     begin
         AdvPageControl1.ActivePageIndex := 6;
     end
@@ -2852,7 +2865,7 @@ end;
 
 procedure TMainForm.Label48Click(Sender: TObject);
 begin
-    if(PasswordForm.IsMaster = true) then
+    if(PasswordForm.AccessLevel = 3) then
     begin
         AdvPageControl1.ActivePageIndex := 6;
     end
@@ -2866,6 +2879,12 @@ end;
 
 procedure TMainForm.Label22Click(Sender: TObject);
 begin
+    if(PasswordForm.AccessLevel <> 3) then
+    begin
+      PasswordForm.AccessLevel := 0;
+      PasswordForm.ModalResult := 0;
+    end;
+    PasswordForm.Edit1.Text := '';
     AdvPageControl1.ActivePageIndex := 1;
     SOLARIUMI.Edit;
     SOLARIUMI.Post;
@@ -2909,6 +2928,9 @@ end;
 
 procedure TMainForm.CancelButtonClick(Sender: TObject);
 begin
+    PasswordForm.ModalResult := 0;
+    PasswordForm.AccessLevel := 0;
+    PasswordForm.Edit1.Text := '';
     AdvPageControl1.ActivePageIndex := 1;
     MainForm.Timer1.Enabled := true;
     UpdatePageControl(0);
@@ -3375,7 +3397,7 @@ begin
                 end
                 else if (PaidChipCard > 0) and not IsChipCard then
                 begin
-                    Application.MessageBox(PChar('Неуспешно плащане с карта. Поставете отново картата!'), PChar('Warning'), MB_OK);
+                    Application.MessageBox(PChar('Неуспешноа операция. Поставете отново картата!'), PChar('Warning'), MB_OK);
                     //Application.MessageBox(PChar('Картата е блокирана!'),PChar('Warning'),MB_OK);
                     PaidChipCard := 0;
                     sol1.Rollback;
@@ -3536,11 +3558,11 @@ begin
             begin
                 try
                     CardNomer := StrToInt(Rightstr(KeyBuff, 8));
-                    if (AdvPageControl1.ActivePageIndex = 1) then
-                    begin
-                        AdvPageControl1.ActivePageIndex := 18;
-                        AddStokaButtonClick(2);
-                    end;
+//                    if (AdvPageControl1.ActivePageIndex = 1) then
+//                    begin
+//                        AdvPageControl1.ActivePageIndex := 18;
+//                        AddStokaButtonClick(2);
+//                    end;
                     if (AdvPageControl1.ActivePageIndex = 4) then
                     begin
                       SelectBarcodKlient();
@@ -3592,8 +3614,9 @@ begin
             PasswordForm.ShowModal;
             if PasswordForm.ModalResult = mrOK then
             begin
-                AdvPageControl1.ActivePageIndex := 5;
-                if( PasswordForm.IsMaster = true) then
+                if( PasswordForm.AccessLevel >1) then
+                    AdvPageControl1.ActivePageIndex := 5;
+                if( PasswordForm.AccessLevel > 0) then
                 begin
                     Label21.color := clBlack;
                     Label17.color := clBlack;
@@ -3639,15 +3662,17 @@ end;
 
 procedure TMainForm.Label91Click(Sender: TObject);
 begin
-    Table3.Active := True;
-
-    AdvPageControl1.ActivePageIndex := 12;
-    DayTotal.Active := false;
-    DayTotal.Active := true;
-    UpdatePageControl(1);
-    Timer4.Enabled := True;
-    ReorderSQLDataSet(DayTotal, 'CHAS');
-    ReorderSQLDataSet(DayTotal, 'CHAS');
+    if(PasswordForm.ModalResult = mrOK) then
+    begin
+      Table3.Active := True;
+      AdvPageControl1.ActivePageIndex := 12;
+      DayTotal.Active := false;
+      DayTotal.Active := true;
+      UpdatePageControl(1);
+      Timer4.Enabled := True;
+      ReorderSQLDataSet(DayTotal, 'CHAS');
+      ReorderSQLDataSet(DayTotal, 'CHAS');
+    end;
 end;
 
 procedure TMainForm.Label92Click(Sender: TObject);
@@ -3667,8 +3692,8 @@ end;
 
 procedure TMainForm.Label94Click(Sender: TObject);
 begin
-
-    Form1.QuickRep1.Preview;
+    if(PasswordForm.AccessLevel = 3) then
+        Form1.QuickRep1.Preview;
     //  QKartiPaid.Active:=False;
 end;
 
@@ -3703,7 +3728,7 @@ end;
 procedure TMainForm.Label23Click(Sender: TObject);
 begin
     //if MainForm.Label21.color = clblack then
-    if(PasswordForm.IsMaster = true) then
+    if(PasswordForm.AccessLevel = 3) then
         AdvPageControl1.ActivePageIndex := 14;
 end;
 
@@ -3937,7 +3962,7 @@ begin
                     mincode := -1;
                 STOKI.Append;
                 STOKI.FieldValues['STOKAKOD'] := mincode - 1;
-                STOKI.FieldValues['STOKAIME'] := 'Нова Чип Карта' +
+                STOKI.FieldValues['STOKAIME'] := 'Нова ' +
                     IntTostr(mincode - 1);
                 STOKI.FieldValues['STOKACENA'] := 0;
                 STOKI.FieldValues['STOKANASKLAD'] := 0;
@@ -4522,7 +4547,7 @@ end;
 
 procedure TMainForm.Label16Click(Sender: TObject);
 begin
-    if(PasswordForm.IsMaster = true) then
+    if(PasswordForm.AccessLevel = 3) then
       AdvPageControl1.ActivePageIndex := 16;
 end;
 
@@ -4795,8 +4820,8 @@ begin // Delete klient
         if not IsChipCard or (PasswordForm.ModalResult = MROK) then
         begin
             wwDBGrid7.ReadOnly := False;
-            Message1 := GetMessage('M24');
-            //Message1:='Наистина ли искате да изтриете ';
+//            Message1 := GetMessage('M24');
+            Message1:='Наистина ли искате да изтриете ';
             if not (VarType(QKlienti.FieldValues['IME']) in [varNull]) then
                 Message1 := Message1 + QKlienti.FieldValues['IME'];
             Result2 := Application.MessageBox(PChar(Message1),
@@ -5192,7 +5217,7 @@ end;
 procedure TMainForm.Label17Click(Sender: TObject);
 begin
 //    if MainForm.Label21.color = clblack then
-    if(PasswordForm.IsMaster = true) then
+    if(PasswordForm.AccessLevel = 3) then
         AdvPageControl1.ActivePageIndex := 13;
 end;
 
@@ -5949,7 +5974,7 @@ begin
     QKlienti.Active := True;
     Label137.Caption := GetMessage('M67'); //'Няма карта';
     Label137.Font.Color := clRed;
-    if (PasswordForm.IsMaster = true) then
+    if (PasswordForm.AccessLevel = 3) then
     begin
 //        PosEdit.enabled := true;
         ValidnostDate.enabled := true;
@@ -5994,7 +6019,7 @@ begin
     Table3.FieldValues['NOMER'] := maxnomer + 1;
     Table3.FieldValues['BALANS'] := 0;
     Table3.FieldValues['FIRMA'] := 0;
-    Table3.FieldValues['IME'] := GetMessage('M66') + IntTostr(maxnomer + 1);
+    Table3.FieldValues['IME'] := 'Нов ' + IntTostr(maxnomer + 1);
     //'Нов клиент №'
     Table3.Post;
     Table3.Last;
@@ -6575,7 +6600,7 @@ end;
 procedure TMainForm.Label21Click(Sender: TObject);
 begin
     // if MainForm.Label21.color=clblack then
-    if(PasswordForm.IsMaster = true) then
+    if(PasswordForm.AccessLevel = 3) then
     begin
         Image32.Picture := image1.Picture;
         AdvPageControl1.ActivePageIndex := 10;

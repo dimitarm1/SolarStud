@@ -785,21 +785,20 @@ begin
         end
         else if not IsChipCard then
         begin
-            res := Application.MessageBox(PChar('Желаете ли да добавите Клиент №'
-                + IntTostr(CardNomer) +
-                ' към списъка с клиенти'), PChar('Нов клиент'), MB_YESNO);
+            res := Application.MessageBox(PChar('Желаете ли да добавите №'
+                + IntTostr(CardNomer)) , PChar('Нов'), MB_YESNO);
             if (res = 6) then
             begin
                 Card.Balans := 0;
                 MainForm.Table3.Append;
                 MainForm.Table3.FieldValues['NOMER'] := CardNomer;
                 MainForm.Table3.FieldValues['FIRMA'] := 0;
-                MainForm.Table3.FieldValues['IME'] := GetMessage('M66') +
+                MainForm.Table3.FieldValues['IME'] := 'Нов ' +
                     IntTostr(CardNomer); //'Нов клиент №'
                 MainForm.Table3.Post;
                 MainForm.Table3.Last;
-                Application.MessageBox(PChar('Клиент №' + IntTostr(CardNomer) +
-                    ' беше добавен към списъка'), PChar('Нов клиент'), MB_OK);
+                Application.MessageBox(PChar('№' + IntTostr(CardNomer) +
+                    ' беше добавен'), PChar('Нов '), MB_OK);
                 MainForm.QKlienti.Active := False;
                 MainForm.QKlienti.Active := True;
                 MainForm.Qklienti.Locate('NOMER', CardNomer, []);

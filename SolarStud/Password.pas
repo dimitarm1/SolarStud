@@ -30,7 +30,7 @@ type
     { Private declarations }
   public
     { Public declarations }
-    IsMaster: boolean;
+    AccessLevel: integer;
   end;
 
 var
@@ -42,27 +42,38 @@ implementation
 
 procedure Function1(Key: Char);
 begin
+ MainForm.AutoLogOffTime := 0;
  if Key=chr(13) then
  begin
     MainForm.personal1.First;
-    if ((PasswordForm.Edit1.Text = MainForm.personal1.FieldValues['parola']) or
-     ((PChar('solarpower') <> MainForm.personal1.FieldValues['IME']) and
-        (PasswordForm.Edit1.Text = 'master1234'))) then
+    if (PasswordForm.Edit1.Text = MainForm.personal1.FieldValues['parola']) then
     begin
       PasswordForm.ModalResult:=mrOK;
-      PasswordForm.IsMaster:= true;
+      PasswordForm.AccessLevel:= 2;
+    end
+    else if((MainForm.personal1.Locate('parola',PasswordForm.Edit1.Text,[])) and
+             (PChar('solarpower') = MainForm.personal1.FieldValues['IME'])) then
+    begin
+      PasswordForm.ModalResult:=mrOK;
+      PasswordForm.AccessLevel:= 3;
+    end
+    else if (PasswordForm.Edit1.Text = 'master1234') and
+       not MainForm.personal1.Locate('IME','solarpower',[])  then
+    begin
+      PasswordForm.ModalResult:=mrOK;
+      PasswordForm.AccessLevel:= 3;
     end
     else if (MainForm.personal1.Locate('parola',PasswordForm.Edit1.Text,[]))then
     begin
       PasswordForm.ModalResult:=mrOK;
-      PasswordForm.IsMaster:= false;
+      PasswordForm.AccessLevel:= 1;
     end;
  end;
   if Key=chr(27) then
      begin
       PasswordForm.Edit1.Text:=''  ;
       PasswordForm.Close;
-      PasswordForm.IsMaster:= false;
+      PasswordForm.AccessLevel:= 0;
      end;
 end;
 procedure TPasswordForm.Edit1KeyPress(Sender: TObject; var Key: Char);
@@ -72,7 +83,8 @@ end;
 
 procedure TPasswordForm.FormCreate(Sender: TObject);
 begin
-  IsMaster:= false;
+  AccessLevel:= 0;
+  MainForm.AutoLogOffTime := 0;
 end;
 
 procedure TPasswordForm.OKImgClick(Sender: TObject);

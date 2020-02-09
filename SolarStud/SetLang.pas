@@ -183,7 +183,7 @@ procedure SetLangText();
     Label74.Caption:=GetLabel('L74');
     Label134.Caption:=GetLabel('L134');
     Label135.Caption:=GetLabel('L135');
-    Label136.Caption:=GetLabel('L136');
+//    Label136.Caption:=GetLabel('L136');
     Label137.Caption:=GetLabel('L137');
 //    Label138.Caption:=GetLabel('L138');
     Label139.Caption:=GetLabel('L139');
@@ -367,11 +367,11 @@ procedure SetLangText();
     QRLabel2.Caption:= GetLabel('QRF3L2');
     QRLabel3.Caption:= GetLabel('QRF3L3');
     QRLabel4.Caption:= GetLabel('QRF3L4');
-    QRLabel5.Caption:= GetLabel('QRF3L5');
+//    QRLabel5.Caption:= GetLabel('QRF3L5');
 
 
 
-    QRLabel9.Caption:= GetLabel('QRF3L9');
+//    QRLabel9.Caption:= GetLabel('QRF3L9');
     QRLabel11.Caption:= GetLabel('QRF3L11');
     QRLabel12.Caption:= GetLabel('QRF3L12');
     QRLabel10.Caption:= GetLabel('QRF3L10');
@@ -533,7 +533,7 @@ procedure SaveLangText();
     SaveLabel('L74',  Label74.Caption);
     SaveLabel('L134',  Label134.Caption);
     SaveLabel('L135',  Label135.Caption);
-    SaveLabel('L136',  Label136.Caption);
+//    SaveLabel('L136',  Label136.Caption);
     SaveLabel('L137',  Label137.Caption);
 //    SaveLabel('L138',  Label138.Caption);
     SaveLabel('L139',  Label139.Caption);
@@ -658,11 +658,11 @@ procedure SaveLangText();
      SaveLabel('QRF3L2',QRLabel2.Caption);
      SaveLabel('QRF3L3',QRLabel3.Caption);
      SaveLabel('QRF3L4',QRLabel4.Caption);
-     SaveLabel('QRF3L5',QRLabel5.Caption);
+//     SaveLabel('QRF3L5',QRLabel5.Caption);
 
 
 
-     SaveLabel('QRF3L9',QRLabel9.Caption);
+//     SaveLabel('QRF3L9',QRLabel9.Caption);
      SaveLabel('QRF3L11',QRLabel11.Caption);
      SaveLabel('QRF3L12',QRLabel12.Caption);
      SaveLabel('QRF3L10',QRLabel10.Caption);
