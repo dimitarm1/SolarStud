@@ -2309,7 +2309,7 @@ var
     dateofd: Extended;
     ShowPanel: bool;
 begin
-    if (AutoLogOffTime < 280) then
+    if (AutoLogOffTime < 280) and (PasswordForm.AccessLevel = 3) then
     begin
        AutoLogOffTime := AutoLogOffTime +1;
        if (AutoLogOffTime = 280) then
@@ -5482,7 +5482,7 @@ begin
     AdvPageControl1.ActivePageIndex := 18;
     QKlienti.Active := False;
     QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join KARTICHIP c on k.NOMER = c.KLIENTNOMER ' + SQLText +
-        ' ORDER BY IME DESC'));
+        ' ORDER BY k.NOMER ASC'));
     CardNomer := 0;
     QKlienti.Active := True;
     Label137.Font.Color := clRed;

@@ -149,7 +149,7 @@ object Form1: TForm1
       object QRLabel5: TQRLabel
         Left = 1
         Top = 21
-        Width = 32
+        Width = 88
         Height = 17
         Frame.Color = clBlack
         Frame.DrawTop = False
@@ -160,10 +160,10 @@ object Form1: TForm1
           44.979166666666670000
           2.645833333333333000
           55.562500000000000000
-          84.666666666666670000)
+          232.833333333333300000)
         Alignment = taLeftJustify
         AlignToBand = False
-        AutoSize = True
+        AutoSize = False
         AutoStretch = False
         Caption = #1050#1072#1088#1090#1072
         Color = clWhite
