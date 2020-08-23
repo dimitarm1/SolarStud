@@ -87,6 +87,7 @@ type
     QRLabel35: TQRLabel;
     QRLabel36: TQRLabel;
     procedure QuickRep3AfterPreview(Sender: TObject);
+    procedure Clean();
     procedure QuickRep3StartPage(Sender: TCustomQuickRep);
     procedure DetailBand1BeforePrint(Sender: TQRCustomBand;
       var PrintBand: Boolean);
@@ -94,7 +95,6 @@ type
     procedure QRBand1BeforePrint(Sender: TQRCustomBand; var PrintBand: Boolean);
     procedure DetailBand1AfterPrint(Sender: TQRCustomBand;
       BandPrinted: Boolean);
-    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -103,6 +103,11 @@ type
 
 var
   Form3: TForm3;
+
+
+implementation
+ uses main;
+ var
   Sum1: Integer;
   Sum2: Integer;
   Sum3: Integer;
@@ -127,13 +132,36 @@ var
   Sum25: Integer;
   Sum26: Integer;
   Sum27: Integer;
-
-implementation
- uses main;
- var
   sum_total: string;
 {$R *.dfm}
 
+procedure TForm3.Clean();
+begin
+  Sum1:= 0;
+  Sum2:= 0;
+  Sum3:= 0;
+  Sum4:= 0;
+  Sum5:= 0;
+  Sum6:= 0;
+  Sum10:= 0;
+  Sum11:= 0;
+  Sum12:= 0;
+  Sum13:= 0;
+  Sum14:= 0;
+  Sum15:= 0;
+  Sum16:= 0;
+  Sum17:= 0;
+  Sum18:= 0;
+  Sum19:= 0;
+  Sum20:= 0;
+  Sum21:= 0;
+  Sum22:= 0;
+  Sum23:= 0;
+  Sum24:= 0;
+  Sum25:= 0;
+  Sum26:= 0;
+  Sum27:= 0;
+end;
 procedure TForm3.QRBand1BeforePrint(Sender: TQRCustomBand;
   var PrintBand: Boolean);
 begin
@@ -305,28 +333,6 @@ if MainForm.DayTotal.FieldValues['SOLARIUM']>0 then
   QRDBText9.Width:=145;
   QRDBText7.Width:=41;
   end;
-end;
-
-procedure TForm3.FormCreate(Sender: TObject);
-begin
-  Sum1:=0;
-  Sum2:=0;
-  Sum3:=0;
-  Sum4:=0;
-  Sum5:=0;
-  Sum6:=0;
-  Sum10:=0;
-  Sum11:=0;
-  Sum12:=0;
-  Sum13:=0;
-  Sum14:=0;
-  Sum15:=0;
-  Sum16:=0;
-  Sum17:=0;
-  Sum18:=0;
-  Sum19:=0;
-  Sum20:=0;
-  Sum21:=0;
 end;
 
 end.

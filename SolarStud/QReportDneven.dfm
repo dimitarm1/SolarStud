@@ -12,7 +12,6 @@ object Form3: TForm3
   Font.Style = []
   OldCreateOrder = False
   Scaled = False
-  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 14
   object QuickRep3: TQuickRep
