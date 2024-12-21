@@ -3694,7 +3694,7 @@ end;
 
 procedure TMainForm.PrintDayReportClick(Sender: TObject);
 begin
-
+    Form3.Clean();
     Form3.QuickRep3.Preview;
 end;
 
@@ -5847,7 +5847,7 @@ begin //Зареждане
             if (KARTICHIP.FieldValues['SUMA'] <> KARTICHIP.FieldValues['SUMA'])
                 then
                 KARTICHIP.FieldValues['SUMA'] := 0; // for null value
-            KARTICHIP.FieldValues['SUMA'] := Card.Balans;
+			KARTICHIP.FieldValues['SUMA'] :=  KARTICHIP.FieldValues['SUMA']+ Card.Balans;
             if (KARTI.FieldValues['VALIDNOST_KARTI'] > 0) then
             begin
                 KARTICHIP.FieldValues['ENDDATE'] := Date +
@@ -6562,7 +6562,10 @@ procedure TMainForm.PaymentOKLabelMouseDown(Sender: TObject; Button:
     Shift: TShiftState; X, Y: Integer);
 begin
     PaymentOKLabel.Top := PaymentOKLabel.Top + 3;
-    PaymentOKLabelClick(sender);
+	 if not ((PaidChipCard = 0) and (CardNomer > 0)) then
+       begin
+         PaymentOKLabelClick(sender);
+       end;
 end;
 
 procedure TMainForm.PaymentOKLabelMouseUp(Sender: TObject; Button: TMouseButton;
