@@ -4863,6 +4863,10 @@ object MainForm: TMainForm
       TabColor = clBtnFace
       TabColorTo = clNone
       OnShow = LogoEkran1Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Image1: TImage
         Tag = -5
         Left = -5
@@ -7845,7 +7849,7 @@ object MainForm: TMainForm
           0D544C4D44504E474F626A65637489504E470D0A1A0A0000000D494844520000
           01C20000016F0806000000D99ACB75000000017352474200AECE1CE900000006
           624B474400FF00FF00FFA0BDA793000000097048597300000B1300000B130100
-          9A9C180000000774494D45E2070B04122A254336DA9F0000004569545874436F
+          9A9C180000000774494D4507E20B04122A255427D91E0000004569545874436F
           6D6D656E74000000000043524541544F523A2067642D6A7065672076312E3020
           287573696E6720494A47204A50454720763632292C207175616C697479203D20
           39300A679D47400000FFFF4944415478DAECBD69B065D7751EB6F63E777AF3EB
@@ -17922,6 +17926,10 @@ object MainForm: TMainForm
       TabColorTo = clNone
       OnHide = IzborNaPlashtane4Hide
       OnShow = IzborNaPlashtane4Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Image4: TImage
         Left = -4
         Top = -5
@@ -22254,6 +22262,10 @@ object MainForm: TMainForm
       TabColor = clBtnFace
       TabColorTo = clNone
       OnShow = IzborNaVreme5Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Image5: TImage
         Left = -6
         Top = -5
@@ -24712,6 +24724,10 @@ object MainForm: TMainForm
       TabColor = clBtnFace
       TabColorTo = clNone
       OnShow = Menu6Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Image10: TImage
         Left = -4
         Top = -6
@@ -25084,6 +25100,10 @@ object MainForm: TMainForm
       TabColor = clBtnFace
       TabColorTo = clNone
       OnShow = SolariumiNastroiki7Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         792
         583)
@@ -39229,7 +39249,7 @@ object MainForm: TMainForm
         Height = 21
         DataField = 'MIVREME'
         DataSource = DataSource1
-        ItemHeight = 13
+        ItemHeight = 0
         Items.Strings = (
           '1'
           '2'
@@ -39249,7 +39269,7 @@ object MainForm: TMainForm
         Height = 21
         DataField = 'LICEVICHAS'
         DataSource = DataSource1
-        ItemHeight = 13
+        ItemHeight = 0
         Items.Strings = (
           '100'
           '200'
@@ -39271,7 +39291,7 @@ object MainForm: TMainForm
         Height = 21
         DataField = 'LAMPICHAS'
         DataSource = DataSource1
-        ItemHeight = 13
+        ItemHeight = 0
         Items.Strings = (
           '100'
           '200'
@@ -39293,7 +39313,7 @@ object MainForm: TMainForm
         Height = 21
         DataField = 'OHLAZDANE'
         DataSource = DataSource1
-        ItemHeight = 13
+        ItemHeight = 0
         Items.Strings = (
           '1'
           '2'
@@ -39313,7 +39333,7 @@ object MainForm: TMainForm
         Height = 21
         DataField = 'PREDVVREME'
         DataSource = DataSource1
-        ItemHeight = 13
+        ItemHeight = 0
         Items.Strings = (
           '1'
           '2'
@@ -39330,7 +39350,7 @@ object MainForm: TMainForm
         Left = 432
         Top = 190
         Width = 297
-        Height = 30
+        Height = 19
         BevelInner = bvLowered
         BevelOuter = bvRaised
         BevelKind = bkSoft
@@ -39369,7 +39389,7 @@ object MainForm: TMainForm
         Height = 21
         DataField = 'VREME'
         DataSource = DataSource1
-        ItemHeight = 13
+        ItemHeight = 0
         Items.Strings = (
           '5'
           '10'
@@ -39387,7 +39407,7 @@ object MainForm: TMainForm
         Height = 21
         DataField = 'ADDRESS'
         DataSource = DataSource1
-        ItemHeight = 13
+        ItemHeight = 0
         Items.Strings = (
           '')
         TabOrder = 8
@@ -39442,6 +39462,10 @@ object MainForm: TMainForm
       TabColor = clBtnFace
       TabColorTo = clNone
       OnShow = SolariumiInfo8Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         792
         583)
@@ -63698,6 +63722,10 @@ object MainForm: TMainForm
       TabColor = clBtnFace
       TabColorTo = clNone
       OnShow = NachalnoUstanoviavane10Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Image19: TImage
         Tag = -5
         Left = -3
@@ -64408,6 +64436,10 @@ object MainForm: TMainForm
       ParentFont = False
       TabColor = clBtnFace
       TabColorTo = clNone
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Image32: TImage
         Left = 0
         Top = 0
@@ -64587,6 +64619,10 @@ object MainForm: TMainForm
       TabColor = clBtnFace
       TabColorTo = clNone
       OnShow = Statistika12Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         792
         583)
@@ -65076,7 +65112,7 @@ object MainForm: TMainForm
         Font.Height = -11
         Font.Name = 'Verdana'
         Font.Style = []
-        ItemHeight = 13
+        ItemHeight = 0
         ParentFont = False
         TabOrder = 3
         Text = '---------'#1048#1079#1073#1077#1088#1077#1090#1077' '#1089#1087#1088#1072#1074#1082#1072' -------------'
@@ -65173,6 +65209,10 @@ object MainForm: TMainForm
       TabColor = clBtnFace
       TabColorTo = clNone
       OnShow = Protokol13Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         792
         583)
@@ -65879,6 +65919,10 @@ object MainForm: TMainForm
       TabColor = clBtnFace
       TabColorTo = clNone
       OnShow = DrugiNastroiki15Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         792
         583)
@@ -66219,7 +66263,7 @@ object MainForm: TMainForm
         Top = 343
         Width = 305
         Height = 21
-        ItemHeight = 13
+        ItemHeight = 0
         TabOrder = 7
         Text = #1050#1072#1088#1090#1080' '#1089' '#1073#1072#1088#1082#1086#1076
         OnChange = TipNaRabotaComboChange
@@ -66246,6 +66290,10 @@ object MainForm: TMainForm
       TabColorTo = clNone
       OnHide = MenuKasa16Hide
       OnShow = MenuKasa16Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         792
         583)
@@ -77319,7 +77367,7 @@ object MainForm: TMainForm
         Top = 467
         Width = 127
         Height = 21
-        ItemHeight = 13
+        ItemHeight = 0
         TabOrder = 3
         Text = '1'
         OnChange = ComboBox2Change
@@ -77332,6 +77380,10 @@ object MainForm: TMainForm
       TabColor = clBtnFace
       TabColorTo = clNone
       OnShow = ManuStoki17Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         792
         583)
@@ -78086,6 +78138,10 @@ object MainForm: TMainForm
       TabColorTo = clNone
       OnHide = ChipKarti19Hide
       OnShow = ChipKarti19Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         792
         583)
@@ -78543,7 +78599,6 @@ object MainForm: TMainForm
         OnEnter = PosEditEnter
         BiDiMode = bdLeftToRight
         ParentBiDiMode = False
-        MaxLength = 1
         Alignment = taRightJustify
         CustomButtons = <>
         DataField = 'COUNTER'
@@ -78560,7 +78615,6 @@ object MainForm: TMainForm
         OnEnter = PosEditEnter
         BiDiMode = bdLeftToRight
         ParentBiDiMode = False
-        MaxLength = 7
         Alignment = taRightJustify
         CustomButtons = <>
         DataField = 'SUMA'
@@ -78582,7 +78636,6 @@ object MainForm: TMainForm
         OnEnter = PosEditEnter
         BiDiMode = bdLeftToRight
         ParentBiDiMode = False
-        MaxLength = 7
         Alignment = taRightJustify
         CustomButtons = <>
         DataField = 'DISCOUNT'
@@ -79488,6 +79541,10 @@ object MainForm: TMainForm
       TabColor = clBtnFace
       TabColorTo = clNone
       OnShow = Grafik23Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         792
         583)
@@ -279539,7 +279596,7 @@ object MainForm: TMainForm
         Fields = 'KLIENTNOMER'
       end
       item
-        Name = 'TEMPORARY_INDEX_{0D548578-9533-4093-A38A-CB121F540B7B}'
+        Name = 'TEMPORARY_INDEX_{FCA17DD5-3A2F-4D9F-BEC7-414C281C17EB}'
         DescFields = 'CHIPNOMER'
         Fields = 'CHIPNOMER'
         Options = [ixDescending]
