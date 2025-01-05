@@ -1085,6 +1085,7 @@ var
     RS_232_Timeouts: _COMMTIMEOUTS;
     PriceCash: Real;
     PriceCard: Real;
+    CardType: Integer;
     PaidCash: Real;
     ToBePaidCash: Real;
     VipDiscount: Real;
@@ -2367,7 +2368,7 @@ begin
 
     TimerTime1 := TimerTime1 + 1;
     // Label1.Caption:=IntToStr(TimerTime1);
-    if (AdvPageControl1.ActivePageIndex in [3, 15, 18]) then
+    if (AdvPageControl1.ActivePageIndex in [3, 4, 15, 18]) then
         SLE4442Timer3();
     if (AdvPageControl1.ActivePageIndex = 1) and (not Backuped) then
     begin
@@ -2682,6 +2683,7 @@ begin
     //SDELKANOMER:=0;
     with MainForm do
     begin
+        CardType := 0;
         PriceCard := -1;
         if(IndexSol > 0) then  SOLARIUMI.RecNo := IndexSol;
         if TimeSet > 99 then
@@ -2704,7 +2706,7 @@ begin
         else  begin
           PriceCash := 0;
         end;
-        if (Qklienti.FieldValues['nomer'] > 0) then
+        if (((Qklienti.FieldValues['nomer'] > 0) and (Card.ErrCounter > 2)) or (not IsChipCard and (CardNomer > 0))) then
         begin
             _Q4 := TABSQuery.Create(nil);
             _Q4.DatabaseName := 'sol1';
@@ -2726,6 +2728,7 @@ begin
                 begin
                     try
                       PriceCard := TimeSet * _Q4.FieldByName('CENA').AsVariant;
+                      CardType := stoka
                     except
                       PriceCard := -1;
                     end;
@@ -2758,6 +2761,40 @@ begin
         // Label64.Caption:='00.00';
     end;
 end;
+
+
+//procedure SelectBarcodKlient();
+//var
+//  Ostatak: Real;
+//  Result: String;
+//begin
+//    with MainForm do
+//    begin
+//      QKarti.Active := False;
+//      if StrLen(PChar(Edit2.Text)) > 0 then
+//          QKarti.SQL.SetText(PChar('SELECT * FROM KARTICHIP WHERE KLIENTNOMER = ' +
+//              Edit2.Text + ''))  ;
+//      QKarti.Active := True;
+//      QKlienti.Active := False;
+//      if QKarti.RecordCount>0 then
+//      begin
+//          QKarti.Active := false;
+//          QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join KARTICHIP c on k.NOMER = c.KLIENTNOMER WHERE NOMER = ' +
+//              Edit2.Text + ''));
+//          QKlienti.Active := True;
+//          if(QKlienti.RecordCount > 0) then
+//          begin
+//               FillValues1;
+//               if(TimeSet > 0) and (PriceCard > 0) then
+//                       Ostatak := (QKlienti.FieldValues['SUMA']) /   (PriceCard/TimeSet)
+//                else Ostatak := QKlienti.FieldValues['SUMA'];
+//                FmtStr(Result, '%4.2f', [Ostatak]);
+//                Label14.Caption := '' + Result + GetMessage('M85');
+//          end;
+//      end;
+//    end;
+//end;
+
 
 procedure TMainForm.Button1Click(Sender: TObject);
 begin
@@ -2805,6 +2842,7 @@ begin
     if T <= SOLARIUMI.FieldValues['VREME'] then
         TimeSet := T;
     FillValues1();
+    CalcPaid();
 end;
 
 procedure LocateSolarium;
@@ -2908,23 +2946,37 @@ procedure TMainForm.Label10Click(Sender: TObject);
 var
     i: Integer;
 begin
-    AdvPageControl1.ActivePageIndex := 3;
-    PaymentOKLabel.Visible := false;
-    MainForm.Gauge2.Visible := false;
-    PaidCash := 0;
-    PaidCard := 0;
-    PaidChipCard := 0;
-    DiscountPrize := 0;
-    VipDiscount := 0;
-    CardNomer := 0;
-    BonusLabel.Caption := '0';
-    ToBePaidCash := 0;
-    for i := 0 to SizeOf(PoseshteniaPaid) do
-        PoseshteniaPaid[i] := 0;
-    PosPaid := 0;
-    BroiKartiPaid := 0;
-    HideKlInfo;
-    UpdatePageControl(1);
+      PayChipCardClick( Sender);
+      PayCashButtonClick(Sender);
+      if(( ToBePaidCash > 0) and (IsChipCard and (Card.ClientNomer > 0))) then
+      begin
+        Application.MessageBox(PChar('Недостатъчни минути в картата!'),PChar('Warning'),MB_OK);
+      end
+      else
+      begin
+        if not ((PaidChipCard = 0) and (CardNomer > 0)) then
+        begin
+          PaymentOKLabelClick(sender);
+        end;
+      end;
+
+//    AdvPageControl1.ActivePageIndex := 3;
+//    PaymentOKLabel.Visible := false;
+//    MainForm.Gauge2.Visible := false;
+//    PaidCash := 0;
+//    PaidCard := 0;
+//    PaidChipCard := 0;
+//    DiscountPrize := 0;
+//    VipDiscount := 0;
+//    CardNomer := 0;
+//    BonusLabel.Caption := '0';
+//    ToBePaidCash := 0;
+//    for i := 0 to SizeOf(PoseshteniaPaid) do
+//        PoseshteniaPaid[i] := 0;
+//    PosPaid := 0;
+//    BroiKartiPaid := 0;
+//    HideKlInfo;
+//    UpdatePageControl(1);
 end;
 
 procedure TMainForm.CancelButtonClick(Sender: TObject);
@@ -2990,7 +3042,7 @@ begin
             SendCmd(4);
     end;
     if Button = mbLeft then
-        if CabineStatus[IndexSol - 1] = 0 then
+        if CabineStatus[IndexSol - 1] in [0,3] then
             LocateSolarium;
     MainForm.Timer1.Enabled := true;
 end;
@@ -3302,8 +3354,16 @@ begin
         PaidChipCard * (PriceCash / PriceCard)) < 0.03 then
     begin
 //        LastTime[(IndexSol - 1)] := TimeSet;
-        CabineSetTime[(IndexSol - 1)] := TimeSet;
-        SendData(TimeSet, IndexSol, true);
+        if(CabineStatus[IndexSol - 1] = 3) then
+        begin
+          CabineSetTime[(IndexSol - 1)] := TimeSet + LastTime[(IndexSol - 1)];
+        end
+        else
+        begin
+          CabineSetTime[(IndexSol - 1)] := TimeSet;
+        end;
+        LastTime[(IndexSol - 1)] := TimeSet;
+        SendData(CabineSetTime[(IndexSol - 1)], IndexSol, true);
         if Retry > 21 then
         begin
             if not ((Plashtania.Locate('RecordID', CabineRecord[IndexSol], []))
@@ -3368,7 +3428,7 @@ begin
                 end
                 else if (PaidChipCard > 0) and not IsChipCard then
                 begin
-                    Application.MessageBox(PChar('Неуспешно плащане с карта. Поставете отново картата!'), PChar('Warning'), MB_OK);
+                    Application.MessageBox(PChar('Неуспешна операция. Поставете отново картата!'), PChar('Warning'), MB_OK);
                     //Application.MessageBox(PChar('Картата е блокирана!'),PChar('Warning'),MB_OK);
                     PaidChipCard := 0;
                     sol1.Rollback;
@@ -3381,12 +3441,22 @@ begin
                 end;
                 if (PaidChipCard > 0) then
                 begin
-                    Plashtania.FieldValues['OTCHIPKARTA'] := Card.ClientNomer;
+                    if(IsChipCard) then
+                    begin
+                       Plashtania.FieldValues['OTCHIPKARTA'] := Card.ClientNomer;
+                       Plashtania.FieldValues['STUDIOCODE'] := Card.StudioNomer;
+                    end
+                    else
+                    begin
+                       Plashtania.FieldValues['OTCHIPKARTA'] := CardNomer;
+                       Plashtania.FieldValues['STUDIOCODE'] := Internet.FieldValues['STUDIONOMER'];
+                    end;
                     // Temporary Value
                     Plashtania.FieldValues['KARTASUMA'] := PaidChipCard;
-                    Plashtania.FieldValues['STUDIOCODE'] := Card.StudioNomer;
+
                     Plashtania.FieldValues['KLIENTNOMER'] :=
                         QKlienti.FieldValues['nomer2'];
+                    plashtania.FieldValues['OTKARTA'] := CardType;
                 end
                 else if (CardNomer > 0) then
                 begin
@@ -3499,7 +3569,7 @@ procedure TMainForm.FormKeyPress(Sender: TObject; var Key: Char);
 var
     len: integer;
 begin
-    if (AdvPageControl1.ActivePageIndex in [18, 15, 3, 1]) then
+    if (AdvPageControl1.ActivePageIndex in [18, 15, 3, 1, 4]) then
     begin
         if (Key = #10) or (Key = #13) then
         begin
@@ -3524,6 +3594,10 @@ begin
                         AdvPageControl1.ActivePageIndex := 18;
                         AddStokaButtonClick(2);
                     end;
+//                    if (AdvPageControl1.ActivePageIndex = 4) then
+//                    begin
+//                      SelectBarcodKlient();
+//                    end;
                     //  label25.Caption:=IntToStr(CardNomer);
                     Timer3.Enabled := true;
                 except;
@@ -3726,7 +3800,7 @@ end;
 
 procedure TMainForm.PrintDayReportClick(Sender: TObject);
 begin
-    Form3.Clean();
+//    Form3.Clean();
     Form3.QuickRep3.Preview;
 end;
 
@@ -3841,11 +3915,7 @@ var
 begin
     ToBePaidCash := PriceCash - (PaidCard * (PriceCash / PriceCard) +
         PaidChipCard * (PriceCash / PriceCard));
-    if VipDiscount + DiscountPrize < 100 then
-        PaidCash := ToBePaidCash - (ToBePaidCash * VipDiscount / 100) -
-            (ToBePaidCash * DiscountPrize / 100)
-    else
-        PaidCash := 0;
+    PaidCash := ToBePaidCash;
 
     Edit1.Text := ConvertCurr1(PaidCash);
     DecPart := Trunc(PaidCash * 100);
@@ -4320,13 +4390,12 @@ end;
 
 procedure TMainForm.LogoEkran1Show(Sender: TObject);
 begin
-  if(FileExists('images\\screens\background.jpg')) then
-  begin
-    try
-      Image1.Picture.LoadFromFile('images\\screens\background.jpg');
-    finally
-
+  try
+    if(FileExists('images\screens\background.jpg')) then
+    begin
+      Image1.Picture.LoadFromFile('images\screens\background.jpg');
     end;
+  finally
   end;
 end;
 
@@ -5171,6 +5240,19 @@ end;
 procedure TMainForm.IzborNaVreme5Show(Sender: TObject);
 begin
   Image5.Picture := Image1.Picture;
+  CardNomer := 0;
+  SLE4442Init();
+  Label14.Caption := '';
+//  Edit2.Text := '';
+  Label9.Caption := IntToStr(Card.ClientNomer);
+  if(card.ConStatus = 0) then
+  begin
+    Label72.Visible := false;
+    Label9.visible := False;
+  end;
+//  if(Edit2.Visible)  then
+//    Edit2.SetFocus();
+  FillValues1();
 end;
 
 procedure TMainForm.PlannerMaskDatePicker2Change(Sender: TObject);
@@ -5385,8 +5467,21 @@ begin
                 PaidChipCard := PriceCard - (PaidCard + PaidCash)
             else
                 PaidChipCard := PriceCard;
-            if (PaidChipCard) > Card.Balans then
-                PaidChipCard := Card.Balans;
+            if not IsChipCard  and (CardNomer > 0) then
+            begin
+              if KARTICHIP.FieldValues['SUMA'] < PaidChipCard then
+              begin
+                Application.MessageBox(PChar('Недостатъчни минути!'), PChar(''), MB_OK);
+                PaidChipCard:= 0;
+                exit;
+              end;
+            end
+            else
+            begin
+                if (PaidChipCard) > Card.Balans then
+                  PaidChipCard := Card.Balans;
+            end;
+
             FmtStr(Result1, '%4.2f', [(PaidChipCard)]);
             temp_discount := VipDiscount;
             VipDiscount := 0;
@@ -5492,7 +5587,7 @@ begin
     AdvPageControl1.ActivePageIndex := 18;
     QKlienti.Active := False;
     QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join KARTICHIP c on k.NOMER = c.KLIENTNOMER ' + SQLText +
-        ' ORDER BY IME DESC'));
+        ' ORDER BY k.NOMER ASC'));
     CardNomer := 0;
     QKlienti.Active := True;
     Label137.Font.Color := clRed;
@@ -5733,6 +5828,11 @@ var
 begin //Зареждане
     if not (QKlienti.RecordCount = 1) and not IsReader then
         Exit;
+    if(QKlienti.RecordCount = 0) then
+    begin
+      NovKlientButtonClick(Sender);
+      Exit;
+    end;
     if KARTICHIP.FieldValues['ENDDATE'] > 0 then
         Exit;
     if( CardNomer <> 0) then
@@ -6541,7 +6641,7 @@ begin
         Timer1.Enabled := True;
     end
     else
-        label64.Caption := leftstr('Solar studio 1.2', Timer2Time);
+        label64.Caption := leftstr('Solar Studio 1.2', Timer2Time);
 end;
 
 procedure TMainForm.BHelpClick(Sender: TObject);
@@ -6594,10 +6694,7 @@ procedure TMainForm.PaymentOKLabelMouseDown(Sender: TObject; Button:
     Shift: TShiftState; X, Y: Integer);
 begin
     PaymentOKLabel.Top := PaymentOKLabel.Top + 3;
-	 if not ((PaidChipCard = 0) and (CardNomer > 0)) then
-       begin
-         PaymentOKLabelClick(sender);
-       end;
+    PaymentOKLabelClick(sender);
 end;
 
 procedure TMainForm.PaymentOKLabelMouseUp(Sender: TObject; Button: TMouseButton;

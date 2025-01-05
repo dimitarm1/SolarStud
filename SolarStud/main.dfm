@@ -6,7 +6,7 @@ object MainForm: TMainForm
   BorderStyle = bsNone
   BorderWidth = 1
   Caption = 'Solar Studio V1.2'
-  ClientHeight = 834
+  ClientHeight = 833
   ClientWidth = 792
   Color = clAppWorkSpace
   DockSite = True
@@ -4825,11 +4825,11 @@ object MainForm: TMainForm
     Transparent = True
   end
   object AdvPageControl1: TAdvPageControl
-    Left = -2
-    Top = 0
-    Width = 800
-    Height = 596
-    ActivePage = OsnovenEkran2
+    Left = -3
+    Top = -2
+    Width = 798
+    Height = 597
+    ActivePage = ChipKarti19
     ActiveFont.Charset = RUSSIAN_CHARSET
     ActiveFont.Color = clWindowText
     ActiveFont.Height = -11
@@ -4863,10 +4863,8 @@ object MainForm: TMainForm
       TabColor = clBtnFace
       TabColorTo = clNone
       OnShow = LogoEkran1Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitWidth = 792
+      ExplicitHeight = 583
       object Image1: TImage
         Tag = -5
         Left = -5
@@ -7816,6 +7814,7 @@ object MainForm: TMainForm
           BD50FF00824FA57ABD45950836F13E696B124BB02735EAF535A0B0DC5554C032
           A0EFE5504ECE71B6F5EAF528E88C3404EBEB566D00DB6AF57A8CF458962CBB55
           6B7AF57ABC13D9E98877F76933D4D7ABD522567FFFD9}
+        Stretch = True
         Transparent = True
       end
       object Label64: TLabel
@@ -7849,7 +7848,7 @@ object MainForm: TMainForm
           0D544C4D44504E474F626A65637489504E470D0A1A0A0000000D494844520000
           01C20000016F0806000000D99ACB75000000017352474200AECE1CE900000006
           624B474400FF00FF00FFA0BDA793000000097048597300000B1300000B130100
-          9A9C180000000774494D4507E20B04122A255427D91E0000004569545874436F
+          9A9C180000000774494D45E2070B04122A254336DA9F0000004569545874436F
           6D6D656E74000000000043524541544F523A2067642D6A7065672076312E3020
           287573696E6720494A47204A50454720763632292C207175616C697479203D20
           39300A679D47400000FFFF4944415478DAECBD69B065D7751EB6F63E777AF3EB
@@ -15408,19 +15407,22 @@ object MainForm: TMainForm
       TabColor = clBtnFace
       TabColorTo = clNone
       OnShow = OsnovenEkran2Show
+      ExplicitWidth = 792
+      ExplicitHeight = 583
       DesignSize = (
-        792
-        583)
+        790
+        584)
       object Image2: TImage
         Left = 0
         Top = 0
         Width = 825
-        Height = 583
+        Height = 584
         Align = alLeft
         OnMouseDown = Image2MouseDown
         OnMouseMove = Image2MouseMove
         OnMouseUp = Image2MouseUp
         ExplicitTop = -1
+        ExplicitHeight = 583
       end
       object Imagepress2: TLMDLImage
         Left = 215
@@ -16571,7 +16573,7 @@ object MainForm: TMainForm
         Style = sbStretch
       end
       object Kabina42: TLabel
-        Left = 599
+        Left = 597
         Top = 127
         Width = 116
         Height = 25
@@ -16591,9 +16593,10 @@ object MainForm: TMainForm
         Layout = tlCenter
         Visible = False
         OnClick = Label1Click
+        ExplicitLeft = 599
       end
       object Kabina41: TLabel
-        Left = 608
+        Left = 606
         Top = 110
         Width = 98
         Height = 31
@@ -16613,6 +16616,7 @@ object MainForm: TMainForm
         Layout = tlCenter
         Visible = False
         OnClick = Label1Click
+        ExplicitLeft = 608
       end
       object Kabina51: TLabel
         Left = 74
@@ -16776,7 +16780,7 @@ object MainForm: TMainForm
         OnClick = Label1Click
       end
       object Kabina2minuti: TLabel
-        Left = 241
+        Left = 240
         Top = 225
         Width = 117
         Height = 22
@@ -16796,9 +16800,10 @@ object MainForm: TMainForm
         Layout = tlCenter
         Visible = False
         OnClick = Label1Click
+        ExplicitLeft = 241
       end
       object Kabina2cena: TLabel
-        Left = 246
+        Left = 245
         Top = 239
         Width = 109
         Height = 22
@@ -16818,9 +16823,10 @@ object MainForm: TMainForm
         Layout = tlCenter
         Visible = False
         OnClick = Label1Click
+        ExplicitLeft = 246
       end
       object Kabina3minuti: TLabel
-        Left = 419
+        Left = 418
         Top = 225
         Width = 121
         Height = 22
@@ -16840,9 +16846,10 @@ object MainForm: TMainForm
         Layout = tlCenter
         Visible = False
         OnClick = Label1Click
+        ExplicitLeft = 419
       end
       object Kabina3cena: TLabel
-        Left = 427
+        Left = 426
         Top = 239
         Width = 111
         Height = 23
@@ -16862,6 +16869,7 @@ object MainForm: TMainForm
         Layout = tlCenter
         Visible = False
         OnClick = Label1Click
+        ExplicitLeft = 427
       end
       object Kabina21: TLabel
         Left = 242
@@ -17021,7 +17029,7 @@ object MainForm: TMainForm
         OnMouseDown = Imagepress1_MouseDown
       end
       object Kabina6cena: TLabel
-        Left = 243
+        Left = 242
         Top = 430
         Width = 115
         Height = 22
@@ -17041,9 +17049,10 @@ object MainForm: TMainForm
         Layout = tlCenter
         Visible = False
         OnClick = Label1Click
+        ExplicitLeft = 243
       end
       object Kabina6minuti: TLabel
-        Left = 241
+        Left = 240
         Top = 416
         Width = 120
         Height = 22
@@ -17063,6 +17072,7 @@ object MainForm: TMainForm
         Layout = tlCenter
         Visible = False
         OnClick = Label1Click
+        ExplicitLeft = 241
       end
       object Kabina5minuti: TLabel
         Left = 67
@@ -17109,7 +17119,7 @@ object MainForm: TMainForm
         OnClick = Label1Click
       end
       object Kabina4minuti: TLabel
-        Left = 596
+        Left = 594
         Top = 225
         Width = 122
         Height = 22
@@ -17129,9 +17139,10 @@ object MainForm: TMainForm
         Layout = tlCenter
         Visible = False
         OnClick = Label1Click
+        ExplicitLeft = 596
       end
       object Kabina4cena: TLabel
-        Left = 604
+        Left = 602
         Top = 239
         Width = 107
         Height = 22
@@ -17151,29 +17162,32 @@ object MainForm: TMainForm
         Layout = tlCenter
         Visible = False
         OnClick = Label1Click
+        ExplicitLeft = 604
       end
       object Label110: TLabel
-        Left = 368
-        Top = 542
-        Width = 52
-        Height = 25
+        Left = 349
+        Top = 541
+        Width = 87
+        Height = 23
         Alignment = taCenter
         Anchors = [akTop]
+        AutoSize = False
         BiDiMode = bdRightToLeftNoAlign
-        Caption = #1050#1072#1089#1072
+        Caption = #1050#1086#1079#1084#1077#1090#1080#1082#1072
         Font.Charset = RUSSIAN_CHARSET
         Font.Color = clRed
-        Font.Height = -21
-        Font.Name = 'Verdana'
-        Font.Style = []
+        Font.Height = -19
+        Font.Name = 'Arial Narrow'
+        Font.Style = [fsBold]
         ParentBiDiMode = False
         ParentFont = False
         Transparent = True
         Layout = tlCenter
         OnClick = Label110Click
+        ExplicitLeft = 350
       end
       object Label92: TLabel
-        Left = 482
+        Left = 481
         Top = 537
         Width = 97
         Height = 34
@@ -17193,9 +17207,10 @@ object MainForm: TMainForm
         Transparent = True
         Layout = tlCenter
         OnMouseDown = Label92MouseDown
+        ExplicitLeft = 482
       end
       object Label91: TLabel
-        Left = 188
+        Left = 187
         Top = 537
         Width = 138
         Height = 34
@@ -17215,6 +17230,7 @@ object MainForm: TMainForm
         Layout = tlCenter
         Visible = False
         OnClick = Label91Click
+        ExplicitLeft = 188
       end
       object Label144: TLabel
         Left = 24
@@ -17238,7 +17254,7 @@ object MainForm: TMainForm
         OnClick = Label144Click
       end
       object Label143: TLabel
-        Left = 630
+        Left = 628
         Top = 540
         Width = 129
         Height = 28
@@ -17257,6 +17273,7 @@ object MainForm: TMainForm
         Transparent = True
         Layout = tlCenter
         OnClick = Label143Click
+        ExplicitLeft = 630
       end
       object StatusShape1: TShape
         Left = 98
@@ -17368,7 +17385,7 @@ object MainForm: TMainForm
         OnClick = Label1Click
       end
       object Kabina7minuti: TLabel
-        Left = 423
+        Left = 422
         Top = 416
         Width = 113
         Height = 22
@@ -17388,9 +17405,10 @@ object MainForm: TMainForm
         Layout = tlCenter
         Visible = False
         OnClick = Label1Click
+        ExplicitLeft = 423
       end
       object Kabina7cena: TLabel
-        Left = 424
+        Left = 423
         Top = 430
         Width = 110
         Height = 22
@@ -17410,6 +17428,7 @@ object MainForm: TMainForm
         Layout = tlCenter
         Visible = False
         OnClick = Label1Click
+        ExplicitLeft = 424
       end
       object Imagepress8: TLMDLImage
         Left = 570
@@ -17484,7 +17503,7 @@ object MainForm: TMainForm
         OnMouseDown = Imagepress1_MouseDown
       end
       object Kabina8minuti: TLabel
-        Left = 600
+        Left = 598
         Top = 416
         Width = 116
         Height = 22
@@ -17504,9 +17523,10 @@ object MainForm: TMainForm
         Layout = tlCenter
         Visible = False
         OnClick = Label1Click
+        ExplicitLeft = 600
       end
       object Kabina8cena: TLabel
-        Left = 601
+        Left = 599
         Top = 430
         Width = 110
         Height = 22
@@ -17526,6 +17546,7 @@ object MainForm: TMainForm
         Layout = tlCenter
         Visible = False
         OnClick = Label1Click
+        ExplicitLeft = 601
       end
       object Imagesol7: TImage
         Left = 421
@@ -17598,7 +17619,7 @@ object MainForm: TMainForm
         Width = 19
         Height = 17
         Cancel = True
-        Caption = '?'
+        Caption = '_'
         Font.Charset = RUSSIAN_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
@@ -17623,9 +17644,11 @@ object MainForm: TMainForm
       TabColor = clBtnFace
       TabColorTo = clNone
       OnShow = FirmiISluziteli3Show
+      ExplicitWidth = 792
+      ExplicitHeight = 583
       DesignSize = (
-        792
-        583)
+        790
+        584)
       object NulImage: TImage
         Left = 704
         Top = 496
@@ -17926,10 +17949,8 @@ object MainForm: TMainForm
       TabColorTo = clNone
       OnHide = IzborNaPlashtane4Hide
       OnShow = IzborNaPlashtane4Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitWidth = 792
+      ExplicitHeight = 583
       object Image4: TImage
         Left = -4
         Top = -5
@@ -22262,10 +22283,8 @@ object MainForm: TMainForm
       TabColor = clBtnFace
       TabColorTo = clNone
       OnShow = IzborNaVreme5Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitWidth = 792
+      ExplicitHeight = 583
       object Image5: TImage
         Left = -6
         Top = -5
@@ -24724,10 +24743,8 @@ object MainForm: TMainForm
       TabColor = clBtnFace
       TabColorTo = clNone
       OnShow = Menu6Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitWidth = 792
+      ExplicitHeight = 583
       object Image10: TImage
         Left = -4
         Top = -6
@@ -25100,13 +25117,11 @@ object MainForm: TMainForm
       TabColor = clBtnFace
       TabColorTo = clNone
       OnShow = SolariumiNastroiki7Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitWidth = 792
+      ExplicitHeight = 583
       DesignSize = (
-        792
-        583)
+        790
+        584)
       object Image11: TImage
         Left = -5
         Top = -5
@@ -39249,7 +39264,7 @@ object MainForm: TMainForm
         Height = 21
         DataField = 'MIVREME'
         DataSource = DataSource1
-        ItemHeight = 0
+        ItemHeight = 13
         Items.Strings = (
           '1'
           '2'
@@ -39269,7 +39284,7 @@ object MainForm: TMainForm
         Height = 21
         DataField = 'LICEVICHAS'
         DataSource = DataSource1
-        ItemHeight = 0
+        ItemHeight = 13
         Items.Strings = (
           '100'
           '200'
@@ -39291,7 +39306,7 @@ object MainForm: TMainForm
         Height = 21
         DataField = 'LAMPICHAS'
         DataSource = DataSource1
-        ItemHeight = 0
+        ItemHeight = 13
         Items.Strings = (
           '100'
           '200'
@@ -39313,7 +39328,7 @@ object MainForm: TMainForm
         Height = 21
         DataField = 'OHLAZDANE'
         DataSource = DataSource1
-        ItemHeight = 0
+        ItemHeight = 13
         Items.Strings = (
           '1'
           '2'
@@ -39333,7 +39348,7 @@ object MainForm: TMainForm
         Height = 21
         DataField = 'PREDVVREME'
         DataSource = DataSource1
-        ItemHeight = 0
+        ItemHeight = 13
         Items.Strings = (
           '1'
           '2'
@@ -39350,7 +39365,7 @@ object MainForm: TMainForm
         Left = 432
         Top = 190
         Width = 297
-        Height = 19
+        Height = 30
         BevelInner = bvLowered
         BevelOuter = bvRaised
         BevelKind = bkSoft
@@ -39389,7 +39404,7 @@ object MainForm: TMainForm
         Height = 21
         DataField = 'VREME'
         DataSource = DataSource1
-        ItemHeight = 0
+        ItemHeight = 13
         Items.Strings = (
           '5'
           '10'
@@ -39407,7 +39422,7 @@ object MainForm: TMainForm
         Height = 21
         DataField = 'ADDRESS'
         DataSource = DataSource1
-        ItemHeight = 0
+        ItemHeight = 13
         Items.Strings = (
           '')
         TabOrder = 8
@@ -39462,13 +39477,11 @@ object MainForm: TMainForm
       TabColor = clBtnFace
       TabColorTo = clNone
       OnShow = SolariumiInfo8Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitWidth = 792
+      ExplicitHeight = 583
       DesignSize = (
-        792
-        583)
+        790
+        584)
       object Image15: TImage
         Left = -6
         Top = -5
@@ -51550,9 +51563,11 @@ object MainForm: TMainForm
       TabColor = clBtnFace
       TabColorTo = clNone
       OnShow = SolariumiCeni9Show
+      ExplicitWidth = 792
+      ExplicitHeight = 583
       DesignSize = (
-        792
-        583)
+        790
+        584)
       object Image17: TImage
         Left = -8
         Top = -5
@@ -63722,10 +63737,8 @@ object MainForm: TMainForm
       TabColor = clBtnFace
       TabColorTo = clNone
       OnShow = NachalnoUstanoviavane10Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitWidth = 792
+      ExplicitHeight = 583
       object Image19: TImage
         Tag = -5
         Left = -3
@@ -64436,17 +64449,16 @@ object MainForm: TMainForm
       ParentFont = False
       TabColor = clBtnFace
       TabColorTo = clNone
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitWidth = 792
+      ExplicitHeight = 583
       object Image32: TImage
         Left = 0
         Top = 0
         Width = 800
-        Height = 583
+        Height = 584
         Align = alLeft
         AutoSize = True
+        ExplicitHeight = 583
       end
       object LMDLImage40: TLMDLImage
         Left = 528
@@ -64619,13 +64631,11 @@ object MainForm: TMainForm
       TabColor = clBtnFace
       TabColorTo = clNone
       OnShow = Statistika12Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitWidth = 792
+      ExplicitHeight = 583
       DesignSize = (
-        792
-        583)
+        790
+        584)
       object Image33: TImage
         Left = -6
         Top = -6
@@ -64665,7 +64675,7 @@ object MainForm: TMainForm
         Style = sbStretch
       end
       object Label147: TLabel
-        Left = 590
+        Left = 588
         Top = 41
         Width = 43
         Height = 16
@@ -64682,9 +64692,10 @@ object MainForm: TMainForm
         ParentFont = False
         Transparent = True
         Layout = tlCenter
+        ExplicitLeft = 590
       end
       object Label150: TLabel
-        Left = 238
+        Left = 237
         Top = 32
         Width = 256
         Height = 23
@@ -64701,6 +64712,7 @@ object MainForm: TMainForm
         ParentFont = False
         Transparent = True
         Layout = tlCenter
+        ExplicitLeft = 238
       end
       object Label108: TLabel
         Left = 36
@@ -64742,7 +64754,7 @@ object MainForm: TMainForm
         OnClick = SettingsEndButtonClick
       end
       object Label148: TLabel
-        Left = 589
+        Left = 587
         Top = 68
         Width = 46
         Height = 16
@@ -64759,6 +64771,7 @@ object MainForm: TMainForm
         ParentFont = False
         Transparent = True
         Layout = tlCenter
+        ExplicitLeft = 589
       end
       object LMDLImage127: TLMDLImage
         Left = 188
@@ -65112,7 +65125,7 @@ object MainForm: TMainForm
         Font.Height = -11
         Font.Name = 'Verdana'
         Font.Style = []
-        ItemHeight = 0
+        ItemHeight = 13
         ParentFont = False
         TabOrder = 3
         Text = '---------'#1048#1079#1073#1077#1088#1077#1090#1077' '#1089#1087#1088#1072#1074#1082#1072' -------------'
@@ -65209,13 +65222,11 @@ object MainForm: TMainForm
       TabColor = clBtnFace
       TabColorTo = clNone
       OnShow = Protokol13Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitWidth = 792
+      ExplicitHeight = 583
       DesignSize = (
-        792
-        583)
+        790
+        584)
       object Image50: TImage
         Left = -3
         Top = -4
@@ -65345,7 +65356,7 @@ object MainForm: TMainForm
         Style = sbStretch
       end
       object Label170: TLabel
-        Left = 336
+        Left = 335
         Top = 528
         Width = 62
         Height = 29
@@ -65364,6 +65375,7 @@ object MainForm: TMainForm
         Transparent = True
         Layout = tlCenter
         OnClick = PrintDayReportClick
+        ExplicitLeft = 336
       end
       object wwDBGrid2: TwwDBGrid
         Left = 22
@@ -65577,9 +65589,11 @@ object MainForm: TMainForm
       TabColor = clBtnFace
       TabColorTo = clNone
       OnShow = OsnovniNastroiki14Show
+      ExplicitWidth = 792
+      ExplicitHeight = 583
       DesignSize = (
-        792
-        583)
+        790
+        584)
       object Image51: TImage
         Left = -5
         Top = -5
@@ -65679,7 +65693,7 @@ object MainForm: TMainForm
         Transparent = True
       end
       object Label95: TLabel
-        Left = 650
+        Left = 648
         Top = 527
         Width = 83
         Height = 29
@@ -65698,6 +65712,7 @@ object MainForm: TMainForm
         Transparent = True
         Layout = tlCenter
         OnClick = SettingsEndButtonClick
+        ExplicitLeft = 650
       end
       object LMDLImage44: TLMDLImage
         Left = 416
@@ -65919,13 +65934,11 @@ object MainForm: TMainForm
       TabColor = clBtnFace
       TabColorTo = clNone
       OnShow = DrugiNastroiki15Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitWidth = 792
+      ExplicitHeight = 583
       DesignSize = (
-        792
-        583)
+        790
+        584)
       object Image52: TImage
         Left = -3
         Top = -4
@@ -66031,7 +66044,7 @@ object MainForm: TMainForm
         Transparent = True
       end
       object Label98: TLabel
-        Left = 168
+        Left = 167
         Top = 96
         Width = 465
         Height = 29
@@ -66049,9 +66062,10 @@ object MainForm: TMainForm
         ParentFont = False
         Transparent = True
         Layout = tlCenter
+        ExplicitLeft = 168
       end
       object Label122: TLabel
-        Left = 638
+        Left = 636
         Top = 528
         Width = 108
         Height = 29
@@ -66070,6 +66084,7 @@ object MainForm: TMainForm
         Transparent = True
         Layout = tlCenter
         OnClick = SettingsEndButtonClick
+        ExplicitLeft = 638
       end
       object LMDLImage42: TLMDLImage
         Left = 395
@@ -66263,7 +66278,7 @@ object MainForm: TMainForm
         Top = 343
         Width = 305
         Height = 21
-        ItemHeight = 0
+        ItemHeight = 13
         TabOrder = 7
         Text = #1050#1072#1088#1090#1080' '#1089' '#1073#1072#1088#1082#1086#1076
         OnChange = TipNaRabotaComboChange
@@ -66290,13 +66305,11 @@ object MainForm: TMainForm
       TabColorTo = clNone
       OnHide = MenuKasa16Hide
       OnShow = MenuKasa16Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitWidth = 792
+      ExplicitHeight = 583
       DesignSize = (
-        792
-        583)
+        790
+        584)
       object Image55: TImage
         Left = -8
         Top = 3
@@ -75896,7 +75909,7 @@ object MainForm: TMainForm
         Options = []
       end
       object Label6: TLabel
-        Left = 352
+        Left = 351
         Top = 96
         Width = 65
         Height = 29
@@ -75913,6 +75926,7 @@ object MainForm: TMainForm
         ParentFont = False
         Transparent = True
         Layout = tlCenter
+        ExplicitLeft = 352
       end
       object Label111: TLabel
         Left = 48
@@ -77173,7 +77187,7 @@ object MainForm: TMainForm
         Transparent = True
       end
       object Label165: TLabel
-        Left = 194
+        Left = 193
         Top = 539
         Width = 140
         Height = 19
@@ -77192,9 +77206,10 @@ object MainForm: TMainForm
         Transparent = True
         Layout = tlCenter
         OnClick = Label165Click
+        ExplicitLeft = 194
       end
       object Label166: TLabel
-        Left = 469
+        Left = 468
         Top = 539
         Width = 140
         Height = 19
@@ -77213,6 +77228,7 @@ object MainForm: TMainForm
         Transparent = True
         Layout = tlCenter
         OnClick = Label166Click
+        ExplicitLeft = 469
       end
       object DBText18: TDBText
         Left = 685
@@ -77367,7 +77383,7 @@ object MainForm: TMainForm
         Top = 467
         Width = 127
         Height = 21
-        ItemHeight = 0
+        ItemHeight = 13
         TabOrder = 3
         Text = '1'
         OnChange = ComboBox2Change
@@ -77380,13 +77396,11 @@ object MainForm: TMainForm
       TabColor = clBtnFace
       TabColorTo = clNone
       OnShow = ManuStoki17Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitWidth = 792
+      ExplicitHeight = 583
       DesignSize = (
-        792
-        583)
+        790
+        584)
       object Image56: TImage
         Left = -4
         Top = -5
@@ -77524,7 +77538,7 @@ object MainForm: TMainForm
         OnClick = Label124Click
       end
       object DobaviStokaBtn: TLabel
-        Left = 213
+        Left = 212
         Top = 533
         Width = 73
         Height = 22
@@ -77542,6 +77556,7 @@ object MainForm: TMainForm
         Transparent = True
         Layout = tlCenter
         OnClick = DobaviStokaBtnClick
+        ExplicitLeft = 213
       end
       object StokaEditBtn: TLabel
         Left = 330
@@ -77757,9 +77772,11 @@ object MainForm: TMainForm
       TabColor = clBtnFace
       TabColorTo = clNone
       OnShow = KlubniKarti18Show
+      ExplicitWidth = 792
+      ExplicitHeight = 583
       DesignSize = (
-        792
-        583)
+        790
+        584)
       object Image58: TImage
         Left = -3
         Top = -4
@@ -77881,7 +77898,7 @@ object MainForm: TMainForm
         OnDblClick = KlientLabel_p18DblClick
       end
       object Label129: TLabel
-        Left = 519
+        Left = 518
         Top = 153
         Width = 78
         Height = 18
@@ -77899,6 +77916,7 @@ object MainForm: TMainForm
         ParentFont = False
         Transparent = True
         Layout = tlCenter
+        ExplicitLeft = 519
       end
       object Label94: TLabel
         Left = 56
@@ -77941,7 +77959,7 @@ object MainForm: TMainForm
         OnClick = EndButtonCardClick
       end
       object Label125: TLabel
-        Left = 303
+        Left = 302
         Top = 73
         Width = 166
         Height = 25
@@ -77958,6 +77976,7 @@ object MainForm: TMainForm
         ParentFont = False
         Transparent = True
         Layout = tlCenter
+        ExplicitLeft = 303
       end
       object Label169: TLabel
         Left = 208
@@ -78138,13 +78157,11 @@ object MainForm: TMainForm
       TabColorTo = clNone
       OnHide = ChipKarti19Hide
       OnShow = ChipKarti19Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitWidth = 792
+      ExplicitHeight = 583
       DesignSize = (
-        792
-        583)
+        790
+        584)
       object Image12: TImage
         Left = -3
         Top = -4
@@ -78237,7 +78254,7 @@ object MainForm: TMainForm
         Style = sbStretch
       end
       object Label137: TLabel
-        Left = 535
+        Left = 533
         Top = 158
         Width = 185
         Height = 26
@@ -78255,9 +78272,10 @@ object MainForm: TMainForm
         ParentFont = False
         Transparent = True
         Layout = tlCenter
+        ExplicitLeft = 535
       end
       object Label140: TLabel
-        Left = 325
+        Left = 324
         Top = 45
         Width = 126
         Height = 25
@@ -78274,9 +78292,10 @@ object MainForm: TMainForm
         ParentFont = False
         Transparent = True
         Layout = tlCenter
+        ExplicitLeft = 325
       end
       object Label141: TLabel
-        Left = 325
+        Left = 324
         Top = 536
         Width = 140
         Height = 23
@@ -78295,6 +78314,7 @@ object MainForm: TMainForm
         Transparent = True
         Layout = tlCenter
         OnClick = ZarezdaneButtonClick
+        ExplicitLeft = 325
       end
       object Label136: TLabel
         Left = 40
@@ -78367,7 +78387,7 @@ object MainForm: TMainForm
         Layout = tlCenter
       end
       object Label145: TLabel
-        Left = 532
+        Left = 531
         Top = 348
         Width = 57
         Height = 13
@@ -78384,9 +78404,10 @@ object MainForm: TMainForm
         ParentFont = False
         Transparent = True
         Layout = tlCenter
+        ExplicitLeft = 532
       end
       object Label159: TLabel
-        Left = 532
+        Left = 531
         Top = 387
         Width = 48
         Height = 26
@@ -78403,9 +78424,10 @@ object MainForm: TMainForm
         Transparent = True
         Layout = tlCenter
         WordWrap = True
+        ExplicitLeft = 532
       end
       object Label89: TLabel
-        Left = 532
+        Left = 531
         Top = 368
         Width = 25
         Height = 13
@@ -78422,9 +78444,10 @@ object MainForm: TMainForm
         ParentFont = False
         Transparent = True
         Layout = tlCenter
+        ExplicitLeft = 532
       end
       object Label112: TLabel
-        Left = 532
+        Left = 531
         Top = 421
         Width = 36
         Height = 13
@@ -78441,9 +78464,10 @@ object MainForm: TMainForm
         Transparent = True
         Layout = tlCenter
         WordWrap = True
+        ExplicitLeft = 532
       end
       object Label157: TLabel
-        Left = 666
+        Left = 664
         Top = 372
         Width = 54
         Height = 13
@@ -78460,9 +78484,10 @@ object MainForm: TMainForm
         ParentFont = False
         Transparent = True
         Layout = tlCenter
+        ExplicitLeft = 666
       end
       object Label128: TLabel
-        Left = 534
+        Left = 532
         Top = 472
         Width = 149
         Height = 13
@@ -78479,9 +78504,10 @@ object MainForm: TMainForm
         ParentFont = False
         Transparent = True
         Layout = tlCenter
+        ExplicitLeft = 534
       end
       object Label171: TLabel
-        Left = 175
+        Left = 174
         Top = 536
         Width = 140
         Height = 23
@@ -78501,6 +78527,7 @@ object MainForm: TMainForm
         Transparent = True
         Layout = tlCenter
         OnClick = Label171Click
+        ExplicitLeft = 175
       end
       object wwDBGrid5: TwwDBGrid
         Left = 40
@@ -79541,13 +79568,11 @@ object MainForm: TMainForm
       TabColor = clBtnFace
       TabColorTo = clNone
       OnShow = Grafik23Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitWidth = 792
+      ExplicitHeight = 583
       DesignSize = (
-        792
-        583)
+        790
+        584)
       object Image7: TImage
         Left = -3
         Top = -4
@@ -79576,7 +79601,7 @@ object MainForm: TMainForm
         Style = sbStretch
       end
       object Label164: TLabel
-        Left = 638
+        Left = 636
         Top = 528
         Width = 108
         Height = 29
@@ -79595,9 +79620,10 @@ object MainForm: TMainForm
         Transparent = True
         Layout = tlCenter
         OnClick = CancelButtonClick
+        ExplicitLeft = 638
       end
       object Page23PrintBtn: TLabel
-        Left = 509
+        Left = 508
         Top = 528
         Width = 68
         Height = 29
@@ -79615,6 +79641,7 @@ object MainForm: TMainForm
         Transparent = True
         Layout = tlCenter
         OnClick = Page23PrintBtnClick
+        ExplicitLeft = 509
       end
       object Planner1: TDBPlanner
         Left = 0
@@ -80466,8 +80493,8 @@ object MainForm: TMainForm
       end
       object TrackBar1: TTrackBar
         Left = 0
-        Top = 569
-        Width = 792
+        Top = 570
+        Width = 790
         Height = 14
         Cursor = crHandPoint
         Align = alBottom
@@ -80482,6 +80509,8 @@ object MainForm: TMainForm
         TickMarks = tmTopLeft
         TickStyle = tsNone
         OnChange = TrackBar1Change
+        ExplicitTop = 569
+        ExplicitWidth = 792
       end
     end
   end
@@ -279596,7 +279625,7 @@ object MainForm: TMainForm
         Fields = 'KLIENTNOMER'
       end
       item
-        Name = 'TEMPORARY_INDEX_{FCA17DD5-3A2F-4D9F-BEC7-414C281C17EB}'
+        Name = 'TEMPORARY_INDEX_{4EDA85E7-A308-4E1E-9076-9E0329A92CB0}'
         DescFields = 'CHIPNOMER'
         Fields = 'CHIPNOMER'
         Options = [ixDescending]

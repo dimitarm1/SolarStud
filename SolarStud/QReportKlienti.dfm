@@ -109,7 +109,7 @@ object Form1: TForm1
         Size.Values = (
           44.979166666666670000
           2.645833333333333000
-          82.020833333333340000
+          82.020833333333330000
           105.833333333333300000)
         Alignment = taLeftJustify
         AlignToBand = False
@@ -134,8 +134,8 @@ object Form1: TForm1
         Size.Values = (
           44.979166666666670000
           341.312500000000000000
-          82.020833333333340000
-          68.791666666666680000)
+          82.020833333333330000
+          68.791666666666670000)
         Alignment = taLeftJustify
         AlignToBand = False
         AutoSize = True
@@ -158,8 +158,8 @@ object Form1: TForm1
         Frame.DrawRight = False
         Size.Values = (
           44.979166666666670000
-          886.354166666666800000
-          82.020833333333340000
+          886.354166666666700000
+          82.020833333333330000
           137.583333333333300000)
         Alignment = taLeftJustify
         AlignToBand = False
@@ -184,7 +184,7 @@ object Form1: TForm1
         Size.Values = (
           44.979166666666670000
           1060.979166666667000000
-          82.020833333333340000
+          82.020833333333330000
           116.416666666666700000)
         Alignment = taLeftJustify
         AlignToBand = False
@@ -230,10 +230,10 @@ object Form1: TForm1
         Frame.DrawLeft = False
         Frame.DrawRight = False
         Size.Values = (
-          66.145833333333340000
-          656.166666666666800000
+          66.145833333333330000
+          656.166666666666700000
           0.000000000000000000
-          661.458333333333400000)
+          661.458333333333300000)
         Alignment = taLeftJustify
         AlignToBand = False
         AutoSize = True
@@ -302,7 +302,7 @@ object Form1: TForm1
       object QRDBText1: TQRDBText
         Left = 0
         Top = 8
-        Width = 41
+        Width = 79
         Height = 17
         Frame.Color = clBlack
         Frame.DrawTop = False
@@ -313,7 +313,7 @@ object Form1: TForm1
           44.979166666666670000
           0.000000000000000000
           21.166666666666670000
-          108.479166666666700000)
+          209.020833333333300000)
         Alignment = taLeftJustify
         AlignToBand = False
         AutoSize = False
@@ -321,9 +321,15 @@ object Form1: TForm1
         Color = clWhite
         DataSet = MainForm.Qklienti
         DataField = 'NOMER'
+        Font.Charset = OEM_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -12
+        Font.Name = 'Terminal'
+        Font.Style = []
+        ParentFont = False
         Transparent = False
         WordWrap = True
-        FontSize = 10
+        FontSize = 9
       end
       object QRDBText2: TQRDBText
         Left = 80
@@ -363,7 +369,7 @@ object Form1: TForm1
         Frame.DrawRight = False
         Size.Values = (
           44.979166666666670000
-          883.708333333333400000
+          883.708333333333300000
           15.875000000000000000
           158.750000000000000000)
         Alignment = taLeftJustify
@@ -417,7 +423,7 @@ object Form1: TForm1
           44.979166666666670000
           2.645833333333333000
           55.562500000000000000
-          84.666666666666680000)
+          84.666666666666670000)
         Alignment = taLeftJustify
         AlignToBand = False
         AutoSize = True
@@ -446,7 +452,7 @@ object Form1: TForm1
         Frame.DrawRight = False
         Size.Values = (
           44.979166666666670000
-          320.145833333333400000
+          320.145833333333300000
           55.562500000000000000
           119.062500000000000000)
         Alignment = taLeftJustify
@@ -624,7 +630,7 @@ object Form1: TForm1
         Size.Values = (
           44.979166666666670000
           1651.000000000000000000
-          42.333333333333340000
+          42.333333333333330000
           121.708333333333300000)
         Alignment = taLeftJustify
         AlignToBand = False
@@ -665,7 +671,7 @@ object Form1: TForm1
       object QRDBText5: TQRDBText
         Left = 0
         Top = 2
-        Width = 41
+        Width = 46
         Height = 17
         Frame.Color = clBlack
         Frame.DrawTop = False
@@ -676,7 +682,7 @@ object Form1: TForm1
           44.979166666666670000
           0.000000000000000000
           5.291666666666667000
-          108.479166666666700000)
+          121.708333333333300000)
         Alignment = taLeftJustify
         AlignToBand = False
         AutoSize = False
@@ -727,7 +733,7 @@ object Form1: TForm1
         FontSize = 8
       end
       object QRDBText7: TQRDBText
-        Left = 48
+        Left = 53
         Top = 2
         Width = 65
         Height = 17
@@ -738,10 +744,10 @@ object Form1: TForm1
         Frame.DrawRight = False
         Size.Values = (
           44.979166666666670000
-          127.000000000000000000
+          140.229166666666700000
           5.291666666666667000
           171.979166666666700000)
-        Alignment = taLeftJustify
+        Alignment = taRightJustify
         AlignToBand = False
         AutoSize = False
         AutoStretch = False
