@@ -2575,8 +2575,9 @@ begin
     if TimerTime1 = 15 then
     begin
         equalscreens();
-        if(BaudRate = 1200) then   Timer1.Interval := 50
-        else Timer1.Interval := 350; //DEBUG 50;
+        //if(BaudRate = 1200) then   Timer1.Interval := 50
+        //else
+        Timer1.Interval := 350; //DEBUG 50;
     end;
     if (AdvPageControl1.ActivePageIndex = 1) and (TimerTime1 > 15) then
     begin
