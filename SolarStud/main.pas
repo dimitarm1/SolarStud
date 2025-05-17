@@ -1921,7 +1921,7 @@ begin
             IOResult := WriteFile(hDevice, Data1, 1, IOCount, nil);
             sleep(2);
             IOResult := WriteFile(hDevice, DataSent, 1, IOCount, nil);
-            if(BaudRate = 1200) then sleep(2)
+            if(BaudRate = 1200) then sleep(200) // then sleep(2)
             else  sleep(200);//DEBUG 2
             IOResult := ReadFile(hDevice, IOByte, 1, IOCount, nil);
             // get old main time
@@ -1929,7 +1929,7 @@ begin
             IOResult := WriteFile(hDevice, Data1, 1, IOCount, nil);
             sleep(2);
             IOResult := WriteFile(hDevice, CoolTime, 1, IOCount, nil);
-            if(BaudRate = 1200) then sleep(4)
+            if(BaudRate = 1200) then sleep(200) // sleep(4)
             else  sleep(200);//DEBUG 4
             IOResult := ReadFile(hDevice, IOByte, 1, IOCount, nil);
             // Get checksum?
@@ -1938,7 +1938,7 @@ begin
             sleep(100);
             Data1 := 128 + Chanel * 8; // Get status command for selected chanel
             IOResult := WriteFile(hDevice, Data1, 1, IOCount, nil);
-            if(BaudRate = 1200) then sleep(5)
+            if(BaudRate = 1200) then sleep(200) //sleep(5)
             else  sleep(200);//DEBUG 5
             IOResult := ReadFile(hDevice, IOByte, 1, IOCount, nil);
             IOByte := IOByte div 64;
