@@ -1938,7 +1938,7 @@ begin
             sleep(2);
             IOResult := WriteFile(hDevice, DataSent, 1, IOCount, nil);
             if(not RFLinkUsed) then sleep(2)
-            else  sleep(200);//DEBUG 2
+            else  sleep(400);//DEBUG 2
             IOResult := ReadFile(hDevice, IOByte, 1, IOCount, nil);
             // get old main time
             Data1 := 128 + Chanel * 8 + 3; //  Set cool time
@@ -1946,16 +1946,16 @@ begin
             sleep(2);
             IOResult := WriteFile(hDevice, CoolTime, 1, IOCount, nil);
             if(not RFLinkUsed) then sleep(4)
-            else  sleep(200);//DEBUG 4
+            else  sleep(400);//DEBUG 4
             IOResult := ReadFile(hDevice, IOByte, 1, IOCount, nil);
             // Get checksum?
             if IOResult and (IOByte = CheckSum) then
                 IOResult := WriteFile(hDevice, CheckSum, 1, IOCount, nil);
-            sleep(100);
+            sleep(400);
             Data1 := 128 + Chanel * 8; // Get status command for selected chanel
             IOResult := WriteFile(hDevice, Data1, 1, IOCount, nil);
             if(not RFLinkUsed) then sleep(5)
-            else  sleep(500);//DEBUG 5
+            else  sleep(400);//DEBUG 5
             IOResult := ReadFile(hDevice, IOByte, 1, IOCount, nil);
             IOByte := IOByte div 64;
             if IOResult and (IOByte <> 0) and
