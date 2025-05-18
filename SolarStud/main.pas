@@ -6237,7 +6237,7 @@ begin
         IOResult := WriteFile(hDevice, Data1, 1, IOCount, 0);
         IOByte := 0;
         if(not RFLinkUsed) then sleep(20)
-        else sleep(200); //DEBUG 20
+        else sleep(500); //DEBUG 20
         IOResult := ReadFile(hDevice, IOByte, 1, IOCount, 0);
 
         if IOCount > 0 then
