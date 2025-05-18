@@ -1096,6 +1096,7 @@ var
     Pos1: Byte;
     ComPortName: string;
     BaudRate: Integer;
+    RFLinkUsed: Boolean;
     Backuped: Boolean;
     IsReader: Boolean;
     LastKey: string;
@@ -1412,9 +1413,11 @@ var
     Cmd: array[0..255] of Char;
     PlannerStep: string;
     DemoString: string;
+    RFLinkString: string;
     UseNativeStartStr: string;
 begin
     MainIniFile := TIniFile.Create(ChangeFileExt(Application.ExeName, '.ini'));
+    Macro :=   MainIniFile.FileName;   // DEBUG
     ComPortName := MainIniFile.ReadString('System', 'ComPort', 'COM20');
     if ComPortName = 'COM20' then
         //this is because KeyExists function is not working
@@ -1423,6 +1426,19 @@ begin
         MainIniFile.WriteString('System', 'ComPort', 'COM2');
         MainIniFile.UpdateFile;
     end;
+
+    RFLinkString := MainIniFile.ReadString('System', 'Rflink', 'NoValue');
+    if RFLinkString = 'NoValue' then
+        //this is because KeyExists function is not working
+    begin
+        MainIniFile.DeleteKey('System', 'Rflink');
+        MainIniFile.WriteString('System', 'Rflink', 'False');
+        MainIniFile.UpdateFile;
+        RFLinkUsed := false;
+    end
+    else if (RFLinkString = 'True') or (RFLinkString = 'true') then
+        RFLinkUsed := true;
+
     BaudRate:= StrToInt(MainIniFile.ReadString('System', 'BaudRate', '4200'));
     if BaudRate = 4200 then
         //this is because KeyExists function is not working
@@ -1921,7 +1937,7 @@ begin
             IOResult := WriteFile(hDevice, Data1, 1, IOCount, nil);
             sleep(2);
             IOResult := WriteFile(hDevice, DataSent, 1, IOCount, nil);
-            if(BaudRate = 1200) then sleep(200) // then sleep(2)
+            if(not RFLinkUsed) then sleep(2)
             else  sleep(200);//DEBUG 2
             IOResult := ReadFile(hDevice, IOByte, 1, IOCount, nil);
             // get old main time
@@ -1929,7 +1945,7 @@ begin
             IOResult := WriteFile(hDevice, Data1, 1, IOCount, nil);
             sleep(2);
             IOResult := WriteFile(hDevice, CoolTime, 1, IOCount, nil);
-            if(BaudRate = 1200) then sleep(200) // sleep(4)
+            if(not RFLinkUsed) then sleep(4)
             else  sleep(200);//DEBUG 4
             IOResult := ReadFile(hDevice, IOByte, 1, IOCount, nil);
             // Get checksum?
@@ -1938,8 +1954,8 @@ begin
             sleep(100);
             Data1 := 128 + Chanel * 8; // Get status command for selected chanel
             IOResult := WriteFile(hDevice, Data1, 1, IOCount, nil);
-            if(BaudRate = 1200) then sleep(200) //sleep(5)
-            else  sleep(200);//DEBUG 5
+            if(not RFLinkUsed) then sleep(5)
+            else  sleep(500);//DEBUG 5
             IOResult := ReadFile(hDevice, IOByte, 1, IOCount, nil);
             IOByte := IOByte div 64;
             if IOResult and (IOByte <> 0) and
@@ -1977,6 +1993,7 @@ begin
         update := false;
         Chanel1 := CabineChanel[SolariumNo];
         IOByte := 0;
+        if(RFLinkUsed) then sleep(250);
         IOResult := ReadFile(hDevice, IOByte, 1, IOCount, nil);
         // MainForm.Label92.Caption:=IntToHex(IOByte,2);
          //MainForm.Label91.Caption:=IntToStr(SolariumNo)+' '+IntToHex(IOByte,2)+ ' Ch='+ IntToStr(Chanel1);
@@ -2452,7 +2469,8 @@ begin
         IOResult := ReadFile(hDevice, IOByte, 1, IOCheck, 0);
         Data1 := 128 + IndexSol * 8; // Get status command for selected chanel
         IOResult := WriteFile(hDevice, Data1, 1, IOCount, 0);
-        sleep(10);
+        if(not RFLinkUsed) then sleep(10)
+        else  sleep(250); // RF Module delay
         IOByte := 0;
         IOResult := ReadFile(hDevice, IOByte, 1, IOCheck, 0);
         if (IOByte div 64) = 0 then
@@ -2575,8 +2593,8 @@ begin
     if TimerTime1 = 15 then
     begin
         equalscreens();
-        //if(BaudRate = 1200) then   Timer1.Interval := 50
-        //else
+        if(not RFLinkUsed) then   Timer1.Interval := 50
+        else
         Timer1.Interval := 350; //DEBUG 50;
     end;
     if (AdvPageControl1.ActivePageIndex = 1) and (TimerTime1 > 15) then
@@ -2947,37 +2965,37 @@ procedure TMainForm.Label10Click(Sender: TObject);
 var
     i: Integer;
 begin
-      PayChipCardClick( Sender);
-      PayCashButtonClick(Sender);
-      if(( ToBePaidCash > 0) and (IsChipCard and (Card.ClientNomer > 0))) then
-      begin
-        Application.MessageBox(PChar('Недостатъчни минути в картата!'),PChar('Warning'),MB_OK);
-      end
-      else
-      begin
-        if not ((PaidChipCard = 0) and (CardNomer > 0)) then
-        begin
-          PaymentOKLabelClick(sender);
-        end;
-      end;
+//      PayChipCardClick( Sender);
+//      PayCashButtonClick(Sender);
+//      if(( ToBePaidCash > 0) and (IsChipCard and (Card.ClientNomer > 0))) then
+//      begin
+//        Application.MessageBox(PChar('Недостатъчни минути в картата!'),PChar('Warning'),MB_OK);
+//      end
+//      else
+//      begin
+//        if not ((PaidChipCard = 0) and (CardNomer > 0)) then
+//        begin
+//          PaymentOKLabelClick(sender);
+//        end;
+//      end;
 
-//    AdvPageControl1.ActivePageIndex := 3;
-//    PaymentOKLabel.Visible := false;
-//    MainForm.Gauge2.Visible := false;
-//    PaidCash := 0;
-//    PaidCard := 0;
-//    PaidChipCard := 0;
-//    DiscountPrize := 0;
-//    VipDiscount := 0;
-//    CardNomer := 0;
-//    BonusLabel.Caption := '0';
-//    ToBePaidCash := 0;
-//    for i := 0 to SizeOf(PoseshteniaPaid) do
-//        PoseshteniaPaid[i] := 0;
-//    PosPaid := 0;
-//    BroiKartiPaid := 0;
-//    HideKlInfo;
-//    UpdatePageControl(1);
+    AdvPageControl1.ActivePageIndex := 3;
+    PaymentOKLabel.Visible := false;
+    MainForm.Gauge2.Visible := false;
+    PaidCash := 0;
+    PaidCard := 0;
+    PaidChipCard := 0;
+    DiscountPrize := 0;
+    VipDiscount := 0;
+    CardNomer := 0;
+    BonusLabel.Caption := '0';
+    ToBePaidCash := 0;
+    for i := 0 to SizeOf(PoseshteniaPaid) do
+        PoseshteniaPaid[i] := 0;
+    PosPaid := 0;
+    BroiKartiPaid := 0;
+    HideKlInfo;
+    UpdatePageControl(1);
 end;
 
 procedure TMainForm.CancelButtonClick(Sender: TObject);
@@ -4599,6 +4617,7 @@ var
     Klient: Integer;
     I: Integer;
     L: Boolean;
+    KartaNomer: Integer;
     KartiBroi: Integer;
 begin
     PosPaid := 0;
@@ -4618,10 +4637,13 @@ begin
         Klient := QKlienti.FieldValues['NOMER'];
         Minutina1 := SOLARIUMI.FieldValues['MINUTINA1'];
         KartaSuma := 0;
-        if (QKarti.Locate('KARTANOMER', StrToInt(AdvComboBox2.Text), [])) then
+        KartaNomer := -1;
+        if(StrLen( PChar(AdvComboBox2.Text)) > 1) then
+        begin
+          KartaNomer := StrToInt(AdvComboBox2.Text);
+          if (QKarti.Locate('KARTANOMER', KartaNomer, [])) then
             KartaSuma := QKarti.FieldValues['POSESHTENIA']
-        else
-            KartaSuma := 0;
+        end;
         if ADVComboBox1.ItemIndex > KartaSuma then
             ADVComboBox1.ItemIndex := KartaSuma;
         if (ADVComboBox1.ItemIndex + PosPaid) * Minutina1 > TimeSet then
@@ -6213,7 +6235,7 @@ begin
         Data1 := 128 + i * 8; // Get status command for selected chanel
         IOResult := WriteFile(hDevice, Data1, 1, IOCount, 0);
         IOByte := 0;
-        if(BaudRate = 1200) then sleep(200)
+        if(not RFLinkUsed) then sleep(20)
         else sleep(200); //DEBUG 20
         IOResult := ReadFile(hDevice, IOByte, 1, IOCount, 0);
 
