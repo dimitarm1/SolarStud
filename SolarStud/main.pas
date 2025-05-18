@@ -2322,6 +2322,7 @@ begin
                     MainTime := LastTime[IndexSol - 1];
                 end;
         end;
+        if(RFLinkUsed) then sleep(500);
         SendData(MainTime, IndexSol, false);
 
     end;
