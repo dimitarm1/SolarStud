@@ -1945,19 +1945,41 @@ begin
             IOResult := WriteFile(hDevice, Data1, 1, IOCount, nil);
             sleep(2);
             IOResult := WriteFile(hDevice, CoolTime, 1, IOCount, nil);
-            if(not RFLinkUsed) then sleep(4)
-            else  sleep(400);//DEBUG 4
-            IOResult := ReadFile(hDevice, IOByte, 1, IOCount, nil);
-            // Get checksum?
-            if IOResult and (IOByte = CheckSum) then
-                IOResult := WriteFile(hDevice, CheckSum, 1, IOCount, nil);
-            sleep(400);
+            sleep(4);
+            if(RFLinkUsed) then
+            begin
+              IOResult := WriteFile(hDevice, CheckSum, 1, IOCount, nil);
+              sleep(400);
+              // Old controllers has small checksum receive timeout
+              // So only one side checsum verification for RF Link
+              // Dummy read
+              IOResult := ReadFile(hDevice, IOByte, 1, IOCount, nil);
+            end
+            else
+            begin
+              IOResult := ReadFile(hDevice, IOByte, 1, IOCount, nil);
+                // Get checksum?
+              if IOResult and (IOByte = CheckSum) then
+                 IOResult := WriteFile(hDevice, CheckSum, 1, IOCount, nil);
+            end;
+//            if(not RFLinkUsed) then sleep(4)
+//            else  sleep(400);//DEBUG 4
+//            IOResult := ReadFile(hDevice, IOByte, 1, IOCount, nil);
+//            // Get checksum?
+//            if IOResult and (IOByte = CheckSum) then
+//                IOResult := WriteFile(hDevice, CheckSum, 1, IOCount, nil);
+            sleep(200);
             Data1 := 128 + Chanel * 8; // Get status command for selected chanel
-            IOResult := WriteFile(hDevice, Data1, 1, IOCount, nil);
-            if(not RFLinkUsed) then sleep(5)
-            else  sleep(400);//DEBUG 5
-            IOResult := ReadFile(hDevice, IOByte, 1, IOCount, nil);
-            IOByte := IOByte div 64;
+            for i := 0 to 4 do
+            begin
+
+              IOResult := WriteFile(hDevice, Data1, 1, IOCount, nil);
+              if(not RFLinkUsed) then sleep(5)
+              else  sleep(600);//DEBUG 5
+              IOResult := ReadFile(hDevice, IOByte, 1, IOCount, nil);
+              IOByte := IOByte div 64;
+              if IOResult and (IOByte <> 0) then Break;
+            end;
             if IOResult and (IOByte <> 0) and
                 ((DataSent = 0) or (PreTime > 0) or ((IOByte = 1) and (DataSent
                 > 0))) then
