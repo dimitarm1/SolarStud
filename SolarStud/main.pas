@@ -3630,9 +3630,10 @@ begin
             else if (Length(BarCodReaderBuff) > 5) then
             begin
                 try
-                    CardNomer := StrToInt(Rightstr(BarCodReaderBuff, 9));
+                    CardNomer := StrToInt(Rightstr(BarCodReaderBuff, 10));
                     if (AdvPageControl1.ActivePageIndex = 1) then
                     begin
+                        // Add new klient?
                         AdvPageControl1.ActivePageIndex := 18;
                         AddStokaButtonClick(2);
                     end;
@@ -3655,7 +3656,6 @@ begin
             KeyBuff := KeyBuff + Key;
             if Timer6.Enabled then
             begin
-                BarCodReaderBuff := BarCodReaderBuff + Key;
                 Timer6.Enabled := false;
                 Timer6.Enabled := true;
             end
@@ -3664,6 +3664,7 @@ begin
                 BarCodReaderBuff := '';
                 Timer6.Enabled := true;
             end;
+            BarCodReaderBuff := BarCodReaderBuff + Key;
         end;
         if (leftstr(KeyBuff, 1) = '%') or (leftstr(KeyBuff, 1) = '+') or
             (leftstr(KeyBuff, 1) = ';') then
@@ -4885,7 +4886,7 @@ try
         LMDMemo1.Lines.Add(GetMessage('M22') + ' ' + ConvertCurr1(PaidCash));
         // LMDMemo1.Lines.Add('В брой - '+ConvertCurr1(PaidCash));
         LMDMemo1.Lines.Add('-----------');
-        if PriceCard = PriceCash then
+        if ((PriceCard = PriceCash)  and (PriceCard <> 0)) then
             LMDMemo1.Lines.Add(GetMessage('M23') + ' ' + ConvertCurr1(PriceCash
                 -
                 (PaidCard * (PriceCash / PriceCard) +
