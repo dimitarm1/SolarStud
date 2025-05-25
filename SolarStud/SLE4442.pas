@@ -32,7 +32,7 @@ var
     dwActProtocol1: DWORD;
     cBAtrLen: DWORD;
     abc1, abc2, abc3, abc4: integer;
-    readerName: string;
+    readerName: AnsiString;
 
 procedure ClearBuffers();
 //procedure InitMenu();
@@ -98,6 +98,13 @@ begin
                 MainForm.mMsg.SelAttributes.Color := clBlack;
                 PrintText := '> ' + PrintText; // Output data
                 IsReader := true;
+            end;
+        4:
+            begin
+                MainForm.mMsg.SelAttributes.Color := clRed;
+                MainForm.mMsg.Lines.Clear;
+                PrintText := 'Insert Card!'; //GetScardErrMsg(retVal);
+                IsReader := False;
             end;
     end;
     if MainForm.mMsg.Lines.Count > 10 then
@@ -1034,7 +1041,9 @@ begin
     end
     else
         DisplayOut(0, 0, 'Select reader and card type, and connect.');
-    readerName := string(buffer);
+    //readerName := string(buffer);
+//    readerName := PAnsiChar(@buffer[0]);
+    readerName := AnsiString(StrPas(PAnsiChar(@buffer[0])));
 
     if ConnActive then
     begin
@@ -1042,12 +1051,13 @@ begin
         Exit;
     end;
     if (not StrUtils.ContainsText(readerName, 'CCID')) and (not
-        StrUtils.ContainsText(readerName, 'OMNIKEY')) then
+        StrUtils.ContainsText(readerName, 'OMNIKEY')) and (not
+        StrUtils.ContainsText(readerName, 'ICC')) then
     begin
 
         // 1. Direct Connection
         retCode := SCardConnectA(hContext,
-            PChar(readerName),
+            PAnsiChar(readerName),
             SCARD_SHARE_DIRECT,
             0,
             @hCard,
@@ -1078,14 +1088,14 @@ begin
         end;
     end;
     retCode := SCardConnectA(hContext,
-        PChar(readerName),
+        PAnsiChar(readerName),
         SCARD_SHARE_SHARED,
         SCARD_PROTOCOL_T0 or SCARD_PROTOCOL_T1,
         @hCard,
         @dwActProtocol);
     if retCode <> SCARD_S_SUCCESS then
     begin
-        DisplayOut(1, retCode, '');
+        DisplayOut(4, retCode, '');
         ConnActive := False;
         Exit;
     end

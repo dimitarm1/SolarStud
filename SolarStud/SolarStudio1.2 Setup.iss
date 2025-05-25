@@ -37,10 +37,16 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Source: "SolarStudio1.2.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "adimage.swf"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Delotch.bat"; DestDir: "{app}"; Flags: ignoreversion
-Source: "FlexType 2.0 XP.zip"; DestDir: "{app}"; Flags: ignoreversion
+;Source: "FlexType 2.0 XP.zip"; DestDir: "{app}"; Flags: ignoreversion
 ;Source: "install_flash_player_10_active_x.exe"; DestDir: "{app}"; Flags: ignoreversion
 ;Source: "Shockwave_Installer_Full.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "pl2303_dirver.exe"; DestDir: "{app}"; Flags: ignoreversion
+;Source: "pl2303_dirver.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "PL2303_64bit_Installer.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "CH341SER.zip"; DestDir: "{app}"; Flags: ignoreversion
+Source: "DisableDriverUpdate.reg"; DestDir: "{app}"; Flags: ignoreversion
+Source: "EnableDriverUpdate.reg"; DestDir: "{app}"; Flags: ignoreversion
+Source: "wushowhide.diagcab"; DestDir: "{app}"; Flags: ignoreversion
+Source: "CDM212364_Setup.zip"; DestDir: "{app}"; Flags: ignoreversion
 Source: "installnotes.rtf"; DestDir: "{app}"; Flags: ignoreversion
 Source: "intro.swf"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Language.ini"; DestDir: "{app}"; Flags: ignoreversion
@@ -69,8 +75,8 @@ Name: "{commondesktop}\SolarStudio1"; Filename: "{app}\StartSolarStudio1.bat"; T
 
 
 [Run]
-Filename: "{app}\pl2303_dirver.exe";
-Filename: "{app}\acr38\Setup.exe";
+;Filename: "{app}\pl2303_dirver.exe";
+;Filename: "{app}\acr38\Setup.exe";
 Filename: "{app}\StartSolarStudio1.bat"; Description: "{cm:LaunchProgram,SolarStudio1}"; Flags: postinstall skipifsilent runminimized
 
 
