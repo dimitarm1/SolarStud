@@ -6,13 +6,13 @@
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{20BE3B2F-6275-48B2-8277-E59C73537CFF}
-AppName=SolarStudio1.2 Build 26-10-2019
-AppVerName=SolarStudio 1.2 Build 26-10-2019
+AppName=SolarStudio1.2 Build 25-05-2025
+AppVerName=SolarStudio 1.2 Build 25-05-2025
 AppPublisher=D.M.
 AppPublisherURL=http://www.example.com/
 AppSupportURL=http://www.example.com/
 AppUpdatesURL=http://www.example.com/
-AppVersion=1.2.26.10.2019
+AppVersion=1.2.25.05.2025
 DefaultDirName=\SolarStudio1
 DefaultGroupName=SolarStudio1
 AllowNoIcons=yes
@@ -62,7 +62,7 @@ Source: "solarstudio1-guide.doc"; DestDir: "{app}"; Flags: ignoreversion
 Source: "StartSolarStudio1.bat"; DestDir: "{app}"; Flags: ignoreversion
 Source: "ACR38_Driver_Windows\*"; DestDir: "{app}\ACR38_Driver_Windows"; Flags:  recursesubdirs createallsubdirs  ignoreversion
 Source: "data\*"; DestDir: "{app}\data";  Flags: ignoreversion
-Source: "acr38\*"; DestDir: "{app}\acr38"; Flags:  recursesubdirs createallsubdirs  ignoreversion
+;Source: "acr38\*"; DestDir: "{app}\acr38"; Flags:  recursesubdirs createallsubdirs  ignoreversion
 Source: "images\*"; DestDir: "{app}\images"; Flags:  recursesubdirs createallsubdirs ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
@@ -78,6 +78,7 @@ Name: "{commondesktop}\SolarStudio1"; Filename: "{app}\StartSolarStudio1.bat"; T
 ;Filename: "{app}\pl2303_dirver.exe";
 ;Filename: "{app}\acr38\Setup.exe";
 Filename: "{app}\StartSolarStudio1.bat"; Description: "{cm:LaunchProgram,SolarStudio1}"; Flags: postinstall skipifsilent runminimized
+
 
 
 
