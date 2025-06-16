@@ -1886,6 +1886,7 @@ procedure SendData(DataSent: Byte; Index: Integer; FromTable: Boolean);
 var
     IOResult: LongBool;
     Data1: Byte;
+    DataBuff: array[0..10] of Byte;
     Chanel: Byte;
     i: integer;
     DataSent2: Integer;
@@ -1924,32 +1925,44 @@ begin
         CheckSum := PreTime + CoolTime - DataSent - 5;
         CheckSum := CheckSum mod 128;
         PurgeComm(hDevice, (PURGE_TXCLEAR or PURGE_RXCLEAR));
-        while retry < 20 do
+        while retry < 5 do
         begin
             for i := 1 to 10 do
                 IOResult := ReadFile(hDevice, IOByte, 1, IOCount, nil);
             Data1 := 128 + Chanel * 8 + 2;
-            IOResult := WriteFile(hDevice, Data1, 1, IOCount, nil);
-            sleep(2); // Set PRE-Time
-            IOResult := WriteFile(hDevice, PreTime, 1, IOCount, nil);
+            DataBuff[0] := Data1;
+//            IOResult := WriteFile(hDevice, Data1, 1, IOCount, nil);
+//            sleep(2); // Set PRE-Time
+//            IOResult := WriteFile(hDevice, PreTime, 1, IOCount, nil);
+            DataBuff[1] := PreTime;
             Data1 := 128 + Chanel * 8 + 5;
-            sleep(2); // Set main time
-            IOResult := WriteFile(hDevice, Data1, 1, IOCount, nil);
-            sleep(2);
-            IOResult := WriteFile(hDevice, DataSent, 1, IOCount, nil);
-            if(not RFLinkUsed) then sleep(2)
-            else  sleep(400);//DEBUG 2
+            DataBuff[2] := Data1;
+//            sleep(2); // Set main time
+//            IOResult := WriteFile(hDevice, Data1, 1, IOCount, nil);
+//            sleep(2);
+            DataBuff[3] := DataSent;
+//            IOResult := WriteFile(hDevice, DataSent, 1, IOCount, nil);
+            IOResult := WriteFile(hDevice, DataBuff, 4, IOCount, nil);
+//            if(not RFLinkUsed) then sleep(2)
+//            else  sleep(50);//DEBUG 2
+            sleep(750);
             IOResult := ReadFile(hDevice, IOByte, 1, IOCount, nil);
             // get old main time
+
             Data1 := 128 + Chanel * 8 + 3; //  Set cool time
-            IOResult := WriteFile(hDevice, Data1, 1, IOCount, nil);
-            sleep(2);
-            IOResult := WriteFile(hDevice, CoolTime, 1, IOCount, nil);
+            DataBuff[0] := Data1;
+//            IOResult := WriteFile(hDevice, Data1, 1, IOCount, nil);
+//            sleep(2);
+//            IOResult := WriteFile(hDevice, CoolTime, 1, IOCount, nil);
+            DataBuff[1] := CoolTime;
+//            IOResult := WriteFile(hDevice, DataBuff, 2, IOCount, nil);
             sleep(4);
             if(RFLinkUsed) then
             begin
-              IOResult := WriteFile(hDevice, CheckSum, 1, IOCount, nil);
-              sleep(400);
+              DataBuff[2] := CheckSum;
+              IOResult := WriteFile(hDevice, DataBuff, 3, IOCount, nil);
+//              IOResult := WriteFile(hDevice, CheckSum, 1, IOCount, nil);
+              sleep(750);
               // Old controllers has small checksum receive timeout
               // So only one side checsum verification for RF Link
               // Dummy read
@@ -1957,6 +1970,7 @@ begin
             end
             else
             begin
+              IOResult := WriteFile(hDevice, DataBuff, 2, IOCount, nil);
               IOResult := ReadFile(hDevice, IOByte, 1, IOCount, nil);
                 // Get checksum?
               if IOResult and (IOByte = CheckSum) then
@@ -1968,7 +1982,7 @@ begin
 //            // Get checksum?
 //            if IOResult and (IOByte = CheckSum) then
 //                IOResult := WriteFile(hDevice, CheckSum, 1, IOCount, nil);
-            sleep(200);
+            sleep(300);
             Data1 := 128 + Chanel * 8; // Get status command for selected chanel
             for i := 0 to 4 do
             begin

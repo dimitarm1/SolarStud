@@ -285847,7 +285847,7 @@ object MainForm: TMainForm
         Fields = 'KLIENTNOMER'
       end
       item
-        Name = 'TEMPORARY_INDEX_{BC7DFEFA-F5C8-4BBF-B4E3-99E75CEFDD0E}'
+        Name = 'TEMPORARY_INDEX_{3B8B9403-4656-4615-BA8B-8A8E4CBA5AED}'
         DescFields = 'CHIPNOMER'
         Fields = 'CHIPNOMER'
         Options = [ixDescending]
