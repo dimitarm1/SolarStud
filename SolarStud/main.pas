@@ -53,6 +53,7 @@ type
 function ConvertCurr1(Money_var: variant): AnsiString;
 function IntToStr2(value: variant): string;
 procedure FillValues1();
+procedure ReadStatus();
 type
     TMainForm = class(TForm)
         OpenDialog: TOpenDialog;
@@ -1096,6 +1097,7 @@ var
     Pos1: Byte;
     ComPortName: string;
     BaudRate: Integer;
+    MaxBarcodeDigits: Integer;
     RFLinkUsed: Boolean;
     Backuped: Boolean;
     IsReader: Boolean;
@@ -1111,6 +1113,7 @@ var
     FormMoveStartX: Integer;
     IsDemoMode: Boolean;
     IsDemo2: Boolean;
+    IsDemo3: Boolean;
     MainIniFile: TIniFile;
     UseNativeStart: Boolean;
     //  WOverlaped: POverlaped;
@@ -1439,6 +1442,16 @@ begin
     else if (RFLinkString = 'True') or (RFLinkString = 'true') then
         RFLinkUsed := true;
 
+    MaxBarcodeDigits:= StrToInt(MainIniFile.ReadString('System', 'MaxBarcodeDigits', '4200'));
+    if MaxBarcodeDigits = 4200 then
+        //this is because KeyExists function is not working
+    begin
+        MainIniFile.DeleteKey('System', 'MaxBarcodeDigits');
+        MainIniFile.WriteString('System', 'MaxBarcodeDigits', '10');
+        MainIniFile.UpdateFile;
+        MaxBarcodeDigits:= 10;
+    end;
+
     BaudRate:= StrToInt(MainIniFile.ReadString('System', 'BaudRate', '4200'));
     if BaudRate = 4200 then
         //this is because KeyExists function is not working
@@ -1483,6 +1496,19 @@ begin
     end
     else if (DemoString = 'True') or (DemoString = 'true') then
         IsDemo2 := true;
+
+    DemoString := MainIniFile.ReadString('System', 'ShowPr', 'NoValue');
+    IsDemo3 := true;
+    if DemoString = 'NoValue' then
+        //this is because KeyExists function is not working
+    begin
+        MainIniFile.DeleteKey('System', 'ShowPr');
+        MainIniFile.WriteString('System', 'ShowPr', 'True');
+        MainIniFile.UpdateFile;
+    end
+    else if not ((DemoString = 'True') or (DemoString = 'true')) then
+        IsDemo3 := false;
+
     MainForm.personal1.First;
     if (PChar('solarpower') = MainForm.personal1.FieldValues['IME']) then IsDemo2:=false;
 
@@ -1922,6 +1948,7 @@ begin
     else
     begin
         MainForm.Gauge2.Visible := true;
+        MainForm.Gauge2.Progress := 2;
         CheckSum := PreTime + CoolTime - DataSent - 5;
         CheckSum := CheckSum mod 128;
         PurgeComm(hDevice, (PURGE_TXCLEAR or PURGE_RXCLEAR));
@@ -1998,12 +2025,16 @@ begin
                 ((DataSent = 0) or (PreTime > 0) or ((IOByte = 1) and (DataSent
                 > 0))) then
             begin
+                // Issue GetStatus command again
+                IOResult := WriteFile(hDevice, Data1, 1, IOCount, nil);
                 retry := 22;
+                TimerTime1 := TimerTime1 - (TimerTime1 mod Solariums) + Index-1;
+                ReadStatus();
             end
             else
                 retry := retry + 1;
             sleep(1);
-            MainForm.Gauge2.Progress := retry;
+            MainForm.Gauge2.Progress := retry*2;
         end;
         IOResult := ReadFile(hDevice, IOByte, 1, IOCount, nil);
         IOResult := ReadFile(hDevice, IOByte, 1, IOCount, nil);
@@ -2023,7 +2054,7 @@ var
     Temp: Integer;
     Temp3: Integer;
 begin
-    if (MainForm.AdvPageControl1.ActivePageIndex = 1) then
+    if ((MainForm.AdvPageControl1.ActivePageIndex = 1)or(MainForm.AdvPageControl1.ActivePageIndex = 3)) then
     begin
         SolariumNo := TimerTime1 mod Solariums;
         update := false;
@@ -2100,6 +2131,10 @@ begin
                     CabineTime[SolariumNo] := Temp;
             if (TimerTime1 > 30) and (TimerTime1 < 50) then
                 update := True;
+            // HACK:
+            update := true;
+            CabineOldStatus[SolariumNo] :=  NewStatus;
+
             case CabineOldStatus[SolariumNo] of
                 1..3:
                     begin
@@ -2614,7 +2649,7 @@ begin
         end;
 
         ShowPanel := (PasswordForm.ModalResult = MROK) or IsDemo2;
-        Label91.Visible := ShowPanel;
+        Label91.Visible := ShowPanel and ((PasswordForm.ModalResult = MROK) or IsDemo3); // Protokol can be disabled separately
         Label110.Visible := ShowPanel;
         Label92.Visible := ShowPanel;
         Label143.Visible := ShowPanel;
@@ -3644,7 +3679,7 @@ begin
             else if (Length(BarCodReaderBuff) > 5) then
             begin
                 try
-                    CardNomer := StrToInt(Rightstr(BarCodReaderBuff, 10));
+                    CardNomer := StrToInt(Rightstr(BarCodReaderBuff, MaxBarcodeDigits));
                     if (AdvPageControl1.ActivePageIndex = 1) then
                     begin
                         // Add new klient?
@@ -6755,6 +6790,7 @@ procedure TMainForm.PaymentOKLabelMouseDown(Sender: TObject; Button:
     Shift: TShiftState; X, Y: Integer);
 begin
     PaymentOKLabel.Top := PaymentOKLabel.Top + 3;
+    PaymentOKLabel.Height := PaymentOKLabel.Height + 3;
     PaymentOKLabelClick(sender);
 end;
 
@@ -6762,6 +6798,7 @@ procedure TMainForm.PaymentOKLabelMouseUp(Sender: TObject; Button: TMouseButton;
     Shift: TShiftState; X, Y: Integer);
 begin
     PaymentOKLabel.Top := PaymentOKLabel.Top - 3;
+    PaymentOKLabel.Height := PaymentOKLabel.Height - 3;
 end;
 
 procedure TMainForm.StatistikaBox1Click(Sender: TObject);
