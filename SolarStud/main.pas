@@ -5845,7 +5845,8 @@ var
     IsOK: Integer;
 
 begin
-    if ((Card.PIN <> Internet.FieldValues['PIN']) and (Card.PIN <> '')) {  or
+    if ((Card.StudioNomer <> Internet.FieldValues['STUDIONOMER'])) 
+    {  or
     (KARTICHIP.fieldvalues['suma']>0)}then
     begin // Message shoud be corrected...
         IsOK := Application.MessageBox(PChar(GetMessage('M78')),
@@ -5856,6 +5857,11 @@ begin
         if ((IsOK <> MROK) or (PasswordForm.ShowModal <> MROK)) then
             exit;
     end;
+    if(Card.PIN <> Internet.FieldValues['PIN']) then
+    begin
+      Application.MessageBox(PChar('Тази карта не може да бъде използвана в това студио!'), PChar(''), MB_OK);
+      exit;
+    end; 
     if not IsChipCard then
         if not (MainForm.STOKI.Locate('STOKATIP', 'D', [])) then
         begin
@@ -6001,6 +6007,11 @@ begin //Зареждане
         end;
         if (Card.PIN <> Internet.FieldValues['PIN']) and not Card.NewCard then
         begin
+            Application.MessageBox(PChar('Тази карта не може да бъде използвана в това студио!'), PChar(''), MB_OK);
+            exit;
+        end;
+        if (Card.StudioNomer <> Internet.FieldValues['STUDIONOMER']) and not Card.NewCard then
+        begin
             // Application.MessageBox(PChar('Картата може да се зарежда само във студиото където е издадена!'),PChar('Warning'),MB_OK);
             Application.MessageBox(PChar(GetMessage('M74')), PChar('Warning'),
                 MB_OK);
@@ -6045,7 +6056,7 @@ begin //Зареждане
         end;
         Balans1 := Card.Balans;
         Data := Card.PIN; //'ffffff';
-        SLE4442Submit();
+        SLE4442Submit();  // Check if really a chip card 
         if IsChipCard and (Card.ErrCounter > 5) then
         begin
             Card.CardNomer := Card.ClientNomer; //QKlienti.FieldValues['NOMER'];
@@ -6074,8 +6085,8 @@ begin //Зареждане
             KARTICHIP.Edit;
             if (KARTICHIP.FieldValues['SUMA'] <> KARTICHIP.FieldValues['SUMA'])
                 then
-                KARTICHIP.FieldValues['SUMA'] := 0; // for null value
-			KARTICHIP.FieldValues['SUMA'] :=  KARTICHIP.FieldValues['SUMA']+ Card.Balans;
+                  KARTICHIP.FieldValues['SUMA'] := 0; // for null value
+            KARTICHIP.FieldValues['SUMA'] := Card.Balans;
             if (KARTI.FieldValues['VALIDNOST_KARTI'] > 0) then
             begin
                 KARTICHIP.FieldValues['ENDDATE'] := Date +

@@ -174,7 +174,8 @@ begin
                 MainForm.Plashtania.Post;
                 Card.Balans := 0;
             end;
-            Card.Balans := Card.Balans + MainForm.KARTI.FieldValues['SUMA'];
+//            Card.Balans := Card.Balans + MainForm.KARTI.FieldValues['SUMA'];
+            Card.Balans := Card.Balans + Suma; // Add new card refill sum
             if (MainForm.KARTICHIP.FieldValues['COUNTER'] = -1) then
             begin
                 MainForm.KARTICHIP.Edit();
