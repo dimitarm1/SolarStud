@@ -3405,6 +3405,15 @@ begin
     PaidCard := Roundto(PaidCard, -2);
     PaidChipCard := Roundto(PaidChipCard, -2);
     PaidCash := Roundto(PaidCash, -2);
+    // HACK!!! Avoid division by zero
+    if (PriceCard = 0) then
+    begin
+      try
+         PriceCard := TimeSet * SOLARIUMI.FieldByName('CENA').AsVariant;
+      except
+         PriceCard := PriceCash;
+      end;
+    end;
 
     if PriceCash - (PaidCard * (PriceCash / PriceCard) + ToBePaidCash +
         PaidChipCard * (PriceCash / PriceCard)) < 0.03 then
@@ -4616,7 +4625,6 @@ var
     i: Integer;
     L: Boolean;
     KartiBroi: Integer;
-    KlientNomer: Integer;
     KartaSelected: Integer;
 begin
     if (PriceCash > 0) or (PriceCard > 0) then
@@ -4631,7 +4639,6 @@ begin
         begin
             KartaSelected := 0;
         end;
-        KlientNomer := QKLienti.FieldValues['NOMER'];
         QKarti.Active := False;
         QKarti.SQL.SetText(PChar('SELECT * FROM kartiall WHERE klientdetail = '
             +
