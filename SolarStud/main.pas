@@ -3596,16 +3596,16 @@ begin
                        Plashtania.FieldValues['STUDIOCODE'] := Internet.FieldValues['STUDIONOMER'];
                        Plashtania.Post;
                     end;
-                    _Q.Active := false;
-                    _Q.SQL.SetText(PChar('SELECT * FROM KLIENTI WHERE NOMER = ' +
-                        IntToStr(CardNomer)));
-                    _Q.Active := true;
-                    if(_Q.RecordCount > 0) then
-                    begin
-                      _Q.Edit;
-                      _Q.FieldValues['IME'] := ' ';
-                      _Q.Post;
-                    end;
+//                    _Q.Active := false;
+//                    _Q.SQL.SetText(PChar('SELECT * FROM KLIENTI WHERE NOMER = ' +
+//                        IntToStr(CardNomer)));
+//                    _Q.Active := true;
+//                    if(_Q.RecordCount > 0) then
+//                    begin
+//                      _Q.Edit;
+//                      _Q.FieldValues['IME'] := ' ';
+//                      _Q.Post;
+//                    end;
                   end;
                 end;
                 CabineRecord[IndexSol] :=
@@ -5574,9 +5574,10 @@ begin
             begin
               if KARTICHIP.FieldValues['SUMA'] < PaidChipCard then
               begin
-                Application.MessageBox(PChar('Недостатъчни минути!'), PChar(''), MB_OK);
-                PaidChipCard:= 0;
-                exit;
+                 PaidChipCard := KARTICHIP.FieldValues['SUMA'];
+//                Application.MessageBox(PChar('Недостатъчни минути!'), PChar(''), MB_OK);
+//                PaidChipCard:= 0;
+//                exit;
               end;
             end
             else
@@ -5852,25 +5853,27 @@ var
     IsOK: Integer;
 
 begin
-    if ((Card.StudioNomer <> Internet.FieldValues['STUDIONOMER'])) 
-    {  or
-    (KARTICHIP.fieldvalues['suma']>0)}then
-    begin // Message shoud be corrected...
-        IsOK := Application.MessageBox(PChar(GetMessage('M78')),
-            PChar('Warning'), MB_OKCANCEL);
-        //Application.MessageBox(PChar('Картата може да се нулира само във студиото където е издадена!'),PChar('Warning'),MB_OK);
-        SLE4442ReadCardInfo();
-        SLE4442ShowCardInfo();
-        if ((IsOK <> MROK) or (PasswordForm.ShowModal <> MROK)) then
-            exit;
-    end;
-    if(Card.PIN <> Internet.FieldValues['PIN']) then
+    if(IsChipCard) then
     begin
-      Application.MessageBox(PChar('Тази карта не може да бъде използвана в това студио!'), PChar(''), MB_OK);
-      exit;
-    end; 
-    if not IsChipCard then
-        if not (MainForm.STOKI.Locate('STOKATIP', 'D', [])) then
+     if ((Card.StudioNomer <> Internet.FieldValues['STUDIONOMER']))
+      {  or
+     (KARTICHIP.fieldvalues['suma']>0)}then
+     begin // Message shoud be corrected...
+          IsOK := Application.MessageBox(PChar(GetMessage('M78')),
+              PChar('Warning'), MB_OKCANCEL);
+          //Application.MessageBox(PChar('Картата може да се нулира само във студиото където е издадена!'),PChar('Warning'),MB_OK);
+          SLE4442ReadCardInfo();
+          SLE4442ShowCardInfo();
+          if ((IsOK <> MROK) or (PasswordForm.ShowModal <> MROK)) then
+              exit;
+      end;
+      if(Card.PIN <> Internet.FieldValues['PIN']) then
+      begin
+        Application.MessageBox(PChar('Тази карта не може да бъде използвана в това студио!'), PChar(''), MB_OK);
+        exit;
+      end;
+    end
+    else if not (MainForm.STOKI.Locate('STOKATIP', 'D', [])) then
         begin
             if PasswordForm.ModalResult <> MROK then
                 if PasswordForm.ShowModal <> MROK then
