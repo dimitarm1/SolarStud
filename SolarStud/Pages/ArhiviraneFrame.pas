@@ -26,9 +26,7 @@ uses
   // Planner components
   Planner, DBPlanner, PlannerDatePicker, PlanSimpleEdit, PlanItemEdit, PlannerMaskDatePicker,
   // Chart components
-  Chart, TeEngine, TeeProcs, Series, DBChart,
-  // Base frame
-  BasePageFrame;
+  Chart, TeEngine, TeeProcs, Series, DBChart;
 
 type
   TArhiviraneFrame = class(TFrame)
@@ -45,10 +43,6 @@ type
     LMDLImage1: TLMDLImage;
     LMDLImage37: TLMDLImage;
     LMDLImage38: TLMDLImage;
-  protected
-    procedure DoPageActivate; override;
-    procedure DoPageDeactivate; override;
-    procedure DoInitialize; override;
   end;
 
 implementation
@@ -57,20 +51,5 @@ uses
   MAIN;
 
 {$R *.dfm}
-
-procedure TArhiviraneFrame.DoInitialize;
-begin
-  inherited;
-end;
-
-procedure TArhiviraneFrame.DoPageActivate;
-begin
-  inherited;
-end;
-
-procedure TArhiviraneFrame.DoPageDeactivate;
-begin
-  inherited;
-end;
 
 end.

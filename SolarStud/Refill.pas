@@ -47,7 +47,7 @@ var
     IsChipCard: Boolean;
 
 implementation
-uses main, KlubniKartiFrame;
+uses main, DataMod, KlubniKartiFrame;
 {$R *.dfm}
 var
     NomerKlient: Integer;
@@ -56,7 +56,7 @@ var
 
 procedure TRefillForm.Panel2Click(Sender: TObject);
 begin
-    MainForm.Qklienti.Cancel;
+    DM.Qklienti.Cancel;
     RefillForm.ModalResult := mrCancel;
     RefillForm.Close;
 end;
@@ -74,16 +74,16 @@ var
     V: Variant;
 begin
     Valid := true;
-    if MainForm.KARTI.RecordCount = 0 then
+    if DM.KARTI.RecordCount = 0 then
     begin
-        MainForm.Qklienti.Cancel;
+        DM.Qklienti.Cancel;
         RefillForm.ModalResult := mrCancel;
         RefillForm.Close;
         exit; //-->
     end;
-    Stoka := MainForm.KARTI.FieldValues['STOKAKOD'];
-    Cena := MainForm.KARTI.FieldValues['STOKACENA'];
-    Suma := MainForm.KARTI.FieldValues['SUMA'];
+    Stoka := DM.KARTI.FieldValues['STOKAKOD'];
+    Cena := DM.KARTI.FieldValues['STOKACENA'];
+    Suma := DM.KARTI.FieldValues['SUMA'];
     Nomer := StrToIntDef(MaskEdit2.EditText, -1);
     if (16777214 < Nomer) and IsReader then
     begin
@@ -91,52 +91,52 @@ begin
             PChar('Warning'), MB_OK);
         exit; //-->
     end;
-    V := MainForm.Qklienti.Lookup('NOMER', Nomer, 'Nomer');
+    V := DM.Qklienti.Lookup('NOMER', Nomer, 'Nomer');
     if not (VarType(V) in [varNull]) then
         Nomer := 0; // So, there is a record with that number
-    MainForm.Qklienti.Edit;
-    MainForm.Qklienti.FieldValues['BALANS'] :=
-        MainForm.Qklienti.FieldValues['BALANS'] +
-        MainForm.KARTI.FieldValues['STOKACENA'];
+    DM.Qklienti.Edit;
+    DM.Qklienti.FieldValues['BALANS'] :=
+        DM.Qklienti.FieldValues['BALANS'] +
+        DM.KARTI.FieldValues['STOKACENA'];
     // Clear new card flag
 
     if Nomer > 0 then
-        MainForm.Qklienti.FieldValues['NOMER'] := Nomer;
-    MainForm.Qklienti.post;
+        DM.Qklienti.FieldValues['NOMER'] := Nomer;
+    DM.Qklienti.post;
     MainForm.Sol1.FlushBuffers;
 
     if not IsChipCard then
     begin
-        if MainForm.KARTIALL1.Locate('KARTANOMER',
+        if DM.KARTIALL1.Locate('KARTANOMER',
             VarArrayOf([StrToInt(Edit1.Text)]), []) then
         begin
             Application.MessageBox(PChar('Дублиран номер на карта!!'),
                 PChar('Warning'), MB_OK);
             exit;
         end;
-        MainForm.KARTIALL1.Append;
-        MainForm.KARTIALL1.FieldValues['STARTDATE'] := Date + 365;
-        MainForm.KARTIALL1.FieldValues['KARTANOMER'] := StrToInt(Edit1.Text);
-        MainForm.KARTIALL1.FieldValues['POSESHTENIA'] :=
-            MainForm.KARTI.FieldValues['POSESHTENIA'];
-        MainForm.KARTIALL1.FieldValues['KLIENTDETAIL'] :=
+        DM.KARTIALL1.Append;
+        DM.KARTIALL1.FieldValues['STARTDATE'] := Date + 365;
+        DM.KARTIALL1.FieldValues['KARTANOMER'] := StrToInt(Edit1.Text);
+        DM.KARTIALL1.FieldValues['POSESHTENIA'] :=
+            DM.KARTI.FieldValues['POSESHTENIA'];
+        DM.KARTIALL1.FieldValues['KLIENTDETAIL'] :=
             MainForm.QKlienti.FieldValues['NOMER'];
 
-        // MainForm.KARTIALL1.FieldValues['MINUTINA1']:=MainForm.KARTI.FieldValues['MINUTINA1'];
-        MainForm.KARTIALL1.Post;
-        KartaNomer := MainForm.KARTIALL1.FieldValues['KARTANOMER'];
+        // DM.KARTIALL1.FieldValues['MINUTINA1']:=DM.KARTI.FieldValues['MINUTINA1'];
+        DM.KARTIALL1.Post;
+        KartaNomer := DM.KARTIALL1.FieldValues['KARTANOMER'];
     end;
     if IsChipCard then
     begin
         KartaNomer := MainForm.QKlienti.FieldValues['NOMER'];
-        //  MainForm.CHIPKARTI.FieldValues['BALANS']:= MainForm.CHIPKARTI.FieldValues['BALANS']+ MainForm.KARTI.FieldValues['SUMA'];
+        //  DM.CHIPKARTI.FieldValues['BALANS']:= DM.CHIPKARTI.FieldValues['BALANS']+ DM.KARTI.FieldValues['SUMA'];
         if Card.Balans >= Suma then
         begin
 
             if (mrCancel =
                 Application.MessageBox(PChar('Внимание! Картата вече е заредена! Да продължа ли?'), PChar('Warning'), MB_OKCANCEL)) then
             begin
-                MainForm.Qklienti.Cancel;
+                DM.Qklienti.Cancel;
                 Valid := False;
                 RefillForm.ModalResult := mrCancel;
                 RefillForm.Close;
@@ -149,49 +149,49 @@ begin
             begin
                 Card.ClientNomer := MainForm.QKlienti.FieldValues['NOMER'];
                 Card.CardNomer := Card.ClientNomer;
-                Card.ClientName := MainForm.Qklienti.FieldValues['IME'];
-                MainForm.Plashtania.Append;
+                Card.ClientName := DM.Qklienti.FieldValues['IME'];
+                DM.Plashtania.Append;
                 MainForm.plashtania.FieldValues['BROI'] := 1;
                 MainForm.plashtania.FieldValues['DATA'] := Date;
                 MainForm.plashtania.FieldValues['CHAS'] := TimeToStr(Time);
                 MainForm.plashtania.FieldValues['OTCHIPKARTA'] :=
                     Card.ClientNomer;
 
-                if MainForm.STOKI.Locate('STOKATIP', 'D', []) then
+                if DM.STOKI.Locate('STOKATIP', 'D', []) then
                     // Sell deposit
                 begin
-                    MainForm.STOKI.Edit;
-                    MainForm.STOKI.FieldValues['STOKANASKLAD'] :=
-                        MainForm.STOKI.FieldValues['STOKANASKLAD'] - 1;
-                    MainForm.STOKI.post;
+                    DM.STOKI.Edit;
+                    DM.STOKI.FieldValues['STOKANASKLAD'] :=
+                        DM.STOKI.FieldValues['STOKANASKLAD'] - 1;
+                    DM.STOKI.post;
                     MainForm.plashtania.FieldValues['STOKA'] :=
-                        MainForm.STOKI.FieldValues['STOKAKOD'];
+                        DM.STOKI.FieldValues['STOKAKOD'];
                     MainForm.plashtania.FieldValues['SUMABROI'] :=
-                        MainForm.STOKI.FieldValues['STOKACENA'];
+                        DM.STOKI.FieldValues['STOKACENA'];
                 end
                 else
                     ;
-                MainForm.Plashtania.Post;
+                DM.Plashtania.Post;
                 Card.Balans := 0;
             end;
-//            Card.Balans := Card.Balans + MainForm.KARTI.FieldValues['SUMA'];
+//            Card.Balans := Card.Balans + DM.KARTI.FieldValues['SUMA'];
             Card.Balans := Card.Balans + Suma; // Add new card refill sum
-            if (MainForm.KARTICHIP.FieldValues['COUNTER'] = -1) then
+            if (DM.KARTICHIP.FieldValues['COUNTER'] = -1) then
             begin
-                MainForm.KARTICHIP.Edit();
-                MainForm.KARTICHIP.FieldValues['COUNTER'] := 0;
-                MainForm.KARTICHIP.Post();
+                DM.KARTICHIP.Edit();
+                DM.KARTICHIP.FieldValues['COUNTER'] := 0;
+                DM.KARTICHIP.Post();
             end;
         end;
     end;
     if Valid then
     begin
-        MainForm.Qklienti.Edit;
-        if not (MainForm.Qklienti.FieldValues['BALANS'] > 0) then
-            MainForm.Qklienti.FieldValues['BALANS'] := 0;
-//        MainForm.Qklienti.FieldValues['BALANS'] :=
-//            MainForm.Qklienti.FieldValues['BALANS'] + Cena;
-        MainForm.Plashtania.Append;
+        DM.Qklienti.Edit;
+        if not (DM.Qklienti.FieldValues['BALANS'] > 0) then
+            DM.Qklienti.FieldValues['BALANS'] := 0;
+//        DM.Qklienti.FieldValues['BALANS'] :=
+//            DM.Qklienti.FieldValues['BALANS'] + Cena;
+        DM.Plashtania.Append;
         MainForm.plashtania.FieldValues['STOKA'] := Stoka;
         MainForm.plashtania.FieldValues['SUMABROI'] := Cena;
         MainForm.plashtania.FieldValues['BROI'] := 1;
@@ -202,8 +202,8 @@ begin
             MainForm.plashtania.FieldValues['OTCHIPKARTA'] := Card.ClientNomer;
         if MainForm.ActivePageIndex = 17 then
             MainForm.plashtania.FieldValues['OTKARTA'] := KartaNomer;
-        MainForm.Plashtania.Post;
-        MainForm.Qklienti.Post;
+        DM.Plashtania.Post;
+        DM.Qklienti.Post;
         MainForm.Sol1.FlushBuffers;
         RefillForm.ModalResult := mrOK;
     end;
@@ -218,27 +218,27 @@ begin
     if not IsChipCard then
     begin
         Label4.Caption := 'посещения';
-        MainForm.KARTIALL1.Refresh;
-        MainForm.KARTIALL.Refresh;
+        DM.KARTIALL1.Refresh;
+        DM.KARTIALL.Refresh;
         nomer := 0;
         maxnomer := 0;
-        MainForm.MinMax.Active := False;
-        MainForm.MinMax.SQL.SetText(PChar('SELECT * FROM kartiall ORDER BY KARTANOMER DESC'));
-        MainForm.MinMax.Active := True;
-        MainForm.MinMax.First;
-        nomer := MainForm.MinMax.FieldByName('KARTANOMER').AsInteger;
+        DM.MinMax.Active := False;
+        DM.MinMax.SQL.SetText(PChar('SELECT * FROM kartiall ORDER BY KARTANOMER DESC'));
+        DM.MinMax.Active := True;
+        DM.MinMax.First;
+        nomer := DM.MinMax.FieldByName('KARTANOMER').AsInteger;
         nomer := nomer + 1;
         Edit1.Text := IntToStr(nomer);
-        MaskEdit2.Text := IntToStr2(MainForm.Qklienti.FieldValues['nomer']);
+        MaskEdit2.Text := IntToStr2(DM.Qklienti.FieldValues['nomer']);
     end;
     if IsChipCard then
     begin
         Label4.Caption := 'минути';
         nomer := 0;
         maxnomer := 0;
-        if (card.StudioNomer > 0) or (MainForm.Internet.FieldValues['StudioNomer'] = 0) then
+        if (card.StudioNomer > 0) or (DM.Internet.FieldValues['StudioNomer'] = 0) then
         begin
-            if card.StudioNomer = MainForm.Internet.FieldValues['StudioNomer']
+            if card.StudioNomer = DM.Internet.FieldValues['StudioNomer']
                 then
             begin
                 MainForm.QKlienti.Active := False;
@@ -247,7 +247,7 @@ begin
                 MainForm.QKlienti.SQL.SetText(PChar('SELECT * FROM klienti ' +
                     SQLText + ' ORDER BY IME'));
                 MainForm.QKlienti.Active := True;
-                if MainForm.Qklienti.Locate('NOMER', Card.ClientNomer, []) then
+                if DM.Qklienti.Locate('NOMER', Card.ClientNomer, []) then
                 begin
                     MainForm.QKlienti.Edit;
                 end
@@ -260,17 +260,17 @@ begin
                 end;
             end;
             Edit1.Text := IntToStr(Card.CardNomer);
-            MaskEdit2.Text := IntToStr2(MainForm.Qklienti.FieldValues['nomer']);
+            MaskEdit2.Text := IntToStr2(DM.Qklienti.FieldValues['nomer']);
         end
         else
         begin
-            //MainForm.CHIPKARTI.Append;
-            //MainForm.CHIPKARTI.FieldValues['STARTDATE']:=Date;
-            //MainForm.CHIPKARTI.FieldValues['KLIENTNOMER']:= MainForm.QKlienti.FieldValues['NOMER'];
-           // MainForm.CHIPKARTI.Post;
-            //Card.CardNomer:= MainForm.CHIPKARTI.FieldValues['KARTANOMER'];
+            //DM.CHIPKARTI.Append;
+            //DM.CHIPKARTI.FieldValues['STARTDATE']:=Date;
+            //DM.CHIPKARTI.FieldValues['KLIENTNOMER']:= MainForm.QKlienti.FieldValues['NOMER'];
+           // DM.CHIPKARTI.Post;
+            //Card.CardNomer:= DM.CHIPKARTI.FieldValues['KARTANOMER'];
             //Edit1.Text:='Нова';
-            MaskEdit2.Text := IntToStr(Card.CardNomer); //IntToStr2(MainForm.Qklienti.FieldValues['nomer']);
+            MaskEdit2.Text := IntToStr(Card.CardNomer); //IntToStr2(DM.Qklienti.FieldValues['nomer']);
             Edit1.Text := MaskEdit2.Text;
         end;
     end;

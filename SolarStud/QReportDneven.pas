@@ -69,7 +69,7 @@ var
   Form3: TForm3;
 
 implementation
- uses main, ProtokolFrame;
+ uses main, DataMod, ProtokolFrame;
  var
   sum_total: string;
 {$R *.dfm}
@@ -108,13 +108,13 @@ begin
  MainForm.GetProtokolFrame.wwDBGrid2.ExportOptions.TitleName := '������ ����� �� ' +
  QRLabel16.Caption + ' (������: ' + sum_total + ' ��.)';
  MainForm.GetProtokolFrame.wwDBGrid2.ExportOptions.Save();
- if MainForm.Internet.FieldValues['dialog'] then
+ if DM.Internet.FieldValues['dialog'] then
  begin
   body := TStringList.Create();
   MainForm.LMDMapiSendMail1.Reset;
   MainForm.LMDMapiSendMail1.LogOn;
   MainForm.LMDMapiSendMail1.ToRecipient.Clear;
-  MainForm.LMDMapiSendMail1.ToRecipient.Append(MainForm.Internet.FieldValues['to']);
+  MainForm.LMDMapiSendMail1.ToRecipient.Append(DM.Internet.FieldValues['to']);
   MainForm.LMDMapiSendMail1.Subject:= 'Otchet za '+QRLabel16.Caption;
   body.Add('Day total: '+ sum_total + ' leva');
   body.Add('**************************************');
@@ -137,7 +137,7 @@ end;
 procedure TForm3.DetailBand1BeforePrint(Sender: TQRCustomBand;
   var PrintBand: Boolean);
 begin
-if MainForm.DayTotal.FieldValues['SOLARIUM']>0 then
+if DM.DayTotal.FieldValues['SOLARIUM']>0 then
  begin
   QRDBText9.Enabled:=false;
   QRDBText7.Enabled:=False;

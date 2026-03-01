@@ -26,9 +26,7 @@ uses
   // Planner components
   Planner, DBPlanner, PlannerDatePicker, PlanSimpleEdit, PlanItemEdit, PlannerMaskDatePicker,
   // Chart components
-  Chart, TeEngine, TeeProcs, Series, DBChart,
-  // Base frame
-  BasePageFrame;
+  Chart, TeEngine, TeeProcs, Series, DBChart;
 
 type
   TStatistikaFrame = class(TFrame)
@@ -51,10 +49,6 @@ type
     ComboBox1: TComboBox;
     wwDBGrid10: TwwDBGrid;
     StatistikaBox1: TRzCheckBox;
-  protected
-    procedure DoPageActivate; override;
-    procedure DoPageDeactivate; override;
-    procedure DoInitialize; override;
   end;
 
 implementation
@@ -63,20 +57,5 @@ uses
   MAIN;
 
 {$R *.dfm}
-
-procedure TStatistikaFrame.DoInitialize;
-begin
-  inherited;
-end;
-
-procedure TStatistikaFrame.DoPageActivate;
-begin
-  inherited;
-end;
-
-procedure TStatistikaFrame.DoPageDeactivate;
-begin
-  inherited;
-end;
 
 end.

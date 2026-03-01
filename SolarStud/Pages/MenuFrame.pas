@@ -26,9 +26,7 @@ uses
   // Planner components
   Planner, DBPlanner, PlannerDatePicker, PlanSimpleEdit, PlanItemEdit, PlannerMaskDatePicker,
   // Chart components
-  Chart, TeEngine, TeeProcs, Series, DBChart,
-  // Base frame
-  BasePageFrame;
+  Chart, TeEngine, TeeProcs, Series, DBChart;
 
 type
   TMenuFrame = class(TFrame)
@@ -59,10 +57,6 @@ type
     Label14: TLabel;
     Label13: TLabel;
     Label12: TLabel;
-  protected
-    procedure DoPageActivate; override;
-    procedure DoPageDeactivate; override;
-    procedure DoInitialize; override;
   end;
 
 implementation
@@ -71,20 +65,5 @@ uses
   MAIN;
 
 {$R *.dfm}
-
-procedure TMenuFrame.DoInitialize;
-begin
-  inherited;
-end;
-
-procedure TMenuFrame.DoPageActivate;
-begin
-  inherited;
-end;
-
-procedure TMenuFrame.DoPageDeactivate;
-begin
-  inherited;
-end;
 
 end.

@@ -13,7 +13,7 @@ uses inifiles,SysUtils, forms;
 
 
 implementation
-  uses main, Password, QReportKlienti, Refill, ArhiviraneFrame, ChipKartiFrame, DrugiNastroikiFrame, FirmiISluziteliFrame, IzborNaPlashtaneFrame, IzborNaVremeFrame, KlubniKartiFrame, LogoEkranFrame, MenuFrame, MenuKasaFrame, MenuStokiFrame, NachalnoUstanoviavaneFrame, OsnovenEkranFrame, OsnovniNastroikiFrame, ProtokolFrame, SolariumiCeniFrame, SolariumiInfoFrame, SolariumiNastroikiFrame, StatistikaFrame,
+  uses main, DataMod, Password, QReportKlienti, Refill, ArhiviraneFrame, ChipKartiFrame, DrugiNastroikiFrame, FirmiISluziteliFrame, IzborNaPlashtaneFrame, IzborNaVremeFrame, KlubniKartiFrame, LogoEkranFrame, MenuFrame, MenuKasaFrame, MenuStokiFrame, NachalnoUstanoviavaneFrame, OsnovenEkranFrame, OsnovniNastroikiFrame, ProtokolFrame, SolariumiCeniFrame, SolariumiInfoFrame, SolariumiNastroikiFrame, StatistikaFrame,
   QReportSolariumiNastroiki, QReportDneven,  Stoki,NotShalter;
    var i:integer;
 procedure InitLang();
@@ -327,7 +327,7 @@ procedure SetLangText();
             :=GetButtonText('KARTI'+IntToStr(i));
          if i < GetMenuKasaFrame.KasaGrid.FieldCount then GetMenuKasaFrame.KasaGrid.Fields[i].DisplayLabel
             :=GetButtonText('STOKITE'+IntToStr(i));
-            //MainForm.sol1.DataSets[1].Fields[1].DisplayName
+            //DM.sol1.DataSets[1].Fields[1].DisplayName
          if i < GetChipKartiFrame.wwDBGrid5.FieldCount then GetChipKartiFrame.wwDBGrid5.Fields[i].DisplayLabel
             :=GetButtonText('QKLIENTI'+IntToStr(i));
          if i < GetKlubniKartiFrame.wwDBGrid7.FieldCount then GetKlubniKartiFrame.wwDBGrid7.Fields[i].DisplayLabel

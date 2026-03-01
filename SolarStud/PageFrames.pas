@@ -3,7 +3,7 @@ unit PageFrames;
 interface
 
 uses
-  Classes, PageManager, PageIndices, BasePageFrame,
+  Classes, PageManager, PageIndices,
   // Page frame units
   LogoEkranFrame,
   OsnovenEkranFrame,

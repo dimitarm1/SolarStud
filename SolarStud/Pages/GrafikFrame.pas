@@ -26,9 +26,7 @@ uses
   // Planner components
   Planner, DBPlanner, PlannerDatePicker, PlannerCal, PlanSimpleEdit, PlanItemEdit, PlannerMaskDatePicker,
   // Chart components
-  Chart, TeEngine, TeeProcs, Series, DBChart,
-  // Base frame
-  BasePageFrame;
+  Chart, TeEngine, TeeProcs, Series, DBChart;
 
 type
   TGrafikFrame = class(TFrame)
@@ -43,10 +41,6 @@ type
     Planner2: TDBPlanner;
     Planner3: TDBPlanner;
     TrackBar1: TTrackBar;
-  protected
-    procedure DoPageActivate; override;
-    procedure DoPageDeactivate; override;
-    procedure DoInitialize; override;
   end;
 
 implementation
@@ -55,20 +49,5 @@ uses
   MAIN;
 
 {$R *.dfm}
-
-procedure TGrafikFrame.DoInitialize;
-begin
-  inherited;
-end;
-
-procedure TGrafikFrame.DoPageActivate;
-begin
-  inherited;
-end;
-
-procedure TGrafikFrame.DoPageDeactivate;
-begin
-  inherited;
-end;
 
 end.

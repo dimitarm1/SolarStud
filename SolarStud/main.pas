@@ -2,7 +2,7 @@ unit MAIN;
 // Modified for test
 interface
 
-uses Windows, SysUtils, DateUtils, Classes, Graphics, Forms, Controls, Menus,
+uses DataMod, Windows, SysUtils, DateUtils, Classes, Graphics, Forms, Controls, Menus,
     StdCtrls, Dialogs, Buttons, Messages, ExtCtrls, ComCtrls, StdActns,
     ActnList, ToolWin, ImgList, jpeg, Gauges, DB, DBTables, DBCtrls, Grids,
     DBGrids, ValEdit, Mask, DBClient, ImageWin, MXDB, Mxstore,
@@ -36,7 +36,7 @@ uses Windows, SysUtils, DateUtils, Classes, Graphics, Forms, Controls, Menus,
     LMDDBListComboBox,
     RzCmboBx, Wwdbigrd, RzEdit, RzDBEdit, LMDCustomControl, madExceptVcl,
   LMDPNGImage,
-  PageManager, PageIndices, PageFrames, BasePageFrame, FrameBindings,
+  PageManager, PageIndices, PageFrames, FrameBindings,
   LogoEkranFrame, OsnovenEkranFrame, FirmiISluziteliFrame, IzborNaPlashtaneFrame,
   IzborNaVremeFrame, MenuFrame, SolariumiNastroikiFrame, SolariumiInfoFrame,
   SolariumiCeniFrame, NachalnoUstanoviavaneFrame, ArhiviraneFrame, StatistikaFrame,
@@ -64,59 +64,20 @@ type
     TMainForm = class(TForm)
         OpenDialog: TOpenDialog;
         Timer1: TTimer;
-        DataSource1: TDataSource;
-        DataSource2: TDataSource;
-        sol1: TABSDatabase;
-        SOLARIUMI: TABSTable;
-        Table3: TABSTable;
         PageContainer: TPanel;
         LMDMapiSendMail1: TLMDMapiSendMail;
-        Internet: TABSTable;
-        DataSource3: TDataSource;
-        DayTotal: TABSQuery;
-        DataSource5: TDataSource;
-        Spravka1: TABSQuery;
-        STOKI: TABSTable;
-        KARTI: TABSQuery;
-        DataSource6: TDataSource;
-        DataSource7: TDataSource;
-        STOKITE: TABSQuery;
-        DataSource8: TDataSource;
-        KARTIALL1: TABSTable;
-        DataSource10: TDataSource;
-        Sdelka: TABSQuery;
-        PlashtaniaTable: TABSTable;
-        DataSource9: TDataSource;
-        MinMax: TABSQuery;
-        DataSource11: TDataSource;
-        DataSource12: TDataSource;
-        KARTIALL: TABSTable;
-        solariumspr: TABSTable;
-        stokispr: TABSTable;
-        DataSource13: TDataSource;
-        Qklienti: TABSQuery;
-        Qkarti: TABSQuery;
-        DataSource14: TDataSource;
-        QKartiPaid: TABSQuery;
-        QChipKarti: TABSQuery;
-        DataSource4: TDataSource;
         PopupMenu1: TPopupMenu;
         N1: TMenuItem;
         N2: TMenuItem;
-        CHIPKARTI: TABSTable;
         KartiAsStokiMenu: TPopupMenu;
         N3: TMenuItem;
         N4: TMenuItem;
         N5: TMenuItem;
         PopupMenu3: TPopupMenu;
-        QStatistika: TABSQuery;
         RzURLLabel1: TRzURLLabel;
         Timer2: TTimer;
         DBCrossTabSource1: TDBCrossTabSource;
         DBCrossTabSource2: TDBCrossTabSource;
-        personal1: TABSTable;
-        personalset: TDataSource;
-        DataSource15: TDataSource;
         OpenDialog1: TOpenDialog;
         SaveDialog1: TSaveDialog;
         IniFile: TLMDStorINIVault;
@@ -126,35 +87,12 @@ type
         LMDImageList4: TLMDImageList;
         LMDImageList5: TLMDImageList;
         LMDImageList6: TLMDImageList;
-        KARTICHIP: TABSTable;
-        DataSource16: TDataSource;
         Image3: TImage;
         Timer3: TTimer;
-        maxday: TABSQuery;
-        Plashtania: TABSQuery;
-        CENITABLE: TABSTable;
         Timer4: TTimer;
-        DataSource17: TDataSource;
-        QCeni: TABSQuery;
-        USLUGITE: TABSQuery;
-        DataSource18: TDataSource;
-        Firmite: TABSQuery;
-        DataSource19: TDataSource;
         SimpleItemEditor1: TSimpleItemEditor;
         DefaultItemEditor1: TDefaultItemEditor;
-        Planner: TABSTable;
-        DataSource20: TDataSource;
-        DBDaySource1: TDBDaySource;
-        DBDaySource2: TDBDaySource;
-        DBDaySource3: TDBDaySource;
-        PLANNER02: TABSTable;
-        DataSource21: TDataSource;
-        PLANNER03: TABSTable;
-        DataSource22: TDataSource;
         Timer6: TTimer;
-        STOKITE_SKLAD: TABSQuery;
-        DataSource23: TDataSource;
-        DataSource24: TDataSource;
     MadExceptionHandler1: TMadExceptionHandler;
         procedure Label1Click(Sender: TObject);
         procedure FormCreate(Sender: TObject);
@@ -602,10 +540,10 @@ begin
     with MainForm do
     begin
         Timer1.Enabled := false;
-        if not FileExists(MainForm.sol1.DatabaseFileName) then
-            MainForm.sol1.CreateDatabase;
+        if not FileExists(DM.sol1.DatabaseFileName) then
+            DM.sol1.CreateDatabase;
         try
-            MainForm.sol1.Open;
+            DM.sol1.Open;
         except Application.MessageBox(PChar(GetMessage('M1')),
                 PChar(GetMessage('M2')), MB_OK);
             // except  Application.MessageBox('Грешка в базата данни - Възстановете от архивно копие!', 'ГРЕШКА', MB_OK);
@@ -627,15 +565,15 @@ begin
         _Q.ExecSQL;
         _Q.Close;
 
-        MinMax.Active := FALSE;
-        QStatistika.Active := FALSE;
+        DM.MinMax.Active := FALSE;
+        DM.QStatistika.Active := FALSE;
         MaxDay.Active := FALSE;
         Stoki.Close;
         Stokite.Close;
-        stokispr.Close;
+        DM.stokispr.Close;
         daytotal.Close;
         karti.Close;
-        USLUGITE.Close;
+        DM.USLUGITE.Close;
         Stoki.readonly := False;
         if stoki.FieldDefs.IndexOf('STOKATIP') < 0 then
         begin
@@ -653,11 +591,11 @@ begin
             Stoki.Close;
         end;
         Stoki.Open; //STOKAORDER
-        stokispr.Open;
+        DM.stokispr.Open;
         daytotal.Open;
         karti.Open;
-        USLUGITE.Open;
-        Stokite.SQL.SetText(PChar('select * from STOKI where STOKATIP = "S"'));
+        DM.USLUGITE.Open;
+        Stokite.SQL.SetText(PChar('select * from DM.STOKI where STOKATIP = "S"'));
         Stokite.Active := TRUE;
         Stoki.First;
         while not Stoki.Eof do
@@ -688,8 +626,8 @@ begin
             end;
             Stoki.Next;
         end;
-        SOLARIUMI.Active := True;
-        if not sol1.TableExists('tablica_ceni') then
+        DM.SOLARIUMI.Active := True;
+        if not DM.sol1.TableExists('tablica_ceni') then
         begin
             _Q.SQL.Text :=
                 'create table TABLICA_CENI ( SOLARIUM integer default 0, ' +
@@ -728,28 +666,28 @@ begin
                 end;
             end;
         end;
-        if (Internet.Active = FALSE) then
-            Internet.Active := TRUE;
+        if (DM.Internet.Active = FALSE) then
+            DM.Internet.Active := TRUE;
 
-        if (Internet.FieldByName('DISCOUNT_PERCENT').DataType = ftInteger) then
+        if (DM.Internet.FieldByName('DISCOUNT_PERCENT').DataType = ftInteger) then
         begin
-            Internet.Close;
+            DM.Internet.Close;
             _Q.SQL.Text := 'alter table internet modify ' +
                 ' (DISCOUNT_PERCENT  FLOAT, DISCOUNT_PERCENT_FIRMI FLOAT)';
             _Q.ExecSQL; // .Active:=true;
             _Q.Active := FALSE;
-            Internet.Open;
+            DM.Internet.Open;
         end;
-        if (KARTICHIP.Active = FALSE) then
-            KARTICHIP.Active := TRUE;
-        if (KARTICHIP.FieldByName('DISCOUNT').DataType = ftInteger) then
+        if (DM.KARTICHIP.Active = FALSE) then
+            DM.KARTICHIP.Active := TRUE;
+        if (DM.KARTICHIP.FieldByName('DISCOUNT').DataType = ftInteger) then
         begin
-            KARTICHIP.Close;
+            DM.KARTICHIP.Close;
             QCHIPKARTI.Active := FALSE;
-            _Q.SQL.Text := 'alter table KARTICHIP modify (DISCOUNT  FLOAT)';
+            _Q.SQL.Text := 'alter table DM.KARTICHIP modify (DISCOUNT  FLOAT)';
             _Q.ExecSQL; // .Active:=true;
             _Q.Active := FALSE;
-            MainForm.KARTICHIP.Open;
+            DM.KARTICHIP.Open;
         end;
         if (PLASHTANIA.Active = FALSE) then
             PLASHTANIA.Active := TRUE;
@@ -757,11 +695,11 @@ begin
             ftInteger]) then
         begin
             PLASHTANIA.Active := FALSE;
-            DayTotal.Active := FALSE;
-            QKartiPaid.Active := FALSE;
+            DM.DayTotal.Active := FALSE;
+            DM.QKartiPaid.Active := FALSE;
 
             Qstatistika.Active := FALSE;
-            PlashtaniaTable.Active := FALSE;
+            DM.PlashtaniaTable.Active := FALSE;
             SDELKA.Active := FALSE;
 
             _Q.SQL.Text :=
@@ -769,10 +707,10 @@ begin
             _Q.ExecSQL; // .Active:=true;
             _Q.Active := FALSE;
             PLASHTANIA.Active := TRUE;
-            PlashtaniaTable.Active := TRUE;
-            DayTotal.Active := TRUE;
-            QKartiPaid.Active := TRUE;
-            PlashtaniaTable.Active := TRUE;
+            DM.PlashtaniaTable.Active := TRUE;
+            DM.DayTotal.Active := TRUE;
+            DM.QKartiPaid.Active := TRUE;
+            DM.PlashtaniaTable.Active := TRUE;
             SDELKA.Active := TRUE;
 
         end;
@@ -780,35 +718,35 @@ begin
         CeniTable.MasterFields := 'SOLARIUM';
         CeniTable.IndexFieldNames := 'SOLARIUM';
         CeniTable.Active := True;
-        KARTIALL.Active := True;
+        DM.KARTIALL.Active := True;
         plashtania.active := true;
-        STOKI.Active := True;
+        DM.STOKI.Active := True;
         internet.Active := True;
-        Table3.Active := False;
-        KARTIALL1.Active := False;
-        Table3.IndexName := '';
-        Table3.MasterFields := '';
-        Table3.MasterSource := nil;
-        // KARTIALL1.IndexName   :='KlientDet';
-        // KARTIALL1.MasterFields:='NOMER';
-        // KARTIALL1.MasterSource:=DataSource2;
-        Table3.Active := True;
-        KARTIALL1.Active := True;
-        STOKITE.Active := True;
+        DM.Table3.Active := False;
+        DM.KARTIALL1.Active := False;
+        DM.Table3.IndexName := '';
+        DM.Table3.MasterFields := '';
+        DM.Table3.MasterSource := nil;
+        // DM.KARTIALL1.IndexName   :='KlientDet';
+        // DM.KARTIALL1.MasterFields:='NOMER';
+        // DM.KARTIALL1.MasterSource:=DM.DataSource2;
+        DM.Table3.Active := True;
+        DM.KARTIALL1.Active := True;
+        DM.STOKITE.Active := True;
         SDELKA.Active := True;
-        KARTI.Active := True;
-        stokispr.Active := True;
-        solariumspr.Active := True;
+        DM.KARTI.Active := True;
+        DM.stokispr.Active := True;
+        DM.solariumspr.Active := True;
         QKlienti.Active := True;
-        personal1.Active := True;
+        DM.personal1.Active := True;
 
-        Planner.Active := True;
+        DM.Planner.Active := True;
         Planner02.Active := true;
         Planner03.Active := True;
-        KARTICHIP.Active := true;
-        Firmite.Active := True;
-        USLUGITE.Active := TRUE;
-        if sol1.TableExists('tablica_ceni') then
+        DM.KARTICHIP.Active := true;
+        DM.Firmite.Active := True;
+        DM.USLUGITE.Active := TRUE;
+        if DM.sol1.TableExists('tablica_ceni') then
         begin
             CeniTable.Active := false;
             CeniTable.TableName := 'TABLICA_CENI';
@@ -816,11 +754,11 @@ begin
             CeniTable.MasterFields := 'SOLARIUM';
             CeniTable.Active := True;
         end;
-        maxday.Active := true;
-        maxday.Refresh;
-        MinMax.Active := true;
-        MinMax.Refresh;
-        //     QStatistika.Active    :=true;
+        DM.maxday.Active := true;
+        DM.maxday.Refresh;
+        DM.MinMax.Active := true;
+        DM.MinMax.Refresh;
+        //     DM.QStatistika.Active    :=true;
         Timer1.Enabled := true;
     end;
 end;
@@ -939,8 +877,8 @@ begin
     else if not ((DemoString = 'True') or (DemoString = 'true')) then
         IsDemo3 := false;
 
-    MainForm.personal1.First;
-    if (PChar('solarpower') = MainForm.personal1.FieldValues['IME']) then IsDemo2:=false;
+    DM.personal1.First;
+    if (PChar('solarpower') = DM.personal1.FieldValues['IME']) then IsDemo2:=false;
 
     UseNativeStartStr := MainIniFile.ReadString('System', 'UseNativeStart',
         'NoValue');
@@ -999,7 +937,7 @@ end;
 
 procedure ShowKlInfo;
 begin
-    MainForm.QklientiAfterRefresh;
+    DM.QklientiAfterRefresh;
     MainForm.GetIzborNaPlashtaneFrame.Label130.Visible := True;
     MainForm.GetIzborNaPlashtaneFrame.DBText7.Visible := True;
     MainForm.GetIzborNaPlashtaneFrame.DBText4.Visible := True;
@@ -1086,7 +1024,7 @@ begin
     begin
         if (ActivePageIndex = 6) then
         begin
-            ImageName := SOLARIUMI.FieldByName('PICTURE').AsString;
+            ImageName := DM.SOLARIUMI.FieldByName('PICTURE').AsString;
             if FileExists(ImageName) then
                 GetSolariumiInfoFrame.Image18.Picture.LoadFromFile(ImageName)
                     // else Image18.Picture:=Imagepress1.Picture;
@@ -1096,37 +1034,37 @@ begin
             //   DATA_COMBO_SELECTED:=Date;
                 //buff := DateToStr(Date, LocalFormat );
             GetProtokolFrame.DBLUCombo1.Text := DateToStrBg(Date);
-            DayTotal.Active := False;
-            DayTotal.SQL.Text :=
-                ' SELECT * FROM Plashtania p LEFT OUTER join STOKI s ON Plashtania.STOKA=STOKI.STOKAKOD' +
+            DM.DayTotal.Active := False;
+            DM.DayTotal.SQL.Text :=
+                ' SELECT * FROM DM.Plashtania p LEFT OUTER join DM.STOKI s ON DM.Plashtania.STOKA=DM.STOKI.STOKAKOD' +
                 ' WHERE DATA = :DATA_COMBO_SELECTED ';
             if (GetProtokolFrame.ProtokolFilterEdit.Text = ' ') then
             begin
-                DayTotal.SQL.Text := DayTotal.SQL.Text +
+                DM.DayTotal.SQL.Text := DM.DayTotal.SQL.Text +
                     ' and SOLARIUM >= 0 ORDER BY :ORDERPARAM DESC';
             end
             else if (GetProtokolFrame.ProtokolFilterEdit.Text = '') then
             begin
-                DayTotal.SQL.Text := DayTotal.SQL.Text +
+                DM.DayTotal.SQL.Text := DM.DayTotal.SQL.Text +
                     ' ORDER BY :ORDERPARAM DESC';
             end
             else
             begin
-                DayTotal.SQL.Text := DayTotal.SQL.Text +
+                DM.DayTotal.SQL.Text := DM.DayTotal.SQL.Text +
                     ' and LOWER(STOKAIME) LIKE "%' +
                     AnsiLowerCase(GetProtokolFrame.ProtokolFilterEdit.Text) +
                     '%" ORDER BY :ORDERPARAM DESC';
             end;
-            DayTotal.ParamByName('DATA_COMBO_SELECTED').AsDate := Date;
-            DayTotal.ParamByName('ORDERPARAM').AsString := 'RECORDID';
-            DayTotal.Active := True;
-            // ReorderSQLDataSet( DayTotal, 'STOKA');
+            DM.DayTotal.ParamByName('DATA_COMBO_SELECTED').AsDate := Date;
+            DM.DayTotal.ParamByName('ORDERPARAM').AsString := 'RECORDID';
+            DM.DayTotal.Active := True;
+            // ReorderSQLDataSet( DM.DayTotal, 'STOKA');
         end;
 
         if (ActivePageIndex = 1) then
         begin
-            SOLARIUMI.RecNo := 1;
-            ImageName := SOLARIUMI.FieldByName('PICTURE').AsString;
+            DM.SOLARIUMI.RecNo := 1;
+            ImageName := DM.SOLARIUMI.FieldByName('PICTURE').AsString;
             if i = 0 then
             begin
                 if FileExists(ImageName) then
@@ -1134,159 +1072,159 @@ begin
                 else
                     GetOsnovenEkranFrame.Imagesol1.Picture := GetFirmiISluziteliFrame.NulImage.Picture;
                 // Image21.Picture.LoadFromFile(ImageName);
-                GetOsnovenEkranFrame.Kabina11.Caption := SOLARIUMI.FieldByName('OPISANIE1').AsString;
-                GetOsnovenEkranFrame.Kabina12.Caption := SOLARIUMI.FieldByName('OPISANIE2').AsString;
+                GetOsnovenEkranFrame.Kabina11.Caption := DM.SOLARIUMI.FieldByName('OPISANIE1').AsString;
+                GetOsnovenEkranFrame.Kabina12.Caption := DM.SOLARIUMI.FieldByName('OPISANIE2').AsString;
             end;
             if not (CabineStatus[0] in [1..3]) then
             begin
                 GetOsnovenEkranFrame.Kabina1minuti.Caption :=
-                    SOLARIUMI.FieldByName('OPISANIE3').AsString;
+                    DM.SOLARIUMI.FieldByName('OPISANIE3').AsString;
                 GetOsnovenEkranFrame.Kabina1cena.Caption :=
-                    SOLARIUMI.FieldByName('OPISANIE4').AsString;
-                //Kabina1minuti.Caption:=SOLARIUMI.FieldByName('MIVREME').AsString +' '+GetMessage('M28');// ' минути';
-                //Kabina1cena.Caption  :=CurrToStr(SOLARIUMI.FieldByName('CENA').AsVariant * SOLARIUMI.FieldByName('MIVREME').AsVariant)+' '+GetMessage('M29');//' лева';
-                CabineChanel[0] := SOLARIUMI.FieldByName('ADDRESS').AsInteger;
+                    DM.SOLARIUMI.FieldByName('OPISANIE4').AsString;
+                //Kabina1minuti.Caption:=DM.SOLARIUMI.FieldByName('MIVREME').AsString +' '+GetMessage('M28');// ' минути';
+                //Kabina1cena.Caption  :=CurrToStr(DM.SOLARIUMI.FieldByName('CENA').AsVariant * DM.SOLARIUMI.FieldByName('MIVREME').AsVariant)+' '+GetMessage('M29');//' лева';
+                CabineChanel[0] := DM.SOLARIUMI.FieldByName('ADDRESS').AsInteger;
             end;
-            SOLARIUMI.RecNo := 2;
+            DM.SOLARIUMI.RecNo := 2;
             if i = 0 then
             begin
-                ImageName := SOLARIUMI.FieldByName('PICTURE').AsString;
+                ImageName := DM.SOLARIUMI.FieldByName('PICTURE').AsString;
                 if FileExists(ImageName) then
                     GetOsnovenEkranFrame.Imagesol2.Picture.LoadFromFile(ImageName);
                 //  else Imagesol2.Picture:=Imagepress1.Picture;
-                GetOsnovenEkranFrame.Kabina21.Caption := SOLARIUMI.FieldByName('OPISANIE1').AsString;
-                GetOsnovenEkranFrame.Kabina22.Caption := SOLARIUMI.FieldByName('OPISANIE2').AsString;
+                GetOsnovenEkranFrame.Kabina21.Caption := DM.SOLARIUMI.FieldByName('OPISANIE1').AsString;
+                GetOsnovenEkranFrame.Kabina22.Caption := DM.SOLARIUMI.FieldByName('OPISANIE2').AsString;
             end;
             if not (CabineStatus[1] in [1..3]) then
             begin
                 GetOsnovenEkranFrame.Kabina2minuti.Caption :=
-                    SOLARIUMI.FieldByName('OPISANIE3').AsString;
+                    DM.SOLARIUMI.FieldByName('OPISANIE3').AsString;
                 GetOsnovenEkranFrame.Kabina2cena.Caption :=
-                    SOLARIUMI.FieldByName('OPISANIE4').AsString;
-                //Kabina2minuti.Caption  :=SOLARIUMI.FieldByName('MIVREME').AsString + ' '+GetMessage('M28');//' минути';
-                //Kabina2cena.Caption    :=CurrToStr(SOLARIUMI.FieldByName('CENA').AsVariant * SOLARIUMI.FieldByName('MIVREME').AsVariant)+' '+GetMessage('M29');//' лева';
-                CabineChanel[1] := SOLARIUMI.FieldByName('ADDRESS').AsInteger;
+                    DM.SOLARIUMI.FieldByName('OPISANIE4').AsString;
+                //Kabina2minuti.Caption  :=DM.SOLARIUMI.FieldByName('MIVREME').AsString + ' '+GetMessage('M28');//' минути';
+                //Kabina2cena.Caption    :=CurrToStr(DM.SOLARIUMI.FieldByName('CENA').AsVariant * DM.SOLARIUMI.FieldByName('MIVREME').AsVariant)+' '+GetMessage('M29');//' лева';
+                CabineChanel[1] := DM.SOLARIUMI.FieldByName('ADDRESS').AsInteger;
             end;
-            SOLARIUMI.RecNo := 3;
+            DM.SOLARIUMI.RecNo := 3;
             if i = 0 then
             begin
-                ImageName := SOLARIUMI.FieldByName('PICTURE').AsString;
+                ImageName := DM.SOLARIUMI.FieldByName('PICTURE').AsString;
                 if FileExists(ImageName) then
                     GetOsnovenEkranFrame.Imagesol3.Picture.LoadFromFile(ImageName);
                 // else Imagesol3.Picture:=Imagepress1.Picture;
-                GetOsnovenEkranFrame.Kabina31.Caption := SOLARIUMI.FieldByName('OPISANIE1').AsString;
-                GetOsnovenEkranFrame.Kabina32.Caption := SOLARIUMI.FieldByName('OPISANIE2').AsString;
+                GetOsnovenEkranFrame.Kabina31.Caption := DM.SOLARIUMI.FieldByName('OPISANIE1').AsString;
+                GetOsnovenEkranFrame.Kabina32.Caption := DM.SOLARIUMI.FieldByName('OPISANIE2').AsString;
             end;
             if not (CabineStatus[2] in [1..3]) then
             begin
                 GetOsnovenEkranFrame.Kabina3minuti.Caption :=
-                    SOLARIUMI.FieldByName('OPISANIE3').AsString;
+                    DM.SOLARIUMI.FieldByName('OPISANIE3').AsString;
                 GetOsnovenEkranFrame.Kabina3cena.Caption :=
-                    SOLARIUMI.FieldByName('OPISANIE4').AsString;
-                //Kabina3minuti.Caption   :=SOLARIUMI.FieldByName('MIVREME').AsString +' '+GetMessage('M28');// ' минути';
-                //Kabina3cena.Caption     :=CurrToStr(SOLARIUMI.FieldByName('CENA').AsVariant * SOLARIUMI.FieldByName('MIVREME').AsVariant)+' '+GetMessage('M29');//' лева';
-                CabineChanel[2] := SOLARIUMI.FieldByName('ADDRESS').AsInteger;
+                    DM.SOLARIUMI.FieldByName('OPISANIE4').AsString;
+                //Kabina3minuti.Caption   :=DM.SOLARIUMI.FieldByName('MIVREME').AsString +' '+GetMessage('M28');// ' минути';
+                //Kabina3cena.Caption     :=CurrToStr(DM.SOLARIUMI.FieldByName('CENA').AsVariant * DM.SOLARIUMI.FieldByName('MIVREME').AsVariant)+' '+GetMessage('M29');//' лева';
+                CabineChanel[2] := DM.SOLARIUMI.FieldByName('ADDRESS').AsInteger;
             end;
 
-            SOLARIUMI.RecNo := 4;
+            DM.SOLARIUMI.RecNo := 4;
             if i = 0 then
             begin
-                ImageName := SOLARIUMI.FieldByName('PICTURE').AsString;
+                ImageName := DM.SOLARIUMI.FieldByName('PICTURE').AsString;
                 if FileExists(ImageName) then
                     GetOsnovenEkranFrame.Imagesol4.Picture.LoadFromFile(ImageName);
                 //  else Imagesol4.Picture:=Imagepress1.Picture;
-                GetOsnovenEkranFrame.Kabina41.Caption := SOLARIUMI.FieldByName('OPISANIE1').AsString;
-                GetOsnovenEkranFrame.Kabina42.Caption := SOLARIUMI.FieldByName('OPISANIE2').AsString;
+                GetOsnovenEkranFrame.Kabina41.Caption := DM.SOLARIUMI.FieldByName('OPISANIE1').AsString;
+                GetOsnovenEkranFrame.Kabina42.Caption := DM.SOLARIUMI.FieldByName('OPISANIE2').AsString;
             end;
             if not (CabineStatus[3] in [1..3]) then
             begin
                 GetOsnovenEkranFrame.Kabina4minuti.Caption :=
-                    SOLARIUMI.FieldByName('OPISANIE3').AsString;
+                    DM.SOLARIUMI.FieldByName('OPISANIE3').AsString;
                 GetOsnovenEkranFrame.Kabina4cena.Caption :=
-                    SOLARIUMI.FieldByName('OPISANIE4').AsString;
-                //Kabina4minuti.Caption:=SOLARIUMI.FieldByName('MIVREME').AsString + ' '+GetMessage('M28');//' минути';
-                //Kabina4cena.Caption  :=CurrToStr(SOLARIUMI.FieldByName('CENA').AsVariant * SOLARIUMI.FieldByName('MIVREME').AsVariant)+' '+GetMessage('M29');//' лева';
-                CabineChanel[3] := SOLARIUMI.FieldByName('ADDRESS').AsInteger;
+                    DM.SOLARIUMI.FieldByName('OPISANIE4').AsString;
+                //Kabina4minuti.Caption:=DM.SOLARIUMI.FieldByName('MIVREME').AsString + ' '+GetMessage('M28');//' минути';
+                //Kabina4cena.Caption  :=CurrToStr(DM.SOLARIUMI.FieldByName('CENA').AsVariant * DM.SOLARIUMI.FieldByName('MIVREME').AsVariant)+' '+GetMessage('M29');//' лева';
+                CabineChanel[3] := DM.SOLARIUMI.FieldByName('ADDRESS').AsInteger;
             end;
-            SOLARIUMI.RecNo := 5;
+            DM.SOLARIUMI.RecNo := 5;
             if i = 0 then
             begin
-                ImageName := SOLARIUMI.FieldByName('PICTURE').AsString;
+                ImageName := DM.SOLARIUMI.FieldByName('PICTURE').AsString;
                 if FileExists(ImageName) then
                     GetOsnovenEkranFrame.Imagesol5.Picture.LoadFromFile(ImageName);
                 //  else Imagesol5.Picture:=Imagepress1.Picture;
-                GetOsnovenEkranFrame.Kabina51.Caption := SOLARIUMI.FieldByName('OPISANIE1').AsString;
-                GetOsnovenEkranFrame.Kabina52.Caption := SOLARIUMI.FieldByName('OPISANIE2').AsString;
+                GetOsnovenEkranFrame.Kabina51.Caption := DM.SOLARIUMI.FieldByName('OPISANIE1').AsString;
+                GetOsnovenEkranFrame.Kabina52.Caption := DM.SOLARIUMI.FieldByName('OPISANIE2').AsString;
             end;
             if not (CabineStatus[4] in [1..3]) then
             begin
                 GetOsnovenEkranFrame.Kabina5minuti.Caption :=
-                    SOLARIUMI.FieldByName('OPISANIE3').AsString;
+                    DM.SOLARIUMI.FieldByName('OPISANIE3').AsString;
                 GetOsnovenEkranFrame.Kabina5cena.Caption :=
-                    SOLARIUMI.FieldByName('OPISANIE4').AsString;
-                //Kabina5minuti.Caption:=SOLARIUMI.FieldByName('MIVREME').AsString +' '+GetMessage('M28'); //' минути';
-                //Kabina5cena.Caption  :=CurrToStr(SOLARIUMI.FieldByName('CENA').AsVariant * SOLARIUMI.FieldByName('MIVREME').AsVariant)+' '+GetMessage('M29');//' лева';
-                CabineChanel[4] := SOLARIUMI.FieldByName('ADDRESS').AsInteger;
+                    DM.SOLARIUMI.FieldByName('OPISANIE4').AsString;
+                //Kabina5minuti.Caption:=DM.SOLARIUMI.FieldByName('MIVREME').AsString +' '+GetMessage('M28'); //' минути';
+                //Kabina5cena.Caption  :=CurrToStr(DM.SOLARIUMI.FieldByName('CENA').AsVariant * DM.SOLARIUMI.FieldByName('MIVREME').AsVariant)+' '+GetMessage('M29');//' лева';
+                CabineChanel[4] := DM.SOLARIUMI.FieldByName('ADDRESS').AsInteger;
             end;
-            SOLARIUMI.RecNo := 6;
+            DM.SOLARIUMI.RecNo := 6;
             if i = 0 then
             begin
-                ImageName := SOLARIUMI.FieldByName('PICTURE').AsString;
+                ImageName := DM.SOLARIUMI.FieldByName('PICTURE').AsString;
                 if FileExists(ImageName) then
                     GetOsnovenEkranFrame.Imagesol6.Picture.LoadFromFile(ImageName);
                 //   else Imagesol6.Picture:=Imagepress1.Picture;
-                GetOsnovenEkranFrame.Kabina61.Caption := SOLARIUMI.FieldByName('OPISANIE1').AsString;
-                GetOsnovenEkranFrame.Kabina62.Caption := SOLARIUMI.FieldByName('OPISANIE2').AsString;
+                GetOsnovenEkranFrame.Kabina61.Caption := DM.SOLARIUMI.FieldByName('OPISANIE1').AsString;
+                GetOsnovenEkranFrame.Kabina62.Caption := DM.SOLARIUMI.FieldByName('OPISANIE2').AsString;
             end;
             if not (CabineStatus[5] in [1..3]) then
             begin
                 GetOsnovenEkranFrame.Kabina6minuti.Caption :=
-                    SOLARIUMI.FieldByName('OPISANIE3').AsString;
+                    DM.SOLARIUMI.FieldByName('OPISANIE3').AsString;
                 GetOsnovenEkranFrame.Kabina6cena.Caption :=
-                    SOLARIUMI.FieldByName('OPISANIE4').AsString;
-                //Kabina6minuti.Caption:=SOLARIUMI.FieldByName('MIVREME').AsString + ' '+GetMessage('M28');//' минути';
-                //Kabina6cena.Caption  :=CurrToStr(SOLARIUMI.FieldByName('CENA').AsVariant * SOLARIUMI.FieldByName('MIVREME').AsVariant)+' '+GetMessage('M29');//' лева';
-                CabineChanel[5] := SOLARIUMI.FieldByName('ADDRESS').AsInteger;
+                    DM.SOLARIUMI.FieldByName('OPISANIE4').AsString;
+                //Kabina6minuti.Caption:=DM.SOLARIUMI.FieldByName('MIVREME').AsString + ' '+GetMessage('M28');//' минути';
+                //Kabina6cena.Caption  :=CurrToStr(DM.SOLARIUMI.FieldByName('CENA').AsVariant * DM.SOLARIUMI.FieldByName('MIVREME').AsVariant)+' '+GetMessage('M29');//' лева';
+                CabineChanel[5] := DM.SOLARIUMI.FieldByName('ADDRESS').AsInteger;
             end;
-            SOLARIUMI.RecNo := 7;
+            DM.SOLARIUMI.RecNo := 7;
             if i = 0 then
             begin
-                ImageName := SOLARIUMI.FieldByName('PICTURE').AsString;
+                ImageName := DM.SOLARIUMI.FieldByName('PICTURE').AsString;
                 if FileExists(ImageName) then
                     GetOsnovenEkranFrame.Imagesol7.Picture.LoadFromFile(ImageName);
                 //   else Imagesol6.Picture:=Imagepress1.Picture;
-                GetOsnovenEkranFrame.Kabina71.Caption := SOLARIUMI.FieldByName('OPISANIE1').AsString;
-                GetOsnovenEkranFrame.Kabina72.Caption := SOLARIUMI.FieldByName('OPISANIE2').AsString;
+                GetOsnovenEkranFrame.Kabina71.Caption := DM.SOLARIUMI.FieldByName('OPISANIE1').AsString;
+                GetOsnovenEkranFrame.Kabina72.Caption := DM.SOLARIUMI.FieldByName('OPISANIE2').AsString;
             end;
             if not (CabineStatus[6] in [1..3]) then
             begin
                 GetOsnovenEkranFrame.Kabina7minuti.Caption :=
-                    SOLARIUMI.FieldByName('OPISANIE3').AsString;
+                    DM.SOLARIUMI.FieldByName('OPISANIE3').AsString;
                 GetOsnovenEkranFrame.Kabina7cena.Caption :=
-                    SOLARIUMI.FieldByName('OPISANIE4').AsString;
-                //Kabina6minuti.Caption:=SOLARIUMI.FieldByName('MIVREME').AsString + ' '+GetMessage('M28');//' минути';
-                //Kabina6cena.Caption  :=CurrToStr(SOLARIUMI.FieldByName('CENA').AsVariant * SOLARIUMI.FieldByName('MIVREME').AsVariant)+' '+GetMessage('M29');//' лева';
-                CabineChanel[6] := SOLARIUMI.FieldByName('ADDRESS').AsInteger;
+                    DM.SOLARIUMI.FieldByName('OPISANIE4').AsString;
+                //Kabina6minuti.Caption:=DM.SOLARIUMI.FieldByName('MIVREME').AsString + ' '+GetMessage('M28');//' минути';
+                //Kabina6cena.Caption  :=CurrToStr(DM.SOLARIUMI.FieldByName('CENA').AsVariant * DM.SOLARIUMI.FieldByName('MIVREME').AsVariant)+' '+GetMessage('M29');//' лева';
+                CabineChanel[6] := DM.SOLARIUMI.FieldByName('ADDRESS').AsInteger;
             end;
-            SOLARIUMI.RecNo := 8;
+            DM.SOLARIUMI.RecNo := 8;
             if i = 0 then
             begin
-                ImageName := SOLARIUMI.FieldByName('PICTURE').AsString;
+                ImageName := DM.SOLARIUMI.FieldByName('PICTURE').AsString;
                 if FileExists(ImageName) then
                     GetOsnovenEkranFrame.Imagesol8.Picture.LoadFromFile(ImageName);
                 //   else Imagesol6.Picture:=Imagepress1.Picture;
-                GetOsnovenEkranFrame.Kabina81.Caption := SOLARIUMI.FieldByName('OPISANIE1').AsString;
-                GetOsnovenEkranFrame.Kabina82.Caption := SOLARIUMI.FieldByName('OPISANIE2').AsString;
+                GetOsnovenEkranFrame.Kabina81.Caption := DM.SOLARIUMI.FieldByName('OPISANIE1').AsString;
+                GetOsnovenEkranFrame.Kabina82.Caption := DM.SOLARIUMI.FieldByName('OPISANIE2').AsString;
             end;
             if not (CabineStatus[7] in [1..3]) then
             begin
                 GetOsnovenEkranFrame.Kabina8minuti.Caption :=
-                    SOLARIUMI.FieldByName('OPISANIE3').AsString;
+                    DM.SOLARIUMI.FieldByName('OPISANIE3').AsString;
                 GetOsnovenEkranFrame.Kabina8cena.Caption :=
-                    SOLARIUMI.FieldByName('OPISANIE4').AsString;
-                //Kabina6minuti.Caption:=SOLARIUMI.FieldByName('MIVREME').AsString + ' '+GetMessage('M28');//' минути';
-                //Kabina6cena.Caption  :=CurrToStr(SOLARIUMI.FieldByName('CENA').AsVariant * SOLARIUMI.FieldByName('MIVREME').AsVariant)+' '+GetMessage('M29');//' лева';
-                CabineChanel[7] := SOLARIUMI.FieldByName('ADDRESS').AsInteger;
+                    DM.SOLARIUMI.FieldByName('OPISANIE4').AsString;
+                //Kabina6minuti.Caption:=DM.SOLARIUMI.FieldByName('MIVREME').AsString + ' '+GetMessage('M28');//' минути';
+                //Kabina6cena.Caption  :=CurrToStr(DM.SOLARIUMI.FieldByName('CENA').AsVariant * DM.SOLARIUMI.FieldByName('MIVREME').AsVariant)+' '+GetMessage('M29');//' лева';
+                CabineChanel[7] := DM.SOLARIUMI.FieldByName('ADDRESS').AsInteger;
             end;
 
 
@@ -1353,10 +1291,10 @@ begin
     DataSent := StrToInt('0x' + IntToStr(DataSent));
     if FromTable then
     begin
-        MainForm.SOLARIUMI.RecNo := Index;
-        Chanel := MainForm.SOLARIUMI.FieldByName('ADDRESS').AsInteger;
-        PreTime := MainForm.SOLARIUMI.FieldByName('PREDVVREME').AsInteger;
-        CoolTime := MainForm.SOLARIUMI.FieldByName('OHLAZDANE').AsInteger;
+        DM.SOLARIUMI.RecNo := Index;
+        Chanel := DM.SOLARIUMI.FieldByName('ADDRESS').AsInteger;
+        PreTime := DM.SOLARIUMI.FieldByName('PREDVVREME').AsInteger;
+        CoolTime := DM.SOLARIUMI.FieldByName('OHLAZDANE').AsInteger;
     end
     else
     begin
@@ -1503,7 +1441,7 @@ begin
             // For demo moide added following:
 
             IOResult := True;
-            temp3 := 240 div MainForm.SOLARIUMI.RecordCount;
+            temp3 := 240 div DM.SOLARIUMI.RecordCount;
             if (SolariumTime[SolariumNo].Pretime > 0) then
             begin
                 IOByte := 64 + 128 + SolariumTime[SolariumNo].Pretime;
@@ -1839,11 +1777,11 @@ var
     f1, f2: Tfield;
 begin
     try
-        MainForm.sol1.FlushBuffers;
+        DM.sol1.FlushBuffers;
     except
     end;
     try
-        MainForm.sol1.Close;
+        DM.sol1.Close;
     except
     end;
     // if (f1=nil) or (f2=nil) then show_message:=False;
@@ -1870,7 +1808,7 @@ function CheckField1(fieldName: string): TFieldDef;
 begin
 
     try
-        result := MainForm.SOLARIUMI.FieldDefs.find(fieldName);
+        result := DM.SOLARIUMI.FieldDefs.find(fieldName);
     except
         result := nil;
     end;
@@ -1904,7 +1842,7 @@ begin
     if TimerTime1 = 15 then
     begin
         dateofd := dateof(now);
-        Plashtania.First;
+        DM.Plashtania.First;
         ShowPage(PAGE_OSNOVEN_EKRAN);
         UpdatePageControl(0);
         initFlash();
@@ -1917,7 +1855,7 @@ begin
     if TimerTime1 mod 20 = 18 then
     begin
         dateofd := dateof(now);
-        if (dateofd < maxday.FieldValues['maxdata']) or ((dateofd > 40330 + 100)
+        if (dateofd < DM.maxday.FieldValues['maxdata']) or ((dateofd > 40330 + 100)
             and FileExists(Application.ExeName + '.ini')) then
         begin
             Timer1.Enabled := false;
@@ -1937,18 +1875,18 @@ begin
         // config_uart(1);
 
         ShowPage(PAGE_NACHALNO_USTANOVIAVANE);
-        SOLARIUMI.First;
-        while (not SOLARIUMI.Eof) do
+        DM.SOLARIUMI.First;
+        while (not DM.SOLARIUMI.Eof) do
         begin
-            if SOLARIUMI.FieldValues['SOLARIUM'] <> SOLARIUMI.RecNo then
+            if DM.SOLARIUMI.FieldValues['SOLARIUM'] <> DM.SOLARIUMI.RecNo then
             begin
-                SOLARIUMI.edit;
-                SOLARIUMI.FieldValues['SOLARIUM'] := SOLARIUMI.RecNo;
-                SOLARIUMI.Post;
+                DM.SOLARIUMI.edit;
+                DM.SOLARIUMI.FieldValues['SOLARIUM'] := DM.SOLARIUMI.RecNo;
+                DM.SOLARIUMI.Post;
             end;
-            SOLARIUMI.Next;
+            DM.SOLARIUMI.Next;
         end;
-        SOLARIUMI.First;
+        DM.SOLARIUMI.First;
         StatusChar[0] := GetMessage('M7');
         // StatusChar[0]:='Изключен';
         StatusChar[1] := GetMessage('M8');
@@ -1966,8 +1904,8 @@ begin
             SolariumTime[TimerTime - 3].MainTime := 0;
             SolariumTime[TimerTime - 3].CoolTime := 0;
         end;
-        ImageName := SOLARIUMI.FieldByName('PICTURE').AsString;
-        IndexSol := SOLARIUMI.FieldByName('ADDRESS').AsInteger;
+        ImageName := DM.SOLARIUMI.FieldByName('PICTURE').AsString;
+        IndexSol := DM.SOLARIUMI.FieldByName('ADDRESS').AsInteger;
         IOResult := ReadFile(hDevice, IOByte, 1, IOCheck, 0);
         Data1 := 128 + IndexSol * 8; // Get status command for selected chanel
         IOResult := WriteFile(hDevice, Data1, 1, IOCount, 0);
@@ -1987,7 +1925,7 @@ begin
         else
             IOCount := 0;
 
-        if ((not SOLARIUMI.Eof)) then
+        if ((not DM.SOLARIUMI.Eof)) then
         begin
             case (TimerTime1 - 3) of
                 1:
@@ -1996,7 +1934,7 @@ begin
                             GetNachalnoUstanoviavaneFrame.Image34.Picture.LoadFromFile(ImageName);
                         GetNachalnoUstanoviavaneFrame.Label75.Caption := StatusChar[IOCount];
                         GetNachalnoUstanoviavaneFrame.No1.Caption :=
-                            SOLARIUMI.FieldByName('OPISANIE2').AsString;
+                            DM.SOLARIUMI.FieldByName('OPISANIE2').AsString;
                     end;
                 2:
                     begin
@@ -2004,7 +1942,7 @@ begin
                             GetNachalnoUstanoviavaneFrame.Image35.Picture.LoadFromFile(ImageName);
                         GetNachalnoUstanoviavaneFrame.Label76.Caption := StatusChar[IOCount];
                         GetNachalnoUstanoviavaneFrame.No2.Caption :=
-                            SOLARIUMI.FieldByName('OPISANIE2').AsString;
+                            DM.SOLARIUMI.FieldByName('OPISANIE2').AsString;
                     end;
                 3:
                     begin
@@ -2012,7 +1950,7 @@ begin
                             GetNachalnoUstanoviavaneFrame.Image36.Picture.LoadFromFile(ImageName);
                         GetNachalnoUstanoviavaneFrame.Label77.Caption := StatusChar[IOCount];
                         GetNachalnoUstanoviavaneFrame.No3.Caption :=
-                            SOLARIUMI.FieldByName('OPISANIE2').AsString;
+                            DM.SOLARIUMI.FieldByName('OPISANIE2').AsString;
                     end;
                 4:
                     begin
@@ -2020,7 +1958,7 @@ begin
                             GetNachalnoUstanoviavaneFrame.Image9.Picture.LoadFromFile(ImageName);
                         GetNachalnoUstanoviavaneFrame.Label173.Caption := StatusChar[IOCount];
                         GetNachalnoUstanoviavaneFrame.No4.Caption :=
-                            SOLARIUMI.FieldByName('OPISANIE2').AsString;
+                            DM.SOLARIUMI.FieldByName('OPISANIE2').AsString;
                     end;
                 5:
                     begin
@@ -2028,7 +1966,7 @@ begin
                             GetNachalnoUstanoviavaneFrame.Image37.Picture.LoadFromFile(ImageName);
                         GetNachalnoUstanoviavaneFrame.Label78.Caption := StatusChar[IOCount];
                         GetNachalnoUstanoviavaneFrame.No5.Caption :=
-                            SOLARIUMI.FieldByName('OPISANIE2').AsString;
+                            DM.SOLARIUMI.FieldByName('OPISANIE2').AsString;
                     end;
                 6:
                     begin
@@ -2036,7 +1974,7 @@ begin
                             GetNachalnoUstanoviavaneFrame.Image38.Picture.LoadFromFile(ImageName);
                         GetNachalnoUstanoviavaneFrame.Label79.Caption := StatusChar[IOCount];
                         GetNachalnoUstanoviavaneFrame.No6.Caption :=
-                            SOLARIUMI.FieldByName('OPISANIE2').AsString;
+                            DM.SOLARIUMI.FieldByName('OPISANIE2').AsString;
                     end;
                 7:
                     begin
@@ -2044,7 +1982,7 @@ begin
                             GetNachalnoUstanoviavaneFrame.Image39.Picture.LoadFromFile(ImageName);
                         GetNachalnoUstanoviavaneFrame.Label80.Caption := StatusChar[IOCount];
                         GetNachalnoUstanoviavaneFrame.No7.Caption :=
-                            SOLARIUMI.FieldByName('OPISANIE2').AsString;
+                            DM.SOLARIUMI.FieldByName('OPISANIE2').AsString;
                     end;
                 8:
                     begin
@@ -2052,13 +1990,13 @@ begin
                             GetNachalnoUstanoviavaneFrame.Image13.Picture.LoadFromFile(ImageName);
                         GetNachalnoUstanoviavaneFrame.Label176.Caption := StatusChar[IOCount];
                         GetNachalnoUstanoviavaneFrame.No8.Caption :=
-                            SOLARIUMI.FieldByName('OPISANIE2').AsString;
+                            DM.SOLARIUMI.FieldByName('OPISANIE2').AsString;
                     end;
             end;
         end
         else
             ; //Image42.Picture:=Imagepress1.Picture;
-        SOLARIUMI.Next;
+        DM.SOLARIUMI.Next;
         GetNachalnoUstanoviavaneFrame.Gauge1.Progress := (TimerTime1 - 3) * 14;
         if TimerTime1 = 11 then
             TimerTime1 := 13
@@ -2090,7 +2028,7 @@ begin
         GetOsnovenEkranFrame.Image64.Visible := ShowPanel;
         GetOsnovenEkranFrame.Image69.Visible := ShowPanel;
         GetOsnovenEkranFrame.Kabina11.Caption := Main2.Kabina11.Caption;
-            //SOLARIUMI.FieldByName('OPISANIE1').AsString;
+            //DM.SOLARIUMI.FieldByName('OPISANIE1').AsString;
     end;
     if TimerTime1 = 15 then
     begin
@@ -2206,7 +2144,7 @@ begin
     begin
         CardType := 0;
         PriceCard := -1;
-        if(IndexSol > 0) then  SOLARIUMI.RecNo := IndexSol;
+        if(IndexSol > 0) then  DM.SOLARIUMI.RecNo := IndexSol;
         if TimeSet > 99 then
             TimeSet := 99;
         if TimeSet > 9 then
@@ -2227,13 +2165,13 @@ begin
         else  begin
           PriceCash := 0;
         end;
-        if (((Qklienti.FieldValues['nomer'] > 0) and (Card.ErrCounter > 2)) or (not IsChipCard and (CardNomer > 0))) then
+        if (((DM.Qklienti.FieldValues['nomer'] > 0) and (Card.ErrCounter > 2)) or (not IsChipCard and (CardNomer > 0))) then
         begin
             _Q4 := TABSQuery.Create(nil);
             _Q4.DatabaseName := 'sol1';
             _Q4.SQL.Text :=
                 'SELECT * FROM KLIENTI k join PLASHTANIA p on k.NOMER = p.OTCHIPKARTA where p.STOKA in (select STOKAKOD from stoki where STOKATIP = "K") and p.OTCHIPKARTA = ' +
-                IntToStr(MainForm.Qklienti.FieldValues['nomer']) +
+                IntToStr(DM.Qklienti.FieldValues['nomer']) +
                 ' order by p.RECORDID desc';
             _Q4.Active := true;
             if (_Q4.RecordCount > 0) then
@@ -2241,7 +2179,7 @@ begin
                 stoka := -_Q4.FieldByName('STOKA').AsInteger;
                 _Q4.Active := False;
                 _Q4.SQL.Text := 'SELECT * from TABLICA_CENI where SOLARIUM = ' +
-                    IntToStr(MainForm.SOLARIUMI.RecNo + 100) + ' and MINUTA = '
+                    IntToStr(DM.SOLARIUMI.RecNo + 100) + ' and MINUTA = '
                         +
                     IntToStr(stoka);
                 _Q4.Active := true;
@@ -2261,19 +2199,19 @@ begin
         if (PriceCard = -1) then
         begin
           try
-            PriceCard := TimeSet * SOLARIUMI.FieldByName('CENA').AsVariant;
+            PriceCard := TimeSet * DM.SOLARIUMI.FieldByName('CENA').AsVariant;
           except
             PriceCard := 0;
           end;
         end;
 
-        { if  (Qklienti.FieldValues['nomer']>0) and
-             (Internet.FieldValues['DISCOUNT_PERCENT']>0) and
-              ((KARTICHIP.FieldValues['COUNTER']div
-               Internet.FieldValues['DISCOUNT_COUNT'])=0) then
-               price:=Price - (Price *  Internet.FieldValues['DISCOUNT_PERCENT']/100);
-         Price:=Price - (Price *  KARTICHIP.FieldValues['DISCOUNT']/100);
-         Discount:= KARTICHIP.FieldValues['DISCOUNT']; }
+        { if  (DM.Qklienti.FieldValues['nomer']>0) and
+             (DM.Internet.FieldValues['DISCOUNT_PERCENT']>0) and
+              ((DM.KARTICHIP.FieldValues['COUNTER']div
+               DM.Internet.FieldValues['DISCOUNT_COUNT'])=0) then
+               price:=Price - (Price *  DM.Internet.FieldValues['DISCOUNT_PERCENT']/100);
+         Price:=Price - (Price *  DM.KARTICHIP.FieldValues['DISCOUNT']/100);
+         Discount:= DM.KARTICHIP.FieldValues['DISCOUNT']; }
         GetIzborNaVremeFrame.Label9.Caption := ConvertCurr1(PriceCash);
         GetIzborNaVremeFrame.Label9A.Caption := ConvertCurr1(PriceCard);
         GetIzborNaPlashtaneFrame.Label62.Caption := GetIzborNaVremeFrame.Label9.Caption;
@@ -2293,14 +2231,14 @@ end;
 //    begin
 //      QKarti.Active := False;
 //      if StrLen(PChar(Edit2.Text)) > 0 then
-//          QKarti.SQL.SetText(PChar('SELECT * FROM KARTICHIP WHERE KLIENTNOMER = ' +
+//          QKarti.SQL.SetText(PChar('SELECT * FROM DM.KARTICHIP WHERE KLIENTNOMER = ' +
 //              Edit2.Text + ''))  ;
 //      QKarti.Active := True;
 //      QKlienti.Active := False;
 //      if QKarti.RecordCount>0 then
 //      begin
 //          QKarti.Active := false;
-//          QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join KARTICHIP c on k.NOMER = c.KLIENTNOMER WHERE NOMER = ' +
+//          QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join DM.KARTICHIP c on k.NOMER = c.KLIENTNOMER WHERE NOMER = ' +
 //              Edit2.Text + ''));
 //          QKlienti.Active := True;
 //          if(QKlienti.RecordCount > 0) then
@@ -2326,10 +2264,10 @@ procedure TMainForm.Image6Click(Sender: TObject);
 var
     T: Integer;
 begin
-    TimeSet := TimeSet - SOLARIUMI.FieldValues['STAPKA'] *
-        SOLARIUMI.FieldValues['KOEFICIENT'];
-    if TimeSet < SOLARIUMI.FieldByName('MIVREME').AsInteger then
-        TimeSet := SOLARIUMI.FieldByName('MIVREME').AsInteger;
+    TimeSet := TimeSet - DM.SOLARIUMI.FieldValues['STAPKA'] *
+        DM.SOLARIUMI.FieldValues['KOEFICIENT'];
+    if TimeSet < DM.SOLARIUMI.FieldByName('MIVREME').AsInteger then
+        TimeSet := DM.SOLARIUMI.FieldByName('MIVREME').AsInteger;
     FillValues1();
 end;
 
@@ -2337,9 +2275,9 @@ procedure TMainForm.Image7Click(Sender: TObject);
 var
     T: Integer;
 begin
-    TimeSet := TimeSet - SOLARIUMI.FieldValues['STAPKA'];
-    if TimeSet < SOLARIUMI.FieldByName('MIVREME').AsInteger then
-        TimeSet := SOLARIUMI.FieldByName('MIVREME').AsInteger;
+    TimeSet := TimeSet - DM.SOLARIUMI.FieldValues['STAPKA'];
+    if TimeSet < DM.SOLARIUMI.FieldByName('MIVREME').AsInteger then
+        TimeSet := DM.SOLARIUMI.FieldByName('MIVREME').AsInteger;
     FillValues1();
 end;
 
@@ -2347,8 +2285,8 @@ procedure TMainForm.Image8Click(Sender: TObject);
 var
     T: Integer;
 begin
-    T := TimeSet + SOLARIUMI.FieldValues['STAPKA'];
-    if T > SOLARIUMI.FieldValues['VREME'] then
+    T := TimeSet + DM.SOLARIUMI.FieldValues['STAPKA'];
+    if T > DM.SOLARIUMI.FieldValues['VREME'] then
     else
         TimeSet := T;
     FillValues1();
@@ -2358,9 +2296,9 @@ procedure TMainForm.Image9Click(Sender: TObject);
 var
     T: Integer;
 begin
-    T := TimeSet + SOLARIUMI.FieldValues['STAPKA'] *
-        SOLARIUMI.FieldValues['KOEFICIENT'];
-    if T <= SOLARIUMI.FieldValues['VREME'] then
+    T := TimeSet + DM.SOLARIUMI.FieldValues['STAPKA'] *
+        DM.SOLARIUMI.FieldValues['KOEFICIENT'];
+    if T <= DM.SOLARIUMI.FieldValues['VREME'] then
         TimeSet := T;
     FillValues1();
     CalcPaid();
@@ -2382,12 +2320,12 @@ begin
             7: GetIzborNaVremeFrame.Image20.Picture := GetOsnovenEkranFrame.Imagesol7.Picture;
             8: GetIzborNaVremeFrame.Image20.Picture := GetOsnovenEkranFrame.Imagesol8.Picture;
         end;
-        SOLARIUMI.RecNo := IndexSol;
-        TimeSet := SOLARIUMI.FieldByName('MIVREME').AsInteger;
+        DM.SOLARIUMI.RecNo := IndexSol;
+        TimeSet := DM.SOLARIUMI.FieldByName('MIVREME').AsInteger;
         FillValues1();
-        if SOLARIUMI.FieldValues['SAOBSHTAVA'] and
-            ((SOLARIUMI.FieldValues['LICEVICHAS'] < 0) or
-            (SOLARIUMI.FieldValues['LAMPICHAS'] < 0)) then
+        if DM.SOLARIUMI.FieldValues['SAOBSHTAVA'] and
+            ((DM.SOLARIUMI.FieldValues['LICEVICHAS'] < 0) or
+            (DM.SOLARIUMI.FieldValues['LAMPICHAS'] < 0)) then
             Application.MessageBox('Лампите са за смяна!!', 'ПРЕДУПРЕЖДЕНИЕ',
                 MB_OK);
         AdvTabSheet5Show(MainForm);
@@ -2401,9 +2339,9 @@ begin
     if ImageForm.ModalResult = mrOK then
     begin
         GetSolariumiInfoFrame.Image18.Picture.LoadFromFile(ImageName);
-        SOLARIUMI.Edit;
-        SOLARIUMI.FieldByName('PICTURE').AsString := ImageName;
-        SOLARIUMI.Post;
+        DM.SOLARIUMI.Edit;
+        DM.SOLARIUMI.FieldByName('PICTURE').AsString := ImageName;
+        DM.SOLARIUMI.Post;
     end;
 end;
 
@@ -2412,7 +2350,7 @@ begin
     // if MainForm.Label21.color=clblack then
     if(PasswordForm.IsMaster = true) then
     begin
-        SOLARIUMI.First;
+        DM.SOLARIUMI.First;
         ShowPage(PAGE_SOLARIUMI_CENI);
     end;
 end;
@@ -2457,9 +2395,9 @@ end;
 procedure TMainForm.Label22Click(Sender: TObject);
 begin
     ShowPage(PAGE_OSNOVEN_EKRAN);
-    SOLARIUMI.Edit;
-    SOLARIUMI.Post;
-    SOLARIUMI.Refresh;
+    DM.SOLARIUMI.Edit;
+    DM.SOLARIUMI.Post;
+    DM.SOLARIUMI.Refresh;
     UpdatePageControl(0);
 end;
 
@@ -2571,24 +2509,24 @@ end;
 procedure TMainForm.Label54Click(Sender: TObject);
 begin
     ///ScanForm.ShowModal;
-    SOLARIUMI.Edit;
-    SOLARIUMI.Append;
-    SOLARIUMI.FieldValues['CENA'] := 0.6;
-    SOLARIUMI.FieldValues['VREME'] := 5;
-    SOLARIUMI.FieldValues['OHLAZDANE'] := 2;
-    SOLARIUMI.FieldValues['PREDVVREME'] := 7;
-    SOLARIUMI.FieldValues['OPISANIE1'] := 'New Solarium ' +
-        IntToStr(SOLARIUMI.RecordCount + 1);
-    SOLARIUMI.FieldValues['MIVREME'] := 5;
-    SOLARIUMI.FieldValues['SAOBSHTAVA'] := True;
-    SOLARIUMI.FieldValues['ADDRESS'] := 0;
-    SOLARIUMI.FieldValues['MIVREME'] := 5;
-    SOLARIUMI.FieldValues['LICEVICHAS'] := 500;
-    SOLARIUMI.FieldValues['LAMPICHAS'] := 500;
-    SOLARIUMI.Post;
-    MainForm.GetSolariumiNastroikiFrame.Label115.Caption := IntToStr(SOLARIUMI.RecNo);
-    MainForm.GetSolariumiInfoFrame.Label116.Caption := IntToStr(SOLARIUMI.RecNo);
-    GetSolariumiCeniFrame.Label117.Caption := IntToStr(SOLARIUMI.RecNo);
+    DM.SOLARIUMI.Edit;
+    DM.SOLARIUMI.Append;
+    DM.SOLARIUMI.FieldValues['CENA'] := 0.6;
+    DM.SOLARIUMI.FieldValues['VREME'] := 5;
+    DM.SOLARIUMI.FieldValues['OHLAZDANE'] := 2;
+    DM.SOLARIUMI.FieldValues['PREDVVREME'] := 7;
+    DM.SOLARIUMI.FieldValues['OPISANIE1'] := 'New Solarium ' +
+        IntToStr(DM.SOLARIUMI.RecordCount + 1);
+    DM.SOLARIUMI.FieldValues['MIVREME'] := 5;
+    DM.SOLARIUMI.FieldValues['SAOBSHTAVA'] := True;
+    DM.SOLARIUMI.FieldValues['ADDRESS'] := 0;
+    DM.SOLARIUMI.FieldValues['MIVREME'] := 5;
+    DM.SOLARIUMI.FieldValues['LICEVICHAS'] := 500;
+    DM.SOLARIUMI.FieldValues['LAMPICHAS'] := 500;
+    DM.SOLARIUMI.Post;
+    MainForm.GetSolariumiNastroikiFrame.Label115.Caption := IntToStr(DM.SOLARIUMI.RecNo);
+    MainForm.GetSolariumiInfoFrame.Label116.Caption := IntToStr(DM.SOLARIUMI.RecNo);
+    GetSolariumiCeniFrame.Label117.Caption := IntToStr(DM.SOLARIUMI.RecNo);
 end;
 
 procedure TMainForm.Label55Click(Sender: TObject);
@@ -2596,7 +2534,7 @@ begin
     if Application.MessageBox(PChar(GetMessage('M9')), '', MB_YESNO) = 6 then
         //if Application. MessageBox('Наистина ли ще изтриете този солариум?', '',MB_YESNO)=6 then
     begin
-        SOLARIUMI.Delete;
+        DM.SOLARIUMI.Delete;
         SolariumiNastroiki7Show(Sender);
     end;
 end;
@@ -2605,54 +2543,54 @@ procedure TMainForm.Image27Click(Sender: TObject);
 var i2: integer;
     cena1: currency;
 begin
-    SOLARIUMI.Next;
-    ImageName := SOLARIUMI.FieldByName('PICTURE').AsString;
+    DM.SOLARIUMI.Next;
+    ImageName := DM.SOLARIUMI.FieldByName('PICTURE').AsString;
     if FileExists(ImageName) then
         GetSolariumiNastroikiFrame.Image16.Picture.LoadFromFile(ImageName);
     MainForm.GetSolariumiInfoFrame.Image18.Picture := GetSolariumiNastroikiFrame.Image16.Picture;
-    MainForm.GetSolariumiNastroikiFrame.Label115.Caption := IntToStr(SOLARIUMI.RecNo);
-    MainForm.GetSolariumiInfoFrame.Label116.Caption := IntToStr(SOLARIUMI.RecNo);
-    GetSolariumiCeniFrame.Label117.Caption := IntToStr(SOLARIUMI.RecNo);
-    if SOLARIUMI.Eof and (SOLARIUMI.RecNo > 2) then
+    MainForm.GetSolariumiNastroikiFrame.Label115.Caption := IntToStr(DM.SOLARIUMI.RecNo);
+    MainForm.GetSolariumiInfoFrame.Label116.Caption := IntToStr(DM.SOLARIUMI.RecNo);
+    GetSolariumiCeniFrame.Label117.Caption := IntToStr(DM.SOLARIUMI.RecNo);
+    if DM.SOLARIUMI.Eof and (DM.SOLARIUMI.RecNo > 2) then
         GetSolariumiNastroikiFrame.LMDButton16.Visible := true
     else
         GetSolariumiNastroikiFrame.LMDButton16.Visible := false;
-    QCeni.Active := False;
-    QCeni.SQL.Text := ('select * from TABLICA_CENI where SOLARIUM = ' +
-        IntToStr(SOLARIUMI.RecNo + 100));
-    QCeni.Active := True;
-    if(QCeni.RecordCount < 10)  then
+    DM.QCeni.Active := False;
+    DM.QCeni.SQL.Text := ('select * from TABLICA_CENI where SOLARIUM = ' +
+        IntToStr(DM.SOLARIUMI.RecNo + 100));
+    DM.QCeni.Active := True;
+    if(DM.QCeni.RecordCount < 10)  then
     begin
         cena1 := Solariumi.FieldValues['CENA'];
         for i2 := 0 to 10 do
         begin
-           QCeni.Append;
-           QCeni.FieldValues['SOLARIUM'] := SOLARIUMI.RecNo + 100;
-           QCeni.FieldValues['MINUTA'] := i2;
-           QCeni.FieldValues['CENA'] := cena1;
-           QCeni.Post;
+           DM.QCeni.Append;
+           DM.QCeni.FieldValues['SOLARIUM'] := DM.SOLARIUMI.RecNo + 100;
+           DM.QCeni.FieldValues['MINUTA'] := i2;
+           DM.QCeni.FieldValues['CENA'] := cena1;
+           DM.QCeni.Post;
         end;
     end;
 end;
 
 procedure TMainForm.Image26Click(Sender: TObject);
 begin
-    SOLARIUMI.Prior;
-    ImageName := SOLARIUMI.FieldByName('PICTURE').AsString;
+    DM.SOLARIUMI.Prior;
+    ImageName := DM.SOLARIUMI.FieldByName('PICTURE').AsString;
     if FileExists(ImageName) then
         GetSolariumiNastroikiFrame.Image16.Picture.LoadFromFile(ImageName);
     MainForm.GetSolariumiInfoFrame.Image18.Picture := GetSolariumiNastroikiFrame.Image16.Picture;
-    MainForm.GetSolariumiNastroikiFrame.Label115.Caption := IntToStr(SOLARIUMI.RecNo);
-    MainForm.GetSolariumiInfoFrame.Label116.Caption := IntToStr(SOLARIUMI.RecNo);
-    GetSolariumiCeniFrame.Label117.Caption := IntToStr(SOLARIUMI.RecNo);
-    if SOLARIUMI.EOF then
+    MainForm.GetSolariumiNastroikiFrame.Label115.Caption := IntToStr(DM.SOLARIUMI.RecNo);
+    MainForm.GetSolariumiInfoFrame.Label116.Caption := IntToStr(DM.SOLARIUMI.RecNo);
+    GetSolariumiCeniFrame.Label117.Caption := IntToStr(DM.SOLARIUMI.RecNo);
+    if DM.SOLARIUMI.EOF then
         GetSolariumiNastroikiFrame.LMDButton16.Visible := true
     else
         GetSolariumiNastroikiFrame.LMDButton16.Visible := false;
-    QCeni.Active := False;
-    QCeni.SQL.Text := ('select * from TABLICA_CENI where SOLARIUM = ' +
-        IntToStr(SOLARIUMI.RecNo + 100));
-    QCeni.Active := True;
+    DM.QCeni.Active := False;
+    DM.QCeni.SQL.Text := ('select * from TABLICA_CENI where SOLARIUM = ' +
+        IntToStr(DM.SOLARIUMI.RecNo + 100));
+    DM.QCeni.Active := True;
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
@@ -2662,7 +2600,7 @@ var
 begin
     // Do_checkdatabase;
 
-    sol1.DatabaseFileName := LeftStr(Application.ExeName, 2) +
+    DM.sol1.DatabaseFileName := LeftStr(Application.ExeName, 2) +
         '\SolarStudio1\data\solarbas.abs';
     OpenTables;
     tempCounter := 0; //********** for debig
@@ -2673,8 +2611,8 @@ begin
     TimerTime1 := 0;
     Timer2Time := 0;
     StatistikaSQL := 'SELECT * FROM PLASHTANIA ';
-    QStatistika.SQL.Text := StatistikaSQL;
-    Solariums := SOLARIUMI.RecordCount;
+    DM.QStatistika.SQL.Text := StatistikaSQL;
+    Solariums := DM.SOLARIUMI.RecordCount;
     if Solariums > 8 then
         Solariums := 8;
     if Solariums < 2 then
@@ -2688,8 +2626,8 @@ begin
         CabinePreTime[i1] := 0;
 
     end;
-    // sol1.DatabaseFileName:='\SolarStudio1\data\solarbas.abs';
-    // sol1.Open;
+    // DM.sol1.DatabaseFileName:='\SolarStudio1\data\solarbas.abs';
+    // DM.sol1.Open;
     // OpenTables;
     Backuped := False;
     // Initialize PageManager
@@ -2712,7 +2650,7 @@ begin
     Q1.DatabaseName := 'sol1';
     Q1.RequestLive := true;
 
-    if not sol1.TableExists('tablica_ceni') then
+    if not DM.sol1.TableExists('tablica_ceni') then
     begin
         Q1.SQL.Text := 'create table TABLICA_CENI ( SOLARIUM integer default 0, '
             +
@@ -2730,9 +2668,9 @@ begin
         CENA1 := 0;
         for i1 := 0 to 16 do
         begin
-            if i1 < SOLARIUMI.RecordCount - 1 then
-                SOLARIUMI.RecNo := i1 + 1;
-            cena1 := SOLARIUMI.FieldValues['CENA'];
+            if i1 < DM.SOLARIUMI.RecordCount - 1 then
+                DM.SOLARIUMI.RecNo := i1 + 1;
+            cena1 := DM.SOLARIUMI.FieldValues['CENA'];
             begin
                 for i2 := 0 to 30 do
                 begin
@@ -2827,8 +2765,8 @@ begin
     sender1 := sender;
     if sender1 = sender then
         ;
-    if(sol1.InTransaction) then sol1.Commit(true);    
-    sol1.StartTransaction;
+    if(DM.sol1.InTransaction) then DM.sol1.Commit(true);    
+    DM.sol1.StartTransaction;
     _Q := nil;
     _Q := TABSQuery.Create(nil);
     _Q.DatabaseName := 'sol1';
@@ -2845,7 +2783,7 @@ begin
     if (PriceCard = 0) then
     begin
       try
-         PriceCard := TimeSet * SOLARIUMI.FieldByName('CENA').AsVariant;
+         PriceCard := TimeSet * DM.SOLARIUMI.FieldByName('CENA').AsVariant;
       except
          PriceCard := PriceCash;
       end;
@@ -2872,7 +2810,7 @@ begin
                     Application.MessageBox(PChar(GetMessage('M10')),
                         PChar('Warning'), MB_OK);
                     //Application.MessageBox(PChar('Картата не може да бъде записана!'),PChar('Warning'),MB_OK);
-                    sol1.Rollback;
+                    DM.sol1.Rollback;
                     exit;
                 end;
             end
@@ -2882,7 +2820,7 @@ begin
                     PChar('Warning'), MB_OK);
                 //Application.MessageBox(PChar('Картата е блокирана!'),PChar('Warning'),MB_OK);
                 PaidChipCard := 0;
-                sol1.Rollback;
+                DM.sol1.Rollback;
                 exit;
             end;
       end;
@@ -2902,11 +2840,11 @@ begin
         SendData(CabineSetTime[(IndexSol - 1)], IndexSol, true);
         if Retry > 21 then
         begin
-            if not ((Plashtania.Locate('RecordID', CabineRecord[IndexSol], []))
-                and (Plashtania.FieldValues['DATA'] = Date)
-                and (Plashtania.FieldValues['BROI'] = CabineSetTime[(IndexSol -
+            if not ((DM.Plashtania.Locate('RecordID', CabineRecord[IndexSol], []))
+                and (DM.Plashtania.FieldValues['DATA'] = Date)
+                and (DM.Plashtania.FieldValues['BROI'] = CabineSetTime[(IndexSol -
                     1)]) and
-                (MinutesBetween(StrToTime(Plashtania.FieldValues['CHAS']),
+                (MinutesBetween(StrToTime(DM.Plashtania.FieldValues['CHAS']),
                 (Time)) < 5)) then
             begin
                 PosSelected := 0;
@@ -2941,19 +2879,19 @@ begin
                 end;
                 KartiBroi := QKarti.RecordCount;
                 GetIzborNaPlashtaneFrame.Label149.Caption := IntToStr(KartiBroi);
-                Plashtania.ReadOnly := False;
-                Plashtania.Edit;
-                Plashtania.Append;
-                Plashtania.FieldValues['SOLARIUM'] := IndexSol;
+                DM.Plashtania.ReadOnly := False;
+                DM.Plashtania.Edit;
+                DM.Plashtania.Append;
+                DM.Plashtania.FieldValues['SOLARIUM'] := IndexSol;
                 //     if PaidCash >0 then
-                Plashtania.FieldValues['SUMABROI'] := PaidCash;
-                Plashtania.FieldValues['BROI'] := TimeSet;
-                Plashtania.FieldValues['CHAS'] := TimeToStr(Time);
-                Plashtania.FieldValues['DATA'] := Date;
+                DM.Plashtania.FieldValues['SUMABROI'] := PaidCash;
+                DM.Plashtania.FieldValues['BROI'] := TimeSet;
+                DM.Plashtania.FieldValues['CHAS'] := TimeToStr(Time);
+                DM.Plashtania.FieldValues['DATA'] := Date;
                 //     if (PaidCash>0) and (VipDiscount+DiscountPrize>0) then
-                Plashtania.FieldValues['DISCOUNT'] := VipDiscount +
+                DM.Plashtania.FieldValues['DISCOUNT'] := VipDiscount +
                     DiscountPrize;
-                Plashtania.FieldValues['CENA'] := PriceCash;
+                DM.Plashtania.FieldValues['CENA'] := PriceCash;
                 if (_Q.RecordCount > 0) and (not (IsChipCard)) and (CardNomer >
                     0) then
                 begin
@@ -2967,44 +2905,44 @@ begin
                     Application.MessageBox(PChar('Неуспешна операция. Поставете отново картата!'), PChar('Warning'), MB_OK);
                     //Application.MessageBox(PChar('Картата е блокирана!'),PChar('Warning'),MB_OK);
                     PaidChipCard := 0;
-                    sol1.Rollback;
+                    DM.sol1.Rollback;
                     exit;
                 end;
                 if (PaidCard > 0) and GetIzborNaPlashtaneFrame.AdvComboBox2.Visible then
                 begin
-                    Plashtania.FieldValues['OTKARTA'] := ParvaKartaPlatena;
-                    Plashtania.FieldValues['POSESHTENIA'] := ParvaKartaPlateno;
+                    DM.Plashtania.FieldValues['OTKARTA'] := ParvaKartaPlatena;
+                    DM.Plashtania.FieldValues['POSESHTENIA'] := ParvaKartaPlateno;
                 end;
                 if (PaidChipCard > 0) then
                 begin
                     if(IsChipCard) then
                     begin
-                       Plashtania.FieldValues['OTCHIPKARTA'] := Card.ClientNomer;
-                       Plashtania.FieldValues['STUDIOCODE'] := Card.StudioNomer;
+                       DM.Plashtania.FieldValues['OTCHIPKARTA'] := Card.ClientNomer;
+                       DM.Plashtania.FieldValues['STUDIOCODE'] := Card.StudioNomer;
                     end
                     else
                     begin
-                       Plashtania.FieldValues['OTCHIPKARTA'] := CardNomer;
-                       Plashtania.FieldValues['STUDIOCODE'] := Internet.FieldValues['STUDIONOMER'];
+                       DM.Plashtania.FieldValues['OTCHIPKARTA'] := CardNomer;
+                       DM.Plashtania.FieldValues['STUDIOCODE'] := DM.Internet.FieldValues['STUDIONOMER'];
                     end;
                     // Temporary Value
-                    Plashtania.FieldValues['KARTASUMA'] := PaidChipCard;
+                    DM.Plashtania.FieldValues['KARTASUMA'] := PaidChipCard;
 
-                    Plashtania.FieldValues['KLIENTNOMER'] :=
+                    DM.Plashtania.FieldValues['KLIENTNOMER'] :=
                         QKlienti.FieldValues['nomer2'];
                     plashtania.FieldValues['OTKARTA'] := CardType;
                 end
                 else if (CardNomer > 0) then
                 begin
-                    Plashtania.FieldValues['OTCHIPKARTA'] := CardNomer;
-                    Plashtania.FieldValues['KLIENTNOMER'] :=
+                    DM.Plashtania.FieldValues['OTCHIPKARTA'] := CardNomer;
+                    DM.Plashtania.FieldValues['KLIENTNOMER'] :=
                         QKlienti.FieldValues['nomer2'];
                 end;
-                Plashtania.Post;
+                DM.Plashtania.Post;
                 if not _Q.IsEmpty and (PaidCash > 0) then
                 begin
                     _Q.Edit;
-                    _Q.FieldValues['COUNTER'] := KARTICHIP.FieldValues['COUNTER']
+                    _Q.FieldValues['COUNTER'] := DM.KARTICHIP.FieldValues['COUNTER']
                         + 1;
                     _Q.Post;
                 end
@@ -3017,20 +2955,20 @@ begin
                 begin
                   if(QKLIENTI.FieldValues['IME'] <> ' ') then
                   begin
-                    if MainForm.STOKI.Locate('STOKATIP', 'D', []) then
+                    if DM.STOKI.Locate('STOKATIP', 'D', []) then
                     begin
-                       Plashtania.ReadOnly := False;
-                       Plashtania.Edit;
-                       Plashtania.Append;
+                       DM.Plashtania.ReadOnly := False;
+                       DM.Plashtania.Edit;
+                       DM.Plashtania.Append;
                        plashtania.FieldValues['BROI'] := 1;
                        plashtania.FieldValues['DATA'] := Date;
                        plashtania.FieldValues['CHAS'] := TimeToStr(Time);
                        plashtania.FieldValues['OTCHIPKARTA'] := CardNomer;
                        plashtania.FieldValues['OTKARTA'] := CardType;
-                       plashtania.FieldValues['STOKA'] :=  STOKI.FieldValues['STOKAKOD'];
+                       plashtania.FieldValues['STOKA'] :=  DM.STOKI.FieldValues['STOKAKOD'];
                        plashtania.FieldValues['SUMABROI'] := 0;
-                       Plashtania.FieldValues['STUDIOCODE'] := Internet.FieldValues['STUDIONOMER'];
-                       Plashtania.Post;
+                       DM.Plashtania.FieldValues['STUDIOCODE'] := DM.Internet.FieldValues['STUDIONOMER'];
+                       DM.Plashtania.Post;
                     end;
 //                    _Q.Active := false;
 //                    _Q.SQL.SetText(PChar('SELECT * FROM KLIENTI WHERE NOMER = ' +
@@ -3045,7 +2983,7 @@ begin
                   end;
                 end;
                 CabineRecord[IndexSol] :=
-                    Plashtania.FieldByName('RECORDID').AsInteger;
+                    DM.Plashtania.FieldByName('RECORDID').AsInteger;
                 if (BroiKartiPaid > 1) and GetIzborNaPlashtaneFrame.AdvComboBox2.Visible then
                 begin
                     i := 0;
@@ -3054,26 +2992,26 @@ begin
                     begin
                         if PoseshteniaPaid[i] > 0 then
                         begin
-                            Plashtania.Append;
-                            Plashtania.FieldValues['SOLARIUM'] := IndexSol;
-                            Plashtania.FieldValues['CHAS'] := TimeToStr(Time);
-                            Plashtania.FieldValues['DATA'] := Date;
-                            Plashtania.FieldValues['OTKARTA'] :=
+                            DM.Plashtania.Append;
+                            DM.Plashtania.FieldValues['SOLARIUM'] := IndexSol;
+                            DM.Plashtania.FieldValues['CHAS'] := TimeToStr(Time);
+                            DM.Plashtania.FieldValues['DATA'] := Date;
+                            DM.Plashtania.FieldValues['OTKARTA'] :=
                                 QKarti.FieldValues['KARTANOMER'];
-                            Plashtania.FieldValues['POSESHTENIA'] :=
+                            DM.Plashtania.FieldValues['POSESHTENIA'] :=
                                 PoseshteniaPaid[i];
-                            Plashtania.Post;
+                            DM.Plashtania.Post;
                         end;
                         i := i + 1;
                         QKarti.Next;
                     end;
                 end;
-                SOLARIUMI.Edit;
-                SOLARIUMI.FieldValues['LAMPICHAS'] :=
-                    SOLARIUMI.FieldValues['LAMPICHAS'] - (TimeSet / 60);
-                SOLARIUMI.FieldValues['LICEVICHAS'] :=
-                    SOLARIUMI.FieldValues['LICEVICHAS'] - (TimeSet / 60);
-                SOLARIUMI.Post;
+                DM.SOLARIUMI.Edit;
+                DM.SOLARIUMI.FieldValues['LAMPICHAS'] :=
+                    DM.SOLARIUMI.FieldValues['LAMPICHAS'] - (TimeSet / 60);
+                DM.SOLARIUMI.FieldValues['LICEVICHAS'] :=
+                    DM.SOLARIUMI.FieldValues['LICEVICHAS'] - (TimeSet / 60);
+                DM.SOLARIUMI.Post;
             end;
             ShowPage(PAGE_OSNOVEN_EKRAN);
             UpdatePageControl(1);
@@ -3092,13 +3030,13 @@ begin
             Application.MessageBox(PChar(GetMessage('M12')),
                 PChar(GetMessage('M13')), MB_OK);
             //Application.MessageBox('Солариума не се стартира!', 'ГРЕШКА', MB_OK);
-            sol1.Rollback;
+            DM.sol1.Rollback;
             exit;
         end;
     end;
-    sol1.Commit(TRUE);
-    maxday.Active := false;
-    maxday.Active := true;
+    DM.sol1.Commit(TRUE);
+    DM.maxday.Active := false;
+    DM.maxday.Active := true;
 end;
 
 procedure TMainForm.FormKeyPress(Sender: TObject; var Key: Char);
@@ -3215,10 +3153,10 @@ begin
     // if MainForm.Label21.color=clblack then
     begin
 
-        Plashtania.First;
-        GetStatistikaFrame.PlannerMaskDatePicker1.Date := Plashtania.FieldValues['data'];
-        Plashtania.Last;
-        GetStatistikaFrame.PlannerMaskDatePicker2.Date := Plashtania.FieldValues['data'];
+        DM.Plashtania.First;
+        GetStatistikaFrame.PlannerMaskDatePicker1.Date := DM.Plashtania.FieldValues['data'];
+        DM.Plashtania.Last;
+        GetStatistikaFrame.PlannerMaskDatePicker2.Date := DM.Plashtania.FieldValues['data'];
         ShowPage(PAGE_STATISTIKA);
     end;
 end;
@@ -3231,29 +3169,29 @@ end;
 
 procedure TMainForm.Label91Click(Sender: TObject);
 begin
-    Table3.Active := True;
+    DM.Table3.Active := True;
 
     ShowPage(PAGE_PROTOKOL);
-    DayTotal.Active := false;
-    DayTotal.Active := true;
+    DM.DayTotal.Active := false;
+    DM.DayTotal.Active := true;
     UpdatePageControl(1);
     Timer4.Enabled := True;
-    ReorderSQLDataSet(DayTotal, 'CHAS');
-    ReorderSQLDataSet(DayTotal, 'CHAS');
+    ReorderSQLDataSet(DM.DayTotal, 'CHAS');
+    ReorderSQLDataSet(DM.DayTotal, 'CHAS');
 end;
 
 procedure TMainForm.Label92Click(Sender: TObject);
 begin
-    Table3.Active := False;
-    KARTIALL1.Active := False;
-    Table3.IndexName := '';
-    Table3.MasterFields := '';
-    Table3.MasterSource := nil;
-    KARTIALL1.IndexName := 'KlientDet';
-    KARTIALL1.MasterFields := 'NOMER';
-    KARTIALL1.MasterSource := DataSource2;
-    Table3.Active := True;
-    KARTIALL1.Active := True;
+    DM.Table3.Active := False;
+    DM.KARTIALL1.Active := False;
+    DM.Table3.IndexName := '';
+    DM.Table3.MasterFields := '';
+    DM.Table3.MasterSource := nil;
+    DM.KARTIALL1.IndexName := 'KlientDet';
+    DM.KARTIALL1.MasterFields := 'NOMER';
+    DM.KARTIALL1.MasterSource := DM.DataSource2;
+    DM.Table3.Active := True;
+    DM.KARTIALL1.Active := True;
     ShowPage(PAGE_KLUBNI_KARTI);
 end;
 
@@ -3261,21 +3199,21 @@ procedure TMainForm.Label94Click(Sender: TObject);
 begin
 
     Form1.QuickRep1.Preview;
-    //  QKartiPaid.Active:=False;
+    //  DM.QKartiPaid.Active:=False;
 end;
 
 procedure TMainForm.SettingsEndButtonClick(Sender: TObject);
 
 begin
     ShowPage(PAGE_MENU);
-    if STOKITE.State in [dsEdit, dsInsert] then
-        STOKITE.Post;
-    if Internet.State in [dsEdit, dsInsert] then
-        Internet.Post;
+    if DM.STOKITE.State in [dsEdit, dsInsert] then
+        DM.STOKITE.Post;
+    if DM.Internet.State in [dsEdit, dsInsert] then
+        DM.Internet.Post;
     if Solariumi.State in [dsEdit, dsInsert] then
         Solariumi.Post;
-    if STOKITE_SKLAD.State in [dsEdit, dsInsert] then
-        STOKITE_SKLAD.Post;
+    if DM.STOKITE_SKLAD.State in [dsEdit, dsInsert] then
+        DM.STOKITE_SKLAD.Post;
     if GetDrugiNastroikiFrame.TipNaRabotaCombo.Tag = 1 then // Changed
     begin
       GetDrugiNastroikiFrame.TipNaRabotaCombo.Tag := 0;
@@ -3301,20 +3239,20 @@ end;
 
 procedure TMainForm.DBLUCombo11Change(Sender: TObject);
 begin
-    DayTotal.ParamByName('DATA_COMBO_SELECTED').AsDate :=
+    DM.DayTotal.ParamByName('DATA_COMBO_SELECTED').AsDate :=
         StrToDate(AnsiReplaceText(GetProtokolFrame.DBLUCombo1.Text, ' г.', ''));
-    DayTotal.Active := False;
-    DayTotal.Active := True;
+    DM.DayTotal.Active := False;
+    DM.DayTotal.Active := True;
 end;
 
 procedure TMainForm.DBText7Change(Sender: TObject);
 begin
-    Qklienti.RecNo := GetIzborNaPlashtaneFrame.DBText7.ItemIndex + 1;
+    DM.Qklienti.RecNo := GetIzborNaPlashtaneFrame.DBText7.ItemIndex + 1;
 end;
 
 procedure TMainForm.DBText7DropDown(Sender: TObject);
 begin
-    Qklienti.ReadOnly := False;
+    DM.Qklienti.ReadOnly := False;
 end;
 
 procedure TMainForm.DobaviStokaBtnClick(Sender: TObject);
@@ -3343,33 +3281,33 @@ end;
 
 procedure TMainForm.ProtokolFilterEditChange(Sender: TObject);
 begin
-    DayTotal.Active := False;
-    DayTotal.SQL.Text :=
-        ' SELECT * FROM Plashtania p LEFT OUTER join STOKI s ON Plashtania.STOKA=STOKI.STOKAKOD' +
+    DM.DayTotal.Active := False;
+    DM.DayTotal.SQL.Text :=
+        ' SELECT * FROM DM.Plashtania p LEFT OUTER join DM.STOKI s ON DM.Plashtania.STOKA=DM.STOKI.STOKAKOD' +
         ' WHERE DATA = :DATA_COMBO_SELECTED ';
     if (GetProtokolFrame.ProtokolFilterEdit.Text = ' ') then
     begin
-        DayTotal.SQL.Text := DayTotal.SQL.Text +
+        DM.DayTotal.SQL.Text := DM.DayTotal.SQL.Text +
             ' and SOLARIUM >= 0 ORDER BY :ORDERPARAM DESC';
     end
     else if (GetProtokolFrame.ProtokolFilterEdit.Text <> '') then
     begin
-        DayTotal.SQL.Text := DayTotal.SQL.Text + ' and LOWER(STOKAIME) LIKE "%'
+        DM.DayTotal.SQL.Text := DM.DayTotal.SQL.Text + ' and LOWER(STOKAIME) LIKE "%'
             + AnsiLowerCase(GetProtokolFrame.ProtokolFilterEdit.Text) +
             '%" ORDER BY :ORDERPARAM DESC';
     end
     else
     begin
-        DayTotal.SQL.Text := DayTotal.SQL.Text + ' ORDER BY :ORDERPARAM DESC';
+        DM.DayTotal.SQL.Text := DM.DayTotal.SQL.Text + ' ORDER BY :ORDERPARAM DESC';
     end;
 
-    DayTotal.ParamByName('DATA_COMBO_SELECTED').AsString := GetProtokolFrame.DBLUCombo1.Text;
+    DM.DayTotal.ParamByName('DATA_COMBO_SELECTED').AsString := GetProtokolFrame.DBLUCombo1.Text;
 
-    DayTotal.ParamByName('ORDERPARAM').AsString := 'RECORDID';
-    DayTotal.Active := True;
+    DM.DayTotal.ParamByName('ORDERPARAM').AsString := 'RECORDID';
+    DM.DayTotal.Active := True;
 end;
 
-procedure TMainForm.QklientiAfterRefresh;
+procedure TDM.QklientiAfterRefresh;
 var
     i, j: Integer;
 begin
@@ -3378,12 +3316,12 @@ begin
         (ActivePageIndex = 15)) then
     begin
         GetIzborNaPlashtaneFrame.DBText7.Clear;
-        i := Qklienti.RecNo;
-        Qklienti.First;
-        while not Qklienti.Eof and (not QKlienti.IsEmpty) do
+        i := DM.Qklienti.RecNo;
+        DM.Qklienti.First;
+        while not DM.Qklienti.Eof and (not QKlienti.IsEmpty) do
         begin
             try
-                GetIzborNaPlashtaneFrame.DBText7.Items.Add(Qklienti.FieldValues['IME']);
+                GetIzborNaPlashtaneFrame.DBText7.Items.Add(DM.Qklienti.FieldValues['IME']);
             except
                 GetIzborNaPlashtaneFrame.DBText7.Items.Add('?');
             end;
@@ -3401,17 +3339,17 @@ end;
 
 procedure TMainForm.Label110Click(Sender: TObject);
 begin
-    Plashtania.Last();
-    // MinMax.active:=false;
-    // MinMax.SQL.Text:='Select max(RECORDID) from plashtania';
-    // MinMax.active:=true;
-    // if MinMax.Fields.Count>0 then
-    // SDELKANOMER:=MinMax.Fields.Fields[0].AsInteger;
-    if (Plashtania.RecNo > 0) then
-        SDELKANOMER := Plashtania.FieldValues['RECORDID']
+    DM.Plashtania.Last();
+    // DM.MinMax.active:=false;
+    // DM.MinMax.SQL.Text:='Select max(RECORDID) from plashtania';
+    // DM.MinMax.active:=true;
+    // if DM.MinMax.Fields.Count>0 then
+    // SDELKANOMER:=DM.MinMax.Fields.Fields[0].AsInteger;
+    if (DM.Plashtania.RecNo > 0) then
+        SDELKANOMER := DM.Plashtania.FieldValues['RECORDID']
     else
         SDELKANOMER := 0;
-    sol1.FlushBuffers;
+    DM.sol1.FlushBuffers;
     PaidCash := 0;
     PaidCard := 0;
     PaidChipCard := 0;
@@ -3425,17 +3363,17 @@ begin
     QKlienti.SQL.SetText(PChar('SELECT * FROM klienti where nomer = 999990 ORDER BY IME DESC'));
     CardNomer := 0;
     QKlienti.Active := True;
-    if(sol1.InTransaction) then sol1.Commit(true);
-    sol1.StartTransaction;
+    if(DM.sol1.InTransaction) then DM.sol1.Commit(true);
+    DM.sol1.StartTransaction;
     ShowPage(PAGE_MENU_KASA);
-    USLUGITE.Active := False;
-    USLUGITE.Active := TRUE;
-    STOKITE.Active := false;
-    STOKITE.Active := True;
+    DM.USLUGITE.Active := False;
+    DM.USLUGITE.Active := TRUE;
+    DM.STOKITE.Active := false;
+    DM.STOKITE.Active := True;
     SDELKA.active := false;
     SDELKA.ParamByName('SDELKANOMER').AsInteger := SDELKANOMER;
     SDELKA.active := true;
-    GetMenuKasaFrame.KasaGrid.DataSource := DataSource7;
+    GetMenuKasaFrame.KasaGrid.DataSource := DM.DataSource7;
     Suma := 0;
     SumaCard := 0;
     FIRMITE.First;
@@ -3468,7 +3406,7 @@ end;
 procedure TMainForm.Label120Click(Sender: TObject);
 begin
     Karti.Active := False;
-    Karti.SQL.SetText(PChar('SELECT * FROM STOKI WHERE STOKAKOD < 0 AND POSESHTENIA > 0 AND SUMA = 0'));
+    Karti.SQL.SetText(PChar('SELECT * FROM DM.STOKI WHERE STOKAKOD < 0 AND POSESHTENIA > 0 AND SUMA = 0'));
     Karti.Active := True;
     RefillForm.ShowModal;
     QKarti.Active := False;
@@ -3494,26 +3432,26 @@ begin
 
         0: //Депозит
             begin
-                _Q.SQL.SetText(PChar('select * from STOKI Where STOKATIP = "D"'));
+                _Q.SQL.SetText(PChar('select * from DM.STOKI Where STOKATIP = "D"'));
                 _Q.Open;
                 if _Q.IsEmpty then
                 begin
-                    if not STOKI.Locate('STOKAKOD', -1, []) then
-                        STOKI.Append;
-                    //   STOKI.FieldValues['STOKAIME']:='Депозит за карта от '+ IntToStr(Round(Suma))+' лв. ';
-          //            STOKI.FieldValues['STOKAIME']:=GetMessage('M68')+' '+ IntToStr(Round(Suma))+' '+GetMessage('M20');
-                    STOKI.FieldValues['STOKACENA'] := 0;
-                    STOKI.FieldValues['STOKANASKLAD'] := 0;
-                    STOKI.FieldValues['POSESHTENIA'] := -1;
-                    STOKI.FieldValues['SUMA'] := Suma;
-                    STOKI.FieldValues['STOKAKOD'] := -1;
-                    STOKI.FieldValues['STOKAIME'] := 'Депозит за карта';
-                    STOKI.FieldValues['STOKACENA'] := 0;
-                    STOKI.FieldValues['STOKANASKLAD'] := 0;
-                    STOKI.FieldValues['STOKATIP'] := 'D';
-                    STOKI.Post;
-                    KARTI.Refresh;
-                    KARTI.Locate('STOKAKOD', maxcode, []);
+                    if not DM.STOKI.Locate('STOKAKOD', -1, []) then
+                        DM.STOKI.Append;
+                    //   DM.STOKI.FieldValues['STOKAIME']:='Депозит за карта от '+ IntToStr(Round(Suma))+' лв. ';
+          //            DM.STOKI.FieldValues['STOKAIME']:=GetMessage('M68')+' '+ IntToStr(Round(Suma))+' '+GetMessage('M20');
+                    DM.STOKI.FieldValues['STOKACENA'] := 0;
+                    DM.STOKI.FieldValues['STOKANASKLAD'] := 0;
+                    DM.STOKI.FieldValues['POSESHTENIA'] := -1;
+                    DM.STOKI.FieldValues['SUMA'] := Suma;
+                    DM.STOKI.FieldValues['STOKAKOD'] := -1;
+                    DM.STOKI.FieldValues['STOKAIME'] := 'Депозит за карта';
+                    DM.STOKI.FieldValues['STOKACENA'] := 0;
+                    DM.STOKI.FieldValues['STOKANASKLAD'] := 0;
+                    DM.STOKI.FieldValues['STOKATIP'] := 'D';
+                    DM.STOKI.Post;
+                    DM.KARTI.Refresh;
+                    DM.KARTI.Locate('STOKAKOD', maxcode, []);
                 end
                 else
                     Application.MessageBox(PChar('Вече има създаден депозит'),
@@ -3530,16 +3468,16 @@ begin
                 end;
                 if mincode > -1 then
                     mincode := -1;
-                STOKI.Append;
-                STOKI.FieldValues['STOKAKOD'] := mincode - 1;
-                STOKI.FieldValues['STOKAIME'] := 'Нова Клубна карта' +
+                DM.STOKI.Append;
+                DM.STOKI.FieldValues['STOKAKOD'] := mincode - 1;
+                DM.STOKI.FieldValues['STOKAIME'] := 'Нова Клубна карта' +
                     IntTostr(mincode - 1);
-                STOKI.FieldValues['STOKACENA'] := 0;
-                STOKI.FieldValues['STOKANASKLAD'] := 0;
-                STOKI.FieldValues['STOKATIP'] := 'K';
-                STOKI.Post;
-                KARTI.Refresh;
-                KARTI.Locate('STOKAKOD', maxcode, []);
+                DM.STOKI.FieldValues['STOKACENA'] := 0;
+                DM.STOKI.FieldValues['STOKANASKLAD'] := 0;
+                DM.STOKI.FieldValues['STOKATIP'] := 'K';
+                DM.STOKI.Post;
+                DM.KARTI.Refresh;
+                DM.KARTI.Locate('STOKAKOD', maxcode, []);
             end;
         2: //Чип Карти
             begin
@@ -3552,16 +3490,16 @@ begin
                 end;
                 if mincode > -1 then
                     mincode := -1;
-                STOKI.Append;
-                STOKI.FieldValues['STOKAKOD'] := mincode - 1;
-                STOKI.FieldValues['STOKAIME'] := 'Нова Чип Карта' +
+                DM.STOKI.Append;
+                DM.STOKI.FieldValues['STOKAKOD'] := mincode - 1;
+                DM.STOKI.FieldValues['STOKAIME'] := 'Нова Чип Карта' +
                     IntTostr(mincode - 1);
-                STOKI.FieldValues['STOKACENA'] := 0;
-                STOKI.FieldValues['STOKANASKLAD'] := 0;
-                STOKI.FieldValues['STOKATIP'] := 'C';
-                STOKI.Post;
-                KARTI.Refresh;
-                KARTI.Locate('STOKAKOD', maxcode, []);
+                DM.STOKI.FieldValues['STOKACENA'] := 0;
+                DM.STOKI.FieldValues['STOKANASKLAD'] := 0;
+                DM.STOKI.FieldValues['STOKATIP'] := 'C';
+                DM.STOKI.Post;
+                DM.KARTI.Refresh;
+                DM.KARTI.Locate('STOKAKOD', maxcode, []);
             end;
         3: //Козметика
             begin
@@ -3574,20 +3512,20 @@ begin
                 end;
                 if maxcode < 0 then
                     maxcode := 0;
-                STOKI.Append;
-                STOKI.FieldValues['STOKAKOD'] := maxcode + 1;
-                STOKI.FieldValues['STOKAIME'] := 'Нова Козметика №' +
+                DM.STOKI.Append;
+                DM.STOKI.FieldValues['STOKAKOD'] := maxcode + 1;
+                DM.STOKI.FieldValues['STOKAIME'] := 'Нова Козметика №' +
                     IntTostr(maxcode + 1);
-                STOKI.FieldValues['STOKACENA'] := 0;
-                STOKI.FieldValues['STOKANASKLAD'] := 0;
-                STOKI.FieldValues['STOKATIP'] := 'S';
-                STOKI.Post;
-                STOKITE.Active := False;
-                STOKITE.Active := True;
-                STOKITE.Locate('STOKAKOD', maxcode, []);
-                STOKITE_SKLAD.Active := False;
-                STOKITE_SKLAD.Active := True;
-                STOKITE_SKLAD.Locate('STOKAKOD', maxcode, []);
+                DM.STOKI.FieldValues['STOKACENA'] := 0;
+                DM.STOKI.FieldValues['STOKANASKLAD'] := 0;
+                DM.STOKI.FieldValues['STOKATIP'] := 'S';
+                DM.STOKI.Post;
+                DM.STOKITE.Active := False;
+                DM.STOKITE.Active := True;
+                DM.STOKITE.Locate('STOKAKOD', maxcode, []);
+                DM.STOKITE_SKLAD.Active := False;
+                DM.STOKITE_SKLAD.Active := True;
+                DM.STOKITE_SKLAD.Locate('STOKAKOD', maxcode, []);
             end;
         4: //Услуги
             begin
@@ -3600,26 +3538,26 @@ begin
                 end;
                 if maxcode < 0 then
                     maxcode := 0;
-                STOKI.Append;
-                STOKI.FieldValues['STOKAKOD'] := maxcode + 1;
-                STOKI.FieldValues['STOKAIME'] := 'Нова Услуга №' +
+                DM.STOKI.Append;
+                DM.STOKI.FieldValues['STOKAKOD'] := maxcode + 1;
+                DM.STOKI.FieldValues['STOKAIME'] := 'Нова Услуга №' +
                     IntTostr(maxcode + 1);
-                STOKI.FieldValues['STOKACENA'] := 0;
-                STOKI.FieldValues['STOKANASKLAD'] := 0;
-                STOKI.FieldValues['STOKATIP'] := 'U';
-                STOKI.Post;
-                USLUGITE.Refresh;
-                USLUGITE.Locate('STOKAKOD', maxcode, []);
+                DM.STOKI.FieldValues['STOKACENA'] := 0;
+                DM.STOKI.FieldValues['STOKANASKLAD'] := 0;
+                DM.STOKI.FieldValues['STOKATIP'] := 'U';
+                DM.STOKI.Post;
+                DM.USLUGITE.Refresh;
+                DM.USLUGITE.Locate('STOKAKOD', maxcode, []);
             end;
         5: //Операция изтриване на клиент
             begin
-                STOKI.Append;
-                STOKI.FieldValues['STOKAKOD'] := 0;
-                STOKI.FieldValues['STOKAIME'] := 'Изтриване на клиент';
-                STOKI.FieldValues['STOKACENA'] := 0;
-                STOKI.FieldValues['STOKANASKLAD'] := 0;
-                STOKI.FieldValues['STOKATIP'] := 'S';
-                STOKI.Post;
+                DM.STOKI.Append;
+                DM.STOKI.FieldValues['STOKAKOD'] := 0;
+                DM.STOKI.FieldValues['STOKAIME'] := 'Изтриване на клиент';
+                DM.STOKI.FieldValues['STOKACENA'] := 0;
+                DM.STOKI.FieldValues['STOKANASKLAD'] := 0;
+                DM.STOKI.FieldValues['STOKATIP'] := 'S';
+                DM.STOKI.Post;
             end;
     end;
     _Q.Free;
@@ -3632,49 +3570,49 @@ var
 
 begin
     case GetMenuStokiFrame.StokiteTab.ActivePageIndex of
-        0: StokaKod := KARTI.FieldValues['STOKAKOD'];
-        1: StokaKod := STOKITE_SKLAD.FieldValues['STOKAKOD'];
-        2: StokaKod := USLUGITE.FieldValues['STOKAKOD'];
+        0: StokaKod := DM.KARTI.FieldValues['STOKAKOD'];
+        1: StokaKod := DM.STOKITE_SKLAD.FieldValues['STOKAKOD'];
+        2: StokaKod := DM.USLUGITE.FieldValues['STOKAKOD'];
     end;
-    if STOKI.Modified then
+    if DM.STOKI.Modified then
     begin
         Application.MessageBox(PChar('Внимание!'),
             PChar('Записът се редактира и не може да бъде изтрит!'), MB_OK);
         exit; //-->
     end;
 
-    STOKI.Locate('STOKAKOD', StokaKod, []);
+    DM.STOKI.Locate('STOKAKOD', StokaKod, []);
     try
-        Message1 := (GetMessage('M16') + STOKI.FieldValues['STOKAIME']);
+        Message1 := (GetMessage('M16') + DM.STOKI.FieldValues['STOKAIME']);
     except
         Message1 := (GetMessage('M16'));
     end;
-    //Message1:=('Наистина ли искате да изтриете '+KARTI.FieldValues['STOKAIME']);
+    //Message1:=('Наистина ли искате да изтриете '+DM.KARTI.FieldValues['STOKAIME']);
     if Application.MessageBox(PChar(Message1), PChar(GetMessage('M17')),
         MB_YESNO) = 6 then
         //if Application.MessageBox(PChar(Message1),'ПОТВЪРДЕТЕ ИЗТРИВАНЕТО!',MB_YESNO)=6 then
     begin
-        STOKI.Delete;
-        STOKI.Refresh;
-        STOKITE.refresh;
-        STOKITE_SKLAD.Active := False;
-        STOKITE_SKLAD.Active := True;
-        KARTI.Refresh;
-        USLUGITE.Refresh;
+        DM.STOKI.Delete;
+        DM.STOKI.Refresh;
+        DM.STOKITE.refresh;
+        DM.STOKITE_SKLAD.Active := False;
+        DM.STOKITE_SKLAD.Active := True;
+        DM.KARTI.Refresh;
+        DM.USLUGITE.Refresh;
     end;
 end;
 
 procedure TMainForm.KasaGridTitleButtonClick(Sender: TObject;
     AFieldName: string);
 begin
-    ReorderSQLDataSet(STOKITE, AFieldName);
-    ReorderSQLDataSet(USLUGITE, AFieldName);
+    ReorderSQLDataSet(DM.STOKITE, AFieldName);
+    ReorderSQLDataSet(DM.USLUGITE, AFieldName);
 end;
 
 procedure TMainForm.wwDBGrid11TitleButtonClick(Sender: TObject;
     AFieldName: string);
 begin
-    ReorderSQLDataSet(USLUGITE, AFieldName);
+    ReorderSQLDataSet(DM.USLUGITE, AFieldName);
 end;
 
 procedure TMainForm.wwDBGrid12RowChanged(Sender: TObject);
@@ -3684,7 +3622,7 @@ var
 begin
     if (Sender = nil) or (ActivePageIndex = 2) then
     begin
-        if Firmite.State in [dsInsert] then
+        if DM.Firmite.State in [dsInsert] then
         begin
             QKLIENTI.Active := False;
             QKLIENTI.SQL.SetText(PChar('select * from KLIENTI where FIRMA = "999999' +
@@ -3707,7 +3645,7 @@ end;
 procedure TMainForm.wwDBGrid2TitleButtonClick(Sender: TObject;
     AFieldName: string);
 begin
-    ReorderSQLDataSet(DayTotal, AFieldName);
+    ReorderSQLDataSet(DM.DayTotal, AFieldName);
 end;
 
 procedure TMainForm.wwDBGrid3FieldChanged(Sender: TObject; Field: TField);
@@ -3717,11 +3655,11 @@ var
 begin
 
     try
-        // Poseshtenia:=STOKITE.FieldValues['POSESHTENIA'];
-        cod := STOKITE.FieldValues['STOKAKOD'];
-        //  STOKI.Locate('STOKAKOD',cod,[]);
-        //  STOKI.FieldValues['STOKAIME']:='Карта за '+IntTostr(Poseshtenia)+' посещения';
-        //  STOKITE.Post;
+        // Poseshtenia:=DM.STOKITE.FieldValues['POSESHTENIA'];
+        cod := DM.STOKITE.FieldValues['STOKAKOD'];
+        //  DM.STOKI.Locate('STOKAKOD',cod,[]);
+        //  DM.STOKI.FieldValues['STOKAIME']:='Карта за '+IntTostr(Poseshtenia)+' посещения';
+        //  DM.STOKITE.Post;
     except
     end;
 end;
@@ -3729,36 +3667,36 @@ end;
 procedure TMainForm.wwDBGrid3TitleButtonClick(Sender: TObject;
     AFieldName: string);
 begin
-    ReorderSQLDataSet(KARTI, AFieldName);
+    ReorderSQLDataSet(DM.KARTI, AFieldName);
 end;
 
 procedure TMainForm.StokaEditBtnClick(Sender: TObject);
 begin
     if GetMenuStokiFrame.StokaEditBtn.Tag = 0 then
     begin
-        STOKITE_SKLAD.Active := False;
+        DM.STOKITE_SKLAD.Active := False;
         GetMenuStokiFrame.StokaEditBtn.Tag := 1;
-        STOKITE_SKLAD.SQL.SetText('SELECT *  FROM STOKI WHERE STOKATIP = "S" ORDER BY STOKAKOD');
+        DM.STOKITE_SKLAD.SQL.SetText('SELECT *  FROM DM.STOKI WHERE STOKATIP = "S" ORDER BY STOKAKOD');
         GetMenuStokiFrame.StokaEditBtn.Font.Color := clGreen;
-        STOKITE_SKLAD.Active := True;
+        DM.STOKITE_SKLAD.Active := True;
     end
     else
     begin
-        if STOKITE_SKLAD.State in [dsEdit, dsInsert] then
-            STOKITE_SKLAD.Post;
-        STOKITE_SKLAD.Active := False;
+        if DM.STOKITE_SKLAD.State in [dsEdit, dsInsert] then
+            DM.STOKITE_SKLAD.Post;
+        DM.STOKITE_SKLAD.Active := False;
         GetMenuStokiFrame.StokaEditBtn.Tag := 0;
-        STOKITE_SKLAD.SQL.SetText('SELECT STOKAIME, STOKAKOD, STOKANASKLAD, SUMA, SUMA * STOKANASKLAD as STOKATOTAL_IN,  STOKACENA,  STOKACENA * STOKANASKLAD as STOKATOTAL_SELL,  POSESHTENIA,  STOKATIP,  STOKACENACARD  FROM STOKI WHERE STOKATIP = "S" ORDER BY STOKAKOD');
+        DM.STOKITE_SKLAD.SQL.SetText('SELECT STOKAIME, STOKAKOD, STOKANASKLAD, SUMA, SUMA * STOKANASKLAD as STOKATOTAL_IN,  STOKACENA,  STOKACENA * STOKANASKLAD as STOKATOTAL_SELL,  POSESHTENIA,  STOKATIP,  STOKACENACARD  FROM DM.STOKI WHERE STOKATIP = "S" ORDER BY STOKAKOD');
         GetMenuStokiFrame.StokaEditBtn.Font.Color := clBlack;
-        STOKITE_SKLAD.ReadOnly := True;
-        STOKITE_SKLAD.Active := True;
+        DM.STOKITE_SKLAD.ReadOnly := True;
+        DM.STOKITE_SKLAD.Active := True;
     end;
 end;
 
 procedure TMainForm.StokiGridTitleButtonClick(Sender: TObject;
     AFieldName: string);
 begin
-    ReorderSQLDataSet(STOKITE, AFieldName);
+    ReorderSQLDataSet(DM.STOKITE, AFieldName);
 end;
 
 procedure TMainForm.StokiteTabChange(Sender: TObject);
@@ -3766,14 +3704,14 @@ begin
     if (GetMenuStokiFrame.StokiteTab.ActivePageIndex = 1) then
     begin
         GetMenuStokiFrame.StokaEditBtn.Visible := true;
-        STOKITE_SKLAD.Active := False;
-        STOKITE_SKLAD.Active := True;
+        DM.STOKITE_SKLAD.Active := False;
+        DM.STOKITE_SKLAD.Active := True;
     end
     else
     begin
         GetMenuStokiFrame.StokaEditBtn.Visible := false;
-        if STOKITE_SKLAD.State in [dsEdit, dsInsert] then
-            STOKITE_SKLAD.Post;
+        if DM.STOKITE_SKLAD.State in [dsEdit, dsInsert] then
+            DM.STOKITE_SKLAD.Post;
     end;
 end;
 
@@ -3816,24 +3754,24 @@ var
 begin
     maxnomer := 0;
     nomer := 0;
-    Table3.First;
+    DM.Table3.First;
     L := False;
     while (not L) do
     begin
-        nomer := Table3.FieldByName('NOMER').AsInteger;
+        nomer := DM.Table3.FieldByName('NOMER').AsInteger;
         if (nomer > 0) and (nomer > maxnomer) then
             maxnomer := nomer;
-        L := Table3.Eof;
-        Table3.Next;
+        L := DM.Table3.Eof;
+        DM.Table3.Next;
     end;
-    Table3.Append;
-    Table3.FieldValues['NOMER'] := maxnomer + 1;
-    Table3.FieldValues['IME'] := GetMessage('M18') + IntTostr(maxnomer + 1);
-    //Table3.FieldValues['IME']:='New client №'+IntTostr(maxnomer+1);
-    Table3.Post;
-    Table3.Last;
+    DM.Table3.Append;
+    DM.Table3.FieldValues['NOMER'] := maxnomer + 1;
+    DM.Table3.FieldValues['IME'] := GetMessage('M18') + IntTostr(maxnomer + 1);
+    //DM.Table3.FieldValues['IME']:='New client №'+IntTostr(maxnomer+1);
+    DM.Table3.Post;
+    DM.Table3.Last;
     QKlienti.Active := False;
-    QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join KARTICHIP c on k.NOMER = c.KLIENTNOMER WHERE k.NOMER >-1 ORDER BY k.nomer DESC'));
+    QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join DM.KARTICHIP c on k.NOMER = c.KLIENTNOMER WHERE k.NOMER >-1 ORDER BY k.nomer DESC'));
     QKlienti.Active := True;
     // RefillForm.DBEdit2.ReadOnly:=false;
     RefillForm.ShowModal;
@@ -3870,7 +3808,7 @@ var
     Cena1: Real;
 begin
     Stoka := GetMenuKasaFrame.Kasagrid.DataSource.DataSet.FieldValues['STOKAKOD'];
-    if (KARTICHIP.RecordCount > 0) and
+    if (DM.KARTICHIP.RecordCount > 0) and
         (varType(GetMenuKasaFrame.Kasagrid.DataSource.DataSet.FieldValues['STOKACENACARD']) <>
         varNull) and
         (Card.Balans > 0) then
@@ -3894,7 +3832,7 @@ begin
             SDELKA.Edit;
             Broi := SDELKA.FieldValues['BROI'];
             SDELKA.FieldValues['BROI'] := Broi + 1;
-            if (KARTICHIP.RecordCount > 0) then
+            if (DM.KARTICHIP.RecordCount > 0) then
                 SDELKA.FieldValues['SUMABROI'] := SDELKA.FieldValues['SUMABROI']
                     + CenaCard
             else
@@ -3908,7 +3846,7 @@ begin
         begin
             plashtania.Append;
             plashtania.FieldValues['STOKA'] := Stoka;
-            if (KARTICHIP.RecordCount > 0) then
+            if (DM.KARTICHIP.RecordCount > 0) then
                 plashtania.FieldValues['SUMABROI'] := CenaCard
             else
                 plashtania.FieldValues['SUMABROI'] := Cena;
@@ -3916,7 +3854,7 @@ begin
             plashtania.FieldValues['BROI'] := 1;
             plashtania.FieldValues['DATA'] := Date;
             plashtania.FieldValues['CHAS'] := TimeToStr(Time);
-            Plashtania.Post;
+            DM.Plashtania.Post;
         end;
         SDELKA.Active := False;
         SDELKA.ParamByName('SDELKANOMER').AsInteger := SDELKANOMER;
@@ -3945,12 +3883,12 @@ begin
     PaidChipCard := 0;
     DiscountFirmi := Integer((QKLIENTI.RecordCount = 1) and
         (QKLIENTI.FieldValues['FIRMA'] > 0)) *
-        Internet.FieldValues['DISCOUNT_PERCENT_FIRMI'];
+        DM.Internet.FieldValues['DISCOUNT_PERCENT_FIRMI'];
     if (Card.Balans >= SumaCard) and IsChipCard then
     begin
         PaidChipCard := SumaCard
     end
-    else if (KARTICHIP.RecordCount > 0) and (KARTICHIP.FieldValues['SUMA'] >
+    else if (DM.KARTICHIP.RecordCount > 0) and (DM.KARTICHIP.FieldValues['SUMA'] >
         SumaCard) and false then //never go here
     begin
         PaidChipCard := SumaCard
@@ -3960,7 +3898,7 @@ begin
         PaidChipCard := 0;
         PaidCash := Suma - (DiscountFirmi * Suma / 100);
     end;
-    if (KARTICHIP.RecordCount < 1) then
+    if (DM.KARTICHIP.RecordCount < 1) then
     begin
         GetMenuKasaFrame.Memo1.Lines.Add('Сума: ' + ConvertCurr1(Suma));
         if (DiscountFirmi > 0) and (PaidCash > 0) then
@@ -3969,7 +3907,7 @@ begin
     end;
     if PaidChipCard > 0 then
         GetMenuKasaFrame.Memo1.Lines.Add('От карта: ' + ConvertCurr1(PaidChipCard))
-    else if (KARTICHIP.RecordCount > 0) then
+    else if (DM.KARTICHIP.RecordCount > 0) then
         GetMenuKasaFrame.Memo1.Lines.Add('Сума с карта: ' + ConvertCurr1(SumaCard))
 end;
 
@@ -3979,7 +3917,7 @@ var
     TempBalans, Cena1: real;
 begin
     SDELKA.First;
-    while not Sdelka.Eof do
+    while not DM.Sdelka.Eof do
     begin
         SDELKA.Edit;
         Cena1 := SDELKA.FieldValues['SUMABROI'];
@@ -3988,9 +3926,9 @@ begin
         begin
             SDELKA.FieldValues['KARTASUMA'] := 0;
             SDELKA.FieldValues['SUMABROI'] := Cena1 -
-                cena1 * Internet.FieldValues['DISCOUNT_PERCENT_FIRMI'] / 100;
+                cena1 * DM.Internet.FieldValues['DISCOUNT_PERCENT_FIRMI'] / 100;
             SDELKA.FieldValues['DISCOUNT'] :=
-                Internet.FieldValues['DISCOUNT_PERCENT_FIRMI'];
+                DM.Internet.FieldValues['DISCOUNT_PERCENT_FIRMI'];
             if not QKLIENTI.IsEmpty then
             begin
                 SDELKA.FieldValues['KLIENTNOMER'] :=
@@ -4028,10 +3966,10 @@ begin
                 exit;
             end;
         end
-        else if KARTICHIP.RecordCount > 0 then
+        else if DM.KARTICHIP.RecordCount > 0 then
         begin
-            KARTICHIP.Edit;
-            KARTICHIP.FieldValues['SUMA'] := KARTICHIP.FieldValues['SUMA'] -
+            DM.KARTICHIP.Edit;
+            DM.KARTICHIP.FieldValues['SUMA'] := DM.KARTICHIP.FieldValues['SUMA'] -
                 PaidChipCard;
             kartichip.Post;
         end
@@ -4043,8 +3981,8 @@ begin
             exit;
         end;
     end;
-    sol1.Commit(True);
-    STOKITE.Active := false;
+    DM.sol1.Commit(True);
+    DM.STOKITE.Active := false;
     ShowPage(PAGE_OSNOVEN_EKRAN);
 end;
 
@@ -4052,7 +3990,7 @@ procedure TMainForm.Label111Click(Sender: TObject);
 begin
     Sol1.Rollback;
     Sol1.FlushBuffers;
-    STOKITE.Active := false;
+    DM.STOKITE.Active := false;
     ShowPage(PAGE_OSNOVEN_EKRAN);
 end;
 
@@ -4148,10 +4086,10 @@ begin
             i := i + 1;
         end;
         L := False;
-        Cena := SOLARIUMI.FieldValues['CENA'];
-        MainTime := SOLARIUMI.FieldValues['VREME'];
+        Cena := DM.SOLARIUMI.FieldValues['CENA'];
+        MainTime := DM.SOLARIUMI.FieldValues['VREME'];
         Klient := QKlienti.FieldValues['NOMER'];
-        Minutina1 := SOLARIUMI.FieldValues['MINUTINA1'];
+        Minutina1 := DM.SOLARIUMI.FieldValues['MINUTINA1'];
         KartaSuma := 0;
         KartaNomer := -1;
         if(StrLen( PChar(GetIzborNaPlashtaneFrame.AdvComboBox2.Text)) > 1) then
@@ -4178,12 +4116,12 @@ end;
 
 procedure TMainForm.Label165Click(Sender: TObject);
 begin
-    GetMenuKasaFrame.KasaGrid.DataSource := DataSource7;
+    GetMenuKasaFrame.KasaGrid.DataSource := DM.DataSource7;
 end;
 
 procedure TMainForm.Label166Click(Sender: TObject);
 begin
-    GetMenuKasaFrame.KasaGrid.DataSource := DataSource18;
+    GetMenuKasaFrame.KasaGrid.DataSource := DM.DataSource18;
 end;
 
 procedure TMainForm.Label16Click(Sender: TObject);
@@ -4201,8 +4139,8 @@ begin
         end;
     if PasswordForm.ModalResult = MROK then
     begin
-        {KARTIALL.Active:=False;
-        KARTIALL1.Active:=False;}
+        {DM.KARTIALL.Active:=False;
+        DM.KARTIALL1.Active:=False;}
         QKarti.ReadOnly := False;
         if not (QKarti.Eof and QKarti.Bof) then
             QKarti.Delete;
@@ -4226,8 +4164,8 @@ var
     I: Integer;
 begin
     GetGrafikFrame.Image7.Picture := GetLogoEkranFrame.Image1.Picture;
-    USLUGITE.Active := false;
-    USLUGITE.Active := true;
+    DM.USLUGITE.Active := false;
+    DM.USLUGITE.Active := true;
     GetGrafikFrame.Planner1.Sidebar.Font.Size := 4;
     GetGrafikFrame.Planner1.Sidebar.HourFontRatio := 1.2;
     GetGrafikFrame.Planner1.sidebar.Width := 30;
@@ -4240,9 +4178,9 @@ begin
     GetGrafikFrame.Planner3.Sidebar.HourFontRatio := 1.2;
     GetGrafikFrame.Planner3.sidebar.Width := 20;
     GetGrafikFrame.Planner3.Display.DisplayScale := 12;
-    GetGrafikFrame.Planner1.Positions := USLUGITE.RecordCount + 1;
-    GetGrafikFrame.Planner2.Positions := USLUGITE.RecordCount + 1;
-    GetGrafikFrame.Planner3.Positions := USLUGITE.RecordCount + 1;
+    GetGrafikFrame.Planner1.Positions := DM.USLUGITE.RecordCount + 1;
+    GetGrafikFrame.Planner2.Positions := DM.USLUGITE.RecordCount + 1;
+    GetGrafikFrame.Planner3.Positions := DM.USLUGITE.RecordCount + 1;
     GetGrafikFrame.Planner1.PositionGroup := 1;
     with GetGrafikFrame.Planner1.Header do
     begin
@@ -4269,47 +4207,47 @@ begin
         Captions.Add('');
         Captions.Add('Солариум');
     end;
-    DBDaySource1.NumberOfResources := USLUGITE.RecordCount + 1;
-    DBDaySource2.NumberOfResources := USLUGITE.RecordCount + 1;
-    DBDaySource3.NumberOfResources := USLUGITE.RecordCount + 1;
-    DBDaySource1.NumberOfDays := 1;
-    DBDaySource2.NumberOfDays := 1;
-    DBDaySource3.NumberOfDays := 1;
-    DBDaySource1.ResourceMap.Clear;
-    DBDaySource1.ResourceMap.Add;
-    DBDaySource1.ResourceMap.Items[0].DisplayName := 'Солариум';
-    USLUGITE.First;
-    while not USLUGITE.Eof do
+    DM.DBDaySource1.NumberOfResources := DM.USLUGITE.RecordCount + 1;
+    DM.DBDaySource2.NumberOfResources := DM.USLUGITE.RecordCount + 1;
+    DM.DBDaySource3.NumberOfResources := DM.USLUGITE.RecordCount + 1;
+    DM.DBDaySource1.NumberOfDays := 1;
+    DM.DBDaySource2.NumberOfDays := 1;
+    DM.DBDaySource3.NumberOfDays := 1;
+    DM.DBDaySource1.ResourceMap.Clear;
+    DM.DBDaySource1.ResourceMap.Add;
+    DM.DBDaySource1.ResourceMap.Items[0].DisplayName := 'Солариум';
+    DM.USLUGITE.First;
+    while not DM.USLUGITE.Eof do
     begin
-        DBDaySource1.ResourceMap.Add;
-        DBDaySource1.ResourceMap.Items[USLUGITE.RecNo].DisplayName :=
-            (USLUGITE.FieldValues['STOKAIME']);
-        GetGrafikFrame.Planner3.Header.Captions.Add((USLUGITE.FieldValues['STOKAIME']));
-        GetGrafikFrame.Planner2.Header.Captions.Add((USLUGITE.FieldValues['STOKAIME']));
-        GetGrafikFrame.Planner1.Header.Captions.Add((USLUGITE.FieldValues['STOKAIME']));
-        USLUGITE.Next;
+        DM.DBDaySource1.ResourceMap.Add;
+        DM.DBDaySource1.ResourceMap.Items[DM.USLUGITE.RecNo].DisplayName :=
+            (DM.USLUGITE.FieldValues['STOKAIME']);
+        GetGrafikFrame.Planner3.Header.Captions.Add((DM.USLUGITE.FieldValues['STOKAIME']));
+        GetGrafikFrame.Planner2.Header.Captions.Add((DM.USLUGITE.FieldValues['STOKAIME']));
+        GetGrafikFrame.Planner1.Header.Captions.Add((DM.USLUGITE.FieldValues['STOKAIME']));
+        DM.USLUGITE.Next;
     end;
-    DBDaySource2.ResourceMap.Clear;
-    DBDaySource2.ResourceMap.Add;
-    DBDaySource2.ResourceMap.Items[0].DisplayName := 'Солариум';
-    USLUGITE.First;
-    while not USLUGITE.Eof do
+    DM.DBDaySource2.ResourceMap.Clear;
+    DM.DBDaySource2.ResourceMap.Add;
+    DM.DBDaySource2.ResourceMap.Items[0].DisplayName := 'Солариум';
+    DM.USLUGITE.First;
+    while not DM.USLUGITE.Eof do
     begin
-        DBDaySource2.ResourceMap.Add;
-        DBDaySource2.ResourceMap.Items[USLUGITE.RecNo].DisplayName :=
-            (USLUGITE.FieldValues['STOKAIME']);
-        USLUGITE.Next;
+        DM.DBDaySource2.ResourceMap.Add;
+        DM.DBDaySource2.ResourceMap.Items[DM.USLUGITE.RecNo].DisplayName :=
+            (DM.USLUGITE.FieldValues['STOKAIME']);
+        DM.USLUGITE.Next;
     end;
-    DBDaySource3.ResourceMap.Clear;
-    DBDaySource3.ResourceMap.Add;
-    DBDaySource3.ResourceMap.Items[0].DisplayName := 'Солариум';
-    USLUGITE.First;
-    while not USLUGITE.Eof do
+    DM.DBDaySource3.ResourceMap.Clear;
+    DM.DBDaySource3.ResourceMap.Add;
+    DM.DBDaySource3.ResourceMap.Items[0].DisplayName := 'Солариум';
+    DM.USLUGITE.First;
+    while not DM.USLUGITE.Eof do
     begin
-        DBDaySource3.ResourceMap.Add;
-        DBDaySource3.ResourceMap.Items[USLUGITE.RecNo].DisplayName :=
-            (USLUGITE.FieldValues['STOKAIME']);
-        USLUGITE.Next;
+        DM.DBDaySource3.ResourceMap.Add;
+        DM.DBDaySource3.ResourceMap.Items[DM.USLUGITE.RecNo].DisplayName :=
+            (DM.USLUGITE.FieldValues['STOKAIME']);
+        DM.USLUGITE.Next;
     end;
     GetGrafikFrame.PlannerDatePicker1.Date := dateof(now);
     PlannerDatePicker1Change(Sender);
@@ -4353,16 +4291,16 @@ try
                 GetIzborNaPlashtaneFrame.LMDMemo1.Lines.Add(GetMessage('M42') + ' ' +
                     GetIzborNaPlashtaneFrame.ADVComboBox2.Items[i] + ' - ' +
                     ConvertCurr1(PoseshteniaPaid[i] *
-                    SOLARIUMI.FieldValues['MINUTINA1'] *
-                    SOLARIUMI.FieldValues['CENA']) + GetMessage('M20')); //'лв.'
+                    DM.SOLARIUMI.FieldValues['MINUTINA1'] *
+                    DM.SOLARIUMI.FieldValues['CENA']) + GetMessage('M20')); //'лв.'
             end;
             i := i + 1;
         end;
-        //LMDMemo1.Lines.Add('Общо карти - '+ConvertCurr1(PosPaid*SOLARIUMI.FieldValues['MINUTINA1']*
+        //LMDMemo1.Lines.Add('Общо карти - '+ConvertCurr1(PosPaid*DM.SOLARIUMI.FieldValues['MINUTINA1']*
         GetIzborNaPlashtaneFrame.LMDMemo1.Lines.Add(GetMessage('M19') + ' ' + ConvertCurr1(PosPaid *
-            SOLARIUMI.FieldValues['MINUTINA1'] *
-            SOLARIUMI.FieldValues['CENA']) + GetMessage('M20'));
-        //SOLARIUMI.FieldValues['CENA'])+'лв.');
+            DM.SOLARIUMI.FieldValues['MINUTINA1'] *
+            DM.SOLARIUMI.FieldValues['CENA']) + GetMessage('M20'));
+        //DM.SOLARIUMI.FieldValues['CENA'])+'лв.');
         if PaidChipCard > 0 then
             GetIzborNaPlashtaneFrame.LMDMemo1.Lines.Add(GetMessage('M21') + ' ' +
                 ConvertCurr1(PaidCHipCard));
@@ -4390,7 +4328,7 @@ try
             GetIzborNaPlashtaneFrame.PaymentOKLabel.Visible := true;
         FmtStr(Result1, '%4.2f', [(PaidChipCard)]);
         Ostatak := (Card.Balans - (PaidChipCard)) /   (PriceCard/TimeSet);
-//            SOLARIUMI.FieldValues['CENA'];
+//            DM.SOLARIUMI.FieldValues['CENA'];
         FmtStr(Result1, '%4.2f', [Ostatak]);
         GetIzborNaPlashtaneFrame.Label72.Caption := '' + Result1 + GetMessage('M28') + ' / ';
         //Label72.Caption:=''+ Result1+'минути / ';
@@ -4409,32 +4347,32 @@ var
     f1, f2: TField;
 begin
 GetSolariumiNastroikiFrame.Image11.Picture := GetLogoEkranFrame.Image1.Picture;
-    f1 := SOLARIUMI.FindField('LICEVILASTDATE');
-    f2 := SOLARIUMI.FindField('LAMPILASTDATE');
+    f1 := DM.SOLARIUMI.FindField('LICEVILASTDATE');
+    f2 := DM.SOLARIUMI.FindField('LAMPILASTDATE');
     if f1 = nil then
     begin
-        SOLARIUMI.RestructureFieldDefs.Add('LICEVILASTDATE', aftDate);
-        SOLARIUMI.Close;
-        SOLARIUMI.RestructureTable;
-        SOLARIUMI.Open;
-        SOLARIUMI.FieldValues['LICEVILASTDATE'] := '01/01/1998';
+        DM.SOLARIUMI.RestructureFieldDefs.Add('LICEVILASTDATE', aftDate);
+        DM.SOLARIUMI.Close;
+        DM.SOLARIUMI.RestructureTable;
+        DM.SOLARIUMI.Open;
+        DM.SOLARIUMI.FieldValues['LICEVILASTDATE'] := '01/01/1998';
     end;
     MainForm.GetSolariumiNastroikiFrame.DBText11.DataField := 'LICEVILASTDATE';
     if f2 = nil then
     begin
-        SOLARIUMI.RestructureFieldDefs.Add('LAMPILASTDATE', aftDate);
-        SOLARIUMI.close;
-        SOLARIUMI.RestructureTable;
-        SOLARIUMI.open;
-        SOLARIUMI.FieldValues['LAMPILASTDATE'] := '01/01/1998';
+        DM.SOLARIUMI.RestructureFieldDefs.Add('LAMPILASTDATE', aftDate);
+        DM.SOLARIUMI.close;
+        DM.SOLARIUMI.RestructureTable;
+        DM.SOLARIUMI.open;
+        DM.SOLARIUMI.FieldValues['LAMPILASTDATE'] := '01/01/1998';
     end;
     MainForm.GetSolariumiNastroikiFrame.DBText12.DataField := 'LAMPILASTDATE';
-    ImageName := SOLARIUMI.FieldByName('PICTURE').AsString;
+    ImageName := DM.SOLARIUMI.FieldByName('PICTURE').AsString;
     if FileExists(ImageName) then
         GetSolariumiNastroikiFrame.Image16.Picture.LoadFromFile(ImageName);
     // else Image16.Picture:=Imagepress1.Picture;
-    MainForm.GetSolariumiNastroikiFrame.Label115.Caption := IntToStr(SOLARIUMI.RecNo);
-    if SOLARIUMI.EOF then
+    MainForm.GetSolariumiNastroikiFrame.Label115.Caption := IntToStr(DM.SOLARIUMI.RecNo);
+    if DM.SOLARIUMI.EOF then
         GetSolariumiNastroikiFrame.LMDButton16.Visible := true
     else
         GetSolariumiNastroikiFrame.LMDButton16.Visible := false;
@@ -4448,7 +4386,7 @@ var
     Result2: integer;
     _Q: TABSQUery;
 begin // Delete klient
-    if KARTICHIP.FieldValues['SUMA'] <> 0 then
+    if DM.KARTICHIP.FieldValues['SUMA'] <> 0 then
     begin
         NuliraneChipCartaButtonClick(Sender);
         exit;
@@ -4485,7 +4423,7 @@ begin // Delete klient
                 begin
                     QKarti.Delete;
                 end;
-                _Q.SQL.SetText(PChar('select * from KARTICHIP where KLIENTNOMER = ' + IntToStr(QKLIENTI.FieldValues['NOMER'])));
+                _Q.SQL.SetText(PChar('select * from DM.KARTICHIP where KLIENTNOMER = ' + IntToStr(QKLIENTI.FieldValues['NOMER'])));
                 _Q.Open;
                 if _Q.RecordCount > 0 then _Q.Delete;
                 QKlienti.Active := False;
@@ -4500,16 +4438,16 @@ begin // Delete klient
                 _Q.Post;
                 _Q.Close;
                 QKlienti.Active := True;
-                Plashtania.ReadOnly := False;
-                Plashtania.Edit;
-                Plashtania.Append;
-                Plashtania.FieldValues['STOKA'] := 0;
-                Plashtania.FieldValues['DATA'] := Date;
-                Plashtania.FieldValues['OTCHIPKARTA'] := Klient;
-                Plashtania.FieldValues['CHAS'] := TimeToStr(Time);
-                Plashtania.Post;
+                DM.Plashtania.ReadOnly := False;
+                DM.Plashtania.Edit;
+                DM.Plashtania.Append;
+                DM.Plashtania.FieldValues['STOKA'] := 0;
+                DM.Plashtania.FieldValues['DATA'] := Date;
+                DM.Plashtania.FieldValues['OTCHIPKARTA'] := Klient;
+                DM.Plashtania.FieldValues['CHAS'] := TimeToStr(Time);
+                DM.Plashtania.Post;
                 // Create empty record to register "Deletion" operation
-                R := STOKI.Locate('STOKAKOD', 0, []);
+                R := DM.STOKI.Locate('STOKAKOD', 0, []);
                 if not R then
                 begin
                     AddStokaButtonClick(5);
@@ -4562,7 +4500,7 @@ begin
     CardNomer := 0;
     QKlienti.Active := True;
     GetMenuKasaFrame.ComboBox2.Clear;
-    STOKITE.Active := true;
+    DM.STOKITE.Active := true;
     SLE4442Init();
 end;
 
@@ -4578,24 +4516,24 @@ begin
         'IME'))) then
     begin
         QKlienti.Active := False;
-        QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join KARTICHIP c on k.NOMER = c.KLIENTNOMER  ' + SQLText +
+        QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join DM.KARTICHIP c on k.NOMER = c.KLIENTNOMER  ' + SQLText +
             ' ORDER BY IME DESC'));
     end;
     if (AFieldName = 'NOMER') then
     begin
         QKlienti.Active := False;
         if AnsiContainsText(QKlienti.SQL.Text, 'DESC') then
-            QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join KARTICHIP c on k.NOMER = c.KLIENTNOMER ' + SQLText +
+            QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join DM.KARTICHIP c on k.NOMER = c.KLIENTNOMER ' + SQLText +
                 ' ORDER BY NOMER DESC'))
         else
-            QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join KARTICHIP c on k.NOMER = c.KLIENTNOMER ' + SQLText +
+            QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join DM.KARTICHIP c on k.NOMER = c.KLIENTNOMER ' + SQLText +
                 ' ORDER BY NOMER ASC'));
     end;
     if (AFieldName = 'BALANS') and (not (AnsiContainsText(QKlienti.SQL.Text,
         'BALANS'))) then
     begin
         QKlienti.Active := False;
-        QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join KARTICHIP c on k.NOMER = c.KLIENTNOMER ' + SQLText +
+        QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join DM.KARTICHIP c on k.NOMER = c.KLIENTNOMER ' + SQLText +
             ' ORDER BY BALANS DESC'));
     end;
     if AnsiContainsText(QKlienti.SQL.Text, 'DESC') then
@@ -4608,7 +4546,7 @@ begin
     QKarti.Active := False;
     QKarti.SQL.SetText(PChar('SELECT * FROM kartiall WHERE klientdetail = ' +
         IntToStr2(QKlienti.FieldValues['NOMER']) + ' ORDER BY KARTANOMER '));
-    Qkarti.SQL.Text := QKarti.SQL.Text;
+    DM.Qkarti.SQL.Text := QKarti.SQL.Text;
     QKarti.Active := True;
 end;
 
@@ -4622,7 +4560,7 @@ begin
         Ime := GetChipKartiFrame.Edit10.Text;
     Ime := AnsiLowerCase(Ime);
     QKlienti.Active := False;
-    SQLText := 'SELECT * FROM klienti k left outer join KARTICHIP c on k.NOMER = c.KLIENTNOMER WHERE LOWER(IME) LIKE "' + (Ime) + '%"';
+    SQLText := 'SELECT * FROM klienti k left outer join DM.KARTICHIP c on k.NOMER = c.KLIENTNOMER WHERE LOWER(IME) LIKE "' + (Ime) + '%"';
     if not (GetKlubniKartiFrame.ShowAllKlientsCb.Checked) then
         SQLText := SQLText + ' and NOMER >-1 ';
     QKlienti.SQL.SetText(PChar(SQLText + ' ORDER BY IME'));
@@ -4647,8 +4585,8 @@ begin
         '"' + IntToStr2(QKlienti.FieldValues['NOMER']) + '"' +
         ' ORDER BY KARTANOMER'));
     QKarti.Active := True;
-    if (varType(KARTICHIP.FieldValues['SUMA']) <> varNull) then
-        suma := KARTICHIP.FieldValues['SUMA'] / Solariumi.FieldValues['CENA']
+    if (varType(DM.KARTICHIP.FieldValues['SUMA']) <> varNull) then
+        suma := DM.KARTICHIP.FieldValues['SUMA'] / Solariumi.FieldValues['CENA']
     else
         suma := 0;
     //    if suma > 2 then
@@ -4673,10 +4611,10 @@ begin
     if not (GetKlubniKartiFrame.ShowAllKlientsCb.Checked) then
         SQLText := ' and NOMER >-1 ';
     if QKarti.FieldValues['klientdetail'] > 0 then
-        QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join KARTICHIP c on k.NOMER = c.KLIENTNOMER WHERE NOMER = ' +
+        QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join DM.KARTICHIP c on k.NOMER = c.KLIENTNOMER WHERE NOMER = ' +
             IntToStr2(QKarti.FieldValues['klientdetail']) + ''))
     else
-        QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join KARTICHIP c on k.NOMER = c.KLIENTNOMER ' + SQLText +
+        QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join DM.KARTICHIP c on k.NOMER = c.KLIENTNOMER ' + SQLText +
             ' ORDER BY NOMER DESC'));
     QKlienti.Active := True;
     wwDBGrid6RowChanged(Sender);
@@ -4693,14 +4631,14 @@ begin
         if QKarti.RecordCount > 0 then
         begin
             QKlienti.Active := False;
-            QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join KARTICHIP c on k.NOMER = c.KLIENTNOMER WHERE NOMER = ' +
+            QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join DM.KARTICHIP c on k.NOMER = c.KLIENTNOMER WHERE NOMER = ' +
                 IntToStr2(QKarti.FieldValues['klientdetail']) + ''));
             QKlienti.Active := True;
         end
         else
         begin
             QKlienti.Active := False;
-            QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join KARTICHIP c on k.NOMER = c.KLIENTNOMER WHERE NOMER = 0'));
+            QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join DM.KARTICHIP c on k.NOMER = c.KLIENTNOMER WHERE NOMER = 0'));
             QKlienti.Active := True;
         end;
     end;
@@ -4712,14 +4650,14 @@ begin
         if QKarti.RecordCount > 0 then
         begin
             QKlienti.Active := False;
-            QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join KARTICHIP c on k.NOMER = c.KLIENTNOMER WHERE NOMER = ' +
+            QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join DM.KARTICHIP c on k.NOMER = c.KLIENTNOMER WHERE NOMER = ' +
                 IntToStr2(QKarti.FieldValues['klientdetail']) + ''));
             QKlienti.Active := True;
         end
         else
         begin
             QKlienti.Active := False;
-            QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join KARTICHIP c on k.NOMER = c.KLIENTNOMER WHERE NOMER = 0'));
+            QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join DM.KARTICHIP c on k.NOMER = c.KLIENTNOMER WHERE NOMER = 0'));
             QKlienti.Active := True;
         end;
     end;
@@ -4833,11 +4771,11 @@ begin
       linetext:= linetext + 'Billing Information,Directory Server,Mileage,Occupation,Hobby,Sensitivity,Priority,Subject,Notes,Group Membership,';
       linetext:= linetext + 'E-mail 1 - Type,E-mail 1 - Value,E-mail 2 - Type,E-mail 2 - Value,Phone 1 - Type,Phone 1 - Value,Website 1 - Type,Website 1 - Value';
       WriteLn(myFile, linetext);
-      Qklienti.First();
-      while not Qklienti.Eof do
+      DM.Qklienti.First();
+      while not DM.Qklienti.Eof do
       begin
-        if (varType(Qklienti.FieldValues['IME']) <> varNull) then
-            ime:= Qklienti.FieldValues['IME']
+        if (varType(DM.Qklienti.FieldValues['IME']) <> varNull) then
+            ime:= DM.Qklienti.FieldValues['IME']
             else  ime:= '';
         sl.DelimitedText := ime;
         if sl.count > 1 then
@@ -4845,14 +4783,14 @@ begin
             familia := sl[1];
             ime := sl[0]
         end;
-        if (varType(Qklienti.FieldValues['TELEFON']) <> varNull) then
-            telefon:= Qklienti.FieldValues['TELEFON']
+        if (varType(DM.Qklienti.FieldValues['TELEFON']) <> varNull) then
+            telefon:= DM.Qklienti.FieldValues['TELEFON']
             else  telefon:= '';
-        if (varType(Qklienti.FieldValues['ADRES']) <> varNull) then
-            address:= Qklienti.FieldValues['ADRES']
+        if (varType(DM.Qklienti.FieldValues['ADRES']) <> varNull) then
+            address:= DM.Qklienti.FieldValues['ADRES']
             else  address:= '';
         WriteLn(myFile, ime + ',' + ime +  ',,' + familia  + ',,,,,,,,,,,,,,,,,,,,,,,* SolarStudio,,,,'+ address +',Mobile,' + telefon + ',,');
-        Qklienti.Next();
+        DM.Qklienti.Next();
       end;
       CloseFile(myFile);
   end;
@@ -4942,12 +4880,12 @@ end;
 
 procedure TMainForm.AdvTabSheet5Show(Sender: TObject);
 begin
-    GetIzborNaVremeFrame.Label154.Caption := IntToStr2(SOLARIUMI.FieldValues['STAPKA'] *
-        SOLARIUMI.FieldValues['KOEFICIENT']);
-    GetIzborNaVremeFrame.Label33.Caption := IntToStr2(SOLARIUMI.FieldValues['STAPKA'] *
-        SOLARIUMI.FieldValues['KOEFICIENT']);
-    GetIzborNaVremeFrame.Label40.Caption := IntToStr2(SOLARIUMI.FieldValues['STAPKA']);
-    GetIzborNaVremeFrame.Label47.Caption := IntToStr2(SOLARIUMI.FieldValues['STAPKA']);
+    GetIzborNaVremeFrame.Label154.Caption := IntToStr2(DM.SOLARIUMI.FieldValues['STAPKA'] *
+        DM.SOLARIUMI.FieldValues['KOEFICIENT']);
+    GetIzborNaVremeFrame.Label33.Caption := IntToStr2(DM.SOLARIUMI.FieldValues['STAPKA'] *
+        DM.SOLARIUMI.FieldValues['KOEFICIENT']);
+    GetIzborNaVremeFrame.Label40.Caption := IntToStr2(DM.SOLARIUMI.FieldValues['STAPKA']);
+    GetIzborNaVremeFrame.Label47.Caption := IntToStr2(DM.SOLARIUMI.FieldValues['STAPKA']);
 end;
 
 procedure TMainForm.PayChipCardClick(Sender: TObject);
@@ -4961,28 +4899,28 @@ begin
     begin
         if (PriceCash > 0) or (PriceCard > 0) then
         begin
-            if (KARTICHIP.FieldValues['ENDDATE'] > 0) and
-                (KARTICHIP.FieldValues['ENDDATE'] < DateOf(Now)) and not
+            if (DM.KARTICHIP.FieldValues['ENDDATE'] > 0) and
+                (DM.KARTICHIP.FieldValues['ENDDATE'] < DateOf(Now)) and not
                     IsChipCard then
             begin
                 Application.MessageBox(PChar('Валидността на картата е изтекла!'), PChar(''), MB_OK);
                 exit;
             end;
-            if (KARTICHIP.FieldValues['STARTTIME'] > 0) and
-                (KARTICHIP.FieldValues['STARTTIME'] < TimeOf(Now)) and not
+            if (DM.KARTICHIP.FieldValues['STARTTIME'] > 0) and
+                (DM.KARTICHIP.FieldValues['STARTTIME'] < TimeOf(Now)) and not
                     IsChipCard then
             begin
                 Application.MessageBox(PChar('Картата не може да бъде ползвана сега!'), PChar(''), MB_OK);
                 exit;
             end;
-            if (Card.PIN <> Internet.FieldValues['PIN']) and (Card.PIN <> '')
+            if (Card.PIN <> DM.Internet.FieldValues['PIN']) and (Card.PIN <> '')
                 then
             begin
                 Application.MessageBox(PChar('Тази карта не може да бъде използвана в това студио!'), PChar(''), MB_OK);
                 exit;
             end;
-            if (KARTICHIP.FieldValues['ONCE_PERDAY'] = true) and
-                (Card.StudioNomer = Internet.FieldValues['STUDIONOMER']) then
+            if (DM.KARTICHIP.FieldValues['ONCE_PERDAY'] = true) and
+                (Card.StudioNomer = DM.Internet.FieldValues['STUDIONOMER']) then
             begin
                 PLASHTANIA.Last;
                 Date := DateOf(Now);
@@ -4990,7 +4928,7 @@ begin
                 begin
                     if ((PLASHTANIA.FieldValues['SOLARIUM'] > -1) and
                         (PLASHTANIA.FieldValues['OTCHIPKARTA'] =
-                        KARTICHIP.FieldValues['KLIENTNOMER'])) then
+                        DM.KARTICHIP.FieldValues['KLIENTNOMER'])) then
                     begin
                         Application.MessageBox(PChar('Тази карта позволява само едно печене на ден!'), PChar(''), MB_OK);
                         exit;
@@ -5008,9 +4946,9 @@ begin
                 PaidChipCard := PriceCard;
             if not IsChipCard  and (CardNomer > 0) then
             begin
-              if KARTICHIP.FieldValues['SUMA'] < PaidChipCard then
+              if DM.KARTICHIP.FieldValues['SUMA'] < PaidChipCard then
               begin
-                 PaidChipCard := KARTICHIP.FieldValues['SUMA'];
+                 PaidChipCard := DM.KARTICHIP.FieldValues['SUMA'];
 //                Application.MessageBox(PChar('Недостатъчни минути!'), PChar(''), MB_OK);
 //                PaidChipCard:= 0;
 //                exit;
@@ -5046,8 +4984,8 @@ procedure TMainForm.Label139Click(Sender: TObject); //ChipCard Payment
 var
     result1: string;
 begin
-    if KARTICHIP.State in [dsEdit, dsInsert] then
-        KARTICHIP.Post;
+    if DM.KARTICHIP.State in [dsEdit, dsInsert] then
+        DM.KARTICHIP.Post;
     if QKLIENTI.State in [dsEdit, dsInsert] then
         QKLIENTI.Post;
     //    if PriceCard>0 then
@@ -5099,10 +5037,10 @@ begin
     if not GetKlubniKartiFrame.ShowAllKlientsCb.Checked then
         SQLText := ' WHERE NOMER >-1 ';
     if QKarti.FieldValues['klientdetail'] > 0 then
-        QKlienti.SQL.SetText(PChar('SSELECT * FROM klienti k left outer join KARTICHIP c on k.NOMER = c.KLIENTNOMER WHERE NOMER = ' +
+        QKlienti.SQL.SetText(PChar('SSELECT * FROM klienti k left outer join DM.KARTICHIP c on k.NOMER = c.KLIENTNOMER WHERE NOMER = ' +
             IntToStr2(QKarti.FieldValues['klientdetail']) + ''))
     else
-        QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join KARTICHIP c on k.NOMER = c.KLIENTNOMER ' + SQLText +
+        QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join DM.KARTICHIP c on k.NOMER = c.KLIENTNOMER ' + SQLText +
             ' ORDER BY NOMER DESC'));
     QKlienti.Active := True;
     wwDBGrid6RowChanged(Sender);
@@ -5126,7 +5064,7 @@ begin
         SQLText := ' WHERE NOMER > -1 ';
     ShowPage(PAGE_CHIP_KARTI);
     QKlienti.Active := False;
-    QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join KARTICHIP c on k.NOMER = c.KLIENTNOMER ' + SQLText +
+    QKlienti.SQL.SetText(PChar('SELECT * FROM klienti k left outer join DM.KARTICHIP c on k.NOMER = c.KLIENTNOMER ' + SQLText +
         ' ORDER BY k.NOMER ASC'));
     CardNomer := 0;
     QKlienti.Active := True;
@@ -5151,8 +5089,8 @@ end;
 
 procedure TMainForm.DBCheckBox1Exit(Sender: TObject);
 begin
-    Internet.Edit;
-    Internet.Post;
+    DM.Internet.Edit;
+    DM.Internet.Post;
 end;
 
 procedure TMainForm.LMDButton10Click(Sender: TObject);
@@ -5161,8 +5099,8 @@ begin
         PChar(GetMessage('M31')), MB_OKCANCEL) = IDOK then
         //if Application.MessageBox(PChar('Ще бъдат изтрити всички стоки!?'),PChar('Стоки?!'),MB_OKCANCEL		)=IDOK	 then
     begin
-        while STOKITE.RecordCount > 0 do
-            STOKITE.Delete;
+        while DM.STOKITE.RecordCount > 0 do
+            DM.STOKITE.Delete;
     end;
 end;
 
@@ -5172,8 +5110,8 @@ begin
         PChar(GetMessage('M33')), MB_OKCANCEL) = IDOK then
         //if Application.MessageBox(PChar('Ще бъдат изтрити всички видове карти!?'),PChar('Карти?!'),MB_OKCANCEL		)=IDOK	 then
     begin
-        while KARTI.RecordCount > 0 do
-            KARTI.Delete;
+        while DM.KARTI.RecordCount > 0 do
+            DM.KARTI.Delete;
     end;
 end;
 
@@ -5203,25 +5141,25 @@ begin
     q.SQL.SetText(PChar('DELETE FROM KLIENTI'));
     q.ExecSQL;
     q.Close;
-    Table3.Append;
-    Table3.FieldValues['NOMER'] := 1;
-    Table3.FieldValues['IME'] := GetMessage('M36');
-    Table3.Post;
-    MainForm.sol1.FlushBuffers;
+    DM.Table3.Append;
+    DM.Table3.FieldValues['NOMER'] := 1;
+    DM.Table3.FieldValues['IME'] := GetMessage('M36');
+    DM.Table3.Post;
+    DM.sol1.FlushBuffers;
     MainForm.Timer1.Enabled := false;
-    MainForm.sol1.Close;
-    MainForm.sol1.Connected := false;
+    DM.sol1.Close;
+    DM.sol1.Connected := false;
     Sleep(1000);
-    MainForm.sol1.Connected := false;
-    MainForm.sol1.Connected := false;
-    MainForm.sol1.Connected := false;
-    MainForm.sol1.Connected := false;
-    MainForm.sol1.Connected := false;
-    MainForm.sol1.Connected := false;
-    MainForm.sol1.CompactDatabase();
+    DM.sol1.Connected := false;
+    DM.sol1.Connected := false;
+    DM.sol1.Connected := false;
+    DM.sol1.Connected := false;
+    DM.sol1.Connected := false;
+    DM.sol1.Connected := false;
+    DM.sol1.CompactDatabase();
     OpenTables;
     MainForm.Timer1.Enabled := true;
-    //Table3.FieldValues['IME']:='Администратор';
+    //DM.Table3.FieldValues['IME']:='Администратор';
 
 end;
 
@@ -5240,25 +5178,25 @@ begin
     q.SQL.SetText(PChar('DELETE FROM plashtania'));
     q.ExecSQL;
     q.Free;
-    Plashtania.Append;
+    DM.Plashtania.Append;
     plashtania.FieldValues['BROI'] := 0;
     plashtania.FieldValues['DATA'] := Date;
     plashtania.FieldValues['CHAS'] := TimeToStr(Time);
     plashtania.FieldValues['OTCHIPKARTA'] := 1;
     plashtania.FieldValues['STOKA'] := 0;
     plashtania.FieldValues['SUMABROI'] := 0;
-    Plashtania.Post;
-    MainForm.sol1.FlushBuffers;
-    MainForm.sol1.Close;
+    DM.Plashtania.Post;
+    DM.sol1.FlushBuffers;
+    DM.sol1.Close;
 
-    MainForm.sol1.Connected := false;
-    MainForm.sol1.Connected := false;
-    MainForm.sol1.Connected := false;
+    DM.sol1.Connected := false;
+    DM.sol1.Connected := false;
+    DM.sol1.Connected := false;
     Sleep(1000);
-    MainForm.sol1.Connected := false;
-    MainForm.sol1.Connected := false;
-    MainForm.sol1.Connected := false;
-    MainForm.sol1.CompactDatabase();
+    DM.sol1.Connected := false;
+    DM.sol1.Connected := false;
+    DM.sol1.Connected := false;
+    DM.sol1.CompactDatabase();
     OpenTables;
     MainForm.Timer1.Enabled := true;
 end;
@@ -5266,22 +5204,22 @@ end;
 procedure TMainForm.NuliraneChipCartaButtonClick(Sender: TObject);
     procedure ReturnDeposit(KartaNomer: Integer);
     begin
-        if MainForm.STOKI.Locate('STOKATIP', 'D', []) and (KartaNomer > 0) then
+        if DM.STOKI.Locate('STOKATIP', 'D', []) and (KartaNomer > 0) then
         begin
-            MainForm.STOKI.Edit;
-            MainForm.STOKI.FieldValues['STOKANASKLAD'] :=
-                MainForm.STOKI.FieldValues['STOKANASKLAD'] + 1;
-            MainForm.STOKI.post;
-            Plashtania.Append;
+            DM.STOKI.Edit;
+            DM.STOKI.FieldValues['STOKANASKLAD'] :=
+                DM.STOKI.FieldValues['STOKANASKLAD'] + 1;
+            DM.STOKI.post;
+            DM.Plashtania.Append;
             plashtania.FieldValues['BROI'] := 1;
             plashtania.FieldValues['DATA'] := Date;
             plashtania.FieldValues['CHAS'] := TimeToStr(Time);
             plashtania.FieldValues['OTCHIPKARTA'] := KartaNomer;
             plashtania.FieldValues['STOKA'] :=
-                MainForm.STOKI.FieldValues['STOKAKOD'];
+                DM.STOKI.FieldValues['STOKAKOD'];
             plashtania.FieldValues['SUMABROI'] :=
-                -MainForm.STOKI.FieldValues['STOKACENA'];
-            Plashtania.Post;
+                -DM.STOKI.FieldValues['STOKACENA'];
+            DM.Plashtania.Post;
         end;
     end;
 var
@@ -5291,9 +5229,9 @@ var
 begin
     if(IsChipCard) then
     begin
-     if ((Card.StudioNomer <> Internet.FieldValues['STUDIONOMER']))
+     if ((Card.StudioNomer <> DM.Internet.FieldValues['STUDIONOMER']))
       {  or
-     (KARTICHIP.fieldvalues['suma']>0)}then
+     (DM.KARTICHIP.fieldvalues['suma']>0)}then
      begin // Message shoud be corrected...
           IsOK := Application.MessageBox(PChar(GetMessage('M78')),
               PChar('Warning'), MB_OKCANCEL);
@@ -5303,13 +5241,13 @@ begin
           if ((IsOK <> MROK) or (PasswordForm.ShowModal <> MROK)) then
               exit;
       end;
-      if(Card.PIN <> Internet.FieldValues['PIN']) then
+      if(Card.PIN <> DM.Internet.FieldValues['PIN']) then
       begin
         Application.MessageBox(PChar('Тази карта не може да бъде използвана в това студио!'), PChar(''), MB_OK);
         exit;
       end;
     end
-    else if not (MainForm.STOKI.Locate('STOKATIP', 'D', [])) then
+    else if not (DM.STOKI.Locate('STOKATIP', 'D', [])) then
         begin
             if PasswordForm.ModalResult <> MROK then
                 if PasswordForm.ShowModal <> MROK then
@@ -5319,20 +5257,20 @@ begin
         = IDOK then
     begin
         //Картата ще бъде изчистена!?
-        KARTICHIP.Edit;
-        KARTICHIP.FieldValues['COUNTER'] := 0;
-        KARTICHIP.FieldValues['DISCOUNT'] := 0;
-        KARTICHIP.FieldValues['SUMA'] := 0;
-        KARTICHIP.Post;
+        DM.KARTICHIP.Edit;
+        DM.KARTICHIP.FieldValues['COUNTER'] := 0;
+        DM.KARTICHIP.FieldValues['DISCOUNT'] := 0;
+        DM.KARTICHIP.FieldValues['SUMA'] := 0;
+        DM.KARTICHIP.Post;
         if not IsChipCard then
         begin
-            ReturnDeposit(KARTICHIP.FieldValues['KLIENTNOMER']);
+            ReturnDeposit(DM.KARTICHIP.FieldValues['KLIENTNOMER']);
         end;
 
         if Card.ErrCounter > 2 then
         begin
             Card.ConStatus := card.ConStatus;
-            Data := Card.PIN; //Internet.FieldValues['PIN'];
+            Data := Card.PIN; //DM.Internet.FieldValues['PIN'];
             SLE4442Submit();
             SLE4442ReadCardInfo();
             if ((not (Card.ErrCounter > 2)) or (Card.ConStatus = 0)) then
@@ -5344,7 +5282,7 @@ begin
                 SLE4442ReadCardInfo();
                 Data := 'ffffff';
                 SLE4442ChangePIN();
-                Card.PIN := 'ffffff'; //Internet.FieldValues['PIN'];
+                Card.PIN := 'ffffff'; //DM.Internet.FieldValues['PIN'];
                 SLE4442WriteCardInfo();
                 SLE4442ShowCardInfo();
                 if ((Card.CardNomer < 0) and (KartaNomer > 0)) then
@@ -5381,16 +5319,16 @@ begin //Зареждане
       NovKlientButtonClick(Sender);
       Exit;
     end;
-    if KARTICHIP.FieldValues['ENDDATE'] > 0 then
+    if DM.KARTICHIP.FieldValues['ENDDATE'] > 0 then
         Exit;
     if( CardNomer <> 0) then
     begin
         QKlienti.Active := False;
         QKlienti.Active := True;
-        Qklienti.Locate('NOMER', CardNomer, []);
+        DM.Qklienti.Locate('NOMER', CardNomer, []);
     end;
     if not IsReader then
-        Card.NewCard := KARTICHIP.FieldValues['COUNTER'] = -1
+        Card.NewCard := DM.KARTICHIP.FieldValues['COUNTER'] = -1
     else
         Card.NewCard := (Card.CardNomer = -1);
     HasCard := Card.ClientNomer > 0;
@@ -5400,21 +5338,21 @@ begin //Зареждане
     if not IsReader or (Card.CardNomer < 0) then
     begin // If new card or no card
         CardNomer := QKlienti.FieldValues['NOMER'];
-        Card.StudioName := Internet.FieldValues['STUDIONAME'];
-        Card.StudioNomer := Internet.FieldValues['STUDIONOMER'];
+        Card.StudioName := DM.Internet.FieldValues['STUDIONAME'];
+        Card.StudioNomer := DM.Internet.FieldValues['STUDIONOMER'];
         Card.ClientName := QKlienti.FieldValues['IME'];
-        //Card.PIN:=Internet.FieldValues['PIN'];
+        //Card.PIN:=DM.Internet.FieldValues['PIN'];
         Card.ClientNomer := QKlienti.FieldValues['NOMER'];
         Card.CardNomer := Card.ClientNomer;
-        if (not IsReader) and ((varType(KARTICHIP.FieldValues['SUMA']) = varNull)
-            or KARTICHIP.FieldValues['COUNTER'] = -1) then
+        if (not IsReader) and ((varType(DM.KARTICHIP.FieldValues['SUMA']) = varNull)
+            or DM.KARTICHIP.FieldValues['COUNTER'] = -1) then
         begin
             Card.NewCard := true;
         end;
-        if (not IsReader) and (varType(KARTICHIP.FieldValues['SUMA']) <> varNull)
+        if (not IsReader) and (varType(DM.KARTICHIP.FieldValues['SUMA']) <> varNull)
             then
         begin
-            Card.Balans := KARTICHIP.FieldValues['SUMA'];
+            Card.Balans := DM.KARTICHIP.FieldValues['SUMA'];
         end;
         if (Card.Balans < 0) then
             Card.Balans := 0;
@@ -5451,12 +5389,12 @@ begin //Зареждане
             // SLE4442ReadCardInfo();SLE4442ShowCardInfo();
             exit;
         end;
-        if (Card.PIN <> Internet.FieldValues['PIN']) and not Card.NewCard then
+        if (Card.PIN <> DM.Internet.FieldValues['PIN']) and not Card.NewCard then
         begin
             Application.MessageBox(PChar('Тази карта не може да бъде използвана в това студио!'), PChar(''), MB_OK);
             exit;
         end;
-        if (Card.StudioNomer <> Internet.FieldValues['STUDIONOMER']) and not Card.NewCard then
+        if (Card.StudioNomer <> DM.Internet.FieldValues['STUDIONOMER']) and not Card.NewCard then
         begin
             // Application.MessageBox(PChar('Картата може да се зарежда само във студиото където е издадена!'),PChar('Warning'),MB_OK);
             Application.MessageBox(PChar(GetMessage('M74')), PChar('Warning'),
@@ -5467,36 +5405,36 @@ begin //Зареждане
     end;
 
     Karti.Active := False;
-    Karti.SQL.SetText(PChar('SELECT * FROM STOKI WHERE STOKAKOD < 0 AND POSESHTENIA > 0 AND SUMA > 0'));
+    Karti.SQL.SetText(PChar('SELECT * FROM DM.STOKI WHERE STOKAKOD < 0 AND POSESHTENIA > 0 AND SUMA > 0'));
     Karti.Active := True;
-    if (sol1.InTransaction) then
+    if (DM.sol1.InTransaction) then
     begin
         //Application.MessageBox(PChar('Базата данни е в транзакция. Това не би трябвало да се случва... Моля рапортувайте тази грешка на автора'), PChar('Вътрешна грешка'), MB_OK);
-//        sol1.Rollback;
-        sol1.Commit;
+//        DM.sol1.Rollback;
+        DM.sol1.Commit;
     end;
-    sol1.StartTransaction;
+    DM.sol1.StartTransaction;
 
     RefillForm.ShowModal;
     if RefillForm.ModalResult = mrOK then
     begin
-        if IsReader and (KARTICHIP.FieldValues['SUMA'] > 0) then
+        if IsReader and (DM.KARTICHIP.FieldValues['SUMA'] > 0) then
         begin
             Result2 :=
                 Application.MessageBox(PChar('Локалната база данни съдържа заредена сума. Да се прехвърли ли?'), PChar('Прехвърляне на сума'), MB_YESNO);
             if Result2 = 6 then
             begin
-                Card.Balans := Card.Balans + KARTICHIP.FieldValues['SUMA'];
+                Card.Balans := Card.Balans + DM.KARTICHIP.FieldValues['SUMA'];
                 Balans1 := Card.Balans;
                 if ((Balans1 - Card.Balans) < 0.02) then
                 begin
                     Application.MessageBox(PChar('Сумата за клиента от локалната база данни '
-                        + ConvertCurr1(KARTICHIP.FieldValues['SUMA']) +
+                        + ConvertCurr1(DM.KARTICHIP.FieldValues['SUMA']) +
                         ' ще бъде добавена към Чип картата'),
                         PChar('Добавяне на сума'), MB_OK);
-                    KARTICHIP.edit;
-                    KARTICHIP.FieldValues['SUMA'] := 0;
-                    KARTICHIP.post;
+                    DM.KARTICHIP.edit;
+                    DM.KARTICHIP.FieldValues['SUMA'] := 0;
+                    DM.KARTICHIP.post;
                 end;
             end;
         end;
@@ -5506,65 +5444,65 @@ begin //Зареждане
         if IsChipCard and (Card.ErrCounter > 5) then
         begin
             Card.CardNomer := Card.ClientNomer; //QKlienti.FieldValues['NOMER'];
-            Data := Internet.FieldValues['PIN'];
+            Data := DM.Internet.FieldValues['PIN'];
             if (strLen(PChar(Data)) <> 6) then
             begin
                 Application.MessageBox(PChar('Невалидна настройка за PIN код.'),
                     PChar(''));
-                if sol1.InTransaction then
-                    sol1.Rollback;
+                if DM.sol1.InTransaction then
+                    DM.sol1.Rollback;
                 Exit;
             end;
             SLE4442ChangePIN();
-            Card.PIN := Internet.FieldValues['PIN'];
+            Card.PIN := DM.Internet.FieldValues['PIN'];
             SLE4442WriteCardInfo();
             SLE4442ReadCardInfo();
         end
         else
         begin
-            if KARTICHIP.RecordCount = 0 then
+            if DM.KARTICHIP.RecordCount = 0 then
             begin
-                KARTICHIP.Append;
-                KARTICHIP.FieldValues['SUMA'] := 0;
-                KARTICHIP.Post;
+                DM.KARTICHIP.Append;
+                DM.KARTICHIP.FieldValues['SUMA'] := 0;
+                DM.KARTICHIP.Post;
             end;
-            KARTICHIP.Edit;
-            if (KARTICHIP.FieldValues['SUMA'] <> KARTICHIP.FieldValues['SUMA'])
+            DM.KARTICHIP.Edit;
+            if (DM.KARTICHIP.FieldValues['SUMA'] <> DM.KARTICHIP.FieldValues['SUMA'])
                 then
-                  KARTICHIP.FieldValues['SUMA'] := 0; // for null value
-            KARTICHIP.FieldValues['SUMA'] := Card.Balans;
-            if (KARTI.FieldValues['VALIDNOST_KARTI'] > 0) then
+                  DM.KARTICHIP.FieldValues['SUMA'] := 0; // for null value
+            DM.KARTICHIP.FieldValues['SUMA'] := Card.Balans;
+            if (DM.KARTI.FieldValues['VALIDNOST_KARTI'] > 0) then
             begin
-                KARTICHIP.FieldValues['ENDDATE'] := Date +
-                    KARTI.FieldValues['VALIDNOST_KARTI'];
+                DM.KARTICHIP.FieldValues['ENDDATE'] := Date +
+                    DM.KARTI.FieldValues['VALIDNOST_KARTI'];
             end;
-            if (KARTICHIP.FieldValues['ONCE_PERDAY'] <>
-                KARTICHIP.FieldValues['ONCE_PERDAY']) or Card.NewCard then
+            if (DM.KARTICHIP.FieldValues['ONCE_PERDAY'] <>
+                DM.KARTICHIP.FieldValues['ONCE_PERDAY']) or Card.NewCard then
             begin
                 if (GetStudioWorkType() <= 0) then
                 begin
-                    KARTICHIP.FieldValues['ONCE_PERDAY'] := false;
+                    DM.KARTICHIP.FieldValues['ONCE_PERDAY'] := false;
                 end
                 else
                 begin
-                    KARTICHIP.FieldValues['ONCE_PERDAY'] := true;
+                    DM.KARTICHIP.FieldValues['ONCE_PERDAY'] := true;
                 end;
             end;
-            KARTICHIP.Post;
+            DM.KARTICHIP.Post;
             Balans1 := Card.balans;
         end;
         if ((Card.Balans - Balans1) < 2) then
-            sol1.Commit(True)
+            DM.sol1.Commit(True)
         else
         begin
-            sol1.Rollback;
+            DM.sol1.Rollback;
             //  Application.MessageBox(PChar('Картата не е записана правилно!'),PChar('Warning'),MB_OK);
             Application.MessageBox(PChar(GetMessage('M73')), PChar('Warning'),
                 MB_OK);
         end;
     end
     else
-        sol1.Rollback;
+        DM.sol1.Rollback;
     if IsChipCard then
     begin
         SLE4442ReadCardInfo();
@@ -5585,10 +5523,10 @@ procedure TMainForm.ManuStoki17Show(Sender: TObject);
 begin
     GetMenuStokiFrame.Image56.Picture := GetLogoEkranFrame.Image1.Picture;
     Karti.Active := False;
-    Karti.SQL.SetText(PChar('SELECT * FROM STOKI WHERE STOKAKOD < 0'));
+    Karti.SQL.SetText(PChar('SELECT * FROM DM.STOKI WHERE STOKAKOD < 0'));
     Karti.Active := True;
-    STOKITE_SKLAD.Active := true;
-    STOKITE_SKLAD.ReadOnly := false;
+    DM.STOKITE_SKLAD.Active := true;
+    DM.STOKITE_SKLAD.ReadOnly := false;
 end;
 
 procedure TMainForm.N3Click(Sender: TObject);
@@ -5679,25 +5617,25 @@ begin
     _Q.RequestLive := True;
     maxnomer := 0;
     nomer := 0;
-    Table3.First;
+    DM.Table3.First;
     L := False;
     while (not L) do
     begin
-        nomer := Table3.FieldByName('NOMER').AsInteger;
+        nomer := DM.Table3.FieldByName('NOMER').AsInteger;
         if (nomer > 0) and (nomer > maxnomer) then
             maxnomer := nomer;
-        L := Table3.Eof;
-        Table3.Next;
+        L := DM.Table3.Eof;
+        DM.Table3.Next;
     end;
 
-    Table3.Append;
-    Table3.FieldValues['NOMER'] := maxnomer + 1;
-    Table3.FieldValues['BALANS'] := 0;
-    Table3.FieldValues['FIRMA'] := 0;
-    Table3.FieldValues['IME'] := GetMessage('M66') + IntTostr(maxnomer + 1);
+    DM.Table3.Append;
+    DM.Table3.FieldValues['NOMER'] := maxnomer + 1;
+    DM.Table3.FieldValues['BALANS'] := 0;
+    DM.Table3.FieldValues['FIRMA'] := 0;
+    DM.Table3.FieldValues['IME'] := GetMessage('M66') + IntTostr(maxnomer + 1);
     //'Нов клиент №'
-    Table3.Post;
-    Table3.Last;
+    DM.Table3.Post;
+    DM.Table3.Last;
     QKlienti.Active := False;
     if not GetKlubniKartiFrame.ShowAllKlientsCb.Checked then
         SQLText := ' WHERE NOMER >-1 ';
@@ -5708,7 +5646,7 @@ begin
     ZarezdaneButtonClick(Sender);
     if RefillForm.ModalResult = mrOK then
     begin
-        _Q.SQL.SetText(PChar('select * from KARTICHIP where KLIENTNOMER = ' +
+        _Q.SQL.SetText(PChar('select * from DM.KARTICHIP where KLIENTNOMER = ' +
             IntToStr(QKLIENTI.FieldValues['NOMER'])));
         _Q.Open;
         if _Q.RecordCount > 0 then
@@ -5724,7 +5662,7 @@ begin
         _Q.FieldValues['DISCOUNT'] := 0;
         if not IsReader then
             _Q.FieldValues['SUMA'] := _Q.FieldValues['SUMA'] +
-                KARTI.FieldValues['SUMA'];
+                DM.KARTI.FieldValues['SUMA'];
         if (GetStudioWorkType() = 1) or (GetStudioWorkType() = 4)then
            _Q.FieldValues['ONCE_PERDAY'] := TRUE
         else
@@ -5780,7 +5718,7 @@ end;
 procedure TMainForm.BcloseClick(Sender: TObject);
 begin
     try
-        sol1.FlushBuffers;
+        DM.sol1.FlushBuffers;
     except
 
     end;
@@ -5798,7 +5736,7 @@ var
     i, j, l: integer;
     k: real;
 begin
-    MainForm.QStatistika.Active := False;
+    DM.QStatistika.Active := False;
     if MainForm.GetStatistikaFrame.ComboBox1.ItemIndex < 0 then
     begin
         MainForm.GetStatistikaFrame.ComboBox1.ItemIndex := 0; index := 0;
@@ -5806,7 +5744,7 @@ begin
     case index of
         0: //Общо за периода сума лева
             begin
-                MainForm.QStatistika.SQL.Text := 'SELECT  CAST (SUM (SUMABROI) '
+                DM.QStatistika.SQL.Text := 'SELECT  CAST (SUM (SUMABROI) '
                     +
                     'AS CURRENCY) AS BROI1, MIN (SOLARIUM) AS SOLARIUM1,  CAST(MIN (SOLARIUM) as STRING) AS WEEKDAY FROM PLASHTANIA WHERE' +
                     '(DATA BETWEEN "' + MainForm.GetStatistikaFrame.PlannerMaskDatePicker1.Text +
@@ -5816,7 +5754,7 @@ begin
 
         1: //Общо за периода брой посещения
             begin
-                MainForm.QStatistika.SQL.Text :=
+                DM.QStatistika.SQL.Text :=
                     'SELECT SUM(STOKA) AS STOKA1, COUNT (*)' +
                     'AS BROI1, MIN (SOLARIUM) AS SOLARIUM1, CAST(MIN (SOLARIUM) as STRING) AS WEEKDAY FROM PLASHTANIA WHERE' +
                     '(SOLARIUM > 0) AND (DATA BETWEEN "' +
@@ -5826,7 +5764,7 @@ begin
             end;
         2: //Общо за периода брой посещения по солариум
             begin
-                MainForm.QStatistika.SQL.Text := 'SELECT  COUNT (*)' +
+                DM.QStatistika.SQL.Text := 'SELECT  COUNT (*)' +
                     'AS BROI1,SOLARIUM  AS SOLARIUM1,  CAST(SUM (STOKA) as STRING) AS WEEKDAY FROM PLASHTANIA WHERE' +
                     '(SOLARIUM > 0) AND (DATA BETWEEN "' +
                     MainForm.GetStatistikaFrame.PlannerMaskDatePicker1.Text +
@@ -5836,7 +5774,7 @@ begin
             end;
         3: //Общо за периода посещения като сума лева
             begin
-                MainForm.QStatistika.SQL.Text := 'SELECT  CAST (SUM (SUMABROI)'
+                DM.QStatistika.SQL.Text := 'SELECT  CAST (SUM (SUMABROI)'
                     +
                     'AS CURRENCY) AS BROI1, MIN (SOLARIUM) AS SOLARIUM1,  CAST(MIN (SOLARIUM) as STRING) AS WEEKDAY FROM PLASHTANIA WHERE' +
                     '(SOLARIUM > 0) AND (DATA BETWEEN "' +
@@ -5847,7 +5785,7 @@ begin
 
         4: //Общо за периода посещения като сума лева по солариум
             begin
-                MainForm.QStatistika.SQL.Text := 'SELECT  CAST (SUM (SUMABROI)'
+                DM.QStatistika.SQL.Text := 'SELECT  CAST (SUM (SUMABROI)'
                     +
                     'AS CURRENCY) AS BROI1, SOLARIUM AS SOLARIUM1,  CAST(MIN (SOLARIUM) as STRING) AS WEEKDAY FROM PLASHTANIA WHERE' +
                     '(SOLARIUM > 0) AND (DATA BETWEEN "' +
@@ -5859,7 +5797,7 @@ begin
 
         5: //Общо за периода отработени часове
             begin
-                MainForm.QStatistika.SQL.Text :=
+                DM.QStatistika.SQL.Text :=
                     'SELECT ROUND (SUM(CAST(BROI as float)/60) ,2) ' +
                     'AS BROI1, MIN (SOLARIUM) AS SOLARIUM1,  CAST(MIN (SOLARIUM) as STRING) AS WEEKDAY FROM PLASHTANIA WHERE' +
                     '(SOLARIUM > 0) AND (PLASHTANIA.DATA BETWEEN "' +
@@ -5870,7 +5808,7 @@ begin
 
         6: //Общо за периода отработени часове по солариуми
             begin
-                MainForm.QStatistika.SQL.Text :=
+                DM.QStatistika.SQL.Text :=
                     '  SELECT   ROUND (SUM(CAST(BROI as float)/60) ,2) ' +
                     'AS BROI1,SOLARIUM AS SOLARIUM1, CAST(SUM (STOKA) as STRING) AS WEEKDAY FROM PLASHTANIA WHERE' +
                     '(SOLARIUM > 0) AND (PLASHTANIA.DATA BETWEEN "' +
@@ -5882,9 +5820,9 @@ begin
 
         7: //Общо за периода брой стоки козметика по стока
             begin
-                MainForm.QStatistika.SQL.Text := 'SELECT COUNT (*) ' +
+                DM.QStatistika.SQL.Text := 'SELECT COUNT (*) ' +
                     'AS BROI1, STOKA AS SOLARIUM1, S.WEEKDAY FROM PLASHTANIA P LEFT OUTER JOIN ' +
-                    '(SELECT STOKAKOD, STOKAIME AS WEEKDAY FROM STOKI ) S ON P.STOKA = S.STOKAKOD WHERE' +
+                    '(SELECT STOKAKOD, STOKAIME AS WEEKDAY FROM DM.STOKI ) S ON P.STOKA = S.STOKAKOD WHERE' +
                     '(STOKA > 0) AND (DATA BETWEEN "' +
                     MainForm.GetStatistikaFrame.PlannerMaskDatePicker1.Text +
                     '" AND "' + MainForm.GetStatistikaFrame.PlannerMaskDatePicker2.Text +
@@ -5893,10 +5831,10 @@ begin
             end;
         8: //Общо за периода козметика като сума лева
             begin
-                MainForm.QStatistika.SQL.Text := 'SELECT CAST (SUM (SUMABROI) '
+                DM.QStatistika.SQL.Text := 'SELECT CAST (SUM (SUMABROI) '
                     +
                     'AS CURRENCY) AS BROI1, STOKA AS SOLARIUM1, S.WEEKDAY FROM PLASHTANIA P LEFT OUTER JOIN ' +
-                    '(SELECT STOKAKOD, STOKAIME AS WEEKDAY FROM STOKI ) S ON P.STOKA = S.STOKAKOD WHERE' +
+                    '(SELECT STOKAKOD, STOKAIME AS WEEKDAY FROM DM.STOKI ) S ON P.STOKA = S.STOKAKOD WHERE' +
                     '(STOKA > 0) AND (DATA BETWEEN "' +
                     MainForm.GetStatistikaFrame.PlannerMaskDatePicker1.Text +
                     '" AND "' + MainForm.GetStatistikaFrame.PlannerMaskDatePicker2.Text +
@@ -5906,9 +5844,9 @@ begin
 
         9: //Общо за периода продадени (заредени) карти
             begin
-                MainForm.QStatistika.SQL.Text := 'SELECT COUNT (*) ' +
+                DM.QStatistika.SQL.Text := 'SELECT COUNT (*) ' +
                     'AS BROI1, STOKA AS SOLARIUM1, S.WEEKDAY FROM PLASHTANIA P LEFT OUTER JOIN ' +
-                    '(SELECT STOKAKOD, STOKAIME AS WEEKDAY FROM STOKI ) S ON P.STOKA = S.STOKAKOD WHERE' +
+                    '(SELECT STOKAKOD, STOKAIME AS WEEKDAY FROM DM.STOKI ) S ON P.STOKA = S.STOKAKOD WHERE' +
                     '(STOKA <-1) AND (DATA BETWEEN "' +
                     MainForm.GetStatistikaFrame.PlannerMaskDatePicker1.Text +
                     '" AND "' + MainForm.GetStatistikaFrame.PlannerMaskDatePicker2.Text +
@@ -5917,7 +5855,7 @@ begin
             end;
         10: //Работа на солариумите по ден от периода
             begin
-                MainForm.QStatistika.SQL.Text :=
+                DM.QStatistika.SQL.Text :=
                     'SELECT DATA, ROUND (SUM(CAST(BROI as float)/60) ,2) AS BROI1' +
                     ', (SOLARIUM - SOLARIUM) AS SOLARIUM1,  TOSTRING(DATA,"DD/M") AS WEEKDAY FROM PLASHTANIA WHERE '
                     + '(SOLARIUM > 0) AND (DATA BETWEEN "' +
@@ -5928,7 +5866,7 @@ begin
             end;
         11: //Работа на солариумите по ден от периода по солариум
             begin
-                MainForm.QStatistika.SQL.Text :=
+                DM.QStatistika.SQL.Text :=
                     'SELECT  ROUND (SUM(CAST(BROI as float)/60) ,2) AS BROI1' +
                     ', SOLARIUM AS SOLARIUM1,  TOSTRING(DATA,"DD/M") AS WEEKDAY FROM PLASHTANIA WHERE '
                     + '(SOLARIUM > 0) AND (DATA BETWEEN "' +
@@ -5947,7 +5885,7 @@ begin
                     MainForm.GetStatistikaFrame.PlannerMaskDatePicker2.Date +
                     (DayOfWeek(MainForm.GetStatistikaFrame.PlannerMaskDatePicker2.Date) -
                     DayOfWeek(MainForm.GetStatistikaFrame.PlannerMaskDatePicker1.Date));
-                MainForm.QStatistika.SQL.Text :=
+                DM.QStatistika.SQL.Text :=
                     'SELECT   CAST (SUM (SUMABROI) AS CURRENCY) ' +
                     'AS BROI1, CAST(TOSTRING(DATA,"DW") AS INTEGER) AS SOLARIUM1, TOSTRING(DATA,"DW") AS WEEKDAY FROM PLASHTANIA WHERE '
                     + '(SOLARIUM > 0) AND (DATA BETWEEN "' +
@@ -5966,7 +5904,7 @@ begin
                     MainForm.GetStatistikaFrame.PlannerMaskDatePicker2.Date +
                     (DayOfWeek(MainForm.GetStatistikaFrame.PlannerMaskDatePicker2.Date) -
                     DayOfWeek(MainForm.GetStatistikaFrame.PlannerMaskDatePicker1.Date));
-                MainForm.QStatistika.SQL.Text :=
+                DM.QStatistika.SQL.Text :=
                     'SELECT  ROUND (SUM(CAST(BROI as float)/60) ,2) ' +
                     'AS BROI1, CAST(TOSTRING(DATA,"DW") AS INTEGER) AS SOLARIUM1, TOSTRING(DATA,"DW") AS WEEKDAY FROM PLASHTANIA WHERE '
                     + '(SOLARIUM > 0) AND (DATA BETWEEN "' +
@@ -5985,7 +5923,7 @@ begin
                     MainForm.GetStatistikaFrame.PlannerMaskDatePicker2.Date +
                     (DayOfWeek(MainForm.GetStatistikaFrame.PlannerMaskDatePicker2.Date) -
                     DayOfWeek(MainForm.GetStatistikaFrame.PlannerMaskDatePicker1.Date));
-                MainForm.QStatistika.SQL.Text :=
+                DM.QStatistika.SQL.Text :=
                     'SELECT  CAST (SUM(SUMABROI) AS CURRENCY) ' +
                     'AS BROI1, SOLARIUM AS SOLARIUM1,  TOSTRING(DATA,"DW") AS WEEKDAY FROM PLASHTANIA WHERE '
                     + '(SOLARIUM > 0) AND (DATA BETWEEN "' +
@@ -6004,7 +5942,7 @@ begin
                     MainForm.GetStatistikaFrame.PlannerMaskDatePicker2.Date +
                     (DayOfWeek(MainForm.GetStatistikaFrame.PlannerMaskDatePicker2.Date) -
                     DayOfWeek(MainForm.GetStatistikaFrame.PlannerMaskDatePicker1.Date));
-                MainForm.QStatistika.SQL.Text := 'SELECT  COUNT (*)' +
+                DM.QStatistika.SQL.Text := 'SELECT  COUNT (*)' +
                     'AS BROI1, CAST(TOSTRING(DATA,"DW") AS INTEGER) AS SOLARIUM1, TOSTRING(DATA,"DW") AS WEEKDAY FROM PLASHTANIA WHERE '
                     + '(SOLARIUM > 0) AND (DATA BETWEEN "' +
                     MainForm.GetStatistikaFrame.PlannerMaskDatePicker1.Text +
@@ -6022,7 +5960,7 @@ begin
                     MainForm.GetStatistikaFrame.PlannerMaskDatePicker2.Date +
                     (DayOfWeek(MainForm.GetStatistikaFrame.PlannerMaskDatePicker2.Date) -
                     DayOfWeek(MainForm.GetStatistikaFrame.PlannerMaskDatePicker1.Date));
-                MainForm.QStatistika.SQL.Text :=
+                DM.QStatistika.SQL.Text :=
                     'SELECT  ROUND (SUM(CAST(BROI as float)/60) ,2) ' +
                     'AS BROI1, SOLARIUM AS SOLARIUM1,  TOSTRING(DATA,"DW") AS WEEKDAY FROM PLASHTANIA WHERE '
                     + '(SOLARIUM > 0) AND (DATA BETWEEN "' +
@@ -6041,7 +5979,7 @@ begin
                     MainForm.GetStatistikaFrame.PlannerMaskDatePicker2.Date +
                     (DayOfWeek(MainForm.GetStatistikaFrame.PlannerMaskDatePicker2.Date) -
                     DayOfWeek(MainForm.GetStatistikaFrame.PlannerMaskDatePicker1.Date));
-                MainForm.QStatistika.SQL.Text := 'SELECT  COUNT (*)' +
+                DM.QStatistika.SQL.Text := 'SELECT  COUNT (*)' +
                     'AS BROI1, SOLARIUM AS SOLARIUM1,  TOSTRING(DATA,"DW") AS WEEKDAY FROM PLASHTANIA WHERE '
                     + '(SOLARIUM > 0) AND (DATA BETWEEN "' +
                     MainForm.GetStatistikaFrame.PlannerMaskDatePicker1.Text +
@@ -6051,7 +5989,7 @@ begin
             end;
         18: //Работа на солариумите по часове
             begin
-                MainForm.QStatistika.SQL.Text :=
+                DM.QStatistika.SQL.Text :=
                     'SELECT  ROUND (SUM(CAST(BROI as float)/60) ,2) ' +
                     'AS BROI1,SOLARIUM AS SOLARIUM1,  TOSTRING(CHAS,"HH24") AS WEEKDAY FROM PLASHTANIA WHERE' +
                     '(SOLARIUM > 0) AND (DATA BETWEEN "' +
@@ -6071,7 +6009,7 @@ begin
                  //     DaysInMonth(YearOf(MainForm.PlannerMaskDatePicker2.Date), MonthOf(MainForm.PlannerMaskDatePicker2.Date));
                 //      MainForm.PlannerMaskDatePicker1.Date:=MainForm.PlannerMaskDatePicker1.Date-
                  //     (DayOfTheMonth(MainForm.PlannerMaskDatePicker1.Date)+1);
-                MainForm.QStatistika.SQL.Text :=
+                DM.QStatistika.SQL.Text :=
                     'SELECT  ROUND (SUM(CAST(BROI as float)/60) ,2) ' +
                     'AS BROI1,SOLARIUM AS SOLARIUM1,  TOSTRING(DATA,"YYYY/MM")  AS WEEKDAY FROM PLASHTANIA WHERE' +
                     '(SOLARIUM > 0) AND (DATA BETWEEN "' +
@@ -6082,7 +6020,7 @@ begin
             end;
     end;
 
-    MainForm.QStatistika.Active := True;
+    DM.QStatistika.Active := True;
 
 end;
 
@@ -6105,13 +6043,13 @@ end;
 procedure TMainForm.SolariumiInfo8Show(Sender: TObject);
 begin
     MainForm.GetSolariumiInfoFrame.Image15.Picture := GetLogoEkranFrame.Image1.Picture;
-    ImageName := SOLARIUMI.FieldByName('PICTURE').AsString;
+    ImageName := DM.SOLARIUMI.FieldByName('PICTURE').AsString;
     if FileExists(ImageName) then
         GetSolariumiNastroikiFrame.Image16.Picture.LoadFromFile(ImageName);
     MainForm.GetSolariumiInfoFrame.Image18.Picture := GetSolariumiNastroikiFrame.Image16.Picture;
-    MainForm.GetSolariumiNastroikiFrame.Label115.Caption := IntToStr(SOLARIUMI.RecNo);
-    MainForm.GetSolariumiInfoFrame.Label116.Caption := IntToStr(SOLARIUMI.RecNo);
-    GetSolariumiCeniFrame.Label117.Caption := IntToStr(SOLARIUMI.RecNo);
+    MainForm.GetSolariumiNastroikiFrame.Label115.Caption := IntToStr(DM.SOLARIUMI.RecNo);
+    MainForm.GetSolariumiInfoFrame.Label116.Caption := IntToStr(DM.SOLARIUMI.RecNo);
+    GetSolariumiCeniFrame.Label117.Caption := IntToStr(DM.SOLARIUMI.RecNo);
 end;
 
 procedure TMainForm.LMDButton15Click(Sender: TObject);
@@ -6121,17 +6059,17 @@ begin
         PChar(GetMessage('M65')), MB_OKCANCEL) = IDOK then
     begin
         MainForm.Timer1.Enabled := false;
-        MainForm.sol1.FlushBuffers;
-        MainForm.sol1.Close;
+        DM.sol1.FlushBuffers;
+        DM.sol1.Close;
         Kartiall.EmptyTable;
-        MainForm.sol1.Connected := false;
-        MainForm.sol1.Connected := false;
+        DM.sol1.Connected := false;
+        DM.sol1.Connected := false;
         Sleep(1000);
-        MainForm.sol1.Connected := false;
-        MainForm.sol1.Connected := false;
-        MainForm.sol1.Connected := false;
-        MainForm.sol1.Connected := false;
-        MainForm.sol1.CompactDatabase();
+        DM.sol1.Connected := false;
+        DM.sol1.Connected := false;
+        DM.sol1.Connected := false;
+        DM.sol1.Connected := false;
+        DM.sol1.CompactDatabase();
         OpenTables;
         MainForm.Timer1.Enabled := true;
     end;
@@ -6163,19 +6101,19 @@ begin
             QKLIENTI.Next;
         end;
         Nomer := Nomer + 1;
-        if(sol1.InTransaction) then sol1.commit(true);
-        sol1.StartTransaction;
+        if(DM.sol1.InTransaction) then DM.sol1.commit(true);
+        DM.sol1.StartTransaction;
         try
             QKLIENTI.Append;
-            QKLIENTI.FieldValues['Firma'] := Firmite.FieldValues['NOMER'];
+            QKLIENTI.FieldValues['Firma'] := DM.Firmite.FieldValues['NOMER'];
             QKLIENTI.FieldValues['NOMER2'] := Nomer;
             QKLIENTI.FieldValues['NOMER'] := Karta;
             QKLIENTI.FieldValues['IME'] := 'Нов Служителужител ' +
                 inttostr(Nomer);
             QKLIENTI.Post;
-            sol1.Commit();
+            DM.sol1.Commit();
         except
-            sol1.Rollback;
+            DM.sol1.Rollback;
         end;
     end
     else
@@ -6214,11 +6152,11 @@ end;
 procedure TMainForm.SolariumiCeni9Show(Sender: TObject);
 begin
     GetSolariumiCeniFrame.Image17.Picture := GetLogoEkranFrame.Image1.Picture;
-    GetSolariumiCeniFrame.Label117.Caption := IntToStr(SOLARIUMI.RecNo);
-    QCeni.Active := False;
-    QCeni.SQL.Text := ('select * from TABLICA_CENI where SOLARIUM = ' +
-        IntToStr(SOLARIUMI.RecNo + 100));
-    QCeni.Active := True;
+    GetSolariumiCeniFrame.Label117.Caption := IntToStr(DM.SOLARIUMI.RecNo);
+    DM.QCeni.Active := False;
+    DM.QCeni.SQL.Text := ('select * from TABLICA_CENI where SOLARIUM = ' +
+        IntToStr(DM.SOLARIUMI.RecNo + 100));
+    DM.QCeni.Active := True;
 end;
 
 procedure TMainForm.ComboBox1Change(Sender: TObject);
@@ -6228,14 +6166,14 @@ end;
 
 procedure TMainForm.ComboBox2Change(Sender: TObject);
 begin
-    Qklienti.RecNo := GetMenuKasaFrame.ComboBox2.ItemIndex + 1;
+    DM.Qklienti.RecNo := GetMenuKasaFrame.ComboBox2.ItemIndex + 1;
 end;
 
 
 Procedure TMainForm.Protokol13Show(Sender: TObject);
 begin
     GetProtokolFrame.Image50.Picture := GetLogoEkranFrame.Image1.Picture;
-    DayTotal.Last;
+    DM.DayTotal.Last;
     if PasswordForm.ModalResult = MROK then
         GetProtokolFrame.DBLUCombo1.Visible := true
     else
@@ -6294,8 +6232,8 @@ begin
     if OpenDialog1.Files.Count > 0 then
     begin
         MainForm.Timer1.Enabled := false;
-        MainForm.sol1.FlushBuffers;
-        MainForm.sol1.Close;
+        DM.sol1.FlushBuffers;
+        DM.sol1.Close;
         FileName2 := LeftStr(Application.ExeName, 2) + '\SolarStudio1\data\solarbas.ABS';
         FileName1 := OpenDialog1.Files.Strings[0];
         CopyStatus := CopyFIle(PChar(FileName1), PChar(FileName2), False);
@@ -6320,9 +6258,9 @@ begin
     if SaveDialog1.Files.Count > 0 then
     begin
         Timer1.Enabled := False;
-        MainForm.sol1.FlushBuffers;
-        MainForm.sol1.Close;
-        FileName1 := sol1.DatabaseFileName;
+        DM.sol1.FlushBuffers;
+        DM.sol1.Close;
+        FileName1 := DM.sol1.DatabaseFileName;
         FileName2 := SaveDialog1.Files.Strings[0];
         CopyStatus := CopyFIle(PChar(FileName1), PChar(FileName2), False);
         if CopyStatus then
@@ -6353,7 +6291,7 @@ procedure TMainForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
     Timer1.Enabled := False;
     backup(false);
-    //sol1.Close;
+    //DM.sol1.Close;
   //  IniFile.Free;
     EndLang();
     FPageManager.Free;
@@ -6397,9 +6335,9 @@ end;
 
 procedure TMainForm.PlannerDatePicker1Change(Sender: TObject);
 begin
-    DBDaySource1.Day := GetGrafikFrame.PlannerDatePicker1.Date;
-    DBDaySource2.Day := GetGrafikFrame.PlannerDatePicker1.Date + 1;
-    DBDaySource3.Day := GetGrafikFrame.PlannerDatePicker1.Date + 2;
+    DM.DBDaySource1.Day := GetGrafikFrame.PlannerDatePicker1.Date;
+    DM.DBDaySource2.Day := GetGrafikFrame.PlannerDatePicker1.Date + 1;
+    DM.DBDaySource3.Day := GetGrafikFrame.PlannerDatePicker1.Date + 2;
 end;
 
 procedure TMainForm.PlannerMaskDatePicker1DaySelect(Sender: TObject;
@@ -6444,12 +6382,12 @@ end;
 
 procedure TMainForm.DBComboBox4Change(Sender: TObject);
 begin
-    SOLARIUMI.FieldValues['LAMPILASTDATE'] := DateOf(now);
+    DM.SOLARIUMI.FieldValues['LAMPILASTDATE'] := DateOf(now);
 end;
 
 procedure TMainForm.DBComboBox5Change(Sender: TObject);
 begin
-    SOLARIUMI.FieldValues['LICEVILASTDATE'] := DateOf(now);
+    DM.SOLARIUMI.FieldValues['LICEVILASTDATE'] := DateOf(now);
 end;
 
 procedure TMainForm.Edit6KeyPress(Sender: TObject; var Key: Char);
@@ -6484,7 +6422,7 @@ end;
 
 procedure TMainForm.Timer4Timer(Sender: TObject);
 begin
-    DayTotal.Last; //Za Gluposti
+    DM.DayTotal.Last; //Za Gluposti
     Timer4.Enabled := False;
 end;
 
@@ -6507,13 +6445,13 @@ end;
 
 procedure TMainForm.PopalniCeniTableButton2Click(Sender: TObject);
 begin
-    QCeni.First;
-    while (not QCeni.Eof) do
+    DM.QCeni.First;
+    while (not DM.QCeni.Eof) do
     begin
-        QCeni.Edit;
-        QCeni.FieldValues['CENA'] := solariumi.FieldValues['CENA'];
-        QCeni.Post;
-        QCeni.Next;
+        DM.QCeni.Edit;
+        DM.QCeni.FieldValues['CENA'] := solariumi.FieldValues['CENA'];
+        DM.QCeni.Post;
+        DM.QCeni.Next;
     end;
 end;
 

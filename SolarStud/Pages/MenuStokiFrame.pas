@@ -26,9 +26,7 @@ uses
   // Planner components
   Planner, DBPlanner, PlannerDatePicker, PlanSimpleEdit, PlanItemEdit, PlannerMaskDatePicker,
   // Chart components
-  Chart, TeEngine, TeeProcs, Series, DBChart,
-  // Base frame
-  BasePageFrame;
+  Chart, TeEngine, TeeProcs, Series, DBChart;
 
 type
   TMenuStokiFrame = class(TFrame)
@@ -51,10 +49,6 @@ type
     wwDBGrid4: TwwDBGrid;
     AdvTabSheet22: TAdvTabSheet;
     wwDBGrid11: TwwDBGrid;
-  protected
-    procedure DoPageActivate; override;
-    procedure DoPageDeactivate; override;
-    procedure DoInitialize; override;
   end;
 
 implementation
@@ -63,20 +57,5 @@ uses
   MAIN;
 
 {$R *.dfm}
-
-procedure TMenuStokiFrame.DoInitialize;
-begin
-  inherited;
-end;
-
-procedure TMenuStokiFrame.DoPageActivate;
-begin
-  inherited;
-end;
-
-procedure TMenuStokiFrame.DoPageDeactivate;
-begin
-  inherited;
-end;
 
 end.

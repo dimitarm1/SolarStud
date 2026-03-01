@@ -26,9 +26,7 @@ uses
   // Planner components
   Planner, DBPlanner, PlannerDatePicker, PlanSimpleEdit, PlanItemEdit, PlannerMaskDatePicker,
   // Chart components
-  Chart, TeEngine, TeeProcs, Series, DBChart,
-  // Base frame
-  BasePageFrame;
+  Chart, TeEngine, TeeProcs, Series, DBChart;
 
 type
   TIzborNaPlashtaneFrame = class(TFrame)
@@ -89,10 +87,6 @@ type
     AdvComboBox2: TAdvComboBox;
     LMDMemo1: TMemo;
     DBText7: TComboBox;
-  protected
-    procedure DoPageActivate; override;
-    procedure DoPageDeactivate; override;
-    procedure DoInitialize; override;
   end;
 
 implementation
@@ -101,20 +95,5 @@ uses
   MAIN;
 
 {$R *.dfm}
-
-procedure TIzborNaPlashtaneFrame.DoInitialize;
-begin
-  inherited;
-end;
-
-procedure TIzborNaPlashtaneFrame.DoPageActivate;
-begin
-  inherited;
-end;
-
-procedure TIzborNaPlashtaneFrame.DoPageDeactivate;
-begin
-  inherited;
-end;
 
 end.

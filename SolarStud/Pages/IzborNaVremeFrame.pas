@@ -26,9 +26,7 @@ uses
   // Planner components
   Planner, DBPlanner, PlannerDatePicker, PlanSimpleEdit, PlanItemEdit, PlannerMaskDatePicker,
   // Chart components
-  Chart, TeEngine, TeeProcs, Series, DBChart,
-  // Base frame
-  BasePageFrame;
+  Chart, TeEngine, TeeProcs, Series, DBChart;
 
 type
   TIzborNaVremeFrame = class(TFrame)
@@ -69,10 +67,6 @@ type
     LMDLImage24: TLMDLImage;
     Label9A: TLMDLEDLabel;
     Label168: TLabel;
-  protected
-    procedure DoPageActivate; override;
-    procedure DoPageDeactivate; override;
-    procedure DoInitialize; override;
   end;
 
 implementation
@@ -81,20 +75,5 @@ uses
   MAIN;
 
 {$R *.dfm}
-
-procedure TIzborNaVremeFrame.DoInitialize;
-begin
-  inherited;
-end;
-
-procedure TIzborNaVremeFrame.DoPageActivate;
-begin
-  inherited;
-end;
-
-procedure TIzborNaVremeFrame.DoPageDeactivate;
-begin
-  inherited;
-end;
 
 end.

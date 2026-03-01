@@ -26,9 +26,7 @@ uses
   // Planner components
   Planner, DBPlanner, PlannerDatePicker, PlanSimpleEdit, PlanItemEdit, PlannerMaskDatePicker,
   // Chart components
-  Chart, TeEngine, TeeProcs, Series, DBChart,
-  // Base frame
-  BasePageFrame;
+  Chart, TeEngine, TeeProcs, Series, DBChart;
 
 type
   TSolariumiCeniFrame = class(TFrame)
@@ -64,10 +62,6 @@ type
     PopalniCeniTableButton: TRzButton;
     wwDBGrid8: TwwDBGrid;
     PopalniCeniTableButton2: TRzButton;
-  protected
-    procedure DoPageActivate; override;
-    procedure DoPageDeactivate; override;
-    procedure DoInitialize; override;
   end;
 
 implementation
@@ -76,20 +70,5 @@ uses
   MAIN;
 
 {$R *.dfm}
-
-procedure TSolariumiCeniFrame.DoInitialize;
-begin
-  inherited;
-end;
-
-procedure TSolariumiCeniFrame.DoPageActivate;
-begin
-  inherited;
-end;
-
-procedure TSolariumiCeniFrame.DoPageDeactivate;
-begin
-  inherited;
-end;
 
 end.

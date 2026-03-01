@@ -10,6 +10,7 @@ uses
   classes,
   Messages,
   Windows,
+  DataMod in 'DataMod.pas' {DM: TDataModule},
   main in 'main.pas' {MainForm},
   ImageWin in 'ImageWin.pas' {ImageForm},
   Password in 'Password.pas' {PasswordForm},
@@ -64,6 +65,7 @@ begin
     Application.Title := 'SolarStudio V1.2';
     if not Do_checkdatabase then goto endapplication;    
     Application.HelpFile := '\SolarStudio1\Manual.htm';
+    Application.CreateForm(TDM, DM);
     Application.CreateForm(TMainForm, MainForm);
     Application.CreateForm(TImageForm, ImageForm);
     Application.CreateForm(TPasswordForm, PasswordForm);

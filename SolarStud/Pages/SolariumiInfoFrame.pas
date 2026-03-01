@@ -26,9 +26,7 @@ uses
   // Planner components
   Planner, DBPlanner, PlannerDatePicker, PlanSimpleEdit, PlanItemEdit, PlannerMaskDatePicker,
   // Chart components
-  Chart, TeEngine, TeeProcs, Series, DBChart,
-  // Base frame
-  BasePageFrame;
+  Chart, TeEngine, TeeProcs, Series, DBChart;
 
 type
   TSolariumiInfoFrame = class(TFrame)
@@ -57,10 +55,6 @@ type
     DBEdit11: TDBEdit;
     DBEdit10: TDBEdit;
     DBEdit9: TDBEdit;
-  protected
-    procedure DoPageActivate; override;
-    procedure DoPageDeactivate; override;
-    procedure DoInitialize; override;
   end;
 
 implementation
@@ -69,20 +63,5 @@ uses
   MAIN;
 
 {$R *.dfm}
-
-procedure TSolariumiInfoFrame.DoInitialize;
-begin
-  inherited;
-end;
-
-procedure TSolariumiInfoFrame.DoPageActivate;
-begin
-  inherited;
-end;
-
-procedure TSolariumiInfoFrame.DoPageDeactivate;
-begin
-  inherited;
-end;
 
 end.

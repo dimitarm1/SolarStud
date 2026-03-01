@@ -26,9 +26,7 @@ uses
   // Planner components
   Planner, DBPlanner, PlannerDatePicker, PlanSimpleEdit, PlanItemEdit, PlannerMaskDatePicker,
   // Chart components
-  Chart, TeEngine, TeeProcs, Series, DBChart,
-  // Base frame
-  BasePageFrame;
+  Chart, TeEngine, TeeProcs, Series, DBChart;
 
 type
   TOsnovniNastroikiFrame = class(TFrame)
@@ -54,10 +52,6 @@ type
     LMDButton15: TLMDButton;
     wwDBGrid1: TwwDBGrid;
     DBNavigator1: TDBNavigator;
-  protected
-    procedure DoPageActivate; override;
-    procedure DoPageDeactivate; override;
-    procedure DoInitialize; override;
   end;
 
 implementation
@@ -66,20 +60,5 @@ uses
   MAIN;
 
 {$R *.dfm}
-
-procedure TOsnovniNastroikiFrame.DoInitialize;
-begin
-  inherited;
-end;
-
-procedure TOsnovniNastroikiFrame.DoPageActivate;
-begin
-  inherited;
-end;
-
-procedure TOsnovniNastroikiFrame.DoPageDeactivate;
-begin
-  inherited;
-end;
 
 end.

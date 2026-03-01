@@ -26,19 +26,13 @@ uses
   // Planner components
   Planner, DBPlanner, PlannerDatePicker, PlanSimpleEdit, PlanItemEdit, PlannerMaskDatePicker,
   // Chart components
-  Chart, TeEngine, TeeProcs, Series, DBChart,
-  // Base frame
-  BasePageFrame;
+  Chart, TeEngine, TeeProcs, Series, DBChart;
 
 type
   TLogoEkranFrame = class(TFrame)
     Image1: TImage;
     Label64: TLabel;
     Image8: TImage;
-  protected
-    procedure DoPageActivate; override;
-    procedure DoPageDeactivate; override;
-    procedure DoInitialize; override;
   end;
 
 implementation
@@ -47,20 +41,5 @@ uses
   MAIN;
 
 {$R *.dfm}
-
-procedure TLogoEkranFrame.DoInitialize;
-begin
-  inherited;
-end;
-
-procedure TLogoEkranFrame.DoPageActivate;
-begin
-  inherited;
-end;
-
-procedure TLogoEkranFrame.DoPageDeactivate;
-begin
-  inherited;
-end;
 
 end.

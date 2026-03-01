@@ -3,14 +3,16 @@ unit PageManager;
 interface
 
 uses
-  Windows, SysUtils, Classes, Controls, Forms, BasePageFrame;
+  Windows, SysUtils, Classes, Controls, Forms;
 
 type
+  TFrameClass = class of TFrame;
+
   TPageInfo = record
     PageIndex: Integer;
     PageName: string;
-    FrameClass: TBasePageFrameClass;
-    Frame: TBasePageFrame;
+    FrameClass: TFrameClass;
+    Frame: TFrame;
     Loaded: Boolean;
   end;
   PPageInfo = ^TPageInfo;
@@ -27,7 +29,7 @@ type
     FOnBeforePageChange: TPageChangeEvent;
     FOnFrameBind: TFrameBindEvent;
     FOnFrameUnbind: TFrameBindEvent;
-    function GetActiveFrame: TBasePageFrame;
+    function GetActiveFrame: TFrame;
     function GetPageCount: Integer;
     function GetPageInfo(Index: Integer): PPageInfo;
     function FindPageInfoIndex(APageIndex: Integer): Integer;
@@ -35,17 +37,17 @@ type
     constructor Create(AContainer: TWinControl);
     destructor Destroy; override;
 
-    procedure RegisterPage(APageIndex: Integer; const APageName: string; AFrameClass: TBasePageFrameClass);
+    procedure RegisterPage(APageIndex: Integer; const APageName: string; AFrameClass: TFrameClass);
     procedure ShowPage(APageIndex: Integer);
     procedure PreloadPage(APageIndex: Integer);
     procedure UnloadPage(APageIndex: Integer);
     procedure UnloadAllPages;
     function IsPageLoaded(APageIndex: Integer): Boolean;
-    function GetFrame(APageIndex: Integer): TBasePageFrame;
-    function GetFrameByName(const APageName: string): TBasePageFrame;
+    function GetFrame(APageIndex: Integer): TFrame;
+    function GetFrameByName(const APageName: string): TFrame;
 
     property ActivePageIndex: Integer read FActivePageIndex;
-    property ActiveFrame: TBasePageFrame read GetActiveFrame;
+    property ActiveFrame: TFrame read GetActiveFrame;
     property PageCount: Integer read GetPageCount;
     property Pages[Index: Integer]: PPageInfo read GetPageInfo;
     property OnPageChange: TPageChangeEvent read FOnPageChange write FOnPageChange;
@@ -71,7 +73,7 @@ begin
   inherited;
 end;
 
-function TPageManager.GetActiveFrame: TBasePageFrame;
+function TPageManager.GetActiveFrame: TFrame;
 var
   Idx: Integer;
 begin
@@ -107,7 +109,7 @@ begin
     end;
 end;
 
-procedure TPageManager.RegisterPage(APageIndex: Integer; const APageName: string; AFrameClass: TBasePageFrameClass);
+procedure TPageManager.RegisterPage(APageIndex: Integer; const APageName: string; AFrameClass: TFrameClass);
 var
   Idx: Integer;
 begin
@@ -129,7 +131,7 @@ procedure TPageManager.ShowPage(APageIndex: Integer);
 var
   Idx: Integer;
   OldPageIndex: Integer;
-  OldFrame: TBasePageFrame;
+  OldFrame: TFrame;
 begin
   Idx := FindPageInfoIndex(APageIndex);
   if Idx < 0 then
@@ -148,7 +150,6 @@ begin
     // Unbind components from MainForm
     if Assigned(FOnFrameUnbind) then
       FOnFrameUnbind(OldFrame);
-    OldFrame.PageDeactivate;
     OldFrame.Visible := False;
   end;
 
@@ -160,7 +161,6 @@ begin
     FPages[Idx].Frame := FPages[Idx].FrameClass.Create(FContainer);
     FPages[Idx].Frame.Parent := FContainer;
     FPages[Idx].Frame.Align := alClient;
-    FPages[Idx].Frame.PageIndex := APageIndex;
     FPages[Idx].Frame.Name := 'PageFrame_' + IntToStr(APageIndex);
     FPages[Idx].Loaded := True;
   end;
@@ -171,7 +171,6 @@ begin
 
   FPages[Idx].Frame.Visible := True;
   FPages[Idx].Frame.BringToFront;
-  FPages[Idx].Frame.PageActivate;
 
   // Call after change event
   if Assigned(FOnPageChange) then
@@ -191,7 +190,6 @@ begin
     FPages[Idx].Frame := FPages[Idx].FrameClass.Create(FContainer);
     FPages[Idx].Frame.Parent := FContainer;
     FPages[Idx].Frame.Align := alClient;
-    FPages[Idx].Frame.PageIndex := APageIndex;
     FPages[Idx].Frame.Name := 'PageFrame_' + IntToStr(APageIndex);
     FPages[Idx].Frame.Visible := False;
     FPages[Idx].Loaded := True;
@@ -213,7 +211,6 @@ begin
       // Unbind before destroying
       if Assigned(FOnFrameUnbind) then
         FOnFrameUnbind(FPages[Idx].Frame);
-      FPages[Idx].Frame.PageDeactivate;
       FActivePageIndex := -1;
     end;
     FreeAndNil(FPages[Idx].Frame);
@@ -247,7 +244,7 @@ begin
     Result := FPages[Idx].Loaded;
 end;
 
-function TPageManager.GetFrame(APageIndex: Integer): TBasePageFrame;
+function TPageManager.GetFrame(APageIndex: Integer): TFrame;
 var
   Idx: Integer;
 begin
@@ -257,7 +254,7 @@ begin
     Result := FPages[Idx].Frame;
 end;
 
-function TPageManager.GetFrameByName(const APageName: string): TBasePageFrame;
+function TPageManager.GetFrameByName(const APageName: string): TFrame;
 var
   I: Integer;
 begin

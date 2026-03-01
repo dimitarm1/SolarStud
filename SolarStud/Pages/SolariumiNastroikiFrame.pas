@@ -26,9 +26,7 @@ uses
   // Planner components
   Planner, DBPlanner, PlannerDatePicker, PlanSimpleEdit, PlanItemEdit, PlannerMaskDatePicker,
   // Chart components
-  Chart, TeEngine, TeeProcs, Series, DBChart,
-  // Base frame
-  BasePageFrame;
+  Chart, TeEngine, TeeProcs, Series, DBChart;
 
 type
   TSolariumiNastroikiFrame = class(TFrame)
@@ -81,10 +79,6 @@ type
     AddressComboBox: TDBComboBox;
     LMDButton16: TLMDButton;
     LMDButton17: TLMDButton;
-  protected
-    procedure DoPageActivate; override;
-    procedure DoPageDeactivate; override;
-    procedure DoInitialize; override;
   end;
 
 implementation
@@ -93,20 +87,5 @@ uses
   MAIN;
 
 {$R *.dfm}
-
-procedure TSolariumiNastroikiFrame.DoInitialize;
-begin
-  inherited;
-end;
-
-procedure TSolariumiNastroikiFrame.DoPageActivate;
-begin
-  inherited;
-end;
-
-procedure TSolariumiNastroikiFrame.DoPageDeactivate;
-begin
-  inherited;
-end;
 
 end.

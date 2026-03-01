@@ -26,9 +26,7 @@ uses
   // Planner components
   Planner, DBPlanner, PlannerDatePicker, PlanSimpleEdit, PlanItemEdit, PlannerMaskDatePicker,
   // Chart components
-  Chart, TeEngine, TeeProcs, Series, DBChart,
-  // Base frame
-  BasePageFrame;
+  Chart, TeEngine, TeeProcs, Series, DBChart;
 
 type
   TNachalnoUstanoviavaneFrame = class(TFrame)
@@ -84,10 +82,6 @@ type
     No8: TLabel;
     LMDLImage151: TLMDLImage;
     Label176: TLabel;
-  protected
-    procedure DoPageActivate; override;
-    procedure DoPageDeactivate; override;
-    procedure DoInitialize; override;
   end;
 
 implementation
@@ -96,20 +90,5 @@ uses
   MAIN;
 
 {$R *.dfm}
-
-procedure TNachalnoUstanoviavaneFrame.DoInitialize;
-begin
-  inherited;
-end;
-
-procedure TNachalnoUstanoviavaneFrame.DoPageActivate;
-begin
-  inherited;
-end;
-
-procedure TNachalnoUstanoviavaneFrame.DoPageDeactivate;
-begin
-  inherited;
-end;
 
 end.

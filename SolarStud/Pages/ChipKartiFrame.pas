@@ -26,9 +26,7 @@ uses
   // Planner components
   Planner, DBPlanner, PlannerDatePicker, PlanSimpleEdit, PlanItemEdit, PlannerMaskDatePicker,
   // Chart components
-  Chart, TeEngine, TeeProcs, Series, DBChart,
-  // Base frame
-  BasePageFrame;
+  Chart, TeEngine, TeeProcs, Series, DBChart;
 
 type
   TChipKartiFrame = class(TFrame)
@@ -70,10 +68,6 @@ type
     Button111: TRzButton;
     ValidnostTime: TRzDBDateTimeEdit;
     NovKlientButton: TLMDButton;
-  protected
-    procedure DoPageActivate; override;
-    procedure DoPageDeactivate; override;
-    procedure DoInitialize; override;
   end;
 
 implementation
@@ -82,20 +76,5 @@ uses
   MAIN;
 
 {$R *.dfm}
-
-procedure TChipKartiFrame.DoInitialize;
-begin
-  inherited;
-end;
-
-procedure TChipKartiFrame.DoPageActivate;
-begin
-  inherited;
-end;
-
-procedure TChipKartiFrame.DoPageDeactivate;
-begin
-  inherited;
-end;
 
 end.

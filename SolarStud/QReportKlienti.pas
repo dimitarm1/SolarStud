@@ -57,7 +57,7 @@ var
 
 implementation
 
-uses MAIN;
+uses MAIN, DataMod;
 
 {$R *.dfm}
 
@@ -87,31 +87,31 @@ begin
       MainForm.QkartiPaid.Active:=True;
       MainForm.QkartiPaid.First;
       i:=0;
-    if MainForm.STOKI.Locate('POSESHTENIA',-1,[]) then   kod_depozit:=MainForm.STOKI.FieldValues['STOKAKOD']
+    if DM.STOKI.Locate('POSESHTENIA',-1,[]) then   kod_depozit:=DM.STOKI.FieldValues['STOKAKOD']
     else    kod_depozit:= -10000;
-    while i < MainForm.QKartiPaid.RecordCount do  begin
-      if  MainForm.QKartiPaid.FieldValues['KARTASUMA']>0 then  begin
-        QRLabel11.Caption:= QRLabel11.Caption + '  '+ DateToStr(MainForm.QKartiPaid.FieldValues['DATA'])+
-        ' - '+ ConvertCurr1(MainForm.QKartiPaid.FieldValues['KARTASUMA'])+'лв.';
-        { if MainForm.QKartiPaid.FieldValues['KLIENTNOMER']<> NULL then QRLabel11.Caption:= QRLabel11.Caption
-         +', служ.№ '+MainForm.QKartiPaid.FieldValues['KLIENTNOMER']}
+    while i < DM.QKartiPaid.RecordCount do  begin
+      if  DM.QKartiPaid.FieldValues['KARTASUMA']>0 then  begin
+        QRLabel11.Caption:= QRLabel11.Caption + '  '+ DateToStr(DM.QKartiPaid.FieldValues['DATA'])+
+        ' - '+ ConvertCurr1(DM.QKartiPaid.FieldValues['KARTASUMA'])+'лв.';
+        { if DM.QKartiPaid.FieldValues['KLIENTNOMER']<> NULL then QRLabel11.Caption:= QRLabel11.Caption
+         +', служ.№ '+DM.QKartiPaid.FieldValues['KLIENTNOMER']}
       end else begin
-        if MainForm.STOKI.Locate('STOKAKOD',MainForm.QKartiPaid.FieldValues['STOKA'],[]) then
-          // MainForm.QKartiPaid.FieldValues['STOKA']=   kod_depozit then
-          QRLabel11.Caption:= QRLabel11.Caption + '  '+ DateToStr(MainForm.QKartiPaid.FieldValues['DATA'])+
-           ' - *+'+ ConvertCurr1(MainForm.QKartiPaid.FieldValues['SUMABROI'])+'лв.* '
+        if DM.STOKI.Locate('STOKAKOD',DM.QKartiPaid.FieldValues['STOKA'],[]) then
+          // DM.QKartiPaid.FieldValues['STOKA']=   kod_depozit then
+          QRLabel11.Caption:= QRLabel11.Caption + '  '+ DateToStr(DM.QKartiPaid.FieldValues['DATA'])+
+           ' - *+'+ ConvertCurr1(DM.QKartiPaid.FieldValues['SUMABROI'])+'лв.* '
         else
         if MainForm.QkartiPaid.FieldValues['STOKA'] = 0 then  begin
-           QRLabel11.Caption:= QRLabel11.Caption + '  '+ DateToStr(MainForm.QKartiPaid.FieldValues['DATA'])+
+           QRLabel11.Caption:= QRLabel11.Caption + '  '+ DateToStr(DM.QKartiPaid.FieldValues['DATA'])+
            ' - < изтрит > ' ;
         end
         else begin
-          QRLabel11.Caption:= QRLabel11.Caption + '  '+ DateToStr(MainForm.QKartiPaid.FieldValues['DATA'])+
-           ' - <+'+ ConvertCurr1(MainForm.QKartiPaid.FieldValues['SUMABROI'])+'лв.> ' ;
+          QRLabel11.Caption:= QRLabel11.Caption + '  '+ DateToStr(DM.QKartiPaid.FieldValues['DATA'])+
+           ' - <+'+ ConvertCurr1(DM.QKartiPaid.FieldValues['SUMABROI'])+'лв.> ' ;
         end;
       end;
       i:=i+1;
-      MainForm.QKartiPaid.Next;
+      DM.QKartiPaid.Next;
     end;
   end;
  end;
@@ -120,20 +120,20 @@ procedure TForm1.QRSubDetail1NeedData(Sender: TObject;
   var MoreData: Boolean);
 begin
   //MoreData:=not MainForm.QKarti.Eof;
-  //QRLabel10.Caption:=IntToStr(MainForm.Qklienti.FieldValues['KARTANOMER']);
+  //QRLabel10.Caption:=IntToStr(DM.Qklienti.FieldValues['KARTANOMER']);
   //MainForm.QKarti.Next;
 end;
 
 procedure TForm1.DetailBand1AfterPrint(Sender: TQRCustomBand;
   BandPrinted: Boolean);
 begin
-  //MainForm.Qklienti.Next;
+  //DM.Qklienti.Next;
 end;
 
 procedure TForm1.QRBand1BeforePrint(Sender: TQRCustomBand;
   var PrintBand: Boolean);
 begin
-   RecordCountLabel.Caption := 'Общо редове: '+IntToStr(MainForm.Qklienti.RecordCount);
+   RecordCountLabel.Caption := 'Общо редове: '+IntToStr(DM.Qklienti.RecordCount);
 end;
 
 procedure TForm1.QRSubDetail1BeforePrint(Sender: TQRCustomBand;
@@ -148,11 +148,11 @@ begin
     MainForm.QkartiPaid.Active:=True;
     MainForm.QkartiPaid.First;
     i:=0;
-    while i < MainForm.QKartiPaid.RecordCount do  begin
-      QRLabel10.Caption:= QRLabel10.Caption + '  '+ DateToStr(MainForm.QKartiPaid.FieldValues['DATA'])+
-      ' - '+IntToStr2(MainForm.QKartiPaid.FieldValues['POSESHTENIA']);
+    while i < DM.QKartiPaid.RecordCount do  begin
+      QRLabel10.Caption:= QRLabel10.Caption + '  '+ DateToStr(DM.QKartiPaid.FieldValues['DATA'])+
+      ' - '+IntToStr2(DM.QKartiPaid.FieldValues['POSESHTENIA']);
       i:=i+1;
-      MainForm.QKartiPaid.Next;
+      DM.QKartiPaid.Next;
     end;
   end;
   if   QRLabel10.Caption=''then QRLabel10.Caption:='няма';

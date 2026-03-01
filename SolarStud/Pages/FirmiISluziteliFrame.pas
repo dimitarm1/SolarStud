@@ -26,9 +26,7 @@ uses
   // Planner components
   Planner, DBPlanner, PlannerDatePicker, PlanSimpleEdit, PlanItemEdit, PlannerMaskDatePicker,
   // Chart components
-  Chart, TeEngine, TeeProcs, Series, DBChart,
-  // Base frame
-  BasePageFrame;
+  Chart, TeEngine, TeeProcs, Series, DBChart;
 
 type
   TFirmiISluziteliFrame = class(TFrame)
@@ -49,10 +47,6 @@ type
     wwDBGrid13: TwwDBGrid;
     LMDButton1: TLMDButton;
     LMDButton2: TLMDButton;
-  protected
-    procedure DoPageActivate; override;
-    procedure DoPageDeactivate; override;
-    procedure DoInitialize; override;
   end;
 
 implementation
@@ -61,20 +55,5 @@ uses
   MAIN;
 
 {$R *.dfm}
-
-procedure TFirmiISluziteliFrame.DoInitialize;
-begin
-  inherited;
-end;
-
-procedure TFirmiISluziteliFrame.DoPageActivate;
-begin
-  inherited;
-end;
-
-procedure TFirmiISluziteliFrame.DoPageDeactivate;
-begin
-  inherited;
-end;
 
 end.

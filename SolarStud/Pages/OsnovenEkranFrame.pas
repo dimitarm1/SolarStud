@@ -26,9 +26,7 @@ uses
   // Planner components
   Planner, DBPlanner, PlannerDatePicker, PlanSimpleEdit, PlanItemEdit, PlannerMaskDatePicker,
   // Chart components
-  Chart, TeEngine, TeeProcs, Series, DBChart,
-  // Base frame
-  BasePageFrame;
+  Chart, TeEngine, TeeProcs, Series, DBChart;
 
 type
   TOsnovenEkranFrame = class(TFrame)
@@ -104,10 +102,6 @@ type
     Bclose: TButton;
     BHelp: TButton;
     BMinimize: TButton;
-  protected
-    procedure DoPageActivate; override;
-    procedure DoPageDeactivate; override;
-    procedure DoInitialize; override;
   end;
 
 implementation
@@ -116,20 +110,5 @@ uses
   MAIN;
 
 {$R *.dfm}
-
-procedure TOsnovenEkranFrame.DoInitialize;
-begin
-  inherited;
-end;
-
-procedure TOsnovenEkranFrame.DoPageActivate;
-begin
-  inherited;
-end;
-
-procedure TOsnovenEkranFrame.DoPageDeactivate;
-begin
-  inherited;
-end;
 
 end.

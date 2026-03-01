@@ -26,9 +26,7 @@ uses
   // Planner components
   Planner, DBPlanner, PlannerDatePicker, PlanSimpleEdit, PlanItemEdit, PlannerMaskDatePicker,
   // Chart components
-  Chart, TeEngine, TeeProcs, Series, DBChart,
-  // Base frame
-  BasePageFrame;
+  Chart, TeEngine, TeeProcs, Series, DBChart;
 
 type
   TProtokolFrame = class(TFrame)
@@ -46,10 +44,6 @@ type
     wwDBGrid2: TwwDBGrid;
     DBLUCombo1: TPlannerMaskDatePicker;
     ProtokolFilterEdit: TEdit;
-  protected
-    procedure DoPageActivate; override;
-    procedure DoPageDeactivate; override;
-    procedure DoInitialize; override;
   end;
 
 implementation
@@ -58,20 +52,5 @@ uses
   MAIN;
 
 {$R *.dfm}
-
-procedure TProtokolFrame.DoInitialize;
-begin
-  inherited;
-end;
-
-procedure TProtokolFrame.DoPageActivate;
-begin
-  inherited;
-end;
-
-procedure TProtokolFrame.DoPageDeactivate;
-begin
-  inherited;
-end;
 
 end.

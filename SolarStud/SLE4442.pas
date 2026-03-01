@@ -1,7 +1,7 @@
 unit SLE4442;
 
 interface
-uses main, Password, Windows, Messages, SysUtils, Variants, Classes, Graphics,
+uses main, DataMod, Password, Windows, Messages, SysUtils, Variants, Classes, Graphics,
     Controls, Forms, Dialogs, ACSModule, StdCtrls, ExtCtrls, ComCtrls, StrUtils,
     ABSMain;
 const
@@ -737,16 +737,16 @@ begin
         if q.IsEmpty and (CardNomer > 0) then
         begin
             VipDiscount := 0;
-            MainForm.KARTICHIP.Append;
-            MainForm.KARTICHIP.FieldValues['KLIENTNOMER'] := CardNomer;
-            MainForm.KARTICHIP.FieldValues['COUNTER'] := 0;
-            MainForm.KARTICHIP.FieldValues['DISCOUNT'] := 0;
-            MainForm.KARTICHIP.FieldValues['SUMA'] := 0;
+            DM.KARTICHIP.Append;
+            DM.KARTICHIP.FieldValues['KLIENTNOMER'] := CardNomer;
+            DM.KARTICHIP.FieldValues['COUNTER'] := 0;
+            DM.KARTICHIP.FieldValues['DISCOUNT'] := 0;
+            DM.KARTICHIP.FieldValues['SUMA'] := 0;
             if (MainForm.GetStudioWorkType() = 1) or (MainForm.GetStudioWorkType() = 4)then
-               MainForm.KARTICHIP.FieldValues['ONCE_PERDAY'] := TRUE
+               DM.KARTICHIP.FieldValues['ONCE_PERDAY'] := TRUE
             else
-               MainForm.KARTICHIP.FieldValues['ONCE_PERDAY'] := FALSE;
-            MainForm.KARTICHIP.Post;
+               DM.KARTICHIP.FieldValues['ONCE_PERDAY'] := FALSE;
+            DM.KARTICHIP.Post;
         end;
         q2 := TABSQuery.Create(MainForm);
         q2.Databasename := 'sol1';
@@ -765,21 +765,21 @@ begin
             ShowKlInfo;
             if not IsChipCard then
             begin
-                Card.Balans := MainForm.KARTICHIP.FieldValues['SUMA'];
+                Card.Balans := DM.KARTICHIP.FieldValues['SUMA'];
                 Card.ClientNomer := CardNomer;
                 Card.CardNomer := CardNomer;
                 DiscountPrize := 0;
                 VipDiscount := 0;
             end;
             abc3 := (q.FieldValues['COUNTER'] + 1);
-            abc4 := MainForm.Internet.FieldValues['DISCOUNT_COUNT'];
+            abc4 := DM.Internet.FieldValues['DISCOUNT_COUNT'];
             abc2 := q.FieldValues['KLIENTNOMER'];
             if (abc4 <> 0) then
             begin
                 abc1 := abc3 mod abc4;
                 if abc1 = 0 then
                     DiscountPrize :=
-                        MainForm.Internet.FieldValues['DISCOUNT_PERCENT'];
+                        DM.Internet.FieldValues['DISCOUNT_PERCENT'];
             end;
             if varType(q.FieldValues['DISCOUNT'])
                     <> varNull then VipDiscount := q.FieldValues['DISCOUNT']
@@ -796,26 +796,26 @@ begin
             if (res = 6) then
             begin
                 Card.Balans := 0;
-                MainForm.Table3.Append;
-                MainForm.Table3.FieldValues['NOMER'] := CardNomer;
-                MainForm.Table3.FieldValues['FIRMA'] := 0;
-                MainForm.Table3.FieldValues['IME'] := GetMessage('M66') +
+                DM.Table3.Append;
+                DM.Table3.FieldValues['NOMER'] := CardNomer;
+                DM.Table3.FieldValues['FIRMA'] := 0;
+                DM.Table3.FieldValues['IME'] := GetMessage('M66') +
                     IntTostr(CardNomer); //'��� ������ �'
-                MainForm.Table3.Post;
-                MainForm.Table3.Last;
+                DM.Table3.Post;
+                DM.Table3.Last;
                 Application.MessageBox(PChar('������ �' + IntTostr(CardNomer) +
                     ' ���� ������� ��� �������'), PChar('��� ������'), MB_OK);
                 MainForm.QKlienti.Active := False;
                 MainForm.QKlienti.Active := True;
-                MainForm.Qklienti.Locate('NOMER', CardNomer, []);
-                if MainForm.KARTICHIP.RecordCount = 0 then
-                    MainForm.KARTICHIP.Append
+                DM.Qklienti.Locate('NOMER', CardNomer, []);
+                if DM.KARTICHIP.RecordCount = 0 then
+                    DM.KARTICHIP.Append
                 else
-                    MainForm.KARTICHIP.Edit;
-                MainForm.KARTICHIP.FieldValues['DISCOUNT'] := 0;
-                MainForm.KARTICHIP.FieldValues['COUNTER'] := -1;
+                    DM.KARTICHIP.Edit;
+                DM.KARTICHIP.FieldValues['DISCOUNT'] := 0;
+                DM.KARTICHIP.FieldValues['COUNTER'] := -1;
                     // ��� ������ - ���� �����
-                MainForm.KARTICHIP.post;
+                DM.KARTICHIP.post;
                 MainForm.Timer3.enabled := True;
             end;
         end;
@@ -867,23 +867,23 @@ begin
                 SLE4442ReadCardInfo();
                 SLE4442ShowCardInfo();
                 if (card.StudioNomer =
-                    MainForm.Internet.FieldValues['StudioNomer']) then
+                    DM.Internet.FieldValues['StudioNomer']) then
                 begin
                     MainForm.QKlienti.Active := False;
                     //     MainForm.QKlienti.SQL.SetText(PChar('SELECT * FROM klienti ORDER BY IME'));
                     MainForm.QKlienti.SQL.SetText(PChar('SELECT * FROM klienti WHERE NOMER = ' + IntToStr(Card.ClientNomer)));
                     MainForm.QKlienti.Active := True;
-                    if MainForm.Qklienti.Locate('NOMER', Card.ClientNomer, [])
+                    if DM.Qklienti.Locate('NOMER', Card.ClientNomer, [])
                         then
                     begin
                         ShowKlInfo;
                         if not (card.ClientName =
-                            MainForm.Qklienti.FieldValues['ime']) then
+                            DM.Qklienti.FieldValues['ime']) then
                         begin
-                            MainForm.Qklienti.Edit;
-                            MainForm.Qklienti.FieldValues['ime'] :=
+                            DM.Qklienti.Edit;
+                            DM.Qklienti.FieldValues['ime'] :=
                                 card.ClientName;
-                            MainForm.Qklienti.Post;
+                            DM.Qklienti.Post;
                         end;
 
                     end;
@@ -897,19 +897,19 @@ begin
                 MainForm.GetIzborNaPlashtaneFrame.Label71.Visible := True;
                 MainForm.GetIzborNaPlashtaneFrame.Label72.Visible := True;
                 if (Card.StudioNomer =
-                    MainForm.Internet.FieldValues['STUDIONOMER']) and (Card.PIN
+                    DM.Internet.FieldValues['STUDIONOMER']) and (Card.PIN
                     =
-                    MainForm.Internet.FieldValues['PIN']) then
+                    DM.Internet.FieldValues['PIN']) then
                 begin
                     _Q.SQL.SetText(PChar('select * from KARTICHIP where KLIENTNOMER = ' + IntToStr(Card.ClientNomer)));
                     _Q.Open;
                     if _Q.RecordCount > 0 then
                     begin
-                        if varType(MainForm.KARTICHIP.FieldValues['DISCOUNT'])
+                        if varType(DM.KARTICHIP.FieldValues['DISCOUNT'])
                             <> varNull then
 
                             VipDiscount :=
-                                MainForm.KARTICHIP.FieldValues['DISCOUNT']
+                                DM.KARTICHIP.FieldValues['DISCOUNT']
                         else
                             VipDiscount := 0;
                     end
@@ -925,7 +925,7 @@ begin
                     end;
                 end;
 //                Ostatak := (Card.Balans) /
-//                    MainForm.SOLARIUMI.FieldValues['CENA'];
+//                    DM.SOLARIUMI.FieldValues['CENA'];
                 if(TimeSet > 0) and (PriceCard > 0) then
                        Ostatak := (Card.Balans - (PaidChipCard)) /   (PriceCard/TimeSet)
                 else Ostatak := Card.Balans;
