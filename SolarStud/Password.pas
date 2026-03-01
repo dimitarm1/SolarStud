@@ -37,22 +37,22 @@ var
   PasswordForm: TPasswordForm;
 
 implementation
- uses main;
+ uses main, DataMod;
 {$R *.dfm}
 
 procedure Function1(Key: Char);
 begin
  if Key=chr(13) then
  begin
-    MainForm.personal1.First;
-    if ((PasswordForm.Edit1.Text = MainForm.personal1.FieldValues['parola']) or
-     ((PChar('solarpower') <> MainForm.personal1.FieldValues['IME']) and
+    DM.personal1.First;
+    if ((PasswordForm.Edit1.Text = DM.personal1.FieldValues['parola']) or
+     ((PChar('solarpower') <> DM.personal1.FieldValues['IME']) and
         (PasswordForm.Edit1.Text = 'master1234'))) then
     begin
       PasswordForm.ModalResult:=mrOK;
       PasswordForm.IsMaster:= true;
     end
-    else if (MainForm.personal1.Locate('parola',PasswordForm.Edit1.Text,[]))then
+    else if (DM.personal1.Locate('parola',PasswordForm.Edit1.Text,[]))then
     begin
       PasswordForm.ModalResult:=mrOK;
       PasswordForm.IsMaster:= false;
