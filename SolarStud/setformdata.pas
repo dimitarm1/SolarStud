@@ -55,7 +55,7 @@ procedure equalStatus(Status1: TShape; Status2: TShape);
 procedure equallabels(Label1: TLabel; Label2: TLabel);
 procedure equalpictures(picture1: TLMDLImage; picture2: TLMDLImage);
 implementation
-uses MAIN, MainForm2;
+uses MAIN, MainForm2, OsnovenEkranFrame;
 {$R *.dfm}
 
 procedure set8main();
@@ -63,437 +63,437 @@ begin
 
   
 
-    MainForm.Kabina11.Visible := true;
-    MainForm.Kabina12.Visible := true;
-    MainForm.Kabina1cena.Visible := true;
-    MainForm.Kabina1minuti.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina11.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina12.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina1cena.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina1minuti.Visible := true;
 
-    MainForm.Kabina21.Visible := true;
-    MainForm.Kabina22.Visible := true;
-    MainForm.Kabina2cena.Visible := true;
-    MainForm.Kabina2minuti.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina21.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina22.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina2cena.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina2minuti.Visible := true;
 
-    MainForm.Kabina31.Visible := true;
-    MainForm.Kabina32.Visible := true;
-    MainForm.Kabina3cena.Visible := true;
-    MainForm.Kabina3minuti.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina31.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina32.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina3cena.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina3minuti.Visible := true;
 
-    MainForm.Kabina41.Visible := true;
-    MainForm.Kabina42.Visible := true;
-    MainForm.Kabina4cena.Visible := true;
-    MainForm.Kabina4minuti.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina41.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina42.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina4cena.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina4minuti.Visible := true;
 
-    MainForm.Kabina51.Visible := true;
-    MainForm.Kabina52.Visible := true;
-    MainForm.Kabina5cena.Visible := true;
-    MainForm.Kabina5minuti.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina51.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina52.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina5cena.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina5minuti.Visible := true;
 
-    MainForm.Kabina61.Visible := true;
-    MainForm.Kabina62.Visible := true;
-    MainForm.Kabina6cena.Visible := true;
-    MainForm.Kabina6minuti.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina61.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina62.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina6cena.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina6minuti.Visible := true;
 
-    MainForm.Kabina71.Visible := true;
-    MainForm.Kabina72.Visible := true;
-    MainForm.Kabina7cena.Visible := true;
-    MainForm.Kabina7minuti.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina71.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina72.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina7cena.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina7minuti.Visible := true;
 
-    MainForm.Kabina81.Visible := true;
-    MainForm.Kabina82.Visible := true;
-    MainForm.Kabina8cena.Visible := true;
-    MainForm.Kabina8minuti.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina81.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina82.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina8cena.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina8minuti.Visible := true;
 end;
 
 
 
 procedure set7main();
 begin
-    with MainForm.ImagePress1 do 
+    with MainForm.GetOsnovenEkranFrame.ImagePress1 do 
     begin
       Left := 38;
       Top := 103;
       Width := 172;
       Height := 172;
     end;
-    with MainForm.Kabina11 do 
+    with MainForm.GetOsnovenEkranFrame.Kabina11 do 
     begin
       Left := 63;
       Top := 115;
       Width := 120;
       Height := 21;
     end;
-    with MainForm.Kabina12 do 
+    with MainForm.GetOsnovenEkranFrame.Kabina12 do 
     begin
       Left := 64;
       Top := 127;
       Width := 117;
       Height := 25;
     end;
-    with MainForm.Imagesol1 do 
+    with MainForm.GetOsnovenEkranFrame.Imagesol1 do 
     begin
       Left := 67;
       Top := 150;
       Width := 115;
       Height := 78;
     end;
-    with MainForm.StatusShape1 do 
+    with MainForm.GetOsnovenEkranFrame.StatusShape1 do 
     begin
       Left := 98;
       Top := 163;
       Width := 52;
       Height := 52;
     end;
-    with MainForm.Kabina1minuti do 
+    with MainForm.GetOsnovenEkranFrame.Kabina1minuti do 
     begin
       Left := 61;
       Top := 225;
       Width := 124;
       Height := 22;
     end;
-    with MainForm.Kabina1cena do 
+    with MainForm.GetOsnovenEkranFrame.Kabina1cena do 
     begin
       Left := 71;
       Top := 239;
       Width := 108;
       Height := 22;
     end;
-    with MainForm.Imagepress2 do 
+    with MainForm.GetOsnovenEkranFrame.Imagepress2 do 
     begin
       Left := 215;
       Top := 103;
       Width := 172;
       Height := 172;
     end;
-    with MainForm.Kabina21 do 
+    with MainForm.GetOsnovenEkranFrame.Kabina21 do 
     begin
       Left := 242;
       Top := 113;
       Width := 117;
       Height := 25;
     end;
-    with MainForm.Kabina22 do 
+    with MainForm.GetOsnovenEkranFrame.Kabina22 do 
     begin
       Left := 243;
       Top := 127;
       Width := 115;
       Height := 25;
     end;
-    with MainForm.Imagesol2 do 
+    with MainForm.GetOsnovenEkranFrame.Imagesol2 do 
     begin
       Left := 243;
       Top := 150;
       Width := 115;
       Height := 78;
     end;
-    with MainForm.StatusShape2 do 
+    with MainForm.GetOsnovenEkranFrame.StatusShape2 do 
     begin
       Left := 274;
       Top := 163;
       Width := 52;
       Height := 52;
     end;
-    with MainForm.Kabina2minuti do 
+    with MainForm.GetOsnovenEkranFrame.Kabina2minuti do 
     begin
       Left := 241;
       Top := 225;
       Width := 117;
       Height := 22;
     end;
-    with MainForm.Kabina2cena do 
+    with MainForm.GetOsnovenEkranFrame.Kabina2cena do 
     begin
       Left := 246;
       Top := 239;
       Width := 109;
       Height := 22;
     end;
-    with MainForm.Imagepress3 do 
+    with MainForm.GetOsnovenEkranFrame.Imagepress3 do 
     begin
       Left := 392;
       Top := 103;
       Width := 172;
       Height := 172;
     end;
-    with MainForm.Kabina31 do 
+    with MainForm.GetOsnovenEkranFrame.Kabina31 do 
     begin
       Left := 428;
       Top := 113;
       Width := 99;
       Height := 25;
     end;
-    with MainForm.Kabina32 do 
+    with MainForm.GetOsnovenEkranFrame.Kabina32 do 
     begin
       Left := 427;
       Top := 127;
       Width := 102;
       Height := 25;
     end;
-    with MainForm.Imagesol3 do 
+    with MainForm.GetOsnovenEkranFrame.Imagesol3 do 
     begin
       Left := 421;
       Top := 150;
       Width := 115;
       Height := 78;
     end;
-    with MainForm.StatusShape3 do 
+    with MainForm.GetOsnovenEkranFrame.StatusShape3 do 
     begin
       Left := 452;
       Top := 163;
       Width := 52;
       Height := 52;
     end;
-    with MainForm.Kabina3minuti do 
+    with MainForm.GetOsnovenEkranFrame.Kabina3minuti do 
     begin
       Left := 419;
       Top := 225;
       Width := 121;
       Height := 22;
     end;
-    with MainForm.Kabina3cena do 
+    with MainForm.GetOsnovenEkranFrame.Kabina3cena do 
     begin
       Left := 427;
       Top := 239;
       Width := 111;
       Height := 23;
     end;
-    with MainForm.Imagepress4 do 
+    with MainForm.GetOsnovenEkranFrame.Imagepress4 do 
     begin
       Left := 570;
       Top := 103;
       Width := 172;
       Height := 172;
     end;
-    with MainForm.Kabina41 do 
+    with MainForm.GetOsnovenEkranFrame.Kabina41 do 
     begin
       Left := 608;
       Top := 110;
       Width := 98;
       Height := 31;
     end;
-    with MainForm.Kabina42 do 
+    with MainForm.GetOsnovenEkranFrame.Kabina42 do 
     begin
       Left := 599;
       Top := 127;
       Width := 116;
       Height := 25;
     end;
-    with MainForm.Imagesol4 do 
+    with MainForm.GetOsnovenEkranFrame.Imagesol4 do 
     begin
       Left := 599;
       Top := 150;
       Width := 115;
       Height := 78;
     end;
-    with MainForm.StatusShape4 do 
+    with MainForm.GetOsnovenEkranFrame.StatusShape4 do 
     begin
       Left := 630;
       Top := 163;
       Width := 52;
       Height := 52;
     end;
-    with MainForm.Kabina4minuti do 
+    with MainForm.GetOsnovenEkranFrame.Kabina4minuti do 
     begin
       Left := 596;
       Top := 225;
       Width := 122;
       Height := 22;
     end;
-    with MainForm.Kabina4cena do 
+    with MainForm.GetOsnovenEkranFrame.Kabina4cena do 
     begin
       Left := 604;
       Top := 239;
       Width := 107;
       Height := 22;
     end;
-    with MainForm.Imagepress5 do 
+    with MainForm.GetOsnovenEkranFrame.Imagepress5 do 
     begin
       Left := 38;
       Top := 294;
       Width := 172;
       Height := 172;
     end;
-    with MainForm.Kabina52 do 
+    with MainForm.GetOsnovenEkranFrame.Kabina52 do 
     begin
       Left := 67;
       Top := 321;
       Width := 114;
       Height := 21;
     end;
-    with MainForm.Kabina51 do 
+    with MainForm.GetOsnovenEkranFrame.Kabina51 do 
     begin
       Left := 74;
       Top := 305;
       Width := 100;
       Height := 25;
     end;
-    with MainForm.Imagesol5 do 
+    with MainForm.GetOsnovenEkranFrame.Imagesol5 do 
     begin
       Left := 67;
       Top := 341;
       Width := 115;
       Height := 78;
     end;
-    with MainForm.StatusShape5 do 
+    with MainForm.GetOsnovenEkranFrame.StatusShape5 do 
     begin
       Left := 98;
       Top := 354;
       Width := 52;
       Height := 52;
     end;
-    with MainForm.Kabina5minuti do 
+    with MainForm.GetOsnovenEkranFrame.Kabina5minuti do 
     begin
       Left := 67;
       Top := 416;
       Width := 115;
       Height := 22;
     end;
-    with MainForm.Kabina5cena do 
+    with MainForm.GetOsnovenEkranFrame.Kabina5cena do 
     begin
       Left := 65;
       Top := 430;
       Width := 117;
       Height := 22;
     end;
-    with MainForm.Imagepress6 do 
+    with MainForm.GetOsnovenEkranFrame.Imagepress6 do 
     begin
       Left := 215;
       Top := 294;
       Width := 172;
       Height := 172;
     end;
-    with MainForm.Kabina61 do 
+    with MainForm.GetOsnovenEkranFrame.Kabina61 do 
     begin
       Left := 247;
       Top := 305;
       Width := 107;
       Height := 25;
     end;
-    with MainForm.Kabina62 do 
+    with MainForm.GetOsnovenEkranFrame.Kabina62 do 
     begin
       Left := 243;
       Top := 319;
       Width := 116;
       Height := 25;
     end;
-    with MainForm.Imagesol6 do 
+    with MainForm.GetOsnovenEkranFrame.Imagesol6 do 
     begin
       Left := 243;
       Top := 341;
       Width := 115;
       Height := 78;
     end;
-    with MainForm.StatusShape6 do 
+    with MainForm.GetOsnovenEkranFrame.StatusShape6 do 
     begin
       Left := 274;
       Top := 354;
       Width := 52;
       Height := 52;
     end;
-    with MainForm.Kabina6minuti do 
+    with MainForm.GetOsnovenEkranFrame.Kabina6minuti do 
     begin
       Left := 241;
       Top := 416;
       Width := 120;
       Height := 22;
     end;
-    with MainForm.Kabina6cena do 
+    with MainForm.GetOsnovenEkranFrame.Kabina6cena do 
     begin
       Left := 243;
       Top := 430;
       Width := 115;
       Height := 22;
     end;
-    with MainForm.Imagepress7 do 
+    with MainForm.GetOsnovenEkranFrame.Imagepress7 do 
     begin
       Left := 392;
       Top := 294;
       Width := 172;
       Height := 172;
     end;
-    with MainForm.Kabina71 do 
+    with MainForm.GetOsnovenEkranFrame.Kabina71 do 
     begin
       Left := 425;
       Top := 305;
       Width := 107;
       Height := 25;
     end;
-    with MainForm.Kabina72 do 
+    with MainForm.GetOsnovenEkranFrame.Kabina72 do 
     begin
       Left := 422;
       Top := 319;
       Width := 113;
       Height := 25;
     end;
-    with MainForm.Imagesol7 do
+    with MainForm.GetOsnovenEkranFrame.Imagesol7 do
     begin
       Left := 421;
       Top := 341;
       Width := 115;
       Height := 78;
     end;
-    with MainForm.StatusShape7 do 
+    with MainForm.GetOsnovenEkranFrame.StatusShape7 do 
     begin
       Left := 452;
       Top := 354;
       Width := 52;
       Height := 52;
     end;
-    with MainForm.Kabina7minuti do 
+    with MainForm.GetOsnovenEkranFrame.Kabina7minuti do 
     begin
       Left := 423;
       Top := 416;
       Width := 113;
       Height := 22;
     end;
-    with MainForm.Kabina7cena do 
+    with MainForm.GetOsnovenEkranFrame.Kabina7cena do 
     begin
       Left := 424;
       Top := 430;
       Width := 110;
       Height := 22;
     end;
-    with MainForm.Imagepress8 do 
+    with MainForm.GetOsnovenEkranFrame.Imagepress8 do 
     begin
       Left := 570;
       Top := 294;
       Width := 172;
       Height := 172;
     end;
-    with MainForm.Kabina81 do 
+    with MainForm.GetOsnovenEkranFrame.Kabina81 do 
     begin
       Left := 601;
       Top := 308;
       Width := 107;
       Height := 19;
     end;
-    with MainForm.Kabina82 do 
+    with MainForm.GetOsnovenEkranFrame.Kabina82 do 
     begin
       Left := 599;
       Top := 322;
       Width := 114;
       Height := 19;
     end;
-    with MainForm.Imagesol8 do 
+    with MainForm.GetOsnovenEkranFrame.Imagesol8 do 
     begin
       Left := 599;
       Top := 341;
       Width := 115;
       Height := 78;
     end;
-    with MainForm.StatusShape8 do 
+    with MainForm.GetOsnovenEkranFrame.StatusShape8 do 
     begin
       Left := 630;
       Top := 354;
       Width := 52;
       Height := 52;
     end;
-    with MainForm.Kabina8minuti do 
+    with MainForm.GetOsnovenEkranFrame.Kabina8minuti do 
     begin
       Left := 600;
       Top := 416;
       Width := 116;
       Height := 22;
     end;
-    with MainForm.Kabina8cena do 
+    with MainForm.GetOsnovenEkranFrame.Kabina8cena do 
     begin
       Left := 601;
       Top := 430;
@@ -503,48 +503,48 @@ begin
 
 
 
-    MainForm.Kabina11.Visible := true;
-    MainForm.Kabina12.Visible := true;
-    MainForm.Kabina1cena.Visible := true;
-    MainForm.Kabina1minuti.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina11.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina12.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina1cena.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina1minuti.Visible := true;
 
-    MainForm.Kabina21.Visible := true;
-    MainForm.Kabina22.Visible := true;
-    MainForm.Kabina2cena.Visible := true;
-    MainForm.Kabina2minuti.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina21.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina22.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina2cena.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina2minuti.Visible := true;
 
-    MainForm.Kabina31.Visible := true;
-    MainForm.Kabina32.Visible := true;
-    MainForm.Kabina3cena.Visible := true;
-    MainForm.Kabina3minuti.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina31.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina32.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina3cena.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina3minuti.Visible := true;
 
-    MainForm.Kabina41.Visible := true;
-    MainForm.Kabina42.Visible := true;
-    MainForm.Kabina4cena.Visible := true;
-    MainForm.Kabina4minuti.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina41.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina42.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina4cena.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina4minuti.Visible := true;
 
-    MainForm.Kabina51.Visible := true;
-    MainForm.Kabina52.Visible := true;
-    MainForm.Kabina5cena.Visible := true;
-    MainForm.Kabina5minuti.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina51.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina52.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina5cena.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina5minuti.Visible := true;
 
-    MainForm.Kabina61.Visible := true;
-    MainForm.Kabina62.Visible := true;
-    MainForm.Kabina6cena.Visible := true;
-    MainForm.Kabina6minuti.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina61.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina62.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina6cena.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina6minuti.Visible := true;
 
-    MainForm.Kabina71.Visible := true;
-    MainForm.Kabina72.Visible := true;
-    MainForm.Kabina7cena.Visible := true;
-    MainForm.Kabina7minuti.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina71.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina72.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina7cena.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina7minuti.Visible := true;
 
-    MainForm.Kabina81.Visible := false;
-    MainForm.Kabina82.Visible := false;
-    MainForm.Kabina8cena.Visible := false;
-    MainForm.Kabina8minuti.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Kabina81.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Kabina82.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Kabina8cena.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Kabina8minuti.Visible := false;
 
-    MainForm.Imagepress8.Visible := False;
-    MainForm.Imagesol8.Visible := False;
+    MainForm.GetOsnovenEkranFrame.Imagepress8.Visible := False;
+    MainForm.GetOsnovenEkranFrame.Imagesol8.Visible := False;
 end;
 
 
@@ -554,14 +554,14 @@ end;
 procedure set6main();
 begin
 
-      with MainForm.ImagePress1 do
+      with MainForm.GetOsnovenEkranFrame.ImagePress1 do
     begin
       Left := 31;
       Top := 54;
       Width := 220;
       Height := 221;
     end;
-    with MainForm.Kabina21 do
+    with MainForm.GetOsnovenEkranFrame.Kabina21 do
     begin
       Left := 313;
       Top := 70;
@@ -569,7 +569,7 @@ begin
       Height := 25;
       Font.Height := -16;
     end;
-    with MainForm.Kabina11 do 
+    with MainForm.GetOsnovenEkranFrame.Kabina11 do 
     begin
       Left := 54;
       Top := 70;
@@ -577,7 +577,7 @@ begin
       Height := 25;
       Font.Height := -16;
     end;
-    with MainForm.Kabina12 do
+    with MainForm.GetOsnovenEkranFrame.Kabina12 do
     begin
       Left := 54;
       Top := 88;
@@ -585,21 +585,21 @@ begin
       Height := 25;
       Font.Height := -16;
     end;
-    with MainForm.Imagesol1 do
+    with MainForm.GetOsnovenEkranFrame.Imagesol1 do
     begin
       Left := 66;
       Top := 112;
       Width := 149;
       Height := 97;
     end;
-    with MainForm.StatusShape1 do 
+    with MainForm.GetOsnovenEkranFrame.StatusShape1 do 
     begin
       Left := 108;
       Top := 130;
       Width := 65;
       Height := 65;
     end;
-    with MainForm.Kabina1minuti do 
+    with MainForm.GetOsnovenEkranFrame.Kabina1minuti do 
     begin
       Left := 58;
       Top := 212;
@@ -607,7 +607,7 @@ begin
       Height := 22;
       Font.Height := -16;
     end;
-    with MainForm.Kabina1cena do 
+    with MainForm.GetOsnovenEkranFrame.Kabina1cena do 
     begin
       Left := 56;
       Top := 232;
@@ -615,14 +615,14 @@ begin
       Height := 22;
       Font.Height := -16;
     end;
-     with MainForm.Imagepress2 do 
+     with MainForm.GetOsnovenEkranFrame.Imagepress2 do 
     begin
       Left := 287;
       Top := 54;
       Width := 220;
       Height := 221;
     end;
-    with MainForm.Kabina21 do 
+    with MainForm.GetOsnovenEkranFrame.Kabina21 do 
     begin
       Left := 313;
       Top := 70;
@@ -634,7 +634,7 @@ begin
 
 
 
-    with MainForm.Kabina22 do 
+    with MainForm.GetOsnovenEkranFrame.Kabina22 do 
     begin
       Left := 313;
       Top := 88;
@@ -642,21 +642,21 @@ begin
       Height := 25;
       Font.Height := -16;
     end;
-    with MainForm.Imagesol2 do 
+    with MainForm.GetOsnovenEkranFrame.Imagesol2 do 
     begin
       Left := 323;
       Top := 114;
       Width := 149;
       Height := 97;
     end;
-    with MainForm.StatusShape2 do 
+    with MainForm.GetOsnovenEkranFrame.StatusShape2 do 
     begin
       Left := 365;
       Top := 130;
       Width := 65;
       Height := 65;
     end;
-    with MainForm.Kabina2minuti do 
+    with MainForm.GetOsnovenEkranFrame.Kabina2minuti do 
     begin
       Left := 311;
       Top := 212;
@@ -664,7 +664,7 @@ begin
       Height := 22;
       Font.Height := -16;
     end;
-    with MainForm.Kabina2cena do 
+    with MainForm.GetOsnovenEkranFrame.Kabina2cena do 
     begin
       Left := 311;
       Top := 232;
@@ -672,14 +672,14 @@ begin
       Height := 22;
       Font.Height := -16;
     end;
-    with MainForm.Imagepress3 do 
+    with MainForm.GetOsnovenEkranFrame.Imagepress3 do 
     begin
       Left := 541;
       Top := 53;
       Width := 220;
       Height := 221;
     end;
-    with MainForm.Kabina31 do 
+    with MainForm.GetOsnovenEkranFrame.Kabina31 do 
     begin
       Left := 574;
       Top := 70;
@@ -687,7 +687,7 @@ begin
       Height := 25;
       Font.Height := -16;
     end;
-    with MainForm.Kabina32 do 
+    with MainForm.GetOsnovenEkranFrame.Kabina32 do 
     begin
       Left := 574;
       Top := 88;
@@ -695,21 +695,21 @@ begin
       Height := 25;
       Font.Height := -16;
     end;
-    with MainForm.Imagesol3 do 
+    with MainForm.GetOsnovenEkranFrame.Imagesol3 do 
     begin
       Left := 579;
       Top := 117;
       Width := 149;
       Height := 97;
     end;
-    with MainForm.StatusShape3 do 
+    with MainForm.GetOsnovenEkranFrame.StatusShape3 do 
     begin
       Left := 622;
       Top := 130;
       Width := 65;
       Height := 65;
     end;
-    with MainForm.Kabina3cena do 
+    with MainForm.GetOsnovenEkranFrame.Kabina3cena do 
     begin
       Left := 545;
       Top := 225;
@@ -717,7 +717,7 @@ begin
       Height := 36;
       Font.Height := -16;
     end;
-    with MainForm.Kabina3minuti do 
+    with MainForm.GetOsnovenEkranFrame.Kabina3minuti do 
     begin
       Left := 572;
       Top := 213;
@@ -725,14 +725,14 @@ begin
       Height := 22;
       Font.Height := -16;
     end;
-    with MainForm.Imagepress4 do 
+    with MainForm.GetOsnovenEkranFrame.Imagepress4 do 
     begin
       Left := 29;
       Top := 301;
       Width := 220;
       Height := 221;
     end;
-    with MainForm.Kabina41 do 
+    with MainForm.GetOsnovenEkranFrame.Kabina41 do 
     begin
       Left := 54;
       Top := 318;
@@ -740,7 +740,7 @@ begin
       Height := 25;
       Font.Height := -16;
     end;
-    with MainForm.Kabina42 do 
+    with MainForm.GetOsnovenEkranFrame.Kabina42 do 
     begin
       Left := 54;
       Top := 336;
@@ -748,21 +748,21 @@ begin
       Height := 25;
       Font.Height := -16;
     end;
-    with MainForm.Imagesol4 do 
+    with MainForm.GetOsnovenEkranFrame.Imagesol4 do 
     begin
       Left := 66;
       Top := 360;
       Width := 149;
       Height := 97;
     end;
-    with MainForm.StatusShape4 do 
+    with MainForm.GetOsnovenEkranFrame.StatusShape4 do 
     begin
       Left := 108;
       Top := 378;
       Width := 65;
       Height := 65;
     end;
-    with MainForm.Kabina4minuti do 
+    with MainForm.GetOsnovenEkranFrame.Kabina4minuti do 
     begin
       Left := 58;
       Top := 457;
@@ -770,21 +770,21 @@ begin
       Height := 22;
       Font.Height := -16;
     end;
-    with MainForm.Kabina4cena do 
+    with MainForm.GetOsnovenEkranFrame.Kabina4cena do 
     begin
       Left := 58;
       Top := 476;
       Width := 161;
       Height := 22;
     end;
-    with MainForm.Imagepress5 do 
+    with MainForm.GetOsnovenEkranFrame.Imagepress5 do 
     begin
       Left := 287;
       Top := 298;
       Width := 220;
       Height := 221;
     end;
-    with MainForm.Kabina51 do 
+    with MainForm.GetOsnovenEkranFrame.Kabina51 do 
     begin
       Left := 313;
       Top := 318;
@@ -792,7 +792,7 @@ begin
       Height := 25;
       Font.Height := -16;
     end;
-    with MainForm.Kabina52 do 
+    with MainForm.GetOsnovenEkranFrame.Kabina52 do 
     begin
       Left := 313;
       Top := 336;
@@ -800,21 +800,21 @@ begin
       Height := 25;
       Font.Height := -16;
     end;
-    with MainForm.Imagesol5 do 
+    with MainForm.GetOsnovenEkranFrame.Imagesol5 do 
     begin
       Left := 323;
       Top := 360;
       Width := 149;
       Height := 97;
     end;
-    with MainForm.StatusShape5 do 
+    with MainForm.GetOsnovenEkranFrame.StatusShape5 do 
     begin
       Left := 365;
       Top := 378;
       Width := 65;
       Height := 65;
     end;
-    with MainForm.Kabina5minuti do 
+    with MainForm.GetOsnovenEkranFrame.Kabina5minuti do 
     begin
       Left := 312;
       Top := 457;
@@ -822,7 +822,7 @@ begin
       Height := 22;
       Font.Height := -16;
     end;
-    with MainForm.Kabina5cena do 
+    with MainForm.GetOsnovenEkranFrame.Kabina5cena do 
     begin
       Left := 312;
       Top := 476;
@@ -830,14 +830,14 @@ begin
       Height := 22;
       Font.Height := -16;
     end;
-    with MainForm.Imagepress6 do 
+    with MainForm.GetOsnovenEkranFrame.Imagepress6 do 
     begin
       Left := 545;
       Top := 300;
       Width := 220;
       Height := 221;
     end;
-    with MainForm.Kabina61 do 
+    with MainForm.GetOsnovenEkranFrame.Kabina61 do 
     begin
       Left := 573;
       Top := 318;
@@ -845,7 +845,7 @@ begin
       Height := 25;
       Font.Height := -16;
     end;
-    with MainForm.Kabina62 do 
+    with MainForm.GetOsnovenEkranFrame.Kabina62 do 
     begin
       Left := 573;
       Top := 336;
@@ -853,21 +853,21 @@ begin
       Height := 25;
       Font.Height := -16;
     end;
-    with MainForm.Imagesol6 do 
+    with MainForm.GetOsnovenEkranFrame.Imagesol6 do 
     begin
       Left := 580;
       Top := 362;
       Width := 149;
       Height := 97;
     end;
-    with MainForm.StatusShape6 do 
+    with MainForm.GetOsnovenEkranFrame.StatusShape6 do 
     begin
       Left := 622;
       Top := 378;
       Width := 65;
       Height := 65;
     end;
-    with MainForm.Kabina6minuti do 
+    with MainForm.GetOsnovenEkranFrame.Kabina6minuti do 
     begin
       Left := 571;
       Top := 458;
@@ -875,7 +875,7 @@ begin
       Height := 22;
       Font.Height := -16;
     end;
-    with MainForm.Kabina6cena do 
+    with MainForm.GetOsnovenEkranFrame.Kabina6cena do 
     begin
       Left := 569;
       Top := 476;
@@ -884,49 +884,49 @@ begin
       Font.Height := -16;
     end;
 
-    MainForm.Kabina11.Visible := true;
-    MainForm.Kabina12.Visible := true;
-    MainForm.Kabina1cena.Visible := true;
-    MainForm.Kabina1minuti.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina11.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina12.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina1cena.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina1minuti.Visible := true;
 
-    MainForm.Kabina21.Visible := true;
-    MainForm.Kabina22.Visible := true;
-    MainForm.Kabina2cena.Visible := true;
-    MainForm.Kabina2minuti.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina21.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina22.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina2cena.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina2minuti.Visible := true;
 
-    MainForm.Kabina31.Visible := true;
-    MainForm.Kabina32.Visible := true;
-    MainForm.Kabina3cena.Visible := true;
-    MainForm.Kabina3minuti.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina31.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina32.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina3cena.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina3minuti.Visible := true;
 
-    MainForm.Kabina41.Visible := true;
-    MainForm.Kabina42.Visible := true;
-    MainForm.Kabina4cena.Visible := true;
-    MainForm.Kabina4minuti.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina41.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina42.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina4cena.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina4minuti.Visible := true;
 
-    MainForm.Kabina51.Visible := true;
-    MainForm.Kabina52.Visible := true;
-    MainForm.Kabina5cena.Visible := true;
-    MainForm.Kabina5minuti.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina51.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina52.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina5cena.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina5minuti.Visible := true;
 
-    MainForm.Kabina61.Visible := true;
-    MainForm.Kabina62.Visible := true;
-    MainForm.Kabina6cena.Visible := true;
-    MainForm.Kabina6minuti.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina61.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina62.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina6cena.Visible := true;
+    MainForm.GetOsnovenEkranFrame.Kabina6minuti.Visible := true;
 
-    MainForm.Kabina71.Visible := false;
-    MainForm.Kabina72.Visible := false;
-    MainForm.Kabina7cena.Visible := false;
-    MainForm.Kabina7minuti.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Kabina71.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Kabina72.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Kabina7cena.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Kabina7minuti.Visible := false;
 
-    MainForm.Kabina81.Visible := false;
-    MainForm.Kabina82.Visible := false;
-    MainForm.Kabina8cena.Visible := false;
-    MainForm.Kabina8minuti.Visible := false;
-    MainForm.Imagepress7.Visible := False;
-    MainForm.Imagesol7.Visible := False;
-    MainForm.Imagepress8.Visible := False;
-    MainForm.Imagesol8.Visible := False;
+    MainForm.GetOsnovenEkranFrame.Kabina81.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Kabina82.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Kabina8cena.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Kabina8minuti.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Imagepress7.Visible := False;
+    MainForm.GetOsnovenEkranFrame.Imagesol7.Visible := False;
+    MainForm.GetOsnovenEkranFrame.Imagepress8.Visible := False;
+    MainForm.GetOsnovenEkranFrame.Imagesol8.Visible := False;
 end;
 
 procedure equalStatus(Status1: TShape; Status2: TShape);
@@ -973,61 +973,61 @@ end;
 procedure equalscreens();
 
 begin
-    equalpictures(main2.Imagepress1, MainForm.Imagepress1);
-    equalpictures2(main2.ImageSol1, MainForm.ImageSol1);
-    equalpictures(main2.Imagepress2, MainForm.Imagepress2);
-    equalpictures2(main2.ImageSol2, MainForm.ImageSol2);
-    equalpictures(main2.Imagepress3, MainForm.Imagepress3);
-    equalpictures2(main2.ImageSol3, MainForm.ImageSol3);
-    equalpictures(main2.Imagepress4, MainForm.Imagepress4);
-    equalpictures2(main2.ImageSol4, MainForm.ImageSol4);
-    equalpictures(main2.Imagepress5, MainForm.Imagepress5);
-    equalpictures2(main2.ImageSol5, MainForm.ImageSol5);
-    equalpictures(main2.Imagepress6, MainForm.Imagepress6);
-    equalpictures2(main2.ImageSol6, MainForm.ImageSol6);
+    equalpictures(main2.Imagepress1, MainForm.GetOsnovenEkranFrame.Imagepress1);
+    equalpictures2(main2.ImageSol1, MainForm.GetOsnovenEkranFrame.ImageSol1);
+    equalpictures(main2.Imagepress2, MainForm.GetOsnovenEkranFrame.Imagepress2);
+    equalpictures2(main2.ImageSol2, MainForm.GetOsnovenEkranFrame.ImageSol2);
+    equalpictures(main2.Imagepress3, MainForm.GetOsnovenEkranFrame.Imagepress3);
+    equalpictures2(main2.ImageSol3, MainForm.GetOsnovenEkranFrame.ImageSol3);
+    equalpictures(main2.Imagepress4, MainForm.GetOsnovenEkranFrame.Imagepress4);
+    equalpictures2(main2.ImageSol4, MainForm.GetOsnovenEkranFrame.ImageSol4);
+    equalpictures(main2.Imagepress5, MainForm.GetOsnovenEkranFrame.Imagepress5);
+    equalpictures2(main2.ImageSol5, MainForm.GetOsnovenEkranFrame.ImageSol5);
+    equalpictures(main2.Imagepress6, MainForm.GetOsnovenEkranFrame.Imagepress6);
+    equalpictures2(main2.ImageSol6, MainForm.GetOsnovenEkranFrame.ImageSol6);
 
-    equallabels(Main2.Kabina1minuti, MainForm.Kabina1minuti);
-    equallabels(Main2.Kabina1cena, MainForm.Kabina1cena);
-    equallabels(Main2.Kabina11, MainForm.Kabina11);
-    equallabels(Main2.Kabina12, MainForm.Kabina12);
+    equallabels(Main2.Kabina1minuti, MainForm.GetOsnovenEkranFrame.Kabina1minuti);
+    equallabels(Main2.Kabina1cena, MainForm.GetOsnovenEkranFrame.Kabina1cena);
+    equallabels(Main2.Kabina11, MainForm.GetOsnovenEkranFrame.Kabina11);
+    equallabels(Main2.Kabina12, MainForm.GetOsnovenEkranFrame.Kabina12);
 
-    equallabels(Main2.Kabina2minuti, MainForm.Kabina2minuti);
-    equallabels(Main2.Kabina2cena, MainForm.Kabina2cena);
-    equallabels(Main2.Kabina21, MainForm.Kabina21);
-    equallabels(Main2.Kabina22, MainForm.Kabina22);
+    equallabels(Main2.Kabina2minuti, MainForm.GetOsnovenEkranFrame.Kabina2minuti);
+    equallabels(Main2.Kabina2cena, MainForm.GetOsnovenEkranFrame.Kabina2cena);
+    equallabels(Main2.Kabina21, MainForm.GetOsnovenEkranFrame.Kabina21);
+    equallabels(Main2.Kabina22, MainForm.GetOsnovenEkranFrame.Kabina22);
 
-    equallabels(Main2.Kabina3minuti, MainForm.Kabina3minuti);
-    equallabels(Main2.Kabina3cena, MainForm.Kabina3cena);
-    equallabels(Main2.Kabina31, MainForm.Kabina31);
-    equallabels(Main2.Kabina32, MainForm.Kabina32);
+    equallabels(Main2.Kabina3minuti, MainForm.GetOsnovenEkranFrame.Kabina3minuti);
+    equallabels(Main2.Kabina3cena, MainForm.GetOsnovenEkranFrame.Kabina3cena);
+    equallabels(Main2.Kabina31, MainForm.GetOsnovenEkranFrame.Kabina31);
+    equallabels(Main2.Kabina32, MainForm.GetOsnovenEkranFrame.Kabina32);
 
-    equallabels(Main2.Kabina4minuti, MainForm.Kabina4minuti);
-    equallabels(Main2.Kabina4cena, MainForm.Kabina4cena);
-    equallabels(Main2.Kabina41, MainForm.Kabina41);
-    equallabels(Main2.Kabina42, MainForm.Kabina42);
+    equallabels(Main2.Kabina4minuti, MainForm.GetOsnovenEkranFrame.Kabina4minuti);
+    equallabels(Main2.Kabina4cena, MainForm.GetOsnovenEkranFrame.Kabina4cena);
+    equallabels(Main2.Kabina41, MainForm.GetOsnovenEkranFrame.Kabina41);
+    equallabels(Main2.Kabina42, MainForm.GetOsnovenEkranFrame.Kabina42);
 
-    equallabels(Main2.Kabina5minuti, MainForm.Kabina5minuti);
-    equallabels(Main2.Kabina5cena, MainForm.Kabina5cena);
-    equallabels(Main2.Kabina51, MainForm.Kabina51);
-    equallabels(Main2.Kabina52, MainForm.Kabina52);
+    equallabels(Main2.Kabina5minuti, MainForm.GetOsnovenEkranFrame.Kabina5minuti);
+    equallabels(Main2.Kabina5cena, MainForm.GetOsnovenEkranFrame.Kabina5cena);
+    equallabels(Main2.Kabina51, MainForm.GetOsnovenEkranFrame.Kabina51);
+    equallabels(Main2.Kabina52, MainForm.GetOsnovenEkranFrame.Kabina52);
 
-    equallabels(Main2.Kabina6minuti, MainForm.Kabina6minuti);
-    equallabels(Main2.Kabina6cena, MainForm.Kabina6cena);
-    equallabels(Main2.Kabina61, MainForm.Kabina61);
-    equallabels(Main2.Kabina62, MainForm.Kabina62);
+    equallabels(Main2.Kabina6minuti, MainForm.GetOsnovenEkranFrame.Kabina6minuti);
+    equallabels(Main2.Kabina6cena, MainForm.GetOsnovenEkranFrame.Kabina6cena);
+    equallabels(Main2.Kabina61, MainForm.GetOsnovenEkranFrame.Kabina61);
+    equallabels(Main2.Kabina62, MainForm.GetOsnovenEkranFrame.Kabina62);
 
-    equalStatus(Main2.StatusShape1, MainForm.StatusShape1);
-    equalStatus(Main2.StatusShape2, MainForm.StatusShape2);
-    equalStatus(Main2.StatusShape3, MainForm.StatusShape3);
-    equalStatus(Main2.StatusShape4, MainForm.StatusShape4);
-    equalStatus(Main2.StatusShape5, MainForm.StatusShape5);
-    equalStatus(Main2.StatusShape6, MainForm.StatusShape6);
+    equalStatus(Main2.StatusShape1, MainForm.GetOsnovenEkranFrame.StatusShape1);
+    equalStatus(Main2.StatusShape2, MainForm.GetOsnovenEkranFrame.StatusShape2);
+    equalStatus(Main2.StatusShape3, MainForm.GetOsnovenEkranFrame.StatusShape3);
+    equalStatus(Main2.StatusShape4, MainForm.GetOsnovenEkranFrame.StatusShape4);
+    equalStatus(Main2.StatusShape5, MainForm.GetOsnovenEkranFrame.StatusShape5);
+    equalStatus(Main2.StatusShape6, MainForm.GetOsnovenEkranFrame.StatusShape6);
 
 end;
 
 procedure set3main();
 begin
-    with MainForm.Kabina1minuti do
+    with MainForm.GetOsnovenEkranFrame.Kabina1minuti do
     begin
         Left := 106;
         Top := 274;
@@ -1038,7 +1038,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina21 do
+    with MainForm.GetOsnovenEkranFrame.Kabina21 do
     begin
         Left := 541;
         Top := 112;
@@ -1049,7 +1049,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina22 do
+    with MainForm.GetOsnovenEkranFrame.Kabina22 do
     begin
         Left := 541;
         Top := 135;
@@ -1060,7 +1060,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina2cena do
+    with MainForm.GetOsnovenEkranFrame.Kabina2cena do
     begin
         Left := 543;
         Top := 295;
@@ -1071,7 +1071,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.kabina2minuti do
+    with MainForm.GetOsnovenEkranFrame.kabina2minuti do
     begin
         Left := 543;
         Top := 274;
@@ -1082,7 +1082,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina31 do
+    with MainForm.GetOsnovenEkranFrame.Kabina31 do
     begin
         Left := 325;
         Top := 254;
@@ -1093,7 +1093,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina32 do
+    with MainForm.GetOsnovenEkranFrame.Kabina32 do
     begin
         Left := 325;
         Top := 277;
@@ -1104,7 +1104,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina3cena do
+    with MainForm.GetOsnovenEkranFrame.Kabina3cena do
     begin
         Left := 326;
         Top := 436;
@@ -1115,7 +1115,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina3minuti do
+    with MainForm.GetOsnovenEkranFrame.Kabina3minuti do
     begin
         Left := 326;
         Top := 417;
@@ -1126,7 +1126,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina11 do
+    with MainForm.GetOsnovenEkranFrame.Kabina11 do
     begin
         Left := 104;
         Top := 112;
@@ -1137,7 +1137,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina12 do
+    with MainForm.GetOsnovenEkranFrame.Kabina12 do
     begin
         Left := 104;
         Top := 135;
@@ -1148,7 +1148,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina1cena do
+    with MainForm.GetOsnovenEkranFrame.Kabina1cena do
     begin
         Left := 106;
         Top := 295;
@@ -1159,42 +1159,42 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Imagepress1 do
+    with MainForm.GetOsnovenEkranFrame.Imagepress1 do
     begin
         Left := 67;
         Top := 99;
         Width := 235;
         Height := 235;
     end;
-    with MainForm.Imagepress2 do
+    with MainForm.GetOsnovenEkranFrame.Imagepress2 do
     begin
         Left := 507;
         Top := 99;
         Width := 235;
         Height := 235;
     end;
-    with MainForm.Imagepress3 do
+    with MainForm.GetOsnovenEkranFrame.Imagepress3 do
     begin
         Left := 289;
         Top := 243;
         Width := 235;
         Height := 235;
     end;
-    with MainForm.Imagesol1 do
+    with MainForm.GetOsnovenEkranFrame.Imagesol1 do
     begin
         Left := 104;
         Top := 160;
         Width := 161;
         Height := 113;
     end;
-    with MainForm.Imagesol2 do
+    with MainForm.GetOsnovenEkranFrame.Imagesol2 do
     begin
         Left := 543;
         Top := 160;
         Width := 161;
         Height := 112;
     end;
-    with MainForm.Imagesol3 do
+    with MainForm.GetOsnovenEkranFrame.Imagesol3 do
     begin
         Left := 325;
         Top := 303;
@@ -1202,28 +1202,28 @@ begin
         Height := 115;
     end;
 
-    with MainForm.StatusShape1 do
+    with MainForm.GetOsnovenEkranFrame.StatusShape1 do
     begin
         Left := 149;
         Top := 178;
         Width := 80;
         Height := 80;
     end;
-    with MainForm.StatusShape3 do
+    with MainForm.GetOsnovenEkranFrame.StatusShape3 do
     begin
         Left := 370;
         Top := 319;
         Width := 80;
         Height := 80;
     end;
-    with MainForm.StatusShape2 do
+    with MainForm.GetOsnovenEkranFrame.StatusShape2 do
     begin
         Left := 587;
         Top := 178;
         Width := 80;
         Height := 80;
     end;
-    with MainForm do
+    with MainForm.GetOsnovenEkranFrame do
     begin
         Kabina41.Visible := False;
         Kabina42.Visible := False;
@@ -1246,24 +1246,24 @@ begin
         // Image2.picture:=Image61.Picture;
     end;
     
-    MainForm.Kabina71.Visible := false;
-    MainForm.Kabina72.Visible := false;
-    MainForm.Kabina7cena.Visible := false;
-    MainForm.Kabina7minuti.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Kabina71.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Kabina72.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Kabina7cena.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Kabina7minuti.Visible := false;
 
-    MainForm.Kabina81.Visible := false;
-    MainForm.Kabina82.Visible := false;
-    MainForm.Kabina8cena.Visible := false;
-    MainForm.Kabina8minuti.Visible := false;
-    MainForm.Imagepress7.Visible := False;
-    MainForm.Imagesol7.Visible := False;
-    MainForm.Imagepress8.Visible := False;
-    MainForm.Imagesol8.Visible := False;
+    MainForm.GetOsnovenEkranFrame.Kabina81.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Kabina82.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Kabina8cena.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Kabina8minuti.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Imagepress7.Visible := False;
+    MainForm.GetOsnovenEkranFrame.Imagesol7.Visible := False;
+    MainForm.GetOsnovenEkranFrame.Imagepress8.Visible := False;
+    MainForm.GetOsnovenEkranFrame.Imagesol8.Visible := False;
 end;
 
 procedure set4main();
 begin
-    with MainForm.Kabina3Minuti do
+    with MainForm.GetOsnovenEkranFrame.Kabina3Minuti do
     begin
         Left := 246;
         Top := 444;
@@ -1274,7 +1274,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina3cena do
+    with MainForm.GetOsnovenEkranFrame.Kabina3cena do
     begin
         Left := 246;
         Top := 461;
@@ -1286,7 +1286,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina32 do
+    with MainForm.GetOsnovenEkranFrame.Kabina32 do
     begin
         Left := 248;
         Top := 304;
@@ -1297,7 +1297,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina31 do
+    with MainForm.GetOsnovenEkranFrame.Kabina31 do
     begin
         Left := 248;
         Top := 287;
@@ -1309,7 +1309,7 @@ begin
 
         Visible := true;
     end;
-    with MainForm.Kabina2minuti do
+    with MainForm.GetOsnovenEkranFrame.Kabina2minuti do
     begin
         Left := 399;
         Top := 258;
@@ -1320,7 +1320,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina41 do
+    with MainForm.GetOsnovenEkranFrame.Kabina41 do
     begin
         Left := 543;
         Top := 287;
@@ -1331,7 +1331,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina42 do
+    with MainForm.GetOsnovenEkranFrame.Kabina42 do
     begin
         Left := 544;
         Top := 303;
@@ -1342,7 +1342,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina4cena do
+    with MainForm.GetOsnovenEkranFrame.Kabina4cena do
     begin
         Left := 548;
         Top := 461;
@@ -1353,7 +1353,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina4minuti do
+    with MainForm.GetOsnovenEkranFrame.Kabina4minuti do
     begin
         Left := 548;
         Top := 444;
@@ -1364,7 +1364,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina11 do
+    with MainForm.GetOsnovenEkranFrame.Kabina11 do
     begin
         Left := 90;
         Top := 102;
@@ -1375,7 +1375,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina12 do
+    with MainForm.GetOsnovenEkranFrame.Kabina12 do
     begin
         Left := 90;
         Top := 120;
@@ -1386,7 +1386,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina1cena do
+    with MainForm.GetOsnovenEkranFrame.Kabina1cena do
     begin
         Left := 95;
         Top := 273;
@@ -1397,7 +1397,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina1minuti do
+    with MainForm.GetOsnovenEkranFrame.Kabina1minuti do
     begin
         Left := 95;
         Top := 258;
@@ -1408,7 +1408,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina21 do
+    with MainForm.GetOsnovenEkranFrame.Kabina21 do
     begin
         Left := 394;
         Top := 102;
@@ -1419,7 +1419,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina22 do
+    with MainForm.GetOsnovenEkranFrame.Kabina22 do
     begin
         Left := 394;
         Top := 120;
@@ -1430,7 +1430,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina2cena do
+    with MainForm.GetOsnovenEkranFrame.Kabina2cena do
     begin
         Left := 399;
         Top := 275;
@@ -1441,91 +1441,91 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Imagepress1 do
+    with MainForm.GetOsnovenEkranFrame.Imagepress1 do
     begin
         Left := 62;
         Top := 90;
         Width := 230;
         Height := 230;
     end;
-    with MainForm.Imagepress2 do
+    with MainForm.GetOsnovenEkranFrame.Imagepress2 do
     begin
         Left := 366;
         Top := 90;
         Width := 230;
         Height := 230;
     end;
-    with MainForm.Imagepress3 do
+    with MainForm.GetOsnovenEkranFrame.Imagepress3 do
     begin
         Left := 214;
         Top := 276;
         Width := 230;
         Height := 230;
     end;
-    with MainForm.Imagepress4 do
+    with MainForm.GetOsnovenEkranFrame.Imagepress4 do
     begin
         Left := 518;
         Top := 276;
         Width := 230;
         Height := 230;
     end;
-    with MainForm.Imagesol1 do
+    with MainForm.GetOsnovenEkranFrame.Imagesol1 do
     begin
         Left := 98;
         Top := 149;
         Width := 160;
         Height := 110;
     end;
-    with MainForm.Imagesol2 do
+    with MainForm.GetOsnovenEkranFrame.Imagesol2 do
     begin
         Left := 402;
         Top := 149;
         Width := 160;
         Height := 110;
     end;
-    with MainForm.Imagesol3 do
+    with MainForm.GetOsnovenEkranFrame.Imagesol3 do
     begin
         Left := 251;
         Top := 333;
         Width := 160;
         Height := 110;
     end;
-    with MainForm.Imagesol4 do
+    with MainForm.GetOsnovenEkranFrame.Imagesol4 do
     begin
         Left := 555;
         Top := 333;
         Width := 160;
         Height := 110;
     end;
-    with MainForm.StatusShape4 do
+    with MainForm.GetOsnovenEkranFrame.StatusShape4 do
     begin
         Left := 600;
         Top := 348;
         Width := 75;
         Height := 75;
     end;
-    with MainForm.StatusShape3 do
+    with MainForm.GetOsnovenEkranFrame.StatusShape3 do
     begin
         Left := 293;
         Top := 348;
         Width := 75;
         Height := 75;
     end;
-    with MainForm.StatusShape2 do
+    with MainForm.GetOsnovenEkranFrame.StatusShape2 do
     begin
         Left := 446;
         Top := 163;
         Width := 75;
         Height := 75;
     end;
-    with MainForm.StatusShape1 do
+    with MainForm.GetOsnovenEkranFrame.StatusShape1 do
     begin
         Left := 135;
         Top := 163;
         Width := 75;
         Height := 75;
     end;
-    with MainForm do
+    with MainForm.GetOsnovenEkranFrame do
     begin
         // Image2.picture:=Image23.Picture;
         Kabina51.Visible := False;
@@ -1543,38 +1543,38 @@ begin
 
     end;
     
-    MainForm.Kabina71.Visible := false;
-    MainForm.Kabina72.Visible := false;
-    MainForm.Kabina7cena.Visible := false;
-    MainForm.Kabina7minuti.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Kabina71.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Kabina72.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Kabina7cena.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Kabina7minuti.Visible := false;
 
-    MainForm.Kabina81.Visible := false;
-    MainForm.Kabina82.Visible := false;
-    MainForm.Kabina8cena.Visible := false;
-    MainForm.Kabina8minuti.Visible := false;
-    MainForm.Imagepress7.Visible := False;
-    MainForm.Imagesol7.Visible := False;
-    MainForm.Imagepress8.Visible := False;
-    MainForm.Imagesol8.Visible := False;
+    MainForm.GetOsnovenEkranFrame.Kabina81.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Kabina82.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Kabina8cena.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Kabina8minuti.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Imagepress7.Visible := False;
+    MainForm.GetOsnovenEkranFrame.Imagesol7.Visible := False;
+    MainForm.GetOsnovenEkranFrame.Imagepress8.Visible := False;
+    MainForm.GetOsnovenEkranFrame.Imagesol8.Visible := False;
 end;
 
 procedure set2main();
 begin
-    with MainForm.statusShape1 do
+    with MainForm.GetOsnovenEkranFrame.statusShape1 do
     begin
         Left := 189;
         Top := 234;
         Width := 90;
         Height := 90;
     end;
-    with MainForm.StatusShape2 do
+    with MainForm.GetOsnovenEkranFrame.StatusShape2 do
     begin
         Left := 525;
         Top := 234;
         Width := 90;
         Height := 90;
     end;
-    with MainForm.Kabina11 do
+    with MainForm.GetOsnovenEkranFrame.Kabina11 do
     begin
         Left := 152;
         Top := 150;
@@ -1585,7 +1585,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina12 do
+    with MainForm.GetOsnovenEkranFrame.Kabina12 do
     begin
         Left := 151;
         Top := 178;
@@ -1596,7 +1596,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina1cena do
+    with MainForm.GetOsnovenEkranFrame.Kabina1cena do
     begin
         Left := 147;
         Top := 379;
@@ -1607,7 +1607,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina1minuti do
+    with MainForm.GetOsnovenEkranFrame.Kabina1minuti do
     begin
         Left := 154;
         Top := 356;
@@ -1618,7 +1618,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina21 do
+    with MainForm.GetOsnovenEkranFrame.Kabina21 do
     begin
         Left := 480;
         Top := 150;
@@ -1629,7 +1629,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina22 do
+    with MainForm.GetOsnovenEkranFrame.Kabina22 do
     begin
         Left := 479;
         Top := 180;
@@ -1640,7 +1640,7 @@ begin
         Visible := true;
         Font.Style := [];
     end;
-    with MainForm.Kabina2cena do
+    with MainForm.GetOsnovenEkranFrame.Kabina2cena do
     begin
         Left := 476;
         Top := 376;
@@ -1651,7 +1651,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina2minuti do
+    with MainForm.GetOsnovenEkranFrame.Kabina2minuti do
     begin
         Left := 478;
         Top := 354;
@@ -1662,35 +1662,35 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Imagesol2 do
+    with MainForm.GetOsnovenEkranFrame.Imagesol2 do
     begin
         Left := 464;
         Top := 208;
         Width := 201;
         Height := 145;
     end;
-    with MainForm.Imagesol1 do
+    with MainForm.GetOsnovenEkranFrame.Imagesol1 do
     begin
         Left := 135;
         Top := 207;
         Width := 201;
         Height := 145;
     end;
-    with MainForm.Imagepress2 do
+    with MainForm.GetOsnovenEkranFrame.Imagepress2 do
     begin
         Left := 408;
         Top := 112;
         Width := 321;
         Height := 329;
     end;
-    with MainForm.Imagepress1 do
+    with MainForm.GetOsnovenEkranFrame.Imagepress1 do
     begin
         Left := 72;
         Top := 112;
         Width := 313;
         Height := 329;
     end;
-    with MainForm do
+    with MainForm.GetOsnovenEkranFrame do
     begin
         Kabina31.Visible := False;
         Kabina32.Visible := False;
@@ -1719,62 +1719,62 @@ begin
         Imagesol6.Visible := False;
     end;
     
-    MainForm.Kabina71.Visible := false;
-    MainForm.Kabina72.Visible := false;
-    MainForm.Kabina7cena.Visible := false;
-    MainForm.Kabina7minuti.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Kabina71.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Kabina72.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Kabina7cena.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Kabina7minuti.Visible := false;
 
-    MainForm.Kabina81.Visible := false;
-    MainForm.Kabina82.Visible := false;
-    MainForm.Kabina8cena.Visible := false;
-    MainForm.Kabina8minuti.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Kabina81.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Kabina82.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Kabina8cena.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Kabina8minuti.Visible := false;
 
-    MainForm.Imagepress7.Visible := False;
-    MainForm.Imagesol7.Visible := False;
-    MainForm.Imagepress8.Visible := False;
-    MainForm.Imagesol8.Visible := False;
+    MainForm.GetOsnovenEkranFrame.Imagepress7.Visible := False;
+    MainForm.GetOsnovenEkranFrame.Imagesol7.Visible := False;
+    MainForm.GetOsnovenEkranFrame.Imagepress8.Visible := False;
+    MainForm.GetOsnovenEkranFrame.Imagesol8.Visible := False;
 
 end;
 
 procedure set5main();
 begin
 
-    with MainForm.StatusShape1 do
+    with MainForm.GetOsnovenEkranFrame.StatusShape1 do
     begin
         Left := 130;
         Top := 156;
         Width := 70;
         Height := 70;
     end;
-    with MainForm.StatusShape2 do
+    with MainForm.GetOsnovenEkranFrame.StatusShape2 do
     begin
         Left := 360;
         Top := 156;
         Width := 70;
         Height := 70;
     end;
-    with MainForm.StatusShape3 do
+    with MainForm.GetOsnovenEkranFrame.StatusShape3 do
     begin
         Left := 590;
         Top := 156;
         Width := 70;
         Height := 70;
     end;
-    with MainForm.StatusShape4 do
+    with MainForm.GetOsnovenEkranFrame.StatusShape4 do
     begin
         Left := 243;
         Top := 358;
         Width := 70;
         Height := 70;
     end;
-    with MainForm.StatusShape5 do
+    with MainForm.GetOsnovenEkranFrame.StatusShape5 do
     begin
         Left := 473;
         Top := 358;
         Width := 70;
         Height := 70;
     end;
-    with MainForm.Kabina3minuti do
+    with MainForm.GetOsnovenEkranFrame.Kabina3minuti do
     begin
         Left := 539;
         Top := 238;
@@ -1785,7 +1785,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina41 do
+    with MainForm.GetOsnovenEkranFrame.Kabina41 do
     begin
         Left := 205;
         Top := 300;
@@ -1796,7 +1796,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina42 do
+    with MainForm.GetOsnovenEkranFrame.Kabina42 do
     begin
         Left := 205;
         Top := 317;
@@ -1807,7 +1807,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina4cena do
+    with MainForm.GetOsnovenEkranFrame.Kabina4cena do
     begin
         Left := 200;
         Top := 458;
@@ -1818,7 +1818,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina4minuti do
+    with MainForm.GetOsnovenEkranFrame.Kabina4minuti do
     begin
         Left := 200;
         Top := 442;
@@ -1829,7 +1829,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina51 do
+    with MainForm.GetOsnovenEkranFrame.Kabina51 do
     begin
         Left := 429;
         Top := 300;
@@ -1840,7 +1840,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina52 do
+    with MainForm.GetOsnovenEkranFrame.Kabina52 do
     begin
         Left := 429;
         Top := 319;
@@ -1851,7 +1851,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina5cena do
+    with MainForm.GetOsnovenEkranFrame.Kabina5cena do
     begin
         Left := 430;
         Top := 458;
@@ -1862,7 +1862,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina5minuti do
+    with MainForm.GetOsnovenEkranFrame.Kabina5minuti do
     begin
         Left := 430;
         Top := 442;
@@ -1873,7 +1873,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina11 do
+    with MainForm.GetOsnovenEkranFrame.Kabina11 do
     begin
         Left := 79;
         Top := 103;
@@ -1884,7 +1884,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina12 do
+    with MainForm.GetOsnovenEkranFrame.Kabina12 do
     begin
         Left := 79;
         Top := 120;
@@ -1895,7 +1895,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina1cena do
+    with MainForm.GetOsnovenEkranFrame.Kabina1cena do
     begin
         Left := 79;
         Top := 255;
@@ -1906,7 +1906,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina1minuti do
+    with MainForm.GetOsnovenEkranFrame.Kabina1minuti do
     begin
         Left := 79;
         Top := 240;
@@ -1917,7 +1917,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina21 do
+    with MainForm.GetOsnovenEkranFrame.Kabina21 do
     begin
         Left := 309;
         Top := 103;
@@ -1928,7 +1928,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina22 do
+    with MainForm.GetOsnovenEkranFrame.Kabina22 do
     begin
         Left := 309;
         Top := 120;
@@ -1939,7 +1939,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina2cena do
+    with MainForm.GetOsnovenEkranFrame.Kabina2cena do
     begin
         Left := 309;
         Top := 255;
@@ -1950,7 +1950,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina2minuti do
+    with MainForm.GetOsnovenEkranFrame.Kabina2minuti do
     begin
         Left := 309;
         Top := 238;
@@ -1961,7 +1961,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina31 do
+    with MainForm.GetOsnovenEkranFrame.Kabina31 do
     begin
         Left := 539;
         Top := 103;
@@ -1972,7 +1972,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina32 do
+    with MainForm.GetOsnovenEkranFrame.Kabina32 do
     begin
         Left := 539;
         Top := 120;
@@ -1983,7 +1983,7 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.Kabina3cena do
+    with MainForm.GetOsnovenEkranFrame.Kabina3cena do
     begin
         Left := 545;
         Top := 256;
@@ -1994,77 +1994,77 @@ begin
         Font.Style := [];
         Visible := true;
     end;
-    with MainForm.ImagePress1 do
+    with MainForm.GetOsnovenEkranFrame.ImagePress1 do
     begin
         Left := 55;
         Top := 80;
         Width := 220;
         Height := 220;
     end;
-    with MainForm.Imagepress2 do
+    with MainForm.GetOsnovenEkranFrame.Imagepress2 do
     begin
         Left := 285;
         Top := 80;
         Width := 220;
         Height := 220;
     end;
-    with MainForm.Imagepress3 do
+    with MainForm.GetOsnovenEkranFrame.Imagepress3 do
     begin
         Left := 515;
         Top := 80;
         Width := 220;
         Height := 220;
     end;
-    with MainForm.ImagePress4 do
+    with MainForm.GetOsnovenEkranFrame.ImagePress4 do
     begin
         Left := 170;
         Top := 286;
         Width := 220;
         Height := 220;
     end;
-    with MainForm.ImagePress5 do
+    with MainForm.GetOsnovenEkranFrame.ImagePress5 do
     begin
         Left := 400;
         Top := 286;
         Width := 220;
         Height := 220;
     end;
-    with MainForm.ImageSol1 do
+    with MainForm.GetOsnovenEkranFrame.ImageSol1 do
     begin
         Left := 90;
         Top := 144;
         Width := 149;
         Height := 97;
     end;
-    with MainForm.ImageSol2 do
+    with MainForm.GetOsnovenEkranFrame.ImageSol2 do
     begin
         Left := 320;
         Top := 144;
         Width := 149;
         Height := 97;
     end;
-    with MainForm.ImageSol3 do
+    with MainForm.GetOsnovenEkranFrame.ImageSol3 do
     begin
         Left := 550;
         Top := 144;
         Width := 149;
         Height := 97;
     end;
-    with MainForm.ImageSol4 do
+    with MainForm.GetOsnovenEkranFrame.ImageSol4 do
     begin
         Left := 203;
         Top := 344;
         Width := 149;
         Height := 97;
     end;
-    with MainForm.ImageSol5 do
+    with MainForm.GetOsnovenEkranFrame.ImageSol5 do
     begin
         Left := 433;
         Top := 344;
         Width := 149;
         Height := 97;
     end;
-    with MainForm do
+    with MainForm.GetOsnovenEkranFrame do
     begin
         //  Image2.picture:=Image22.Picture;
         Kabina61.Visible := False;
@@ -2075,19 +2075,19 @@ begin
         Imagesol6.Visible := False;
     end;
     
-    MainForm.Kabina71.Visible := false;
-    MainForm.Kabina72.Visible := false;
-    MainForm.Kabina7cena.Visible := false;
-    MainForm.Kabina7minuti.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Kabina71.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Kabina72.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Kabina7cena.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Kabina7minuti.Visible := false;
 
-    MainForm.Kabina81.Visible := false;
-    MainForm.Kabina82.Visible := false;
-    MainForm.Kabina8cena.Visible := false;
-    MainForm.Kabina8minuti.Visible := false;
-    MainForm.Imagepress7.Visible := False;
-    MainForm.Imagesol7.Visible := False;
-    MainForm.Imagepress8.Visible := False;
-    MainForm.Imagesol8.Visible := False;
+    MainForm.GetOsnovenEkranFrame.Kabina81.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Kabina82.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Kabina8cena.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Kabina8minuti.Visible := false;
+    MainForm.GetOsnovenEkranFrame.Imagepress7.Visible := False;
+    MainForm.GetOsnovenEkranFrame.Imagesol7.Visible := False;
+    MainForm.GetOsnovenEkranFrame.Imagepress8.Visible := False;
+    MainForm.GetOsnovenEkranFrame.Imagesol8.Visible := False;
 end;
 
 end.

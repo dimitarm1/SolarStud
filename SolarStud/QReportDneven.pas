@@ -69,7 +69,7 @@ var
   Form3: TForm3;
 
 implementation
- uses main;
+ uses main, ProtokolFrame;
  var
   sum_total: string;
 {$R *.dfm}
@@ -77,16 +77,16 @@ implementation
 procedure TForm3.QRBand1BeforePrint(Sender: TQRCustomBand;
   var PrintBand: Boolean);
 begin
-  QRLabel20.Caption :=  MainForm.ProtokolFilterEdit.Text;
-  if(MainForm.ProtokolFilterEdit.Text = '') then
+  QRLabel20.Caption :=  MainForm.GetProtokolFrame.ProtokolFilterEdit.Text;
+  if(MainForm.GetProtokolFrame.ProtokolFilterEdit.Text = '') then
   begin
     QRLabel21.Font.Color := clWhite;
   end
   else
-  if(MainForm.ProtokolFilterEdit.Text = ' ') then
+  if(MainForm.GetProtokolFrame.ProtokolFilterEdit.Text = ' ') then
   begin
     QRLabel21.Font.Color := clBlack;
-    QRLabel20.Caption := ' само солариуми';
+    QRLabel20.Caption := ' пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ';
   end
   else
   begin
@@ -104,10 +104,10 @@ procedure TForm3.QuickRep3AfterPreview(Sender: TObject);
 begin
 //  QuickRep3.ExportToFilter(TQRXLSFilter.Create(OtchetFileName));
  OtchetFileName:='Otchet '+QRLabel16.Caption+'.html' ;
- MainForm.wwDBGrid2.ExportOptions.FileName := OtchetFileName;
- MainForm.wwDBGrid2.ExportOptions.TitleName := 'Дневен отчет за ' +
- QRLabel16.Caption + ' (Оборот: ' + sum_total + ' лв.)';
- MainForm.wwDBGrid2.ExportOptions.Save();
+ MainForm.GetProtokolFrame.wwDBGrid2.ExportOptions.FileName := OtchetFileName;
+ MainForm.GetProtokolFrame.wwDBGrid2.ExportOptions.TitleName := 'пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ ' +
+ QRLabel16.Caption + ' (пїЅпїЅпїЅпїЅпїЅпїЅ: ' + sum_total + ' пїЅпїЅ.)';
+ MainForm.GetProtokolFrame.wwDBGrid2.ExportOptions.Save();
  if MainForm.Internet.FieldValues['dialog'] then
  begin
   body := TStringList.Create();
@@ -130,7 +130,7 @@ end;
 
 procedure TForm3.QuickRep3StartPage(Sender: TCustomQuickRep);
 begin
-QRLabel16.Caption:= MainForm.DBLUCombo1.EditText;
+QRLabel16.Caption:= MainForm.GetProtokolFrame.DBLUCombo1.EditText;
 QRLabel16.Caption:= AnsiReplaceStr(QRLabel16.Caption,'/','-');
 end;
 

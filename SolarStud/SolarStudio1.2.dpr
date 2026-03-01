@@ -23,7 +23,34 @@ uses
   SLE4442 in 'SLE4442.pas',
   MainForm2 in 'MainForm2.pas' {Main2},
   SetLang in 'SetLang.pas',
-  Checkdatabase in 'Checkdatabase.pas';
+  Checkdatabase in 'Checkdatabase.pas',
+  // PageManager infrastructure
+  BasePageFrame in 'BasePageFrame.pas' {BasePageFrame: TFrame},
+  PageManager in 'PageManager.pas',
+  PageIndices in 'PageIndices.pas',
+  PageFrames in 'PageFrames.pas',
+  FrameBindings in 'FrameBindings.pas',
+  // Page frames
+  LogoEkranFrame in 'Pages\LogoEkranFrame.pas' {LogoEkranFrame: TFrame},
+  OsnovenEkranFrame in 'Pages\OsnovenEkranFrame.pas' {OsnovenEkranFrame: TFrame},
+  FirmiISluziteliFrame in 'Pages\FirmiISluziteliFrame.pas' {FirmiISluziteliFrame: TFrame},
+  IzborNaPlashtaneFrame in 'Pages\IzborNaPlashtaneFrame.pas' {IzborNaPlashtaneFrame: TFrame},
+  IzborNaVremeFrame in 'Pages\IzborNaVremeFrame.pas' {IzborNaVremeFrame: TFrame},
+  MenuFrame in 'Pages\MenuFrame.pas' {MenuFrame: TFrame},
+  SolariumiNastroikiFrame in 'Pages\SolariumiNastroikiFrame.pas' {SolariumiNastroikiFrame: TFrame},
+  SolariumiInfoFrame in 'Pages\SolariumiInfoFrame.pas' {SolariumiInfoFrame: TFrame},
+  SolariumiCeniFrame in 'Pages\SolariumiCeniFrame.pas' {SolariumiCeniFrame: TFrame},
+  NachalnoUstanoviavaneFrame in 'Pages\NachalnoUstanoviavaneFrame.pas' {NachalnoUstanoviavaneFrame: TFrame},
+  ArhiviraneFrame in 'Pages\ArhiviraneFrame.pas' {ArhiviraneFrame: TFrame},
+  StatistikaFrame in 'Pages\StatistikaFrame.pas' {StatistikaFrame: TFrame},
+  ProtokolFrame in 'Pages\ProtokolFrame.pas' {ProtokolFrame: TFrame},
+  OsnovniNastroikiFrame in 'Pages\OsnovniNastroikiFrame.pas' {OsnovniNastroikiFrame: TFrame},
+  DrugiNastroikiFrame in 'Pages\DrugiNastroikiFrame.pas' {DrugiNastroikiFrame: TFrame},
+  MenuKasaFrame in 'Pages\MenuKasaFrame.pas' {MenuKasaFrame: TFrame},
+  MenuStokiFrame in 'Pages\MenuStokiFrame.pas' {MenuStokiFrame: TFrame},
+  KlubniKartiFrame in 'Pages\KlubniKartiFrame.pas' {KlubniKartiFrame: TFrame},
+  ChipKartiFrame in 'Pages\ChipKartiFrame.pas' {ChipKartiFrame: TFrame},
+  GrafikFrame in 'Pages\GrafikFrame.pas' {GrafikFrame: TFrame};
 
 {$R *.RES}
 var
@@ -38,30 +65,23 @@ begin
     if not Do_checkdatabase then goto endapplication;    
     Application.HelpFile := '\SolarStudio1\Manual.htm';
     Application.CreateForm(TMainForm, MainForm);
-  Application.CreateForm(TImageForm, ImageForm);
-  Application.CreateForm(TPasswordForm, PasswordForm);
-  Application.CreateForm(TNotshalterForm, NotshalterForm);
-  Application.CreateForm(TForm1, Form1);
-  Application.CreateForm(TForm2, Form2);
-  Application.CreateForm(TForm3, Form3);
-  Application.CreateForm(TRefillForm, RefillForm);
-  Application.CreateForm(TForm4, Form4);
-  Application.CreateForm(TForm6, Form6);
-  Application.CreateForm(TMain2, Main2);
-  MainForm.Height:=594;
+    Application.CreateForm(TImageForm, ImageForm);
+    Application.CreateForm(TPasswordForm, PasswordForm);
+    Application.CreateForm(TNotshalterForm, NotshalterForm);
+    Application.CreateForm(TForm1, Form1);
+    Application.CreateForm(TForm2, Form2);
+    Application.CreateForm(TForm3, Form3);
+    Application.CreateForm(TRefillForm, RefillForm);
+    Application.CreateForm(TForm4, Form4);
+    Application.CreateForm(TForm6, Form6);
+    Application.CreateForm(TMain2, Main2);
+    MainForm.Height:=594;
     x:=(screen.Monitors[0].Width div 2) - 400;
     y:=(screen.Monitors[0].Height div 2) - 300;
     MainForm.Visible:=true;
     MainForm.Show;
     MainForm.Top:=y;
     MainForm.Left:=x;
-   // AddFontResource('f:\temp\murmansk.TTF') ;
-   // SendMessage(HWND_BROADCAST, WM_FONTCHANGE, 0, 0) ;
-    //MainForm.ComboBox1.Items := Screen.Fonts;     Added for testing
-    //MainForm.Font.Name:=ComboBox1.Text;
-    //RemoveFontResource('f:\temp\LAZURSK1.TTF') ;
-    //SendMessage(HWND_BROADCAST, WM_FONTCHANGE, 0, 0) ;
-
     Application.Run;
 endapplication:
   end
@@ -74,5 +94,3 @@ endapplication:
         'Solar Studio V0.01', mb_OK);
   end;
 end.
-
-

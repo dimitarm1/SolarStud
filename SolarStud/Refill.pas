@@ -47,7 +47,7 @@ var
     IsChipCard: Boolean;
 
 implementation
-uses main;
+uses main, KlubniKartiFrame;
 {$R *.dfm}
 var
     NomerKlient: Integer;
@@ -198,9 +198,9 @@ begin
         MainForm.plashtania.FieldValues['DATA'] := Date;
         MainForm.plashtania.FieldValues['CHAS'] := TimeToStr(Time);
 
-        if MainForm.AdvPageControl1.ActivePageIndex = 18 then
+        if MainForm.ActivePageIndex = 18 then
             MainForm.plashtania.FieldValues['OTCHIPKARTA'] := Card.ClientNomer;
-        if MainForm.AdvPageControl1.ActivePageIndex = 17 then
+        if MainForm.ActivePageIndex = 17 then
             MainForm.plashtania.FieldValues['OTKARTA'] := KartaNomer;
         MainForm.Plashtania.Post;
         MainForm.Qklienti.Post;
@@ -214,7 +214,7 @@ procedure TRefillForm.FormShow(Sender: TObject);
 var
     SQLText: string;
 begin
-    IsChipCard := (MainForm.AdvPageControl1.ActivePageIndex <> 17);
+    IsChipCard := (MainForm.ActivePageIndex <> 17);
     if not IsChipCard then
     begin
         Label4.Caption := 'посещения';
@@ -242,7 +242,7 @@ begin
                 then
             begin
                 MainForm.QKlienti.Active := False;
-                if not MainForm.ShowAllKlientsCb.Checked then
+                if not MainForm.GetKlubniKartiFrame.ShowAllKlientsCb.Checked then
                     SQLText := ' WHERE NOMER >-1 ';
                 MainForm.QKlienti.SQL.SetText(PChar('SELECT * FROM klienti ' +
                     SQLText + ' ORDER BY IME'));
