@@ -35,7 +35,7 @@ uses Windows, SysUtils, DateUtils, Classes, Graphics, Forms, Controls, Menus,
     PlannerDatePicker, LMDCustomListComboBox, LMDListComboBox,
     LMDDBListComboBox,
     RzCmboBx, Wwdbigrd, RzEdit, RzDBEdit, LMDCustomControl, madExceptVcl,
-  LMDPNGImage;
+  LMDPNGImage, LMDCustomLabel, LMDLabel;
 
 type
     TSLE4442Card = packed record
@@ -757,6 +757,7 @@ type
     Kabina8cena: TLabel;
     MadExceptionHandler1: TMadExceptionHandler;
     BMinimize: TButton;
+    Label_build_num: TLMDLabel;
         procedure Label1Click(Sender: TObject);
         procedure FormCreate(Sender: TObject);
         procedure Timer1Timer(Sender: TObject);
@@ -1710,7 +1711,7 @@ begin
                 Kabina11.Caption := SOLARIUMI.FieldByName('OPISANIE1').AsString;
                 Kabina12.Caption := SOLARIUMI.FieldByName('OPISANIE2').AsString;
             end;
-            if not (CabineStatus[0] in [1..3]) then
+            if not (CabineOldStatus[0] in [1..3]) then
             begin
                 Kabina1minuti.Caption :=
                     SOLARIUMI.FieldByName('OPISANIE3').AsString;
@@ -1730,7 +1731,7 @@ begin
                 Kabina21.Caption := SOLARIUMI.FieldByName('OPISANIE1').AsString;
                 Kabina22.Caption := SOLARIUMI.FieldByName('OPISANIE2').AsString;
             end;
-            if not (CabineStatus[1] in [1..3]) then
+            if not (CabineOldStatus[1] in [1..3]) then
             begin
                 Kabina2minuti.Caption :=
                     SOLARIUMI.FieldByName('OPISANIE3').AsString;
@@ -1750,7 +1751,7 @@ begin
                 Kabina31.Caption := SOLARIUMI.FieldByName('OPISANIE1').AsString;
                 Kabina32.Caption := SOLARIUMI.FieldByName('OPISANIE2').AsString;
             end;
-            if not (CabineStatus[2] in [1..3]) then
+            if not (CabineOldStatus[2] in [1..3]) then
             begin
                 Kabina3minuti.Caption :=
                     SOLARIUMI.FieldByName('OPISANIE3').AsString;
@@ -1771,7 +1772,7 @@ begin
                 Kabina41.Caption := SOLARIUMI.FieldByName('OPISANIE1').AsString;
                 Kabina42.Caption := SOLARIUMI.FieldByName('OPISANIE2').AsString;
             end;
-            if not (CabineStatus[3] in [1..3]) then
+            if not (CabineOldStatus[3] in [1..3]) then
             begin
                 Kabina4minuti.Caption :=
                     SOLARIUMI.FieldByName('OPISANIE3').AsString;
@@ -1791,7 +1792,7 @@ begin
                 Kabina51.Caption := SOLARIUMI.FieldByName('OPISANIE1').AsString;
                 Kabina52.Caption := SOLARIUMI.FieldByName('OPISANIE2').AsString;
             end;
-            if not (CabineStatus[4] in [1..3]) then
+            if not (CabineOldStatus[4] in [1..3]) then
             begin
                 Kabina5minuti.Caption :=
                     SOLARIUMI.FieldByName('OPISANIE3').AsString;
@@ -1811,7 +1812,7 @@ begin
                 Kabina61.Caption := SOLARIUMI.FieldByName('OPISANIE1').AsString;
                 Kabina62.Caption := SOLARIUMI.FieldByName('OPISANIE2').AsString;
             end;
-            if not (CabineStatus[5] in [1..3]) then
+            if not (CabineOldStatus[5] in [1..3]) then
             begin
                 Kabina6minuti.Caption :=
                     SOLARIUMI.FieldByName('OPISANIE3').AsString;
@@ -1831,7 +1832,7 @@ begin
                 Kabina71.Caption := SOLARIUMI.FieldByName('OPISANIE1').AsString;
                 Kabina72.Caption := SOLARIUMI.FieldByName('OPISANIE2').AsString;
             end;
-            if not (CabineStatus[6] in [1..3]) then
+            if not (CabineOldStatus[6] in [1..3]) then
             begin
                 Kabina7minuti.Caption :=
                     SOLARIUMI.FieldByName('OPISANIE3').AsString;
@@ -1851,7 +1852,7 @@ begin
                 Kabina81.Caption := SOLARIUMI.FieldByName('OPISANIE1').AsString;
                 Kabina82.Caption := SOLARIUMI.FieldByName('OPISANIE2').AsString;
             end;
-            if not (CabineStatus[7] in [1..3]) then
+            if not (CabineOldStatus[7] in [1..3]) then
             begin
                 Kabina8minuti.Caption :=
                     SOLARIUMI.FieldByName('OPISANIE3').AsString;
@@ -2135,8 +2136,10 @@ begin
             if (TimerTime1 > 30) and (TimerTime1 < 50) then
                 update := True;
             // HACK:
-            update := true;
-            CabineOldStatus[SolariumNo] :=  NewStatus;
+            if NewStatus <> 4 then  begin
+              update := true;
+              CabineOldStatus[SolariumNo] :=  NewStatus;
+            end;
 
             case CabineOldStatus[SolariumNo] of
                 1..3:
