@@ -1579,7 +1579,7 @@ begin
         Left := 152;
         Top := 150;
         Width := 169;
-        Height := 25;
+        Height := 27;
         Font.Height := -24;
         Font.Name := 'Arial Black';
         Font.Style := [];
@@ -1590,7 +1590,7 @@ begin
         Left := 151;
         Top := 178;
         Width := 169;
-        Height := 25;
+        Height := 30;
         Font.Height := -24;
         Font.Name := 'Arial Black';
         Font.Style := [];
@@ -1600,7 +1600,7 @@ begin
     begin
         Left := 147;
         Top := 379;
-        Width := 167;
+        Width := 177;
         Height := 34;
         Font.Height := -21;
         Font.Name := 'Arial Black';
@@ -1611,7 +1611,7 @@ begin
     begin
         Left := 154;
         Top := 356;
-        Width := 161;
+        Width := 190;
         Height := 29;
         Font.Height := -21;
         Font.Name := 'Arial Black';
@@ -1623,7 +1623,7 @@ begin
         Left := 480;
         Top := 150;
         Width := 169;
-        Height := 25;
+        Height := 27;
         Font.Height := -24;
         Font.Name := 'Arial Black';
         Font.Style := [];
@@ -1633,8 +1633,8 @@ begin
     begin
         Left := 479;
         Top := 180;
-        Width := 169;
-        Height := 25;
+        Width := 177;
+        Height := 30;
         Font.Height := -24;
         Font.Name := 'Arial Black';
         Visible := true;
@@ -1644,7 +1644,7 @@ begin
     begin
         Left := 476;
         Top := 376;
-        Width := 169;
+        Width := 177;
         Height := 34;
         Font.Height := -21;
         Font.Name := 'Arial Black';
@@ -1655,7 +1655,7 @@ begin
     begin
         Left := 478;
         Top := 354;
-        Width := 169;
+        Width := 190;
         Height := 31;
         Font.Height := -21;
         Font.Name := 'Arial Black';

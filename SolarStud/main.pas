@@ -1404,7 +1404,10 @@ var
 begin
     SetCommState(hDevice, CB_RS232);
     EscapeCommFunction(hDevice, CLRDTR);
-    EscapeCommFunction(hDevice, SETRTS);
+    if(RFLinkUsed) then
+      EscapeCommFunction(hDevice, CLRRTS)
+    else
+      EscapeCommFunction(hDevice, SETRTS);
     GetCommState(hDevice, CB_RS232);
     Message1 := IntToStr(CB_RS232.BaudRate);
     //Application.MessageBox(PChar(Message1), 'Messager', MB_OK);

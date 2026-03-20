@@ -7829,7 +7829,7 @@ object MainForm: TMainForm
         AutoSize = False
         Caption = 'SOLAR STUDIO 1.2'
         Color = clBlack
-        Font.Charset = ANSI_CHARSET
+        Font.Charset = RUSSIAN_CHARSET
         Font.Color = 12449017
         Font.Height = -60
         Font.Name = 'Verdana'
@@ -7849,8 +7849,8 @@ object MainForm: TMainForm
           0D544C4D44504E474F626A65637489504E470D0A1A0A0000000D494844520000
           02FD0000021D0806000000AE82C2960000000467414D410000B18F0BFC610500
           0000017352474201D9C92C7F00000006624B4744000000000000F943BB7F0000
-          00097048597300000B1300000B1301009A9C180000000774494D45E907050D06
-          26186CFB773F0000FFFF4944415478DAECBD079C1CD771265E93C3CEE680DD05
+          00097048597300000B1300000B1301009A9C180000000774494D4507E9050D06
+          2618132AD0870000FFFF4944415478DAECBD079C1CD771265E93C3CEE680DD05
           B0C8394702200002CC51A4288AA612458593A5A365D996CEF6D9675B3A5967C9
           51B6EF6FC9540EB4499A41A498C44C308020889CC32E16586073DED9C9E15F5F
           75D76C63B900285281DC7BDFEFD7BF99E9E97EFD52BFF755BDAA7AAEEAAABA3C
@@ -24502,7 +24502,7 @@ object MainForm: TMainForm
         AutoSize = False
         Caption = 'X'
         Color = clNone
-        Font.Charset = ANSI_CHARSET
+        Font.Charset = RUSSIAN_CHARSET
         Font.Color = clRed
         Font.Height = -37
         Font.Name = 'Arial'
@@ -24538,7 +24538,7 @@ object MainForm: TMainForm
         AutoSize = False
         Caption = 'OK'
         Color = clNone
-        Font.Charset = ANSI_CHARSET
+        Font.Charset = RUSSIAN_CHARSET
         Font.Color = clLime
         Font.Height = -37
         Font.Name = 'Arial'
@@ -30589,7 +30589,7 @@ object MainForm: TMainForm
         AutoSize = False
         Caption = 'X'
         Color = clNone
-        Font.Charset = ANSI_CHARSET
+        Font.Charset = RUSSIAN_CHARSET
         Font.Color = clRed
         Font.Height = -37
         Font.Name = 'Arial'
@@ -82156,7 +82156,7 @@ object MainForm: TMainForm
         AutoSize = False
         Caption = 'X'
         Color = clNone
-        Font.Charset = ANSI_CHARSET
+        Font.Charset = RUSSIAN_CHARSET
         Font.Color = clRed
         Font.Height = -37
         Font.Name = 'Encyclopaedia'
@@ -285846,7 +285846,7 @@ object MainForm: TMainForm
         Fields = 'KLIENTNOMER'
       end
       item
-        Name = 'TEMPORARY_INDEX_{A87B794E-84F3-4CE5-8E33-BCDA25B669F9}'
+        Name = 'TEMPORARY_INDEX_{3267F11C-30BA-44B7-A59B-A2D5A95CEA8D}'
         DescFields = 'CHIPNOMER'
         Fields = 'CHIPNOMER'
         Options = [ixDescending]
