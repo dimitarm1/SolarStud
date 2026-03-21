@@ -1469,7 +1469,7 @@ begin
     Macro := 'mode ' + ComPortName + ' 1200,n,8,,';
     Macro := 'set_com2.bat ' + ComPortName;
     StrPCopy(Cmd, Macro);
-    WinExec(Cmd, SW_SHOW);
+//    WinExec(Cmd, SW_SHOW);
     WinExec(PChar('Delotc.bat'), SW_SHOWMINIMIZED);
 
     PlannerStep := MainIniFile.ReadString('System', 'PlannerStep', 'NoValue');
@@ -1622,26 +1622,29 @@ begin
             // and terminate (it is useless to continue if we can’t connect to Direct I/O)
 
           // For demo mode Section is removed
+        end
+        else begin
+          Exit;
         end;
 
     // some more processing...
-
-    CB_RS232.DCBlength := SizeOf(CB_RS232); // sizeof(DCB)
+    GetCommState(hDevice, CB_RS232);
+//    CB_RS232.DCBlength := SizeOf(CB_RS232); // sizeof(DCB)
     CB_RS232.BaudRate := BaudRate; //1200; // current baud rate
-    CB_RS232.Flags := $31; //$31;
-    CB_RS232.wReserved := 0; // not currently used
-    CB_RS232.XonLim := 1; // transmit XON threshold
-    CB_RS232.XoffLim := 1; // transmit XOFF threshold
+//    CB_RS232.Flags := $31; //$31;
+//    CB_RS232.wReserved := 0; // not currently used
+//    CB_RS232.XonLim := 1; // transmit XON threshold
+//    CB_RS232.XoffLim := 1; // transmit XOFF threshold
     CB_RS232.ByteSize := 8; // number of bits/byte, 4-8
     CB_RS232.Parity := 0; // 0-4=no,odd,even,mark,space
-    CB_RS232.StopBits := 1; // 0,1,2 = 1, 1.5, 2
-    CB_RS232.XonChar := 'x'; // Tx and Rx XON character
-    CB_RS232.XoffChar := 'X'; // Tx and Rx XOFF character
-    CB_RS232.ErrorChar := 'E'; // error replacement character
+    CB_RS232.StopBits := 0; // 0,1,2 = 1, 1.5, 2
+//    CB_RS232.XonChar := 'x'; // Tx and Rx XON character
+//    CB_RS232.XoffChar := 'X'; // Tx and Rx XOFF character
+//    CB_RS232.ErrorChar := 'E'; // error replacement character
 
-    CB_RS232.EofChar := 'T'; // end of input character
-    CB_RS232.EvtChar := 'R'; // received event character
-    CB_RS232.wReserved1 := 0; // reserved; do not use
+//    CB_RS232.EofChar := 'T'; // end of input character
+//    CB_RS232.EvtChar := 'R'; // received event character
+//    CB_RS232.wReserved1 := 0; // reserved; do not use
 
     RS_232_Timeouts.ReadIntervalTimeout := 100;
     RS_232_Timeouts.ReadIntervalTimeout := 100;

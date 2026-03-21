@@ -6,13 +6,13 @@
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{20BE3B2F-6275-48B2-8277-E59C73537CFF}
-AppName=SolarStudio1.2 Build 20-07-2025
-AppVerName=SolarStudio 1.2 Build 20-07-2025
+AppName=SolarStudio1.2 Build 21-03-2026
+AppVerName=SolarStudio 1.2 Build 21-03-2026
 AppPublisher=D.M.
 AppPublisherURL=http://www.example.com/
 AppSupportURL=http://www.example.com/
 AppUpdatesURL=http://www.example.com/
-AppVersion=1.2.20.07.2025
+AppVersion=1.2.25.03.2026
 DefaultDirName=\SolarStudio1
 DefaultGroupName=SolarStudio1
 AllowNoIcons=yes
@@ -78,6 +78,7 @@ Name: "{commondesktop}\SolarStudio1"; Filename: "{app}\StartSolarStudio1.bat"; T
 ;Filename: "{app}\pl2303_dirver.exe";
 ;Filename: "{app}\acr38\Setup.exe";
 Filename: "{app}\StartSolarStudio1.bat"; Description: "{cm:LaunchProgram,SolarStudio1}"; Flags: postinstall skipifsilent runminimized
+
 
 
 
