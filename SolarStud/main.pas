@@ -54,6 +54,8 @@ function ConvertCurr1(Money_var: variant): AnsiString;
 function IntToStr2(value: variant): string;
 procedure FillValues1();
 procedure ReadStatus();
+procedure init_uart(const n1: short);
+function config_uart(const n1: short): boolean;
 type
     TMainForm = class(TForm)
         OpenDialog: TOpenDialog;
@@ -1399,10 +1401,40 @@ begin
     end;
 end;
 
-procedure config_uart(const n1: short);
+function config_uart(const n1: short): boolean;
 var
     Message1: string;
 begin
+    result:= true;
+    // some more processing...
+    if not GetCommState(hDevice, CB_RS232) then
+    begin
+       init_uart(1);
+       if not GetCommState(hDevice, CB_RS232) then result := false;
+    end;
+
+//    CB_RS232.DCBlength := SizeOf(CB_RS232); // sizeof(DCB)
+    CB_RS232.BaudRate := BaudRate; //1200; // current baud rate
+//    CB_RS232.Flags := $31; //$31;
+//    CB_RS232.wReserved := 0; // not currently used
+//    CB_RS232.XonLim := 1; // transmit XON threshold
+//    CB_RS232.XoffLim := 1; // transmit XOFF threshold
+    CB_RS232.ByteSize := 8; // number of bits/byte, 4-8
+    CB_RS232.Parity := 0; // 0-4=no,odd,even,mark,space
+    CB_RS232.StopBits := 0; // 0,1,2 = 1, 1.5, 2
+//    CB_RS232.XonChar := 'x'; // Tx and Rx XON character
+//    CB_RS232.XoffChar := 'X'; // Tx and Rx XOFF character
+//    CB_RS232.ErrorChar := 'E'; // error replacement character
+
+//    CB_RS232.EofChar := 'T'; // end of input character
+//    CB_RS232.EvtChar := 'R'; // received event character
+//    CB_RS232.wReserved1 := 0; // reserved; do not use
+
+    RS_232_Timeouts.ReadIntervalTimeout := 100;
+    RS_232_Timeouts.ReadIntervalTimeout := 100;
+    RS_232_Timeouts.ReadTotalTimeoutMultiplier := 100;
+    
+    SetCommTimeouts(hDevice, RS_232_Timeouts);
     SetCommState(hDevice, CB_RS232);
     EscapeCommFunction(hDevice, CLRDTR);
     if(RFLinkUsed) then
@@ -1617,7 +1649,7 @@ begin
             ComPortName := GetMessage('M3') + ' (' + ComPortName + ')';
             //ComPortName:='Програмата няма достъп до серийния порт ('+ComPortName+ ')';
             Application.MessageBox(PChar(ComPortName), 'error', MB_OK);
-            Application.Terminate;
+//            Application.Terminate;
             // possibly call GetLastError() to get a hint what failed
             // and terminate (it is useless to continue if we can’t connect to Direct I/O)
 
@@ -1626,31 +1658,6 @@ begin
         else begin
           Exit;
         end;
-
-    // some more processing...
-    GetCommState(hDevice, CB_RS232);
-//    CB_RS232.DCBlength := SizeOf(CB_RS232); // sizeof(DCB)
-    CB_RS232.BaudRate := BaudRate; //1200; // current baud rate
-//    CB_RS232.Flags := $31; //$31;
-//    CB_RS232.wReserved := 0; // not currently used
-//    CB_RS232.XonLim := 1; // transmit XON threshold
-//    CB_RS232.XoffLim := 1; // transmit XOFF threshold
-    CB_RS232.ByteSize := 8; // number of bits/byte, 4-8
-    CB_RS232.Parity := 0; // 0-4=no,odd,even,mark,space
-    CB_RS232.StopBits := 0; // 0,1,2 = 1, 1.5, 2
-//    CB_RS232.XonChar := 'x'; // Tx and Rx XON character
-//    CB_RS232.XoffChar := 'X'; // Tx and Rx XOFF character
-//    CB_RS232.ErrorChar := 'E'; // error replacement character
-
-//    CB_RS232.EofChar := 'T'; // end of input character
-//    CB_RS232.EvtChar := 'R'; // received event character
-//    CB_RS232.wReserved1 := 0; // reserved; do not use
-
-    RS_232_Timeouts.ReadIntervalTimeout := 100;
-    RS_232_Timeouts.ReadIntervalTimeout := 100;
-    RS_232_Timeouts.ReadTotalTimeoutMultiplier := 100;
-    config_uart(1);
-    SetCommTimeouts(hDevice, RS_232_Timeouts);
 
 end;
 
@@ -1924,6 +1931,7 @@ var
     i: integer;
     DataSent2: Integer;
 begin
+    if not config_uart(1) then exit;
     retry := 1;
     MainForm.Timer1.Enabled := False;
     DataSent2 := DataSent;
@@ -2246,6 +2254,7 @@ begin
             init_uart(0);
             if (hDevice <> INVALID_HANDLE_VALUE) then
             begin
+                config_uart(1);
                 MainForm.Label91.Caption := 'протокол';
             end;
         end;
@@ -2536,6 +2545,7 @@ begin
     if (TimerTime1 = 3) then
     begin
         init_uart(1);
+        config_uart(1);
     end;
     if (TimerTime1 < 15) and (TimerTime1 > 3) then
     begin
