@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask import Flask, abort, jsonify, redirect, render_template, url_for
+from flask import Flask, abort, jsonify, redirect, render_template, request, url_for
 
 import db
 import models
@@ -49,6 +49,9 @@ def bed_detail(bed_id):
         nav_items=NAV_ITEMS,
         bottom_buttons=BOTTOM_BUTTONS,
         server_time=datetime.now().strftime("%H:%M:%S"),
+        session_min=models.MIN_SESSION_MINUTES,
+        session_max=models.MAX_SESSION_MINUTES,
+        session_default=models.DEFAULT_SESSION_MINUTES,
     )
 
 
@@ -56,7 +59,8 @@ def bed_detail(bed_id):
 def start_bed(bed_id):
     if models.get_bed(bed_id) is None:
         abort(404)
-    models.start_session(bed_id)
+    total_min = request.form.get("total_min", type=int, default=models.DEFAULT_SESSION_MINUTES)
+    models.start_session(bed_id, total_min=total_min)
     return redirect(url_for("bed_detail", bed_id=bed_id))
 
 

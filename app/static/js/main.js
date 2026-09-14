@@ -57,4 +57,20 @@
       render();
     }, 1000);
   });
+
+  // Session length slider on the bed detail page
+  const sessionSlider = document.getElementById("session-length");
+  const sessionValue = document.getElementById("session-length-value");
+  if (sessionSlider) {
+    const updateSlider = () => {
+      const value = Number(sessionSlider.value);
+      const min = Number(sessionSlider.min);
+      const max = Number(sessionSlider.max);
+      const pct = ((value - min) / (max - min)) * 100;
+      sessionSlider.style.setProperty("--fill", `${pct}%`);
+      if (sessionValue) sessionValue.textContent = `${value} min`;
+    };
+    sessionSlider.addEventListener("input", updateSlider);
+    updateSlider();
+  }
 })();

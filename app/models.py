@@ -4,6 +4,8 @@ from datetime import datetime
 
 import db
 
+MIN_SESSION_MINUTES = 1
+MAX_SESSION_MINUTES = 35
 DEFAULT_SESSION_MINUTES = 12
 
 
@@ -50,6 +52,7 @@ def get_bed(bed_id):
 
 
 def start_session(bed_id, total_min=DEFAULT_SESSION_MINUTES):
+    total_min = max(MIN_SESSION_MINUTES, min(MAX_SESSION_MINUTES, int(total_min)))
     conn = db.get_connection()
     try:
         with db.transaction(conn):

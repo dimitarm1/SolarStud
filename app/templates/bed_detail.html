@@ -53,6 +53,30 @@
       <div class="status-panel">
         <span class="status-badge status-badge--idle">Idle</span>
         <form class="action-form" method="post" action="{{ url_for('start_bed', bed_id=bed.id) }}">
+          <div class="session-picker">
+            <div class="session-picker__header">
+              <span class="session-picker__label">Session length</span>
+              <span class="session-picker__value" id="session-length-value">{{ session_default }} min</span>
+            </div>
+            <div class="session-picker__track-wrap">
+              <input
+                class="session-slider"
+                type="range"
+                name="total_min"
+                id="session-length"
+                min="{{ session_min }}"
+                max="{{ session_max }}"
+                step="1"
+                value="{{ session_default }}"
+                style="--fill: {{ ((session_default - session_min) / (session_max - session_min) * 100) }}%"
+              >
+              <div class="session-picker__ticks">
+                {% for t in [session_min, 5, 10, 15, 20, 25, 30, session_max] %}
+                <span class="session-picker__tick" style="left: {{ ((t - session_min) / (session_max - session_min) * 100) }}%">{{ t }}</span>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
           <button class="action-btn action-btn--start" type="submit">
             {{ icon('power', 'action-icon') }}
             <span>Start session</span>
