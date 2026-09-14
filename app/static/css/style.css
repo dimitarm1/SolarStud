@@ -516,8 +516,7 @@ body {
   padding: 20px;
 }
 
-.status-panel.js-countdown,
-.status-panel--running {
+.status-panel.js-countdown {
   border-color: var(--gold);
   box-shadow: 0 0 0 1px rgba(232, 179, 78, 0.35), 0 8px 24px rgba(232, 179, 78, 0.08);
 }
@@ -544,6 +543,10 @@ body {
 
 .status-panel .bed-remaining { margin-top: 4px; }
 .status-panel .progress-track { margin-bottom: 20px; }
+
+.action-form {
+  margin: 0;
+}
 
 .action-btn {
   display: flex;

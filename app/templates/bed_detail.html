@@ -42,18 +42,22 @@
           <div class="progress-fill" style="width: {{ ((bed.total_min - bed.remaining_min) / bed.total_min * 100) | round | int }}%"
                data-total-min="{{ bed.total_min }}" data-remaining-min="{{ bed.remaining_min }}"></div>
         </div>
-        <button class="action-btn action-btn--stop" type="button">
-          {{ icon('power', 'action-icon') }}
-          <span>Stop session</span>
-        </button>
+        <form class="action-form" method="post" action="{{ url_for('stop_bed', bed_id=bed.id) }}">
+          <button class="action-btn action-btn--stop" type="submit">
+            {{ icon('power', 'action-icon') }}
+            <span>Stop session</span>
+          </button>
+        </form>
       </div>
       {% else %}
       <div class="status-panel">
         <span class="status-badge status-badge--idle">Idle</span>
-        <button class="action-btn action-btn--start" type="button">
-          {{ icon('power', 'action-icon') }}
-          <span>Start session</span>
-        </button>
+        <form class="action-form" method="post" action="{{ url_for('start_bed', bed_id=bed.id) }}">
+          <button class="action-btn action-btn--start" type="submit">
+            {{ icon('power', 'action-icon') }}
+            <span>Start session</span>
+          </button>
+        </form>
       </div>
       {% endif %}
     </div>

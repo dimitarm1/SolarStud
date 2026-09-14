@@ -1,43 +1,14 @@
 from datetime import datetime
 
-from flask import Flask, abort, jsonify, render_template
+from flask import Flask, abort, jsonify, redirect, render_template, url_for
+
+import db
+import models
 
 app = Flask(__name__)
+db.init_db()
 
 VERSION = "V1.2"
-
-BEDS = [
-    {
-        "id": 1,
-        "number": "No 1",
-        "model": "Esprit 770",
-        "kind": "lie",
-        "status": "running",
-        "remaining_min": 3,
-        "total_min": 12,
-    },
-    {
-        "id": 2,
-        "number": "No 2",
-        "model": "Megasun T230",
-        "kind": "lie",
-        "status": "idle",
-    },
-    {
-        "id": 3,
-        "number": "No 3",
-        "model": "Megasun P9S",
-        "kind": "lie",
-        "status": "idle",
-    },
-    {
-        "id": 4,
-        "number": "No 4",
-        "model": "MS Pure 5",
-        "kind": "stand",
-        "status": "idle",
-    },
-]
 
 NAV_ITEMS = [
     {"id": "tanning", "label": "Tanning", "icon": "sun"},
@@ -54,16 +25,12 @@ BOTTOM_BUTTONS = [
 ]
 
 
-def find_bed(bed_id):
-    return next((b for b in BEDS if b["id"] == bed_id), None)
-
-
 @app.route("/")
 def index():
     return render_template(
         "index.html",
         version=VERSION,
-        beds=BEDS,
+        beds=models.list_beds(),
         nav_items=NAV_ITEMS,
         bottom_buttons=BOTTOM_BUTTONS,
         server_time=datetime.now().strftime("%H:%M:%S"),
@@ -72,7 +39,7 @@ def index():
 
 @app.route("/bed/<int:bed_id>")
 def bed_detail(bed_id):
-    bed = find_bed(bed_id)
+    bed = models.get_bed(bed_id)
     if bed is None:
         abort(404)
     return render_template(
@@ -85,12 +52,28 @@ def bed_detail(bed_id):
     )
 
 
+@app.route("/bed/<int:bed_id>/start", methods=["POST"])
+def start_bed(bed_id):
+    if models.get_bed(bed_id) is None:
+        abort(404)
+    models.start_session(bed_id)
+    return redirect(url_for("bed_detail", bed_id=bed_id))
+
+
+@app.route("/bed/<int:bed_id>/stop", methods=["POST"])
+def stop_bed(bed_id):
+    if models.get_bed(bed_id) is None:
+        abort(404)
+    models.stop_session(bed_id)
+    return redirect(url_for("bed_detail", bed_id=bed_id))
+
+
 @app.route("/api/status")
 def status():
     return jsonify(
         {
             "time": datetime.now().strftime("%H:%M:%S"),
-            "beds": BEDS,
+            "beds": models.list_beds(),
         }
     )
 
