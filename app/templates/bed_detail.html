@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% from "icons.html" import icon, nav_link, bottom_link %}
+
+{% block title %}Solar Studio — {{ bed.number }}{% endblock %}
+
+{% block sidebar %}
+<nav class="sidebar">
+  {% for item in nav_items %}
+  {{ nav_link(item, 'tanning', url_for('index')) }}
+  {% endfor %}
+</nav>
+{% endblock %}
+
+{% block content %}
+<section class="view view-detail">
+  <a class="back-link" href="{{ url_for('index') }}">
+    {{ icon('back', 'back-icon') }}
+    <span>Back</span>
+  </a>
+
+  <div class="detail-layout">
+    <div class="detail-illustration bed-illustration bed-illustration--{{ bed.kind }}">
+      <div class="bed-tube"></div>
+      <div class="bed-tube"></div>
+      <div class="bed-tube"></div>
+      <div class="bed-tube"></div>
+      <div class="bed-glow"></div>
+    </div>
+
+    <div class="detail-info">
+      <h2 class="detail-title">{{ bed.number }}</h2>
+      <p class="detail-model">{{ bed.model }}</p>
+
+      {% if bed.status == 'running' %}
+      <div class="status-panel js-countdown">
+        <span class="status-badge status-badge--running">In session</span>
+        <div class="bed-remaining">
+          {{ icon('clock', 'remaining-icon') }}
+          <span class="remaining-text" data-remaining-min="{{ bed.remaining_min }}">Остават {{ bed.remaining_min }} мин</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" style="width: {{ ((bed.total_min - bed.remaining_min) / bed.total_min * 100) | round | int }}%"
+               data-total-min="{{ bed.total_min }}" data-remaining-min="{{ bed.remaining_min }}"></div>
+        </div>
+        <button class="action-btn action-btn--stop" type="button">
+          {{ icon('power', 'action-icon') }}
+          <span>Stop session</span>
+        </button>
+      </div>
+      {% else %}
+      <div class="status-panel">
+        <span class="status-badge status-badge--idle">Idle</span>
+        <button class="action-btn action-btn--start" type="button">
+          {{ icon('power', 'action-icon') }}
+          <span>Start session</span>
+        </button>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block bottom_buttons %}
+{% for btn in bottom_buttons %}
+{{ bottom_link(btn, url_for('index')) }}
+{% endfor %}
+{% endblock %}

@@ -63,5 +63,42 @@
   <circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.6"/>
   <path d="M12 7.5V12l3 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
+{%- elif name == 'back' -%}
+<svg class="{{ cls }}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M15 5 8 12l7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+{%- elif name == 'power' -%}
+<svg class="{{ cls }}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M12 3.5v7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M7 6.2a8 8 0 1 0 10 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+</svg>
 {%- endif -%}
+{% endmacro %}
+
+{% macro nav_button(item, active_id) %}
+<button class="nav-item {{ 'active' if item.id == active_id }}" type="button" data-target="{{ item.id }}">
+  {{ icon(item.icon, 'nav-icon') }}
+  <span>{{ item.label }}</span>
+</button>
+{% endmacro %}
+
+{% macro nav_link(item, active_id, href) %}
+<a class="nav-item {{ 'active' if item.id == active_id }}" href="{{ href }}">
+  {{ icon(item.icon, 'nav-icon') }}
+  <span>{{ item.label }}</span>
+</a>
+{% endmacro %}
+
+{% macro bottom_button(btn) %}
+<button class="bottom-btn" type="button" data-target="{{ btn.id }}">
+  {{ icon(btn.icon, 'bottom-btn-icon') }}
+  <span>{{ btn.label }}</span>
+</button>
+{% endmacro %}
+
+{% macro bottom_link(btn, href) %}
+<a class="bottom-btn" href="{{ href }}">
+  {{ icon(btn.icon, 'bottom-btn-icon') }}
+  <span>{{ btn.label }}</span>
+</a>
 {% endmacro %}

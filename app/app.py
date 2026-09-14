@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask import Flask, jsonify, render_template
+from flask import Flask, abort, jsonify, render_template
 
 app = Flask(__name__)
 
@@ -54,12 +54,31 @@ BOTTOM_BUTTONS = [
 ]
 
 
+def find_bed(bed_id):
+    return next((b for b in BEDS if b["id"] == bed_id), None)
+
+
 @app.route("/")
 def index():
     return render_template(
         "index.html",
         version=VERSION,
         beds=BEDS,
+        nav_items=NAV_ITEMS,
+        bottom_buttons=BOTTOM_BUTTONS,
+        server_time=datetime.now().strftime("%H:%M:%S"),
+    )
+
+
+@app.route("/bed/<int:bed_id>")
+def bed_detail(bed_id):
+    bed = find_bed(bed_id)
+    if bed is None:
+        abort(404)
+    return render_template(
+        "bed_detail.html",
+        version=VERSION,
+        bed=bed,
         nav_items=NAV_ITEMS,
         bottom_buttons=BOTTOM_BUTTONS,
         server_time=datetime.now().strftime("%H:%M:%S"),

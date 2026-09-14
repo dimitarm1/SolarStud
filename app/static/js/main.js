@@ -29,7 +29,7 @@
   );
 
   // Countdown simulation for active bed(s)
-  document.querySelectorAll(".bed-card--active").forEach((card) => {
+  document.querySelectorAll(".js-countdown").forEach((card) => {
     const remainingText = card.querySelector(".remaining-text");
     const fill = card.querySelector(".progress-fill");
     if (!remainingText || !fill) return;
@@ -57,4 +57,32 @@
       render();
     }, 1000);
   });
+
+  // Start/Stop session button on the bed detail page (demo only, not persisted)
+  const startBtn = document.querySelector(".action-btn--start");
+  const stopBtn = document.querySelector(".action-btn--stop");
+  if (startBtn) {
+    startBtn.addEventListener("click", () => {
+      const panel = startBtn.closest(".status-panel");
+      panel.classList.add("status-panel--running");
+      const badge = panel.querySelector(".status-badge");
+      badge.textContent = "In session";
+      badge.classList.remove("status-badge--idle");
+      badge.classList.add("status-badge--running");
+      startBtn.remove();
+    });
+  }
+  if (stopBtn) {
+    stopBtn.addEventListener("click", () => {
+      const panel = stopBtn.closest(".status-panel");
+      panel.classList.remove("status-panel--running", "js-countdown");
+      const badge = panel.querySelector(".status-badge");
+      badge.textContent = "Idle";
+      badge.classList.remove("status-badge--running");
+      badge.classList.add("status-badge--idle");
+      panel.querySelector(".bed-remaining")?.remove();
+      panel.querySelector(".progress-track")?.remove();
+      stopBtn.remove();
+    });
+  }
 })();

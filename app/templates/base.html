@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Solar Studio{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+{% from "icons.html" import icon %}
+<div class="panel">
+
+  <div class="titlebar">
+    <div class="brand">
+      {{ icon('sun', 'brand-icon') }}
+      <span class="brand-name">SOLAR STUDIO</span>
+      <span class="brand-version">{{ version }}</span>
+    </div>
+    <div class="window-controls">
+      <button class="win-btn" type="button" aria-label="Minimize">{{ icon('minimize') }}</button>
+      <button class="win-btn" type="button" aria-label="Help">{{ icon('help') }}</button>
+      <button class="win-btn" type="button" aria-label="Settings">{{ icon('gear') }}</button>
+      <button class="win-btn win-btn--close" type="button" aria-label="Close">{{ icon('close') }}</button>
+    </div>
+  </div>
+
+  <div class="body">
+    {% block sidebar %}{% endblock %}
+    <main class="content">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+  <div class="statusbar">
+    <div class="wave"></div>
+    <div class="clock" id="clock">{{ server_time }}</div>
+    <div class="bottom-buttons">
+      {% block bottom_buttons %}{% endblock %}
+    </div>
+  </div>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

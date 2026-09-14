@@ -1,99 +1,65 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Solar Studio</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
-{% from "icons.html" import icon %}
-<div class="panel">
+{% extends "base.html" %}
+{% from "icons.html" import nav_button, bottom_button %}
 
-  <div class="titlebar">
-    <div class="brand">
-      {{ icon('sun', 'brand-icon') }}
-      <span class="brand-name">SOLAR STUDIO</span>
-      <span class="brand-version">{{ version }}</span>
-    </div>
-    <div class="window-controls">
-      <button class="win-btn" type="button" aria-label="Minimize">{{ icon('minimize') }}</button>
-      <button class="win-btn" type="button" aria-label="Help">{{ icon('help') }}</button>
-      <button class="win-btn" type="button" aria-label="Settings">{{ icon('gear') }}</button>
-      <button class="win-btn win-btn--close" type="button" aria-label="Close">{{ icon('close') }}</button>
-    </div>
-  </div>
+{% block sidebar %}
+<nav class="sidebar">
+  {% for item in nav_items %}
+  {{ nav_button(item, 'tanning') }}
+  {% endfor %}
+</nav>
+{% endblock %}
 
-  <div class="body">
-    <nav class="sidebar">
-      {% for item in nav_items %}
-      <button class="nav-item {{ 'active' if loop.first }}" type="button" data-target="{{ item.id }}">
-        {{ icon(item.icon, 'nav-icon') }}
-        <span>{{ item.label }}</span>
-      </button>
-      {% endfor %}
-    </nav>
-
-    <main class="content">
-      <section class="view" id="view-tanning" data-view="tanning">
-        <div class="bed-grid">
-          {% for bed in beds %}
-          <article class="bed-card {{ 'bed-card--active' if bed.status == 'running' }}" data-bed-id="{{ bed.id }}">
-            <header class="bed-card__header">
-              <h3>{{ bed.number }}</h3>
-              <p>{{ bed.model }}</p>
-            </header>
-            <div class="bed-illustration bed-illustration--{{ bed.kind }}">
-              <div class="bed-tube"></div>
-              <div class="bed-tube"></div>
-              <div class="bed-tube"></div>
-              <div class="bed-tube"></div>
-              <div class="bed-glow"></div>
-            </div>
-            {% if bed.status == 'running' %}
-            <footer class="bed-card__footer">
-              <div class="bed-remaining">
-                {{ icon('clock', 'remaining-icon') }}
-                <span class="remaining-text" data-remaining-min="{{ bed.remaining_min }}">Остават {{ bed.remaining_min }} мин</span>
-              </div>
-              <div class="progress-track">
-                <div class="progress-fill" style="width: {{ ((bed.total_min - bed.remaining_min) / bed.total_min * 100) | round | int }}%"
-                     data-total-min="{{ bed.total_min }}" data-remaining-min="{{ bed.remaining_min }}"></div>
-              </div>
-            </footer>
-            {% endif %}
-          </article>
-          {% endfor %}
+{% block content %}
+<section class="view" id="view-tanning" data-view="tanning">
+  <div class="bed-grid">
+    {% for bed in beds %}
+    <a class="bed-card {{ 'bed-card--active js-countdown' if bed.status == 'running' }}"
+       href="{{ url_for('bed_detail', bed_id=bed.id) }}" data-bed-id="{{ bed.id }}">
+      <header class="bed-card__header">
+        <h3>{{ bed.number }}</h3>
+        <p>{{ bed.model }}</p>
+      </header>
+      <div class="bed-illustration bed-illustration--{{ bed.kind }}">
+        <div class="bed-tube"></div>
+        <div class="bed-tube"></div>
+        <div class="bed-tube"></div>
+        <div class="bed-tube"></div>
+        <div class="bed-glow"></div>
+      </div>
+      {% if bed.status == 'running' %}
+      <footer class="bed-card__footer">
+        <div class="bed-remaining">
+          {% from "icons.html" import icon %}
+          {{ icon('clock', 'remaining-icon') }}
+          <span class="remaining-text" data-remaining-min="{{ bed.remaining_min }}">Остават {{ bed.remaining_min }} мин</span>
         </div>
-      </section>
-
-      <section class="view view--placeholder" id="view-cosmetics" data-view="cosmetics" hidden>
-        <div class="placeholder">{{ icon('leaf', 'placeholder-icon') }}<p>Cosmetics</p></div>
-      </section>
-      <section class="view view--placeholder" id="view-cards" data-view="cards" hidden>
-        <div class="placeholder">{{ icon('card', 'placeholder-icon') }}<p>Cards</p></div>
-      </section>
-      <section class="view view--placeholder" id="view-studio" data-view="studio" hidden>
-        <div class="placeholder">{{ icon('home', 'placeholder-icon') }}<p>Studio</p></div>
-      </section>
-    </main>
+        <div class="progress-track">
+          <div class="progress-fill" style="width: {{ ((bed.total_min - bed.remaining_min) / bed.total_min * 100) | round | int }}%"
+               data-total-min="{{ bed.total_min }}" data-remaining-min="{{ bed.remaining_min }}"></div>
+        </div>
+      </footer>
+      {% endif %}
+    </a>
+    {% endfor %}
   </div>
+</section>
 
-  <div class="statusbar">
-    <div class="wave"></div>
-    <div class="clock" id="clock">{{ server_time }}</div>
-    <div class="bottom-buttons">
-      {% for btn in bottom_buttons %}
-      <button class="bottom-btn" type="button" data-target="{{ btn.id }}">
-        {{ icon(btn.icon, 'bottom-btn-icon') }}
-        <span>{{ btn.label }}</span>
-      </button>
-      {% endfor %}
-    </div>
-  </div>
+<section class="view view--placeholder" id="view-cosmetics" data-view="cosmetics" hidden>
+  {% from "icons.html" import icon %}
+  <div class="placeholder">{{ icon('leaf', 'placeholder-icon') }}<p>Cosmetics</p></div>
+</section>
+<section class="view view--placeholder" id="view-cards" data-view="cards" hidden>
+  {% from "icons.html" import icon %}
+  <div class="placeholder">{{ icon('card', 'placeholder-icon') }}<p>Cards</p></div>
+</section>
+<section class="view view--placeholder" id="view-studio" data-view="studio" hidden>
+  {% from "icons.html" import icon %}
+  <div class="placeholder">{{ icon('home', 'placeholder-icon') }}<p>Studio</p></div>
+</section>
+{% endblock %}
 
-</div>
-
-<script src="{{ url_for('static', filename='js/main.js') }}"></script>
-</body>
-</html>
+{% block bottom_buttons %}
+{% for btn in bottom_buttons %}
+{{ bottom_button(btn) }}
+{% endfor %}
+{% endblock %}
