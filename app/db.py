@@ -2,6 +2,8 @@
 
 import shutil
 import sqlite3
+import threading
+import time
 from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
@@ -13,7 +15,8 @@ MIGRATIONS_DIR = APP_DIR / "migrations"
 DB_PATH = DATA_DIR / "solar_studio.db"
 
 DB_NAME = "solar_studio"
-MAX_BACKUPS = 5
+MAX_BACKUPS = 100
+BACKUP_INTERVAL_SECONDS = 4 * 60 * 60
 
 
 def _ensure_dirs():
@@ -125,6 +128,23 @@ def _prune_backups(keep=MAX_BACKUPS):
     excess = len(backups) - keep
     for path in backups[:max(excess, 0)]:
         path.unlink(missing_ok=True)
+
+
+def start_backup_scheduler(interval_seconds=BACKUP_INTERVAL_SECONDS):
+    """Take a fresh backup every `interval_seconds` for as long as the process runs.
+
+    Runs in a daemon background thread so it never blocks request handling
+    and never keeps the process alive on its own. init_db() already takes
+    one backup at startup, so this only needs to wait before the first one.
+    """
+    def loop():
+        while True:
+            time.sleep(interval_seconds)
+            create_backup()
+
+    thread = threading.Thread(target=loop, name="backup-scheduler", daemon=True)
+    thread.start()
+    return thread
 
 
 # --- Integrity checks & recovery --------------------------------------------

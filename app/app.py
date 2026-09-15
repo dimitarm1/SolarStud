@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 from pathlib import Path
 
@@ -7,6 +8,7 @@ import db
 import models
 
 ALLOWED_IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp", ".svg"}
+DEBUG = True
 
 app = Flask(__name__)
 db.init_db()
@@ -138,4 +140,10 @@ def status():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    # Under the debug reloader there are two processes: a parent monitor
+    # (WERKZEUG_RUN_MAIN unset) and the child that actually serves requests
+    # (WERKZEUG_RUN_MAIN="true"). Only start the scheduler in the process
+    # that will actually stick around, so it doesn't run twice.
+    if not DEBUG or os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+        db.start_backup_scheduler()
+    app.run(debug=DEBUG, host="0.0.0.0", port=5000)
