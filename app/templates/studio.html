@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% from "icons.html" import icon, nav_link, bottom_link %}
+
+{% block title %}Solar Studio — Studio settings{% endblock %}
+
+{% block sidebar %}
+<nav class="sidebar">
+  {% for item in nav_items %}
+    {% if item.id == 'studio' %}
+      {{ nav_link(item, 'studio', url_for('studio')) }}
+    {% else %}
+      {{ nav_link(item, 'studio', url_for('index')) }}
+    {% endif %}
+  {% endfor %}
+</nav>
+{% endblock %}
+
+{% block content %}
+<section class="view view-detail">
+  <a class="back-link" href="{{ url_for('index') }}">
+    {{ icon('back', 'back-icon') }}
+    <span>Back</span>
+  </a>
+
+  <div class="settings-panel settings-panel--static">
+    <h3 class="settings-panel__title">Studio settings</h3>
+    <p class="settings-hint settings-hint--lead">
+      Choose how many tanning beds appear on the Tanning page.
+    </p>
+
+    <form class="settings-form" method="post" action="{{ url_for('studio_set_bed_count') }}">
+      <div class="slider-field">
+        <div class="slider-field__header">
+          <span class="slider-field__label">Number of tanning beds</span>
+          <span class="slider-field__value" id="bed-count-value">{{ bed_count }}</span>
+        </div>
+        <div class="slider-field__track-wrap">
+          <input
+            class="range-input"
+            type="range"
+            name="bed_count"
+            id="bed-count"
+            min="{{ bed_count_min }}"
+            max="{{ bed_count_max }}"
+            step="1"
+            value="{{ bed_count }}"
+            data-value-target="bed-count-value"
+            style="--fill: {{ ((bed_count - bed_count_min) / (bed_count_max - bed_count_min) * 100) }}%"
+          >
+          <div class="slider-field__ticks">
+            {% for t in range(bed_count_min, bed_count_max + 1) %}
+            <span class="slider-field__tick" style="left: {{ ((t - bed_count_min) / (bed_count_max - bed_count_min) * 100) }}%">{{ t }}</span>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <p class="settings-hint">
+        Increasing the count adds new unconfigured beds — open each one to set its name, model,
+        and other details. Decreasing it permanently removes the highest-numbered beds and their session history.
+      </p>
+
+      <button class="action-btn action-btn--start" type="submit">
+        {{ icon('check', 'action-icon') }}
+        <span>Save</span>
+      </button>
+    </form>
+  </div>
+</section>
+{% endblock %}
+
+{% block bottom_buttons %}
+{% for btn in bottom_buttons %}
+  {% if btn.id == 'studio' %}
+    {{ bottom_link(btn, url_for('studio')) }}
+  {% else %}
+    {{ bottom_link(btn, url_for('index')) }}
+  {% endif %}
+{% endfor %}
+{% endblock %}

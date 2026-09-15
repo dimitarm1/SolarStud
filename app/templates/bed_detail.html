@@ -1,46 +1,55 @@
 {% extends "base.html" %}
-{% from "icons.html" import icon, nav_link, bottom_link %}
+{% from "icons.html" import icon, nav_link, bottom_link, bed_illustration %}
 
 {% block title %}Solar Studio — {{ bed.number }}{% endblock %}
 
 {% block sidebar %}
 <nav class="sidebar">
   {% for item in nav_items %}
-  {{ nav_link(item, 'tanning', url_for('index')) }}
+    {% if item.id == 'studio' %}
+      {{ nav_link(item, 'tanning', url_for('studio')) }}
+    {% else %}
+      {{ nav_link(item, 'tanning', url_for('index')) }}
+    {% endif %}
   {% endfor %}
 </nav>
 {% endblock %}
 
 {% block content %}
 <section class="view view-detail">
-  <a class="back-link" href="{{ url_for('index') }}">
-    {{ icon('back', 'back-icon') }}
-    <span>Back</span>
-  </a>
+  <div class="detail-topbar">
+    <a class="back-link" href="{{ url_for('index') }}">
+      {{ icon('back', 'back-icon') }}
+      <span>Back</span>
+    </a>
+    <button class="settings-toggle" type="button" id="settings-toggle" aria-expanded="false" aria-controls="bed-settings-panel">
+      {{ icon('gear', 'settings-toggle-icon') }}
+      <span>Settings</span>
+    </button>
+  </div>
 
   <div class="detail-layout">
-    <div class="detail-illustration bed-illustration bed-illustration--{{ bed.kind }}">
-      <div class="bed-tube"></div>
-      <div class="bed-tube"></div>
-      <div class="bed-tube"></div>
-      <div class="bed-tube"></div>
-      <div class="bed-glow"></div>
-    </div>
+    {{ bed_illustration(bed, 'detail-illustration') }}
 
     <div class="detail-info">
       <h2 class="detail-title">{{ bed.number }}</h2>
       <p class="detail-model">{{ bed.model }}</p>
 
       {% if bed.status == 'running' %}
-      <div class="status-panel js-countdown">
-        <span class="status-badge status-badge--running">In session</span>
+      {% set stage_labels = {'prep': 'Preparing', 'active': 'In session', 'cooling': 'Cooling down'} %}
+      <div class="status-panel js-countdown phase-{{ bed.stage }}"
+           data-stage="{{ bed.stage }}"
+           data-remaining-min="{{ bed.remaining_min }}"
+           data-prep-min="{{ bed.prep_min_session }}"
+           data-active-min="{{ bed.active_min_session }}"
+           data-cool-min="{{ bed.cool_min_session }}">
+        <span class="status-badge status-badge--{{ bed.stage }}">{{ stage_labels[bed.stage] }}</span>
         <div class="bed-remaining">
           {{ icon('clock', 'remaining-icon') }}
-          <span class="remaining-text" data-remaining-min="{{ bed.remaining_min }}">Остават {{ bed.remaining_min }} мин</span>
+          <span class="remaining-text">Остават {{ bed.remaining_min }} мин</span>
         </div>
         <div class="progress-track">
-          <div class="progress-fill" style="width: {{ ((bed.total_min - bed.remaining_min) / bed.total_min * 100) | round | int }}%"
-               data-total-min="{{ bed.total_min }}" data-remaining-min="{{ bed.remaining_min }}"></div>
+          <div class="progress-fill"></div>
         </div>
         <form class="action-form" method="post" action="{{ url_for('stop_bed', bed_id=bed.id) }}">
           <button class="action-btn action-btn--stop" type="submit">
@@ -53,14 +62,14 @@
       <div class="status-panel">
         <span class="status-badge status-badge--idle">Idle</span>
         <form class="action-form" method="post" action="{{ url_for('start_bed', bed_id=bed.id) }}">
-          <div class="session-picker">
-            <div class="session-picker__header">
-              <span class="session-picker__label">Session length</span>
-              <span class="session-picker__value" id="session-length-value">{{ session_default }} min</span>
+          <div class="slider-field">
+            <div class="slider-field__header">
+              <span class="slider-field__label">Session length</span>
+              <span class="slider-field__value" id="session-length-value">{{ session_default }} min</span>
             </div>
-            <div class="session-picker__track-wrap">
+            <div class="slider-field__track-wrap">
               <input
-                class="session-slider"
+                class="range-input"
                 type="range"
                 name="total_min"
                 id="session-length"
@@ -68,15 +77,25 @@
                 max="{{ session_max }}"
                 step="1"
                 value="{{ session_default }}"
+                data-value-target="session-length-value"
+                data-suffix=" min"
                 style="--fill: {{ ((session_default - session_min) / (session_max - session_min) * 100) }}%"
               >
-              <div class="session-picker__ticks">
+              <div class="slider-field__ticks">
                 {% for t in [session_min, 5, 10, 15, 20, 25, 30, session_max] %}
-                <span class="session-picker__tick" style="left: {{ ((t - session_min) / (session_max - session_min) * 100) }}%">{{ t }}</span>
+                <span class="slider-field__tick" style="left: {{ ((t - session_min) / (session_max - session_min) * 100) }}%">{{ t }}</span>
                 {% endfor %}
               </div>
             </div>
           </div>
+          {% if bed.prep_min or bed.cool_min %}
+          <p class="settings-hint">
+            {% if bed.prep_min %}{{ bed.prep_min }} min preparation{% endif %}
+            {% if bed.prep_min and bed.cool_min %} + {% endif %}
+            {% if bed.cool_min %}{{ bed.cool_min }} min cooling{% endif %}
+            added automatically.
+          </p>
+          {% endif %}
           <button class="action-btn action-btn--start" type="submit">
             {{ icon('power', 'action-icon') }}
             <span>Start session</span>
@@ -86,11 +105,74 @@
       {% endif %}
     </div>
   </div>
+
+  <div class="settings-panel" id="bed-settings-panel" hidden>
+    <h3 class="settings-panel__title">Bed settings</h3>
+    <form class="settings-form" method="post" action="{{ url_for('update_bed_settings', bed_id=bed.id) }}">
+      <div class="settings-grid">
+        <label class="field">
+          <span class="field__label">Name</span>
+          <input class="field__input" type="text" name="number" value="{{ bed.number }}" maxlength="40" required>
+        </label>
+        <label class="field">
+          <span class="field__label">Model</span>
+          <input class="field__input" type="text" name="model" value="{{ bed.model }}" maxlength="60" required>
+        </label>
+      </div>
+
+      <div class="settings-grid">
+        <div class="slider-field">
+          <div class="slider-field__header">
+            <span class="slider-field__label">Preparation time</span>
+            <span class="slider-field__value" id="prep-min-value">{{ bed.prep_min }} min</span>
+          </div>
+          <div class="slider-field__track-wrap">
+            <input class="range-input" type="range" name="prep_min" id="prep-min"
+                   min="{{ prep_min_bound }}" max="{{ prep_max_bound }}" step="1" value="{{ bed.prep_min }}"
+                   data-value-target="prep-min-value" data-suffix=" min"
+                   style="--fill: {{ ((bed.prep_min - prep_min_bound) / (prep_max_bound - prep_min_bound) * 100) }}%">
+          </div>
+        </div>
+
+        <div class="slider-field">
+          <div class="slider-field__header">
+            <span class="slider-field__label">Cooling time</span>
+            <span class="slider-field__value" id="cool-min-value">{{ bed.cool_min }} min</span>
+          </div>
+          <div class="slider-field__track-wrap">
+            <input class="range-input" type="range" name="cool_min" id="cool-min"
+                   min="{{ cool_min_bound }}" max="{{ cool_max_bound }}" step="1" value="{{ bed.cool_min }}"
+                   data-value-target="cool-min-value" data-suffix=" min"
+                   style="--fill: {{ ((bed.cool_min - cool_min_bound) / (cool_max_bound - cool_min_bound) * 100) }}%">
+          </div>
+        </div>
+      </div>
+
+      <label class="field">
+        <span class="field__label">Picture path</span>
+        <input class="field__input" type="text" name="picture_path" value="{{ bed.picture_path }}"
+               placeholder="/home/user/images/bed1.jpg or C:\Studio\Images\bed1.jpg">
+        <span class="field__hint">
+          Browsers can't reveal a full local file path for security reasons, so paste or type it here.
+          Leave empty to use the default illustration.
+        </span>
+      </label>
+
+      <button class="action-btn action-btn--start" type="submit">
+        {{ icon('check', 'action-icon') }}
+        <span>Save settings</span>
+      </button>
+    </form>
+  </div>
 </section>
 {% endblock %}
 
 {% block bottom_buttons %}
 {% for btn in bottom_buttons %}
-{{ bottom_link(btn, url_for('index')) }}
+  {% if btn.id == 'studio' %}
+    {{ bottom_link(btn, url_for('studio')) }}
+  {% else %}
+    {{ bottom_link(btn, url_for('index')) }}
+  {% endif %}
 {% endfor %}
 {% endblock %}

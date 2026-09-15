@@ -52,6 +52,10 @@ def bed_detail(bed_id):
         session_min=models.MIN_SESSION_MINUTES,
         session_max=models.MAX_SESSION_MINUTES,
         session_default=models.DEFAULT_SESSION_MINUTES,
+        prep_min_bound=models.MIN_PREP_MINUTES,
+        prep_max_bound=models.MAX_PREP_MINUTES,
+        cool_min_bound=models.MIN_COOL_MINUTES,
+        cool_max_bound=models.MAX_COOL_MINUTES,
     )
 
 
@@ -70,6 +74,43 @@ def stop_bed(bed_id):
         abort(404)
     models.stop_session(bed_id)
     return redirect(url_for("bed_detail", bed_id=bed_id))
+
+
+@app.route("/bed/<int:bed_id>/settings", methods=["POST"])
+def update_bed_settings(bed_id):
+    if models.get_bed(bed_id) is None:
+        abort(404)
+    models.update_bed_settings(
+        bed_id,
+        number=request.form.get("number", ""),
+        model=request.form.get("model", ""),
+        prep_min=request.form.get("prep_min", type=int, default=models.MIN_PREP_MINUTES),
+        cool_min=request.form.get("cool_min", type=int, default=models.MIN_COOL_MINUTES),
+        picture_path=request.form.get("picture_path", ""),
+    )
+    return redirect(url_for("bed_detail", bed_id=bed_id))
+
+
+@app.route("/studio")
+def studio():
+    return render_template(
+        "studio.html",
+        version=VERSION,
+        nav_items=NAV_ITEMS,
+        bottom_buttons=BOTTOM_BUTTONS,
+        server_time=datetime.now().strftime("%H:%M:%S"),
+        bed_count=models.get_bed_count(),
+        bed_count_min=models.MIN_BEDS,
+        bed_count_max=models.MAX_BEDS,
+    )
+
+
+@app.route("/studio/bed-count", methods=["POST"])
+def studio_set_bed_count():
+    current = models.get_bed_count()
+    count = request.form.get("bed_count", type=int, default=current)
+    models.set_bed_count(count)
+    return redirect(url_for("studio"))
 
 
 @app.route("/api/status")

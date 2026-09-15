@@ -1,10 +1,14 @@
 {% extends "base.html" %}
-{% from "icons.html" import nav_button, bottom_button %}
+{% from "icons.html" import icon, nav_button, nav_link, bottom_button, bottom_link, bed_illustration %}
 
 {% block sidebar %}
 <nav class="sidebar">
   {% for item in nav_items %}
-  {{ nav_button(item, 'tanning') }}
+    {% if item.id == 'studio' %}
+      {{ nav_link(item, 'tanning', url_for('studio')) }}
+    {% else %}
+      {{ nav_button(item, 'tanning') }}
+    {% endif %}
   {% endfor %}
 </nav>
 {% endblock %}
@@ -13,29 +17,28 @@
 <section class="view" id="view-tanning" data-view="tanning">
   <div class="bed-grid">
     {% for bed in beds %}
-    <a class="bed-card {{ 'bed-card--active js-countdown' if bed.status == 'running' }}"
-       href="{{ url_for('bed_detail', bed_id=bed.id) }}" data-bed-id="{{ bed.id }}">
+    <a class="bed-card {{ 'js-countdown phase-' + bed.stage if bed.status == 'running' }}"
+       href="{{ url_for('bed_detail', bed_id=bed.id) }}"
+       {% if bed.status == 'running' %}
+       data-stage="{{ bed.stage }}"
+       data-remaining-min="{{ bed.remaining_min }}"
+       data-prep-min="{{ bed.prep_min_session }}"
+       data-active-min="{{ bed.active_min_session }}"
+       data-cool-min="{{ bed.cool_min_session }}"
+       {% endif %}>
       <header class="bed-card__header">
         <h3>{{ bed.number }}</h3>
         <p>{{ bed.model }}</p>
       </header>
-      <div class="bed-illustration bed-illustration--{{ bed.kind }}">
-        <div class="bed-tube"></div>
-        <div class="bed-tube"></div>
-        <div class="bed-tube"></div>
-        <div class="bed-tube"></div>
-        <div class="bed-glow"></div>
-      </div>
+      {{ bed_illustration(bed) }}
       {% if bed.status == 'running' %}
       <footer class="bed-card__footer">
         <div class="bed-remaining">
-          {% from "icons.html" import icon %}
           {{ icon('clock', 'remaining-icon') }}
-          <span class="remaining-text" data-remaining-min="{{ bed.remaining_min }}">Остават {{ bed.remaining_min }} мин</span>
+          <span class="remaining-text">Остават {{ bed.remaining_min }} мин</span>
         </div>
         <div class="progress-track">
-          <div class="progress-fill" style="width: {{ ((bed.total_min - bed.remaining_min) / bed.total_min * 100) | round | int }}%"
-               data-total-min="{{ bed.total_min }}" data-remaining-min="{{ bed.remaining_min }}"></div>
+          <div class="progress-fill"></div>
         </div>
       </footer>
       {% endif %}
@@ -45,21 +48,19 @@
 </section>
 
 <section class="view view--placeholder" id="view-cosmetics" data-view="cosmetics" hidden>
-  {% from "icons.html" import icon %}
   <div class="placeholder">{{ icon('leaf', 'placeholder-icon') }}<p>Cosmetics</p></div>
 </section>
 <section class="view view--placeholder" id="view-cards" data-view="cards" hidden>
-  {% from "icons.html" import icon %}
   <div class="placeholder">{{ icon('card', 'placeholder-icon') }}<p>Cards</p></div>
-</section>
-<section class="view view--placeholder" id="view-studio" data-view="studio" hidden>
-  {% from "icons.html" import icon %}
-  <div class="placeholder">{{ icon('home', 'placeholder-icon') }}<p>Studio</p></div>
 </section>
 {% endblock %}
 
 {% block bottom_buttons %}
 {% for btn in bottom_buttons %}
-{{ bottom_button(btn) }}
+  {% if btn.id == 'studio' %}
+    {{ bottom_link(btn, url_for('studio')) }}
+  {% else %}
+    {{ bottom_button(btn) }}
+  {% endif %}
 {% endfor %}
 {% endblock %}
