@@ -67,21 +67,21 @@ def _current_session(conn, bed_id):
     ).fetchone()
 
 
-def _picture_src(picture_path):
+def _picture_src(bed_id, picture_path):
     path = (picture_path or "").strip()
     if not path:
         return ""
-    if path.startswith(("http://", "https://", "file://", "/static/")):
+    if path.startswith(("http://", "https://", "/static/")):
         return path
-    normalized = path.replace("\\", "/")
-    if not normalized.startswith("/"):
-        normalized = "/" + normalized
-    return "file://" + normalized
+    # A local filesystem path: browsers block file:// subresource loads from
+    # an http(s) page, so route it through our own server instead, which can
+    # read the file directly (see the /bed/<id>/photo view in app.py).
+    return f"/bed/{bed_id}/photo"
 
 
 def _serialize(bed_row, session_row):
     bed = dict(bed_row)
-    bed["picture_src"] = _picture_src(bed_row["picture_path"])
+    bed["picture_src"] = _picture_src(bed_row["id"], bed_row["picture_path"])
     if session_row is not None:
         stage, remaining_min = _stage_and_remaining(session_row)
         bed["status"] = "running"

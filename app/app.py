@@ -1,9 +1,12 @@
 from datetime import datetime
+from pathlib import Path
 
-from flask import Flask, abort, jsonify, redirect, render_template, request, url_for
+from flask import Flask, abort, jsonify, redirect, render_template, request, send_file, url_for
 
 import db
 import models
+
+ALLOWED_IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp", ".svg"}
 
 app = Flask(__name__)
 db.init_db()
@@ -74,6 +77,17 @@ def stop_bed(bed_id):
         abort(404)
     models.stop_session(bed_id)
     return redirect(url_for("bed_detail", bed_id=bed_id))
+
+
+@app.route("/bed/<int:bed_id>/photo")
+def bed_photo(bed_id):
+    bed = models.get_bed(bed_id)
+    if bed is None or not bed["picture_path"]:
+        abort(404)
+    path = Path(bed["picture_path"])
+    if path.suffix.lower() not in ALLOWED_IMAGE_EXTENSIONS or not path.is_file():
+        abort(404)
+    return send_file(path, conditional=True)
 
 
 @app.route("/bed/<int:bed_id>/settings", methods=["POST"])

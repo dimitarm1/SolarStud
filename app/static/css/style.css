@@ -367,6 +367,8 @@ body {
   width: calc(100% - 16px);
   height: calc(100% - 16px);
   object-fit: cover;
+  object-position: center top;
+  background: #0f1c26;
   border-radius: 16px;
   border: 1px solid #33475a;
 }
