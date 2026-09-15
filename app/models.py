@@ -119,10 +119,19 @@ def get_bed(bed_id):
         conn.close()
 
 
+def _strip_wrapping_quotes(text):
+    if len(text) >= 2 and text[0] == text[-1] and text[0] in ("'", '"'):
+        return text[1:-1].strip()
+    return text
+
+
 def update_bed_settings(bed_id, number, model, prep_min, cool_min, picture_path):
     prep_min = max(MIN_PREP_MINUTES, min(MAX_PREP_MINUTES, int(prep_min)))
     cool_min = max(MIN_COOL_MINUTES, min(MAX_COOL_MINUTES, int(cool_min)))
-    picture_path = (picture_path or "").strip()
+    # Pasting a path from a terminal or file manager often brings along
+    # wrapping quotes (e.g. '/path/with spaces/file.jpg') - strip those
+    # rather than storing a path that will never match a real file.
+    picture_path = _strip_wrapping_quotes((picture_path or "").strip())
     number = (number or "").strip()
     model = (model or "").strip()
 
