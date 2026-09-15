@@ -15,7 +15,7 @@
 
 {% block content %}
 <section class="view" id="view-tanning" data-view="tanning">
-  <div class="bed-grid">
+  <div class="bed-grid {{ 'bed-grid--wrapped' if beds|length > 4 }}">
     {% for bed in beds %}
     <a class="bed-card {{ 'js-countdown phase-' + bed.stage if bed.status == 'running' }}"
        href="{{ url_for('bed_detail', bed_id=bed.id) }}"

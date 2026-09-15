@@ -192,15 +192,30 @@ body {
 .bed-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 16px 16px;
+  gap: 16px;
   row-gap: 24px;
   width: 100%;
 }
 
-/* Beds 5-8 wrap onto a second row, nudged right for a bricklay look */
-.bed-card:nth-child(n + 5) {
-  margin-left: 28px;
+/*
+ * With more than 4 beds, row 2 is bricklaid a half-step to the right of
+ * row 1. Nine equal tracks (instead of four) give every card, on either
+ * row, the same width: row 1 spans tracks 1-8 and leaves track 9 empty on
+ * the right, row 2 spans tracks 2-9 and leaves track 1 empty on the left -
+ * so the leftover gap matches on both sides.
+ */
+.bed-grid--wrapped {
+  grid-template-columns: repeat(9, minmax(0, 1fr));
 }
+
+.bed-grid--wrapped .bed-card {
+  grid-column: span 2;
+}
+
+.bed-grid--wrapped .bed-card:nth-child(5) { grid-column: 2 / span 2; }
+.bed-grid--wrapped .bed-card:nth-child(6) { grid-column: 4 / span 2; }
+.bed-grid--wrapped .bed-card:nth-child(7) { grid-column: 6 / span 2; }
+.bed-grid--wrapped .bed-card:nth-child(8) { grid-column: 8 / span 2; }
 
 .bed-card {
   background: linear-gradient(180deg, var(--surface) 0%, #101c27 100%);
@@ -479,8 +494,13 @@ body {
 
 /* Responsive */
 @media (max-width: 900px) {
-  .bed-grid { grid-template-columns: repeat(2, 1fr); }
-  .bed-card:nth-child(n + 5) { margin-left: 0; }
+  .bed-grid,
+  .bed-grid--wrapped { grid-template-columns: repeat(2, 1fr); }
+  .bed-grid--wrapped .bed-card,
+  .bed-grid--wrapped .bed-card:nth-child(5),
+  .bed-grid--wrapped .bed-card:nth-child(6),
+  .bed-grid--wrapped .bed-card:nth-child(7),
+  .bed-grid--wrapped .bed-card:nth-child(8) { grid-column: auto; }
   .body { flex-direction: column; }
   .sidebar {
     width: 100%;
@@ -493,8 +513,8 @@ body {
 }
 
 @media (max-width: 560px) {
-  .bed-grid { grid-template-columns: 1fr; }
-  .bed-card:nth-child(n + 5) { margin-left: 0; }
+  .bed-grid,
+  .bed-grid--wrapped { grid-template-columns: 1fr; }
   .statusbar { flex-direction: column; gap: 14px; align-items: stretch; }
   .bottom-buttons { flex-wrap: wrap; justify-content: center; }
 }
