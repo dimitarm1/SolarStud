@@ -913,6 +913,62 @@ body {
   line-height: 1.5;
 }
 
+.controller-picker {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.controller-select {
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.controller-select:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.controller-scan-btn {
+  flex-shrink: 0;
+  width: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: #0c1820;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.controller-scan-btn:hover {
+  background: var(--surface-2);
+  color: var(--gold);
+  border-color: var(--gold-soft);
+}
+
+.controller-scan-btn:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.controller-scan-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.controller-scan-btn--busy .controller-scan-icon {
+  animation: controller-scan-spin 1s linear infinite;
+}
+
+@keyframes controller-scan-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 .settings-hint {
   margin: -6px 0 20px;
   font-size: 12px;

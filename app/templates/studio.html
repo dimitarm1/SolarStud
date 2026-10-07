@@ -66,6 +66,27 @@
       </button>
     </form>
   </div>
+
+  <div class="settings-panel settings-panel--static">
+    <h3 class="settings-panel__title">Controller link</h3>
+    <p class="settings-hint settings-hint--lead">
+      The serial port used to reach the tanning bed controllers (wired or via an HC-12
+      wireless link), at 1200 baud — see protocol.md for details.
+    </p>
+
+    <form class="settings-form" method="post" action="{{ url_for('studio_set_serial_port') }}">
+      <label class="field">
+        <span class="field__label">Serial port</span>
+        <input class="field__input" type="text" name="serial_port" value="{{ serial_port }}"
+               placeholder="/dev/ttyUSB0 or COM3">
+      </label>
+
+      <button class="action-btn action-btn--start" type="submit">
+        {{ icon('check', 'action-icon') }}
+        <span>Save</span>
+      </button>
+    </form>
+  </div>
 </section>
 {% endblock %}
 

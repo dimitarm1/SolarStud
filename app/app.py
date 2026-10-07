@@ -4,6 +4,7 @@ from pathlib import Path
 
 from flask import Flask, abort, jsonify, redirect, render_template, request, send_file, url_for
 
+import controller_link
 import db
 import models
 
@@ -61,6 +62,8 @@ def bed_detail(bed_id):
         prep_max_bound=models.MAX_PREP_MINUTES,
         cool_min_bound=models.MIN_COOL_MINUTES,
         cool_max_bound=models.MAX_COOL_MINUTES,
+        controller_address_min=models.MIN_CONTROLLER_ADDRESS,
+        controller_address_max=models.MAX_CONTROLLER_ADDRESS,
     )
 
 
@@ -103,8 +106,26 @@ def update_bed_settings(bed_id):
         prep_min=request.form.get("prep_min", type=int, default=models.MIN_PREP_MINUTES),
         cool_min=request.form.get("cool_min", type=int, default=models.MIN_COOL_MINUTES),
         picture_path=request.form.get("picture_path", ""),
+        controller_address=request.form.get("controller_address", ""),
     )
     return redirect(url_for("bed_detail", bed_id=bed_id))
+
+
+@app.route("/api/controllers/scan")
+def scan_controllers():
+    exclude_bed_id = request.args.get("bed_id", type=int)
+    port = models.get_serial_port()
+    if not port:
+        return jsonify({"error": "No serial port configured. Set one on the Studio page."}), 400
+    try:
+        found = controller_link.scan(port)
+    except controller_link.ControllerLinkError as exc:
+        return jsonify({"error": str(exc)}), 503
+
+    in_use = models.list_controller_addresses_in_use(exclude_bed_id=exclude_bed_id)
+    for entry in found:
+        entry["in_use_by_bed_id"] = in_use.get(entry["address"])
+    return jsonify({"port": port, "controllers": found})
 
 
 @app.route("/studio")
@@ -118,6 +139,7 @@ def studio():
         bed_count=models.get_bed_count(),
         bed_count_min=models.MIN_BEDS,
         bed_count_max=models.MAX_BEDS,
+        serial_port=models.get_serial_port(),
     )
 
 
@@ -126,6 +148,12 @@ def studio_set_bed_count():
     current = models.get_bed_count()
     count = request.form.get("bed_count", type=int, default=current)
     models.set_bed_count(count)
+    return redirect(url_for("studio"))
+
+
+@app.route("/studio/serial-port", methods=["POST"])
+def studio_set_serial_port():
+    models.set_serial_port(request.form.get("serial_port", ""))
     return redirect(url_for("studio"))
 
 

@@ -121,4 +121,89 @@
       render();
     }, 1000);
   });
+
+  // Controller address picker: scans the serial bus (0-14) and fills the
+  // dropdown with whatever responds, instead of requiring the address to be
+  // known ahead of time.
+  const controllerSelect = document.getElementById("controller-address");
+  const controllerScanBtn = document.getElementById("controller-scan-btn");
+  if (controllerSelect) {
+    let scanned = false;
+    let scanning = false;
+
+    const setBusy = (busy) => {
+      scanning = busy;
+      controllerSelect.disabled = busy;
+      if (controllerScanBtn) {
+        controllerScanBtn.disabled = busy;
+        controllerScanBtn.classList.toggle("controller-scan-btn--busy", busy);
+      }
+    };
+
+    const runScan = async () => {
+      if (scanning) return;
+      scanned = true;
+      setBusy(true);
+
+      const placeholder = document.createElement("option");
+      placeholder.textContent = "Scanning bus… (a few seconds)";
+      placeholder.disabled = true;
+      placeholder.selected = true;
+      controllerSelect.appendChild(placeholder);
+
+      try {
+        const res = await fetch(controllerSelect.dataset.scanUrl);
+        const data = await res.json();
+        placeholder.remove();
+
+        if (!res.ok) {
+          const errOpt = document.createElement("option");
+          errOpt.textContent = `Scan failed: ${data.error || res.statusText}`;
+          errOpt.disabled = true;
+          controllerSelect.appendChild(errOpt);
+        } else if (!data.controllers || data.controllers.length === 0) {
+          const noneOpt = document.createElement("option");
+          noneOpt.textContent = "No controllers responded";
+          noneOpt.disabled = true;
+          controllerSelect.appendChild(noneOpt);
+        } else {
+          data.controllers.forEach((ctrl) => {
+            if (controllerSelect.querySelector(`option[value="${ctrl.address}"]`)) return;
+            const opt = document.createElement("option");
+            opt.value = ctrl.address;
+            let label = `Address ${ctrl.address} — ${ctrl.status}`;
+            if (ctrl.remaining_min) label += ` (${ctrl.remaining_min} min)`;
+            if (ctrl.in_use_by_bed_id) {
+              label += ` · already used by bed #${ctrl.in_use_by_bed_id}`;
+              opt.disabled = true;
+            }
+            opt.textContent = label;
+            controllerSelect.appendChild(opt);
+          });
+        }
+      } catch (err) {
+        placeholder.remove();
+        const errOpt = document.createElement("option");
+        errOpt.textContent = "Scan failed: network error";
+        errOpt.disabled = true;
+        controllerSelect.appendChild(errOpt);
+      } finally {
+        setBusy(false);
+        if (controllerSelect.showPicker) {
+          try {
+            controllerSelect.showPicker();
+          } catch (err) {
+            // ignore - user can just open the (now populated) select themselves
+          }
+        }
+      }
+    };
+
+    controllerSelect.addEventListener("focus", () => {
+      if (!scanned) runScan();
+    });
+    if (controllerScanBtn) {
+      controllerScanBtn.addEventListener("click", runScan);
+    }
+  }
 })();

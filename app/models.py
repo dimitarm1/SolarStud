@@ -2,7 +2,11 @@
 
 from datetime import datetime
 
+import controller_link
 import db
+
+MIN_CONTROLLER_ADDRESS = controller_link.MIN_ADDRESS
+MAX_CONTROLLER_ADDRESS = controller_link.MAX_ADDRESS
 
 MIN_SESSION_MINUTES = 1
 MAX_SESSION_MINUTES = 35
@@ -125,7 +129,8 @@ def _strip_wrapping_quotes(text):
     return text
 
 
-def update_bed_settings(bed_id, number, model, prep_min, cool_min, picture_path):
+def update_bed_settings(bed_id, number, model, prep_min, cool_min, picture_path,
+                         controller_address=""):
     prep_min = max(MIN_PREP_MINUTES, min(MAX_PREP_MINUTES, int(prep_min)))
     cool_min = max(MIN_COOL_MINUTES, min(MAX_COOL_MINUTES, int(cool_min)))
     # Pasting a path from a terminal or file manager often brings along
@@ -135,6 +140,14 @@ def update_bed_settings(bed_id, number, model, prep_min, cool_min, picture_path)
     number = (number or "").strip()
     model = (model or "").strip()
 
+    controller_address = str(controller_address).strip()
+    if controller_address == "":
+        controller_address = None
+    else:
+        controller_address = max(
+            MIN_CONTROLLER_ADDRESS, min(MAX_CONTROLLER_ADDRESS, int(controller_address))
+        )
+
     conn = db.get_connection()
     try:
         with db.transaction(conn):
@@ -143,16 +156,33 @@ def update_bed_settings(bed_id, number, model, prep_min, cool_min, picture_path)
                 raise ValueError(f"Unknown bed id {bed_id}")
             conn.execute(
                 "UPDATE beds SET number = ?, model = ?, prep_min = ?, cool_min = ?, "
-                "picture_path = ? WHERE id = ?",
+                "picture_path = ?, controller_address = ? WHERE id = ?",
                 (
                     number or bed["number"],
                     model or bed["model"],
                     prep_min,
                     cool_min,
                     picture_path,
+                    controller_address,
                     bed_id,
                 ),
             )
+    finally:
+        conn.close()
+
+
+def list_controller_addresses_in_use(exclude_bed_id=None):
+    """Return {address: bed_id} for every bed that already has a controller
+    address assigned, optionally leaving one bed's own assignment out."""
+    conn = db.get_connection()
+    try:
+        query = "SELECT id, controller_address FROM beds WHERE controller_address IS NOT NULL"
+        params = ()
+        if exclude_bed_id is not None:
+            query += " AND id != ?"
+            params = (exclude_bed_id,)
+        rows = conn.execute(query, params).fetchall()
+        return {row["controller_address"]: row["id"] for row in rows}
     finally:
         conn.close()
 
@@ -191,6 +221,26 @@ def set_bed_count(new_count):
     finally:
         conn.close()
     return new_count
+
+
+def get_serial_port():
+    conn = db.get_connection()
+    try:
+        row = conn.execute("SELECT serial_port FROM settings WHERE id = 1").fetchone()
+        return row["serial_port"] if row is not None else ""
+    finally:
+        conn.close()
+
+
+def set_serial_port(port):
+    port = (port or "").strip()
+    conn = db.get_connection()
+    try:
+        with db.transaction(conn):
+            conn.execute("UPDATE settings SET serial_port = ? WHERE id = 1", (port,))
+    finally:
+        conn.close()
+    return port
 
 
 # --- sessions ------------------------------------------------------------

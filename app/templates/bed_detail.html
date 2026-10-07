@@ -149,6 +149,30 @@
       </div>
 
       <label class="field">
+        <span class="field__label">Controller address</span>
+        <div class="controller-picker">
+          <select
+            class="field__input controller-select"
+            name="controller_address"
+            id="controller-address"
+            data-scan-url="{{ url_for('scan_controllers', bed_id=bed.id) }}"
+          >
+            <option value="">— Not assigned —</option>
+            {% if bed.controller_address is not none %}
+            <option value="{{ bed.controller_address }}" selected>Address {{ bed.controller_address }} (current)</option>
+            {% endif %}
+          </select>
+          <button class="controller-scan-btn" type="button" id="controller-scan-btn" title="Scan the bus for controllers">
+            {{ icon('scan', 'controller-scan-icon') }}
+          </button>
+        </div>
+        <span class="field__hint">
+          Scans addresses {{ controller_address_min }}–{{ controller_address_max }} on the configured serial
+          port and lists every controller that responds. A scan takes a few seconds.
+        </span>
+      </label>
+
+      <label class="field">
         <span class="field__label">Picture path</span>
         <input class="field__input" type="text" name="picture_path" value="{{ bed.picture_path }}"
                placeholder="/home/user/images/bed1.jpg or C:\Studio\Images\bed1.jpg">
