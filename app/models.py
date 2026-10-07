@@ -448,10 +448,23 @@ def start_session(bed_id, total_min=DEFAULT_SESSION_MINUTES):
 
 
 def stop_session(bed_id):
-    """Stop a session. Symmetric with start_session: for a real controller,
-    the DB is only updated once the all-zero Set-Time handshake is
-    confirmed, so the UI never claims "stopped" while the physical bed
-    might still be running."""
+    """Stop a session - mirrors what the controller's own physical Stop
+    button does (ProcessButtons() in the firmware):
+
+    - during the active phase, this moves straight into the full configured
+      cooling phase rather than cutting off abruptly - the bed is hot and
+      needs to cool down, same as if the session had finished on its own.
+      Pressing Stop *again* while it's cooling is the second chance that
+      actually ends the session.
+    - during prep, or once already cooling (or when there's no cooling
+      time configured at all), this ends the session immediately - there's
+      nothing to cool down from during prep, and cooling is either already
+      underway or doesn't apply.
+
+    For a real controller, the DB is only updated once the corresponding
+    Set-Time handshake is confirmed, so the UI never claims a state the
+    physical bed hasn't actually reached.
+    """
     conn = db.get_connection()
     try:
         with db.transaction(conn):
@@ -461,15 +474,34 @@ def stop_session(bed_id):
             if bed is None:
                 raise ValueError(f"Unknown bed id {bed_id}")
 
+            session = _current_session(conn, bed_id)
+            stage = _stage_and_remaining(session)[0] if session is not None else None
+            enter_cooling = stage == "active" and session["cool_min"] > 0
+
             if not is_demo_address(bed["controller_address"]):
                 port = _require_serial_port()
-                controller_link.set_time(port, bed["controller_address"], 0, 0, 0)
+                cool_arg = session["cool_min"] if enter_cooling else 0
+                controller_link.set_time(port, bed["controller_address"], 0, 0, cool_arg)
 
-            conn.execute(
-                "UPDATE sessions SET status = 'stopped', ended_at = ? "
-                "WHERE bed_id = ? AND status = 'running'",
-                (datetime.now().isoformat(timespec="seconds"), bed_id),
-            )
+            if enter_cooling:
+                new_started_at = _started_at_for(
+                    "cooling",
+                    session["cool_min"],
+                    session["prep_min"],
+                    session["total_min"],
+                    session["cool_min"],
+                    datetime.now(),
+                )
+                conn.execute(
+                    "UPDATE sessions SET started_at = ? WHERE id = ?",
+                    (new_started_at.isoformat(timespec="seconds"), session["id"]),
+                )
+            else:
+                conn.execute(
+                    "UPDATE sessions SET status = 'stopped', ended_at = ? "
+                    "WHERE bed_id = ? AND status = 'running'",
+                    (datetime.now().isoformat(timespec="seconds"), bed_id),
+                )
     finally:
         conn.close()
 

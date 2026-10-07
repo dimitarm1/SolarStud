@@ -54,6 +54,7 @@
 
       {% if bed.status == 'running' %}
       {% set stage_labels = {'prep': 'Preparing', 'active': 'In session', 'cooling': 'Cooling down'} %}
+      {% set stop_labels = {'prep': 'Stop session', 'active': 'Stop & cool down', 'cooling': 'End session'} %}
       <div class="status-panel js-countdown phase-{{ bed.stage }}"
            data-stage="{{ bed.stage }}"
            data-remaining-min="{{ bed.remaining_min }}"
@@ -76,12 +77,16 @@
             </button>
           </form>
           <form class="action-form" method="post" action="{{ url_for('stop_bed', bed_id=bed.id) }}">
-            <button class="action-btn action-btn--stop" type="submit">
+            <button class="action-btn action-btn--stop" type="submit" id="stop-btn">
               {{ icon('power', 'action-icon') }}
-              <span>Stop session</span>
+              <span>{{ stop_labels[bed.stage] }}</span>
             </button>
           </form>
         </div>
+        <p class="settings-hint" id="stop-hint" {{ 'hidden' if not (bed.stage == 'active' and bed.cool_min_session) }}>
+          Stopping now cools the bed down first ({{ bed.cool_min_session }} min) - press it again during
+          cooling to end the session right away.
+        </p>
       </div>
       {% else %}
       <div class="status-panel">

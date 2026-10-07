@@ -64,6 +64,11 @@
   // needing a page reload to get there.
   const STAGE_ORDER = ["prep", "active", "cooling"];
   const STAGE_LABELS = { prep: "Preparing", active: "In session", cooling: "Cooling down" };
+  // Stop's behavior mirrors the controller's own physical button: during
+  // active it only moves into cooling (the bed needs to cool down, not cut
+  // off abruptly), so the label should say that rather than "Stop session"
+  // - pressing it again once cooling is the second chance that actually ends it.
+  const STOP_LABELS = { prep: "Stop session", active: "Stop & cool down", cooling: "End session" };
 
   function startCardTicker(el, { onFinish } = {}) {
     if (el._tickerTimer) {
@@ -75,6 +80,9 @@
     const fill = el.querySelector(".progress-fill");
     const badge = el.querySelector(".status-badge");
     const skipPrepBtn = el.querySelector("#skip-prep-btn");
+    const stopBtn = el.querySelector("#stop-btn");
+    const stopBtnLabel = stopBtn ? stopBtn.querySelector("span") : null;
+    const stopHint = el.querySelector("#stop-hint");
 
     const durations = {
       prep: parseFloat(el.dataset.prepMin || "0"),
@@ -94,6 +102,12 @@
       }
       if (skipPrepBtn) {
         skipPrepBtn.disabled = stage !== "prep";
+      }
+      if (stopBtnLabel) {
+        stopBtnLabel.textContent = STOP_LABELS[stage];
+      }
+      if (stopHint) {
+        stopHint.hidden = !(stage === "active" && durations.cooling > 0);
       }
     }
 
