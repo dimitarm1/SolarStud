@@ -87,6 +87,13 @@ def _current_session(conn, bed_id):
 # they've drifted apart.
 _LIVE_STAGE_MAP = {"free": None, "waiting": "prep", "working": "active", "cooling": "cooling"}
 RECONCILE_DRIFT_TOLERANCE_MIN = 2
+# Backstop for a just-created/just-changed session: controller_link's
+# COMMIT_SETTLE_SECONDS already waits for a Set-Time commit to actually land
+# before set_time() returns, which is the real fix for a disagreeing read
+# arriving before the commit has taken effect - this is a generous extra
+# margin against any other transient misread (e.g. a dropped RF packet)
+# nuking a session moments after it legitimately started.
+RECONCILE_GRACE_PERIOD_SECONDS = 2.0
 
 
 def _started_at_for(stage, remaining_min, prep_min, total_min, cool_min, now):
@@ -113,6 +120,9 @@ def _reconcile_with_hardware(conn, bed_row, live):
     db_stage, db_remaining = (None, 0)
     if session is not None:
         db_stage, db_remaining = _stage_and_remaining(session)
+        session_age = (datetime.now() - datetime.fromisoformat(session["started_at"])).total_seconds()
+        if session_age < RECONCILE_GRACE_PERIOD_SECONDS:
+            return
 
     if db_stage == live_stage and abs(db_remaining - live["remaining_min"]) <= RECONCILE_DRIFT_TOLERANCE_MIN:
         return  # close enough - don't rewrite on every poll over tiny clock drift

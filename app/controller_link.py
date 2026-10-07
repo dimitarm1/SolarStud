@@ -33,6 +33,18 @@ STATUS_NAMES = {0: "free", 1: "working", 2: "cooling", 3: "waiting"}
 
 DEFAULT_REPLY_TIMEOUT = 0.45  # seconds; measured round trip is ~0.2s, this gives it headroom
 OPEN_SETTLE_SECONDS = 0.2
+# The final echo byte of a Set-Time handshake (see set_time_on) is a
+# fire-and-forget write - ser.write() returns once the byte is queued
+# locally, not once the controller has actually received and processed it
+# over the RF link's own one-way transmission delay. Without this, a status
+# query issued immediately after set_time() returns (e.g. the page reload
+# right after Start) can catch the controller before it's finished
+# committing and read its old, stale status - which a status-reconciling
+# caller would (reasonably) read as "nothing is running" and undo what was
+# just started. Sized with headroom above the ~200ms round trip measured
+# for a Status command (this is only a one-way send, but we don't have a
+# precise one-way-only measurement, so it's safer to assume parity).
+COMMIT_SETTLE_SECONDS = 0.3
 SCAN_RETRIES = 2  # total attempts per address when scanning, to ride out a dropped RF packet
 
 _lock = threading.Lock()
@@ -185,6 +197,7 @@ def set_time_on(ser, address, pre_min, main_min, cool_min):
         )
 
     ser.write(bytes([expected_checksum]))
+    time.sleep(COMMIT_SETTLE_SECONDS)
 
 
 def set_time(port, address, pre_min, main_min, cool_min, timeout=DEFAULT_REPLY_TIMEOUT):
