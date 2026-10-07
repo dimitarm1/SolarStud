@@ -17,10 +17,10 @@ db.init_db()
 VERSION = "V1.2"
 
 NAV_ITEMS = [
-    {"id": "tanning", "label": "Tanning", "icon": "sun"},
-    {"id": "cosmetics", "label": "Cosmetics", "icon": "leaf"},
-    {"id": "cards", "label": "Cards", "icon": "card"},
-    {"id": "studio", "label": "Studio", "icon": "home"},
+    {"id": "tanning", "label": "Солариум", "icon": "sun"},
+    {"id": "cosmetics", "label": "Козметика", "icon": "leaf"},
+    {"id": "cards", "label": "Карти", "icon": "card"},
+    {"id": "studio", "label": "Студио", "icon": "home"},
 ]
 
 BOTTOM_BUTTONS = [
@@ -136,7 +136,7 @@ def scan_controllers():
     exclude_bed_id = request.args.get("bed_id", type=int)
     port = models.get_serial_port()
     if not port:
-        return jsonify({"error": "No serial port configured. Set one on the Studio page."}), 400
+        return jsonify({"error": "Не е зададен сериен порт. Задайте го в страница Студио."}), 400
     try:
         found = controller_link.scan(port)
     except controller_link.ControllerLinkError as exc:

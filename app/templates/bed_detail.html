@@ -20,11 +20,11 @@
   <div class="detail-topbar">
     <a class="back-link" href="{{ url_for('index') }}">
       {{ icon('back', 'back-icon') }}
-      <span>Back</span>
+      <span>Назад</span>
     </a>
     <button class="settings-toggle" type="button" id="settings-toggle" aria-expanded="false" aria-controls="bed-settings-panel">
       {{ icon('gear', 'settings-toggle-icon') }}
-      <span>Settings</span>
+      <span>Настройки</span>
     </button>
   </div>
 
@@ -32,7 +32,7 @@
   <div class="hw-error-banner" id="hw-error-banner">
     {{ icon('warning', 'hw-error-icon') }}
     <span>{{ hw_error }}</span>
-    <button class="hw-error-dismiss" type="button" id="hw-error-dismiss" aria-label="Dismiss">
+    <button class="hw-error-dismiss" type="button" id="hw-error-dismiss" aria-label="Затвори">
       {{ icon('close', 'hw-error-dismiss-icon') }}
     </button>
   </div>
@@ -45,16 +45,16 @@
       <div class="detail-title-row">
         <h2 class="detail-title">{{ bed.number }}</h2>
         {% if bed.is_demo %}
-        <span class="mode-badge mode-badge--demo">Demo</span>
+        <span class="mode-badge mode-badge--demo">Демо</span>
         {% else %}
-        <span class="mode-badge mode-badge--real">Address {{ bed.controller_address }}</span>
+        <span class="mode-badge mode-badge--real">Адрес {{ bed.controller_address }}</span>
         {% endif %}
       </div>
       <p class="detail-model">{{ bed.model }}</p>
 
       {% if bed.status == 'running' %}
-      {% set stage_labels = {'prep': 'Preparing', 'active': 'In session', 'cooling': 'Cooling down'} %}
-      {% set stop_labels = {'prep': 'Stop session', 'active': 'Stop & cool down', 'cooling': 'End session'} %}
+      {% set stage_labels = {'prep': 'Подготовка', 'active': 'В сесия', 'cooling': 'Охлаждане'} %}
+      {% set stop_labels = {'prep': 'Спри сесията', 'active': 'Спри и охлади', 'cooling': 'Прекрати сесията'} %}
       <div class="status-panel js-countdown phase-{{ bed.stage }}"
            data-stage="{{ bed.stage }}"
            data-remaining-min="{{ bed.remaining_min }}"
@@ -73,7 +73,7 @@
           <form class="action-form" method="post" action="{{ url_for('skip_prep_bed', bed_id=bed.id) }}">
             <button class="action-btn action-btn--start" type="submit" id="skip-prep-btn" {% if bed.stage != 'prep' %}disabled{% endif %}>
               {{ icon('power', 'action-icon') }}
-              <span>Start now</span>
+              <span>Старт сега</span>
             </button>
           </form>
           <form class="action-form" method="post" action="{{ url_for('stop_bed', bed_id=bed.id) }}">
@@ -84,18 +84,18 @@
           </form>
         </div>
         <p class="settings-hint" id="stop-hint" {{ 'hidden' if not (bed.stage == 'active' and bed.cool_min_session) }}>
-          Stopping now cools the bed down first ({{ bed.cool_min_session }} min) - press it again during
-          cooling to end the session right away.
+          Спирането сега първо ще охлади леглото ({{ bed.cool_min_session }} мин) - натиснете отново по
+          време на охлаждане, за да прекратите сесията веднага.
         </p>
       </div>
       {% else %}
       <div class="status-panel">
-        <span class="status-badge status-badge--idle">Idle</span>
+        <span class="status-badge status-badge--idle">Свободно</span>
         <form class="action-form" method="post" action="{{ url_for('start_bed', bed_id=bed.id) }}">
           <div class="slider-field">
             <div class="slider-field__header">
-              <span class="slider-field__label">Session length</span>
-              <span class="slider-field__value" id="session-length-value">{{ session_default }} min</span>
+              <span class="slider-field__label">Продължителност на сесията</span>
+              <span class="slider-field__value" id="session-length-value">{{ session_default }} мин</span>
             </div>
             <div class="slider-field__track-wrap">
               <input
@@ -108,7 +108,7 @@
                 step="1"
                 value="{{ session_default }}"
                 data-value-target="session-length-value"
-                data-suffix=" min"
+                data-suffix=" мин"
                 style="--fill: {{ ((session_default - session_min) / (session_max - session_min) * 100) }}%"
               >
               <div class="slider-field__ticks">
@@ -120,15 +120,15 @@
           </div>
           {% if bed.prep_min or bed.cool_min %}
           <p class="settings-hint">
-            {% if bed.prep_min %}{{ bed.prep_min }} min preparation{% endif %}
+            {% if bed.prep_min %}{{ bed.prep_min }} мин подготовка{% endif %}
             {% if bed.prep_min and bed.cool_min %} + {% endif %}
-            {% if bed.cool_min %}{{ bed.cool_min }} min cooling{% endif %}
-            added automatically.
+            {% if bed.cool_min %}{{ bed.cool_min }} мин охлаждане{% endif %}
+            се добавят автоматично.
           </p>
           {% endif %}
           <button class="action-btn action-btn--start" type="submit">
             {{ icon('power', 'action-icon') }}
-            <span>Start session</span>
+            <span>Старт на сесията</span>
           </button>
         </form>
       </div>
@@ -137,15 +137,15 @@
   </div>
 
   <div class="settings-panel" id="bed-settings-panel" hidden>
-    <h3 class="settings-panel__title">Bed settings</h3>
+    <h3 class="settings-panel__title">Настройки на леглото</h3>
     <form class="settings-form" method="post" action="{{ url_for('update_bed_settings', bed_id=bed.id) }}">
       <div class="settings-grid">
         <label class="field">
-          <span class="field__label">Name</span>
+          <span class="field__label">Име</span>
           <input class="field__input" type="text" name="number" value="{{ bed.number }}" maxlength="40" required>
         </label>
         <label class="field">
-          <span class="field__label">Model</span>
+          <span class="field__label">Модел</span>
           <input class="field__input" type="text" name="model" value="{{ bed.model }}" maxlength="60" required>
         </label>
       </div>
@@ -153,33 +153,33 @@
       <div class="settings-grid">
         <div class="slider-field">
           <div class="slider-field__header">
-            <span class="slider-field__label">Preparation time</span>
-            <span class="slider-field__value" id="prep-min-value">{{ bed.prep_min }} min</span>
+            <span class="slider-field__label">Време за подготовка</span>
+            <span class="slider-field__value" id="prep-min-value">{{ bed.prep_min }} мин</span>
           </div>
           <div class="slider-field__track-wrap">
             <input class="range-input" type="range" name="prep_min" id="prep-min"
                    min="{{ prep_min_bound }}" max="{{ prep_max_bound }}" step="1" value="{{ bed.prep_min }}"
-                   data-value-target="prep-min-value" data-suffix=" min"
+                   data-value-target="prep-min-value" data-suffix=" мин"
                    style="--fill: {{ ((bed.prep_min - prep_min_bound) / (prep_max_bound - prep_min_bound) * 100) }}%">
           </div>
         </div>
 
         <div class="slider-field">
           <div class="slider-field__header">
-            <span class="slider-field__label">Cooling time</span>
-            <span class="slider-field__value" id="cool-min-value">{{ bed.cool_min }} min</span>
+            <span class="slider-field__label">Време за охлаждане</span>
+            <span class="slider-field__value" id="cool-min-value">{{ bed.cool_min }} мин</span>
           </div>
           <div class="slider-field__track-wrap">
             <input class="range-input" type="range" name="cool_min" id="cool-min"
                    min="{{ cool_min_bound }}" max="{{ cool_max_bound }}" step="1" value="{{ bed.cool_min }}"
-                   data-value-target="cool-min-value" data-suffix=" min"
+                   data-value-target="cool-min-value" data-suffix=" мин"
                    style="--fill: {{ ((bed.cool_min - cool_min_bound) / (cool_max_bound - cool_min_bound) * 100) }}%">
           </div>
         </div>
       </div>
 
       <label class="field">
-        <span class="field__label">Controller address</span>
+        <span class="field__label">Адрес на контролера</span>
         <div class="controller-picker">
           <input
             class="field__input controller-address-input"
@@ -188,7 +188,7 @@
             id="controller-address"
             min="{{ controller_address_min }}"
             max="{{ demo_address_max }}"
-            placeholder="Not assigned (demo)"
+            placeholder="Не е зададен (демо)"
             value="{{ bed.controller_address if bed.controller_address is not none else '' }}"
           >
           <select
@@ -196,41 +196,41 @@
             id="controller-address-picker"
             data-scan-url="{{ url_for('scan_controllers', bed_id=bed.id) }}"
           >
-            <option value="" selected>Pick from list…</option>
-            <option value="">— Not assigned (demo) —</option>
-            <optgroup label="Demo addresses (simulated, no hardware)">
+            <option value="" selected>Избери от списък…</option>
+            <option value="">— Не е зададен (демо) —</option>
+            <optgroup label="Демо адреси (симулирани, без хардуер)">
               {% for a in range(demo_address_min, demo_address_max + 1) %}
-              <option value="{{ a }}">Demo {{ a }}</option>
+              <option value="{{ a }}">Демо {{ a }}</option>
               {% endfor %}
             </optgroup>
-            <optgroup label="Real controllers (scan to find)" id="controller-real-group"></optgroup>
+            <optgroup label="Реални контролери (сканирай за откриване)" id="controller-real-group"></optgroup>
           </select>
-          <button class="controller-scan-btn" type="button" id="controller-scan-btn" title="Scan the bus for real controllers">
+          <button class="controller-scan-btn" type="button" id="controller-scan-btn" title="Сканирай шината за реални контролери">
             {{ icon('scan', 'controller-scan-icon') }}
           </button>
         </div>
         <span class="field__hint">
-          Type an address directly if you already know it - handy when the controller has no power
-          right now and won't answer a scan. Real controllers live on addresses
-          {{ controller_address_min }}–{{ controller_address_max }} and can also be found by scanning the
-          configured serial port (a few seconds). Demo addresses ({{ demo_address_min }}–{{ demo_address_max }})
-          are simulated in software only, for testing without hardware.
+          Въведете адрес директно, ако вече го знаете - полезно, когато контролерът в момента няма
+          захранване и няма да отговори на сканиране. Реалните контролери са на адреси
+          {{ controller_address_min }}–{{ controller_address_max }} и могат да бъдат открити и чрез
+          сканиране на зададения сериен порт (отнема няколко секунди). Демо адресите
+          ({{ demo_address_min }}–{{ demo_address_max }}) се симулират само софтуерно, за тестване без хардуер.
         </span>
       </label>
 
       <label class="field">
-        <span class="field__label">Picture path</span>
+        <span class="field__label">Път до изображение</span>
         <input class="field__input" type="text" name="picture_path" value="{{ bed.picture_path }}"
-               placeholder="/home/user/images/bed1.jpg or C:\Studio\Images\bed1.jpg">
+               placeholder="/home/user/images/bed1.jpg или C:\Studio\Images\bed1.jpg">
         <span class="field__hint">
-          Browsers can't reveal a full local file path for security reasons, so paste or type it here.
-          Leave empty to use the default illustration.
+          Поради съображения за сигурност браузърите не могат да разкрият пълния локален път до файл,
+          затова го поставете или въведете тук. Оставете празно, за да се използва илюстрацията по подразбиране.
         </span>
       </label>
 
       <button class="action-btn action-btn--start" type="submit">
         {{ icon('check', 'action-icon') }}
-        <span>Save settings</span>
+        <span>Запази настройките</span>
       </button>
     </form>
   </div>

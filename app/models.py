@@ -368,7 +368,7 @@ def set_bed_count(new_count):
                         "INSERT INTO beds (id, number, model, kind, sort_order, "
                         "prep_min, cool_min, picture_path) "
                         "VALUES (?, ?, ?, 'lie', ?, 0, 0, '')",
-                        (bed_id, f"No {bed_id}", "Unconfigured", bed_id),
+                        (bed_id, f"No {bed_id}", "Неконфигуриран", bed_id),
                     )
     finally:
         conn.close()
@@ -401,7 +401,7 @@ def _require_serial_port():
     port = get_serial_port()
     if not port:
         raise controller_link.ControllerLinkError(
-            "No serial port configured - set one on the Studio page."
+            "Не е зададен сериен порт - задайте го в страница Студио."
         )
     return port
 

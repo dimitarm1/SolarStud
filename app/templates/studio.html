@@ -19,19 +19,19 @@
 <section class="view view-detail">
   <a class="back-link" href="{{ url_for('index') }}">
     {{ icon('back', 'back-icon') }}
-    <span>Back</span>
+    <span>Назад</span>
   </a>
 
   <div class="settings-panel settings-panel--static">
-    <h3 class="settings-panel__title">Studio settings</h3>
+    <h3 class="settings-panel__title">Настройки на студиото</h3>
     <p class="settings-hint settings-hint--lead">
-      Choose how many tanning beds appear on the Tanning page.
+      Изберете колко солариумни легла да се показват на страница Солариум.
     </p>
 
     <form class="settings-form" method="post" action="{{ url_for('studio_set_bed_count') }}">
       <div class="slider-field">
         <div class="slider-field__header">
-          <span class="slider-field__label">Number of tanning beds</span>
+          <span class="slider-field__label">Брой солариумни легла</span>
           <span class="slider-field__value" id="bed-count-value">{{ bed_count }}</span>
         </div>
         <div class="slider-field__track-wrap">
@@ -56,34 +56,35 @@
       </div>
 
       <p class="settings-hint">
-        Increasing the count adds new unconfigured beds — open each one to set its name, model,
-        and other details. Decreasing it permanently removes the highest-numbered beds and their session history.
+        Увеличаването на броя добавя нови неконфигурирани легла — отворете всяко от тях, за да зададете
+        име, модел и други детайли. Намаляването трайно премахва леглата с най-висок номер и тяхната
+        история на сесиите.
       </p>
 
       <button class="action-btn action-btn--start" type="submit">
         {{ icon('check', 'action-icon') }}
-        <span>Save</span>
+        <span>Запази</span>
       </button>
     </form>
   </div>
 
   <div class="settings-panel settings-panel--static">
-    <h3 class="settings-panel__title">Controller link</h3>
+    <h3 class="settings-panel__title">Връзка с контролера</h3>
     <p class="settings-hint settings-hint--lead">
-      The serial port used to reach the tanning bed controllers (wired or via an HC-12
-      wireless link), at 1200 baud — see protocol.md for details.
+      Серийният порт, използван за връзка с контролерите на солариумните легла (кабелно или чрез
+      безжична връзка HC-12), на 1200 бода — вижте protocol.md за подробности.
     </p>
 
     <form class="settings-form" method="post" action="{{ url_for('studio_set_serial_port') }}">
       <label class="field">
-        <span class="field__label">Serial port</span>
+        <span class="field__label">Сериен порт</span>
         <input class="field__input" type="text" name="serial_port" value="{{ serial_port }}"
-               placeholder="/dev/ttyUSB0 or COM3">
+               placeholder="/dev/ttyUSB0 или COM3">
       </label>
 
       <button class="action-btn action-btn--start" type="submit">
         {{ icon('check', 'action-icon') }}
-        <span>Save</span>
+        <span>Запази</span>
       </button>
     </form>
   </div>

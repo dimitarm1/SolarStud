@@ -63,12 +63,12 @@
   // session, a locally-pressed Stop, a corrected duration, ...), without
   // needing a page reload to get there.
   const STAGE_ORDER = ["prep", "active", "cooling"];
-  const STAGE_LABELS = { prep: "Preparing", active: "In session", cooling: "Cooling down" };
+  const STAGE_LABELS = { prep: "Подготовка", active: "В сесия", cooling: "Охлаждане" };
   // Stop's behavior mirrors the controller's own physical button: during
   // active it only moves into cooling (the bed needs to cool down, not cut
   // off abruptly), so the label should say that rather than "Stop session"
   // - pressing it again once cooling is the second chance that actually ends it.
-  const STOP_LABELS = { prep: "Stop session", active: "Stop & cool down", cooling: "End session" };
+  const STOP_LABELS = { prep: "Спри сесията", active: "Спри и охлади", cooling: "Прекрати сесията" };
 
   function startCardTicker(el, { onFinish } = {}) {
     if (el._tickerTimer) {
@@ -270,13 +270,15 @@
       controllerPicker.selectedIndex = 0;
     });
 
+    const HW_STATUS_LABELS_BG = { free: "свободен", working: "активен", cooling: "охлаждане", waiting: "подготовка" };
+
     const runScan = async () => {
       if (scanning) return;
       scanned = true;
       setBusy(true);
 
       const placeholder = document.createElement("option");
-      placeholder.textContent = "Scanning bus… (a few seconds)";
+      placeholder.textContent = "Сканиране на шината… (няколко секунди)";
       placeholder.disabled = true;
       realGroup.appendChild(placeholder);
 
@@ -287,12 +289,12 @@
 
         if (!res.ok) {
           const errOpt = document.createElement("option");
-          errOpt.textContent = `Scan failed: ${data.error || res.statusText}`;
+          errOpt.textContent = `Сканирането пропадна: ${data.error || res.statusText}`;
           errOpt.disabled = true;
           realGroup.appendChild(errOpt);
         } else if (!data.controllers || data.controllers.length === 0) {
           const noneOpt = document.createElement("option");
-          noneOpt.textContent = "No controllers responded";
+          noneOpt.textContent = "Няма отговорили контролери";
           noneOpt.disabled = true;
           realGroup.appendChild(noneOpt);
         } else {
@@ -300,10 +302,10 @@
             if (realGroup.querySelector(`option[value="${ctrl.address}"]`)) return;
             const opt = document.createElement("option");
             opt.value = ctrl.address;
-            let label = `Address ${ctrl.address} — ${ctrl.status}`;
-            if (ctrl.remaining_min) label += ` (${ctrl.remaining_min} min)`;
+            let label = `Адрес ${ctrl.address} — ${HW_STATUS_LABELS_BG[ctrl.status] || ctrl.status}`;
+            if (ctrl.remaining_min) label += ` (${ctrl.remaining_min} мин)`;
             if (ctrl.in_use_by_bed_id) {
-              label += ` · already used by bed #${ctrl.in_use_by_bed_id}`;
+              label += ` · вече се използва от легло №${ctrl.in_use_by_bed_id}`;
               opt.disabled = true;
             }
             opt.textContent = label;
@@ -313,7 +315,7 @@
       } catch (err) {
         placeholder.remove();
         const errOpt = document.createElement("option");
-        errOpt.textContent = "Scan failed: network error";
+        errOpt.textContent = "Сканирането пропадна: мрежова грешка";
         errOpt.disabled = true;
         realGroup.appendChild(errOpt);
       } finally {

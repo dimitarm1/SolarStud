@@ -95,7 +95,7 @@ def _open_port(port, timeout):
         ser.setDTR(False)
         ser.setRTS(False)
     except serial.SerialException as exc:
-        raise ControllerLinkError(f"Could not open serial port {port!r}: {exc}") from exc
+        raise ControllerLinkError(f"Неуспешно отваряне на серийния порт {port!r}: {exc}") from exc
     time.sleep(OPEN_SETTLE_SECONDS)
     return ser
 
@@ -186,14 +186,15 @@ def set_time_on(ser, address, pre_min, main_min, cool_min):
     reply = ser.read(1)
     if len(reply) != 1:
         raise SetTimeError(
-            f"No checksum reply from address {address} (expected it right after the cool-time byte)"
+            f"Няма отговор с контролна сума от адрес {address} "
+            f"(очакваше се веднага след байта за време на охлаждане)"
         )
 
     expected_checksum = (pre_min + cool_min - main_bcd - 5) & 0x7F
     if reply[0] != expected_checksum:
         raise SetTimeError(
-            f"Checksum mismatch from address {address}: "
-            f"controller replied 0x{reply[0]:02x}, expected 0x{expected_checksum:02x}"
+            f"Несъответствие в контролната сума от адрес {address}: "
+            f"контролерът отговори 0x{reply[0]:02x}, очакваше се 0x{expected_checksum:02x}"
         )
 
     ser.write(bytes([expected_checksum]))
