@@ -1,5 +1,6 @@
 """SQLite access layer: connections, migrations, backups, and integrity checks."""
 
+import re
 import shutil
 import sqlite3
 import threading
@@ -63,8 +64,25 @@ def _split_statements(sql):
     return [stmt.strip() for stmt in sql.split(";") if stmt.strip()]
 
 
+# `PRAGMA foreign_keys = ON/OFF` is a documented no-op when issued inside a
+# transaction, which matters for a migration that rebuilds a table (SQLite
+# has no ALTER TABLE for changing a CHECK constraint): dropping a table that
+# something else references via FK cascades those rows away unless
+# foreign_keys is OFF *outside* any transaction first. A migration file can
+# contain such a statement; everything around it still runs transactionally,
+# just split into separate runs at each pragma boundary.
+_FK_PRAGMA_RE = re.compile(r"^PRAGMA\s+foreign_keys\s*=\s*(ON|OFF)$", re.IGNORECASE)
+
+
 def run_migrations():
-    """Apply any migration files not yet recorded, each as its own transaction."""
+    """Apply any migration files not yet recorded.
+
+    Each file runs as one atomic transaction, unless it contains a
+    `PRAGMA foreign_keys = ON/OFF` statement - those execute standalone
+    (connections are autocommit by default), splitting the rest of the file
+    into one transaction per run between pragma boundaries. The migration is
+    only recorded as applied once every part has succeeded.
+    """
     conn = get_connection()
     try:
         conn.execute(
@@ -83,9 +101,25 @@ def run_migrations():
             version = path.stem
             if version in applied:
                 continue
-            with transaction(conn):
-                for statement in _split_statements(path.read_text()):
+
+            pending = []
+
+            def flush_pending():
+                if pending:
+                    with transaction(conn):
+                        for stmt in pending:
+                            conn.execute(stmt)
+                    pending.clear()
+
+            for statement in _split_statements(path.read_text()):
+                if _FK_PRAGMA_RE.match(statement):
+                    flush_pending()
                     conn.execute(statement)
+                else:
+                    pending.append(statement)
+            flush_pending()
+
+            with transaction(conn):
                 conn.execute(
                     "INSERT INTO schema_migrations (version, applied_at) VALUES (?, ?)",
                     (version, datetime.now().isoformat(timespec="seconds")),

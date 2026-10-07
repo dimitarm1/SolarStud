@@ -63,7 +63,10 @@ def bed_detail(bed_id):
         cool_min_bound=models.MIN_COOL_MINUTES,
         cool_max_bound=models.MAX_COOL_MINUTES,
         controller_address_min=models.MIN_CONTROLLER_ADDRESS,
-        controller_address_max=models.MAX_CONTROLLER_ADDRESS,
+        controller_address_max=models.MAX_REAL_CONTROLLER_ADDRESS,
+        demo_address_min=models.MIN_DEMO_CONTROLLER_ADDRESS,
+        demo_address_max=models.MAX_CONTROLLER_ADDRESS,
+        hw_error=request.args.get("hw_error"),
     )
 
 
@@ -72,7 +75,10 @@ def start_bed(bed_id):
     if models.get_bed(bed_id) is None:
         abort(404)
     total_min = request.form.get("total_min", type=int, default=models.DEFAULT_SESSION_MINUTES)
-    models.start_session(bed_id, total_min=total_min)
+    try:
+        models.start_session(bed_id, total_min=total_min)
+    except controller_link.ControllerLinkError as exc:
+        return redirect(url_for("bed_detail", bed_id=bed_id, hw_error=str(exc)))
     return redirect(url_for("bed_detail", bed_id=bed_id))
 
 
@@ -80,7 +86,10 @@ def start_bed(bed_id):
 def stop_bed(bed_id):
     if models.get_bed(bed_id) is None:
         abort(404)
-    models.stop_session(bed_id)
+    try:
+        models.stop_session(bed_id)
+    except controller_link.ControllerLinkError as exc:
+        return redirect(url_for("bed_detail", bed_id=bed_id, hw_error=str(exc)))
     return redirect(url_for("bed_detail", bed_id=bed_id))
 
 

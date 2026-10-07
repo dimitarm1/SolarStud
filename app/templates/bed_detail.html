@@ -28,11 +28,28 @@
     </button>
   </div>
 
+  {% if hw_error %}
+  <div class="hw-error-banner" id="hw-error-banner">
+    {{ icon('warning', 'hw-error-icon') }}
+    <span>{{ hw_error }}</span>
+    <button class="hw-error-dismiss" type="button" id="hw-error-dismiss" aria-label="Dismiss">
+      {{ icon('close', 'hw-error-dismiss-icon') }}
+    </button>
+  </div>
+  {% endif %}
+
   <div class="detail-layout">
     {{ bed_illustration(bed, 'detail-illustration') }}
 
     <div class="detail-info">
-      <h2 class="detail-title">{{ bed.number }}</h2>
+      <div class="detail-title-row">
+        <h2 class="detail-title">{{ bed.number }}</h2>
+        {% if bed.is_demo %}
+        <span class="mode-badge mode-badge--demo">Demo</span>
+        {% else %}
+        <span class="mode-badge mode-badge--real">Address {{ bed.controller_address }}</span>
+        {% endif %}
+      </div>
       <p class="detail-model">{{ bed.model }}</p>
 
       {% if bed.status == 'running' %}
@@ -157,18 +174,26 @@
             id="controller-address"
             data-scan-url="{{ url_for('scan_controllers', bed_id=bed.id) }}"
           >
-            <option value="">— Not assigned —</option>
-            {% if bed.controller_address is not none %}
-            <option value="{{ bed.controller_address }}" selected>Address {{ bed.controller_address }} (current)</option>
-            {% endif %}
+            <option value="">— Not assigned (demo) —</option>
+            <optgroup label="Demo addresses (simulated, no hardware)">
+              {% for a in range(demo_address_min, demo_address_max + 1) %}
+              <option value="{{ a }}" {% if bed.controller_address == a %}selected{% endif %}>Demo {{ a }}</option>
+              {% endfor %}
+            </optgroup>
+            <optgroup label="Real controllers (scan to find)" id="controller-real-group">
+              {% if bed.controller_address is not none and bed.controller_address <= controller_address_max %}
+              <option value="{{ bed.controller_address }}" selected>Address {{ bed.controller_address }} (current)</option>
+              {% endif %}
+            </optgroup>
           </select>
-          <button class="controller-scan-btn" type="button" id="controller-scan-btn" title="Scan the bus for controllers">
+          <button class="controller-scan-btn" type="button" id="controller-scan-btn" title="Scan the bus for real controllers">
             {{ icon('scan', 'controller-scan-icon') }}
           </button>
         </div>
         <span class="field__hint">
-          Scans addresses {{ controller_address_min }}–{{ controller_address_max }} on the configured serial
-          port and lists every controller that responds. A scan takes a few seconds.
+          Real controllers live on addresses {{ controller_address_min }}–{{ controller_address_max }} and are
+          found by scanning the configured serial port (a few seconds). Demo addresses
+          ({{ demo_address_min }}–{{ demo_address_max }}) are simulated in software only, for testing without hardware.
         </span>
       </label>
 

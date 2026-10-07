@@ -24,6 +24,10 @@ MAX_ADDRESS = 14  # address 15 behaves differently internally in the firmware - 
 
 BAUD_RATE = 1200
 CMD_STATUS = 0
+CMD_START = 1  # not used - see protocol.md §4.2, it's firmware-marked test-only
+CMD_SET_PRE_TIME = 2
+CMD_SET_COOL_TIME = 3
+CMD_SET_MAIN_TIME = 5
 
 STATUS_NAMES = {0: "free", 1: "working", 2: "cooling", 3: "waiting"}
 
@@ -38,8 +42,17 @@ class ControllerLinkError(Exception):
     """The serial port could not be opened or used."""
 
 
+class SetTimeError(ControllerLinkError):
+    """The Set-Time handshake didn't complete - no/garbled checksum reply,
+    or the controller's checksum didn't match what we computed locally."""
+
+
 def _command_byte(address, command):
     return 0x80 | ((address & 0x0F) << 3) | (command & 0x07)
+
+
+def _to_bcd(value):
+    return (value % 10) | (((value // 10) % 10) << 4)
 
 
 def _decode_status_reply(byte_value):
@@ -120,3 +133,49 @@ def scan(port, addresses=None, timeout=DEFAULT_REPLY_TIMEOUT, retries=SCAN_RETRI
         finally:
             ser.close()
     return found
+
+
+def set_time_on(ser, address, pre_min, main_min, cool_min):
+    """Run the checksummed Set-Time handshake on an already-open, settled
+    port (protocol.md §5) - the real start/stop mechanism: non-zero values
+    start a session, all zeros stop one.
+
+    Raises SetTimeError if the controller didn't reply, or replied with a
+    checksum that doesn't match what we computed locally (in which case we
+    deliberately don't echo it back blindly - nothing is committed on the
+    controller's side unless the echo matches its own computation).
+    """
+    pre_min = pre_min & 0x7F
+    cool_min = cool_min & 0x7F
+    main_bcd = _to_bcd(main_min) & 0x7F
+
+    ser.reset_input_buffer()
+    ser.write(bytes([_command_byte(address, CMD_SET_PRE_TIME), pre_min]))
+    ser.write(bytes([_command_byte(address, CMD_SET_MAIN_TIME), main_bcd]))
+    ser.write(bytes([_command_byte(address, CMD_SET_COOL_TIME), cool_min]))
+
+    reply = ser.read(1)
+    if len(reply) != 1:
+        raise SetTimeError(
+            f"No checksum reply from address {address} (expected it right after the cool-time byte)"
+        )
+
+    expected_checksum = (pre_min + cool_min - main_bcd - 5) & 0x7F
+    if reply[0] != expected_checksum:
+        raise SetTimeError(
+            f"Checksum mismatch from address {address}: "
+            f"controller replied 0x{reply[0]:02x}, expected 0x{expected_checksum:02x}"
+        )
+
+    ser.write(bytes([expected_checksum]))
+
+
+def set_time(port, address, pre_min, main_min, cool_min, timeout=DEFAULT_REPLY_TIMEOUT):
+    """Open a connection, run the Set-Time handshake for one address, and
+    close it again. Raises SetTimeError on any failure - see set_time_on."""
+    with _lock:
+        ser = _open_port(port, timeout)
+        try:
+            set_time_on(ser, address, pre_min, main_min, cool_min)
+        finally:
+            ser.close()

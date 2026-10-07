@@ -83,6 +83,12 @@
   <path d="M5.8 5.8a9 9 0 0 1 12.4 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
   <path d="M15.5 15.5a5 5 0 0 1-7 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity="0.4"/>
 </svg>
+{%- elif name == 'warning' -%}
+<svg class="{{ cls }}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M12 3.5 21.5 20h-19Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+  <line x1="12" y1="9.5" x2="12" y2="14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+  <circle cx="12" cy="16.8" r="1" fill="currentColor"/>
+</svg>
 {%- endif -%}
 {% endmacro %}
 

@@ -5,8 +5,14 @@ from datetime import datetime
 import controller_link
 import db
 
+# Addresses 0-14 are real physical bus addresses (see controller_link /
+# protocol.md; 15 is reserved - the firmware logs it differently
+# internally). 16-32 are app-only "demo" addresses: never sent over the
+# wire, just a marker meaning "simulate this bed, no real hardware".
 MIN_CONTROLLER_ADDRESS = controller_link.MIN_ADDRESS
-MAX_CONTROLLER_ADDRESS = controller_link.MAX_ADDRESS
+MAX_REAL_CONTROLLER_ADDRESS = controller_link.MAX_ADDRESS
+MIN_DEMO_CONTROLLER_ADDRESS = 16
+MAX_CONTROLLER_ADDRESS = 32
 
 MIN_SESSION_MINUTES = 1
 MAX_SESSION_MINUTES = 35
@@ -86,6 +92,7 @@ def _picture_src(bed_id, picture_path):
 def _serialize(bed_row, session_row):
     bed = dict(bed_row)
     bed["picture_src"] = _picture_src(bed_row["id"], bed_row["picture_path"])
+    bed["is_demo"] = is_demo_address(bed_row["controller_address"])
     if session_row is not None:
         stage, remaining_min = _stage_and_remaining(session_row)
         bed["status"] = "running"
@@ -129,6 +136,25 @@ def _strip_wrapping_quotes(text):
     return text
 
 
+def _clamp_controller_address(value):
+    value = int(value)
+    if value < MIN_CONTROLLER_ADDRESS:
+        return MIN_CONTROLLER_ADDRESS
+    if value > MAX_CONTROLLER_ADDRESS:
+        return MAX_CONTROLLER_ADDRESS
+    if MAX_REAL_CONTROLLER_ADDRESS < value < MIN_DEMO_CONTROLLER_ADDRESS:
+        # Address 15 is reserved and not a valid choice either side of the
+        # gap - fall back to the nearest real address rather than erroring.
+        return MAX_REAL_CONTROLLER_ADDRESS
+    return value
+
+
+def is_demo_address(controller_address):
+    """True if this address means 'simulate, no real hardware' - i.e. it's
+    unset, or in the 16-32 demo range. False only for a real 0-14 address."""
+    return controller_address is None or controller_address >= MIN_DEMO_CONTROLLER_ADDRESS
+
+
 def update_bed_settings(bed_id, number, model, prep_min, cool_min, picture_path,
                          controller_address=""):
     prep_min = max(MIN_PREP_MINUTES, min(MAX_PREP_MINUTES, int(prep_min)))
@@ -141,12 +167,7 @@ def update_bed_settings(bed_id, number, model, prep_min, cool_min, picture_path,
     model = (model or "").strip()
 
     controller_address = str(controller_address).strip()
-    if controller_address == "":
-        controller_address = None
-    else:
-        controller_address = max(
-            MIN_CONTROLLER_ADDRESS, min(MAX_CONTROLLER_ADDRESS, int(controller_address))
-        )
+    controller_address = None if controller_address == "" else _clamp_controller_address(controller_address)
 
     conn = db.get_connection()
     try:
@@ -245,19 +266,41 @@ def set_serial_port(port):
 
 # --- sessions ------------------------------------------------------------
 
+def _require_serial_port():
+    port = get_serial_port()
+    if not port:
+        raise controller_link.ControllerLinkError(
+            "No serial port configured - set one on the Studio page."
+        )
+    return port
+
+
 def start_session(bed_id, total_min=DEFAULT_SESSION_MINUTES):
+    """Start a session. For a bed on a real controller address (0-14) this
+    only commits once the controller has confirmed the Set-Time handshake
+    (protocol.md §5) - if that fails, nothing is written and the exception
+    propagates so the caller can surface it, rather than showing a session
+    as running when the physical bed never got the command."""
     total_min = max(MIN_SESSION_MINUTES, min(MAX_SESSION_MINUTES, int(total_min)))
     conn = db.get_connection()
     try:
         _reap_finished_sessions(conn, bed_id)
         with db.transaction(conn):
             bed = conn.execute(
-                "SELECT id, prep_min, cool_min FROM beds WHERE id = ?", (bed_id,)
+                "SELECT id, prep_min, cool_min, controller_address FROM beds WHERE id = ?",
+                (bed_id,),
             ).fetchone()
             if bed is None:
                 raise ValueError(f"Unknown bed id {bed_id}")
             if _current_session(conn, bed_id) is not None:
                 return  # a session is already running, nothing to do
+
+            if not is_demo_address(bed["controller_address"]):
+                port = _require_serial_port()
+                controller_link.set_time(
+                    port, bed["controller_address"], bed["prep_min"], total_min, bed["cool_min"]
+                )
+
             conn.execute(
                 "INSERT INTO sessions (bed_id, started_at, total_min, prep_min, cool_min, status) "
                 "VALUES (?, ?, ?, ?, ?, 'running')",
@@ -274,9 +317,23 @@ def start_session(bed_id, total_min=DEFAULT_SESSION_MINUTES):
 
 
 def stop_session(bed_id):
+    """Stop a session. Symmetric with start_session: for a real controller,
+    the DB is only updated once the all-zero Set-Time handshake is
+    confirmed, so the UI never claims "stopped" while the physical bed
+    might still be running."""
     conn = db.get_connection()
     try:
         with db.transaction(conn):
+            bed = conn.execute(
+                "SELECT controller_address FROM beds WHERE id = ?", (bed_id,)
+            ).fetchone()
+            if bed is None:
+                raise ValueError(f"Unknown bed id {bed_id}")
+
+            if not is_demo_address(bed["controller_address"]):
+                port = _require_serial_port()
+                controller_link.set_time(port, bed["controller_address"], 0, 0, 0)
+
             conn.execute(
                 "UPDATE sessions SET status = 'stopped', ended_at = ? "
                 "WHERE bed_id = ? AND status = 'running'",

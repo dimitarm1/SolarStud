@@ -128,6 +128,7 @@
   const controllerSelect = document.getElementById("controller-address");
   const controllerScanBtn = document.getElementById("controller-scan-btn");
   if (controllerSelect) {
+    const realGroup = document.getElementById("controller-real-group") || controllerSelect;
     let scanned = false;
     let scanning = false;
 
@@ -149,7 +150,7 @@
       placeholder.textContent = "Scanning bus… (a few seconds)";
       placeholder.disabled = true;
       placeholder.selected = true;
-      controllerSelect.appendChild(placeholder);
+      realGroup.appendChild(placeholder);
 
       try {
         const res = await fetch(controllerSelect.dataset.scanUrl);
@@ -160,15 +161,15 @@
           const errOpt = document.createElement("option");
           errOpt.textContent = `Scan failed: ${data.error || res.statusText}`;
           errOpt.disabled = true;
-          controllerSelect.appendChild(errOpt);
+          realGroup.appendChild(errOpt);
         } else if (!data.controllers || data.controllers.length === 0) {
           const noneOpt = document.createElement("option");
           noneOpt.textContent = "No controllers responded";
           noneOpt.disabled = true;
-          controllerSelect.appendChild(noneOpt);
+          realGroup.appendChild(noneOpt);
         } else {
           data.controllers.forEach((ctrl) => {
-            if (controllerSelect.querySelector(`option[value="${ctrl.address}"]`)) return;
+            if (realGroup.querySelector(`option[value="${ctrl.address}"]`)) return;
             const opt = document.createElement("option");
             opt.value = ctrl.address;
             let label = `Address ${ctrl.address} — ${ctrl.status}`;
@@ -178,7 +179,7 @@
               opt.disabled = true;
             }
             opt.textContent = label;
-            controllerSelect.appendChild(opt);
+            realGroup.appendChild(opt);
           });
         }
       } catch (err) {
@@ -186,7 +187,7 @@
         const errOpt = document.createElement("option");
         errOpt.textContent = "Scan failed: network error";
         errOpt.disabled = true;
-        controllerSelect.appendChild(errOpt);
+        realGroup.appendChild(errOpt);
       } finally {
         setBusy(false);
         if (controllerSelect.showPicker) {
@@ -205,5 +206,12 @@
     if (controllerScanBtn) {
       controllerScanBtn.addEventListener("click", runScan);
     }
+  }
+
+  // Hardware-error banner dismiss (set via ?hw_error= on the bed detail page)
+  const hwErrorDismiss = document.getElementById("hw-error-dismiss");
+  const hwErrorBanner = document.getElementById("hw-error-banner");
+  if (hwErrorDismiss && hwErrorBanner) {
+    hwErrorDismiss.addEventListener("click", () => hwErrorBanner.remove());
   }
 })();
