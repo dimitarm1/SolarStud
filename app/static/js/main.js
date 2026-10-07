@@ -56,14 +56,25 @@
     });
   }
 
-  // Phase-aware countdown: preparation -> active tanning -> cooling
+  // Phase-aware countdown: preparation -> active tanning -> cooling.
+  // startCardTicker is reusable so the main-screen poll below can restart a
+  // card's ticker with fresh numbers whenever the server reports something
+  // the local countdown couldn't have known on its own (a locally-started
+  // session, a locally-pressed Stop, a corrected duration, ...), without
+  // needing a page reload to get there.
   const STAGE_ORDER = ["prep", "active", "cooling"];
   const STAGE_LABELS = { prep: "Preparing", active: "In session", cooling: "Cooling down" };
 
-  document.querySelectorAll(".js-countdown").forEach((el) => {
+  function startCardTicker(el, { onFinish } = {}) {
+    if (el._tickerTimer) {
+      clearInterval(el._tickerTimer);
+      el._tickerTimer = null;
+    }
+
     const remainingText = el.querySelector(".remaining-text");
     const fill = el.querySelector(".progress-fill");
     const badge = el.querySelector(".status-badge");
+    const skipPrepBtn = el.querySelector("#skip-prep-btn");
 
     const durations = {
       prep: parseFloat(el.dataset.prepMin || "0"),
@@ -72,8 +83,6 @@
     };
     let stage = el.dataset.stage;
     let remainingSec = parseFloat(el.dataset.remainingMin || "0") * 60;
-
-    const skipPrepBtn = el.querySelector("#skip-prep-btn");
 
     function applyStageClasses() {
       el.classList.remove("phase-prep", "phase-active", "phase-cooling");
@@ -104,7 +113,7 @@
     applyStageClasses();
     render();
 
-    const timer = setInterval(() => {
+    el._tickerTimer = setInterval(() => {
       remainingSec -= 1;
       if (remainingSec <= 0) {
         let nextIndex = STAGE_ORDER.indexOf(stage) + 1;
@@ -112,11 +121,12 @@
           nextIndex += 1;
         }
         if (nextIndex >= STAGE_ORDER.length) {
-          clearInterval(timer);
+          clearInterval(el._tickerTimer);
+          el._tickerTimer = null;
           remainingSec = 0;
           render();
-          // Session finished server-side too; reload to pick up the idle state.
-          setTimeout(() => window.location.reload(), 600);
+          el.classList.remove("js-countdown");
+          if (onFinish) onFinish();
           return;
         }
         stage = STAGE_ORDER[nextIndex];
@@ -125,26 +135,126 @@
       }
       render();
     }, 1000);
+  }
+
+  document.querySelectorAll(".js-countdown").forEach((el) => {
+    const isIndexCard = el.classList.contains("bed-card");
+    startCardTicker(el, {
+      // The bed detail page has no live-patch system of its own - reload to
+      // pick up the now-idle controls. An index card just needs to look
+      // idle; the poll below will confirm (or correct) it within seconds.
+      onFinish: isIndexCard
+        ? () => {
+            el.classList.remove("phase-prep", "phase-active", "phase-cooling");
+            const footer = el.querySelector(".bed-card__footer");
+            if (footer) footer.hidden = true;
+          }
+        : () => setTimeout(() => window.location.reload(), 600),
+    });
   });
 
-  // Controller address picker: scans the serial bus (0-14) and fills the
-  // dropdown with whatever responds, instead of requiring the address to be
-  // known ahead of time.
-  const controllerSelect = document.getElementById("controller-address");
+  // Main screen live refresh: the controllers have their own physical
+  // buttons, so a session can be set/started/stopped directly on a unit
+  // with no PC involved at all. Poll the lightweight status endpoint often
+  // and patch only the cards that actually changed, rather than reloading
+  // the whole page on a timer - a full reload every few seconds would be
+  // its own kind of annoying. A fetch() to our own server is cheap, so this
+  // can run often; the real cost (talking to hardware) is throttled
+  // server-side instead (see models.py), adaptively, based on how long
+  // that actually takes - so this just needs to ask frequently and let the
+  // server decide how fresh an answer it can afford to give.
+  const bedGrid = document.querySelector(".bed-grid");
+  if (bedGrid) {
+    const STATUS_POLL_MS = 1000;
+    const DRIFT_TOLERANCE_MIN = 1;
+
+    function applyBedState(card, bed) {
+      const footer = card.querySelector(".bed-card__footer");
+      const nowRunning = bed.status === "running";
+
+      if (nowRunning) {
+        card.classList.add("js-countdown");
+        card.dataset.stage = bed.stage;
+        card.dataset.remainingMin = bed.remaining_min;
+        card.dataset.prepMin = bed.prep_min_session;
+        card.dataset.activeMin = bed.active_min_session;
+        card.dataset.coolMin = bed.cool_min_session;
+        if (footer) footer.hidden = false;
+        startCardTicker(card, {
+          onFinish: () => {
+            card.classList.remove("phase-prep", "phase-active", "phase-cooling");
+            if (footer) footer.hidden = true;
+          },
+        });
+      } else {
+        if (card._tickerTimer) {
+          clearInterval(card._tickerTimer);
+          card._tickerTimer = null;
+        }
+        card.classList.remove("js-countdown", "phase-prep", "phase-active", "phase-cooling");
+        delete card.dataset.stage;
+        if (footer) footer.hidden = true;
+      }
+    }
+
+    async function pollStatus() {
+      let data;
+      try {
+        const res = await fetch("/api/status");
+        if (!res.ok) return;
+        data = await res.json();
+      } catch (err) {
+        return; // transient network hiccup - just try again next tick
+      }
+      (data.beds || []).forEach((bed) => {
+        const card = bedGrid.querySelector(`.bed-card[data-bed-id="${bed.id}"]`);
+        if (!card) return;
+        const currentStage = card.dataset.stage || null;
+        const currentRemaining = Number(card.dataset.remainingMin || 0);
+        const newStage = bed.status === "running" ? bed.stage : null;
+        const stageChanged = currentStage !== newStage;
+        const driftedTooFar = Math.abs(currentRemaining - (bed.remaining_min || 0)) > DRIFT_TOLERANCE_MIN;
+        // Only touch a card when something meaningful actually changed -
+        // most polls should be visually silent, letting the local ticker
+        // keep counting smoothly rather than fighting it every 3 seconds.
+        if (stageChanged || driftedTooFar) {
+          applyBedState(card, bed);
+        }
+      });
+    }
+
+    setInterval(pollStatus, STATUS_POLL_MS);
+  }
+
+  // Controller address: a plain number input is the field that actually
+  // gets submitted, so an address can always be typed directly (e.g. the
+  // controller is known but currently unpowered, so it won't answer a
+  // scan). The select next to it is just a convenience picker - scanning
+  // the serial bus (0-14) fills it with whatever responds, and choosing an
+  // option there copies the value into the real input.
+  const controllerInput = document.getElementById("controller-address");
+  const controllerPicker = document.getElementById("controller-address-picker");
   const controllerScanBtn = document.getElementById("controller-scan-btn");
-  if (controllerSelect) {
-    const realGroup = document.getElementById("controller-real-group") || controllerSelect;
+  if (controllerInput && controllerPicker) {
+    const realGroup = document.getElementById("controller-real-group") || controllerPicker;
     let scanned = false;
     let scanning = false;
 
     const setBusy = (busy) => {
       scanning = busy;
-      controllerSelect.disabled = busy;
+      controllerPicker.disabled = busy;
       if (controllerScanBtn) {
         controllerScanBtn.disabled = busy;
         controllerScanBtn.classList.toggle("controller-scan-btn--busy", busy);
       }
     };
+
+    controllerPicker.addEventListener("change", () => {
+      if (controllerPicker.value !== "") {
+        controllerInput.value = controllerPicker.value;
+      }
+      controllerPicker.selectedIndex = 0;
+    });
 
     const runScan = async () => {
       if (scanning) return;
@@ -154,11 +264,10 @@
       const placeholder = document.createElement("option");
       placeholder.textContent = "Scanning bus… (a few seconds)";
       placeholder.disabled = true;
-      placeholder.selected = true;
       realGroup.appendChild(placeholder);
 
       try {
-        const res = await fetch(controllerSelect.dataset.scanUrl);
+        const res = await fetch(controllerPicker.dataset.scanUrl);
         const data = await res.json();
         placeholder.remove();
 
@@ -195,9 +304,9 @@
         realGroup.appendChild(errOpt);
       } finally {
         setBusy(false);
-        if (controllerSelect.showPicker) {
+        if (controllerPicker.showPicker) {
           try {
-            controllerSelect.showPicker();
+            controllerPicker.showPicker();
           } catch (err) {
             // ignore - user can just open the (now populated) select themselves
           }
@@ -205,7 +314,7 @@
       }
     };
 
-    controllerSelect.addEventListener("focus", () => {
+    controllerPicker.addEventListener("focus", () => {
       if (!scanned) runScan();
     });
     if (controllerScanBtn) {

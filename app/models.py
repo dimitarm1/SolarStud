@@ -1,5 +1,6 @@
 """Domain queries for beds, studio settings, and tanning sessions."""
 
+import time
 from datetime import datetime, timedelta
 
 import controller_link
@@ -78,6 +79,123 @@ def _current_session(conn, bed_id):
     ).fetchone()
 
 
+# The controllers have their own physical buttons - a session can be set,
+# started, or stopped directly on the unit with no PC involved at all. For a
+# real (non-demo) bed, the DB's own session timer can silently go stale the
+# moment someone does that, so before trusting it for display we check it
+# against what the hardware actually reports right now and correct it if
+# they've drifted apart.
+_LIVE_STAGE_MAP = {"free": None, "waiting": "prep", "working": "active", "cooling": "cooling"}
+RECONCILE_DRIFT_TOLERANCE_MIN = 2
+
+
+def _started_at_for(stage, remaining_min, prep_min, total_min, cool_min, now):
+    """Inverse of _stage_and_remaining: the started_at that would make a
+    session's elapsed-time computation land exactly on (stage, remaining)."""
+    if stage == "prep":
+        elapsed = max(0, prep_min - remaining_min)
+    elif stage == "active":
+        elapsed = prep_min + max(0, total_min - remaining_min)
+    else:  # cooling
+        elapsed = prep_min + total_min + max(0, cool_min - remaining_min)
+    return now - timedelta(minutes=elapsed)
+
+
+def _reconcile_with_hardware(conn, bed_row, live):
+    """Bring a real bed's DB session state back in sync with what the
+    controller just reported, if they've drifted apart. A no-op when the
+    hardware couldn't be reached this round (`live` is None) - we just fall
+    back to whatever the DB last knew rather than erroring the whole page."""
+    if live is None:
+        return
+    live_stage = _LIVE_STAGE_MAP.get(live["status"])
+    session = _current_session(conn, bed_row["id"])
+    db_stage, db_remaining = (None, 0)
+    if session is not None:
+        db_stage, db_remaining = _stage_and_remaining(session)
+
+    if db_stage == live_stage and abs(db_remaining - live["remaining_min"]) <= RECONCILE_DRIFT_TOLERANCE_MIN:
+        return  # close enough - don't rewrite on every poll over tiny clock drift
+
+    with db.transaction(conn):
+        now = datetime.now()
+        if session is not None:
+            conn.execute(
+                "UPDATE sessions SET status = 'stopped', ended_at = ? WHERE id = ?",
+                (now.isoformat(timespec="seconds"), session["id"]),
+            )
+        if live_stage is not None:
+            remaining = live["remaining_min"]
+            # The controller may have been started locally using its own
+            # stored prep/cool presets, which can differ from this bed's
+            # configured values here - clamp so the reported remaining time
+            # always fits inside the phase we're about to record, or the
+            # elapsed-time math below would place it past the end of that
+            # phase entirely.
+            prep_min = max(bed_row["prep_min"], remaining) if live_stage == "prep" else bed_row["prep_min"]
+            cool_min = max(bed_row["cool_min"], remaining) if live_stage == "cooling" else bed_row["cool_min"]
+            # The active-phase duration is only ever learned by observing it
+            # directly - while still in prep we don't know it yet, so assume
+            # the app's own default until a later poll catches it in "active"
+            # and can read the real figure off the remaining-time itself.
+            total_min = remaining if live_stage == "active" else DEFAULT_SESSION_MINUTES
+            started_at = _started_at_for(live_stage, remaining, prep_min, total_min, cool_min, now)
+            conn.execute(
+                "INSERT INTO sessions (bed_id, started_at, total_min, prep_min, cool_min, status) "
+                "VALUES (?, ?, ?, ?, ?, 'running')",
+                (bed_row["id"], started_at.isoformat(timespec="seconds"), total_min, prep_min, cool_min),
+            )
+
+
+# The client can poll for status as often as it likes (see index.html's
+# fast in-place refresh) without that translating into hammering the shared
+# half-duplex serial bus: actual hardware queries are rate-limited here,
+# independent of request frequency, so a burst of requests (multiple tabs,
+# a bed-detail view open alongside the main screen, ...) just reuses
+# whatever the most recent real check found.
+#
+# The gap is adaptive rather than a flat guess: it's derived from how long
+# the last real poll actually took (query_many shares one connection across
+# every real bed, so that's ~200ms settle once per batch, not per bed, plus
+# ~200ms round trip per bed - measured against real hardware, see
+# controller_link.py). A one- or two-bed studio ends up polling roughly
+# twice a second; a fuller one backs off automatically rather than letting
+# polls pile up on the shared bus.
+_last_hw_poll_monotonic = 0.0
+_last_hw_poll_duration = 0.0
+HW_POLL_MIN_GAP_SECONDS = 0.5  # floor, so even one fast-responding bed doesn't get hit back-to-back
+HW_POLL_SAFETY_FACTOR = 1.5  # headroom above the last measured poll duration
+
+
+def _reconcile_real_beds(conn, bed_rows):
+    """Query live status for every real bed in one shared connection and
+    reconcile each against the DB. Best-effort: if the port is unconfigured
+    or unreachable, or hardware was already checked too recently, every
+    real bed just falls back to its last-known DB state for this round."""
+    global _last_hw_poll_monotonic, _last_hw_poll_duration
+    real_beds = [b for b in bed_rows if not is_demo_address(b["controller_address"])]
+    if not real_beds:
+        return
+    now = time.monotonic()
+    required_gap = max(HW_POLL_MIN_GAP_SECONDS, _last_hw_poll_duration * HW_POLL_SAFETY_FACTOR)
+    if now - _last_hw_poll_monotonic < required_gap:
+        return
+    port = get_serial_port()
+    if not port:
+        return
+    _last_hw_poll_monotonic = now
+    try:
+        live_results = controller_link.query_many(
+            port, [b["controller_address"] for b in real_beds]
+        )
+    except controller_link.ControllerLinkError:
+        return
+    finally:
+        _last_hw_poll_duration = time.monotonic() - now
+    for bed in real_beds:
+        _reconcile_with_hardware(conn, bed, live_results.get(bed["controller_address"]))
+
+
 def _picture_src(bed_id, picture_path):
     path = (picture_path or "").strip()
     if not path:
@@ -114,6 +232,7 @@ def list_beds():
     try:
         _reap_finished_sessions(conn)
         beds = conn.execute("SELECT * FROM beds ORDER BY sort_order").fetchall()
+        _reconcile_real_beds(conn, beds)
         return [_serialize(bed, _current_session(conn, bed["id"])) for bed in beds]
     finally:
         conn.close()
@@ -126,6 +245,7 @@ def get_bed(bed_id):
         bed = conn.execute("SELECT * FROM beds WHERE id = ?", (bed_id,)).fetchone()
         if bed is None:
             return None
+        _reconcile_real_beds(conn, [bed])
         return _serialize(bed, _current_session(conn, bed_id))
     finally:
         conn.close()

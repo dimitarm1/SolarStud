@@ -108,6 +108,23 @@ def query_status(port, address, timeout=DEFAULT_REPLY_TIMEOUT):
             ser.close()
 
 
+def query_many(port, addresses, timeout=DEFAULT_REPLY_TIMEOUT):
+    """Query several addresses on one open connection - for status polling
+    across multiple real beds, this avoids paying OPEN_SETTLE_SECONDS again
+    for every single one. No retries (this is a routine poll, not a
+    discovery scan): a miss just means that bed's status falls back to
+    whatever the caller already knows.
+
+    Returns {address: {"status", "remaining_min"} or None}.
+    """
+    with _lock:
+        ser = _open_port(port, timeout)
+        try:
+            return {address: query_status_on(ser, address) for address in addresses}
+        finally:
+            ser.close()
+
+
 def scan(port, addresses=None, timeout=DEFAULT_REPLY_TIMEOUT, retries=SCAN_RETRIES):
     """Poll each address in turn on one open connection.
 

@@ -176,32 +176,40 @@
       <label class="field">
         <span class="field__label">Controller address</span>
         <div class="controller-picker">
-          <select
-            class="field__input controller-select"
+          <input
+            class="field__input controller-address-input"
+            type="number"
             name="controller_address"
             id="controller-address"
+            min="{{ controller_address_min }}"
+            max="{{ demo_address_max }}"
+            placeholder="Not assigned (demo)"
+            value="{{ bed.controller_address if bed.controller_address is not none else '' }}"
+          >
+          <select
+            class="controller-picker-select"
+            id="controller-address-picker"
             data-scan-url="{{ url_for('scan_controllers', bed_id=bed.id) }}"
           >
+            <option value="" selected>Pick from list…</option>
             <option value="">— Not assigned (demo) —</option>
             <optgroup label="Demo addresses (simulated, no hardware)">
               {% for a in range(demo_address_min, demo_address_max + 1) %}
-              <option value="{{ a }}" {% if bed.controller_address == a %}selected{% endif %}>Demo {{ a }}</option>
+              <option value="{{ a }}">Demo {{ a }}</option>
               {% endfor %}
             </optgroup>
-            <optgroup label="Real controllers (scan to find)" id="controller-real-group">
-              {% if bed.controller_address is not none and bed.controller_address <= controller_address_max %}
-              <option value="{{ bed.controller_address }}" selected>Address {{ bed.controller_address }} (current)</option>
-              {% endif %}
-            </optgroup>
+            <optgroup label="Real controllers (scan to find)" id="controller-real-group"></optgroup>
           </select>
           <button class="controller-scan-btn" type="button" id="controller-scan-btn" title="Scan the bus for real controllers">
             {{ icon('scan', 'controller-scan-icon') }}
           </button>
         </div>
         <span class="field__hint">
-          Real controllers live on addresses {{ controller_address_min }}–{{ controller_address_max }} and are
-          found by scanning the configured serial port (a few seconds). Demo addresses
-          ({{ demo_address_min }}–{{ demo_address_max }}) are simulated in software only, for testing without hardware.
+          Type an address directly if you already know it - handy when the controller has no power
+          right now and won't answer a scan. Real controllers live on addresses
+          {{ controller_address_min }}–{{ controller_address_max }} and can also be found by scanning the
+          configured serial port (a few seconds). Demo addresses ({{ demo_address_min }}–{{ demo_address_max }})
+          are simulated in software only, for testing without hardware.
         </span>
       </label>
 

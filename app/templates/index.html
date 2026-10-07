@@ -19,6 +19,7 @@
     {% for bed in beds %}
     <a class="bed-card {{ 'js-countdown phase-' + bed.stage if bed.status == 'running' }}"
        href="{{ url_for('bed_detail', bed_id=bed.id) }}"
+       data-bed-id="{{ bed.id }}"
        {% if bed.status == 'running' %}
        data-stage="{{ bed.stage }}"
        data-remaining-min="{{ bed.remaining_min }}"
@@ -31,17 +32,15 @@
         <p>{{ bed.model }}</p>
       </header>
       {{ bed_illustration(bed) }}
-      {% if bed.status == 'running' %}
-      <footer class="bed-card__footer">
+      <footer class="bed-card__footer" {{ 'hidden' if bed.status != 'running' }}>
         <div class="bed-remaining">
           {{ icon('clock', 'remaining-icon') }}
-          <span class="remaining-text">Остават {{ bed.remaining_min }} мин</span>
+          <span class="remaining-text">Остават {{ bed.remaining_min or 0 }} мин</span>
         </div>
         <div class="progress-track">
           <div class="progress-fill"></div>
         </div>
       </footer>
-      {% endif %}
     </a>
     {% endfor %}
   </div>
