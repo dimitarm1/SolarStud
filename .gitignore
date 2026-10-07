@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# Runtime SQLite database and its backups
+data/
