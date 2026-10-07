@@ -68,12 +68,20 @@
         <div class="progress-track">
           <div class="progress-fill"></div>
         </div>
-        <form class="action-form" method="post" action="{{ url_for('stop_bed', bed_id=bed.id) }}">
-          <button class="action-btn action-btn--stop" type="submit">
-            {{ icon('power', 'action-icon') }}
-            <span>Stop session</span>
-          </button>
-        </form>
+        <div class="action-row">
+          <form class="action-form" method="post" action="{{ url_for('skip_prep_bed', bed_id=bed.id) }}">
+            <button class="action-btn action-btn--start" type="submit" id="skip-prep-btn" {% if bed.stage != 'prep' %}disabled{% endif %}>
+              {{ icon('power', 'action-icon') }}
+              <span>Start now</span>
+            </button>
+          </form>
+          <form class="action-form" method="post" action="{{ url_for('stop_bed', bed_id=bed.id) }}">
+            <button class="action-btn action-btn--stop" type="submit">
+              {{ icon('power', 'action-icon') }}
+              <span>Stop session</span>
+            </button>
+          </form>
+        </div>
       </div>
       {% else %}
       <div class="status-panel">

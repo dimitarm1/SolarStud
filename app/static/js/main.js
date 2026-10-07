@@ -73,6 +73,8 @@
     let stage = el.dataset.stage;
     let remainingSec = parseFloat(el.dataset.remainingMin || "0") * 60;
 
+    const skipPrepBtn = el.querySelector("#skip-prep-btn");
+
     function applyStageClasses() {
       el.classList.remove("phase-prep", "phase-active", "phase-cooling");
       el.classList.add(`phase-${stage}`);
@@ -80,6 +82,9 @@
         badge.classList.remove("status-badge--prep", "status-badge--active", "status-badge--cooling");
         badge.classList.add(`status-badge--${stage}`);
         badge.textContent = STAGE_LABELS[stage];
+      }
+      if (skipPrepBtn) {
+        skipPrepBtn.disabled = stage !== "prep";
       }
     }
 

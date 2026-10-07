@@ -1,18 +1,19 @@
 """Domain queries for beds, studio settings, and tanning sessions."""
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import controller_link
 import db
 
 # Addresses 0-14 are real physical bus addresses (see controller_link /
 # protocol.md; 15 is reserved - the firmware logs it differently
-# internally). 16-32 are app-only "demo" addresses: never sent over the
-# wire, just a marker meaning "simulate this bed, no real hardware".
+# internally). 16-21 are app-only "demo" addresses: never sent over the
+# wire, just a marker meaning "simulate this bed, no real hardware". Six is
+# plenty - nobody needs more than a handful of demo beds in practice.
 MIN_CONTROLLER_ADDRESS = controller_link.MIN_ADDRESS
 MAX_REAL_CONTROLLER_ADDRESS = controller_link.MAX_ADDRESS
 MIN_DEMO_CONTROLLER_ADDRESS = 16
-MAX_CONTROLLER_ADDRESS = 32
+MAX_CONTROLLER_ADDRESS = 21
 
 MIN_SESSION_MINUTES = 1
 MAX_SESSION_MINUTES = 35
@@ -338,6 +339,61 @@ def stop_session(bed_id):
                 "UPDATE sessions SET status = 'stopped', ended_at = ? "
                 "WHERE bed_id = ? AND status = 'running'",
                 (datetime.now().isoformat(timespec="seconds"), bed_id),
+            )
+    finally:
+        conn.close()
+
+
+def skip_prep(bed_id):
+    """Skip the remaining preparation time and move straight into the active
+    phase - this is what the controller's own physical Start button does
+    locally while pre_time is still counting down (ProcessButtons() in the
+    firmware just zeroes pre_time and re-evaluates status).
+
+    For a real controller, that same effect is reproduced remotely by
+    re-running the Set-Time handshake with pre=0 and the original
+    main/cool values (the dedicated wire "Start" command only works in a
+    firmware test-only edge case - see protocol.md §4.2 - so it can't be
+    used for this in general). For a demo bed it's a pure DB update: the
+    session's started_at is shifted back by its prep_min, which makes the
+    elapsed-time stage calculation land exactly at the start of the active
+    phase with the full main_min remaining.
+
+    A no-op if the bed isn't currently in its preparation phase.
+    """
+    conn = db.get_connection()
+    try:
+        with db.transaction(conn):
+            bed = conn.execute(
+                "SELECT controller_address FROM beds WHERE id = ?", (bed_id,)
+            ).fetchone()
+            if bed is None:
+                raise ValueError(f"Unknown bed id {bed_id}")
+
+            session = _current_session(conn, bed_id)
+            if session is None:
+                return
+            stage, _ = _stage_and_remaining(session)
+            if stage != "prep":
+                return
+
+            if not is_demo_address(bed["controller_address"]):
+                port = _require_serial_port()
+                controller_link.set_time(
+                    port,
+                    bed["controller_address"],
+                    0,
+                    session["total_min"],
+                    session["cool_min"],
+                )
+
+            # Rewind started_at so elapsed time already equals prep_min
+            # exactly - i.e. "preparation just finished", landing at the
+            # very start of the active phase with the full main_min left.
+            new_started_at = datetime.now() - timedelta(minutes=session["prep_min"])
+            conn.execute(
+                "UPDATE sessions SET started_at = ? WHERE id = ?",
+                (new_started_at.isoformat(timespec="seconds"), session["id"]),
             )
     finally:
         conn.close()

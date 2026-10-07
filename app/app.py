@@ -93,6 +93,17 @@ def stop_bed(bed_id):
     return redirect(url_for("bed_detail", bed_id=bed_id))
 
 
+@app.route("/bed/<int:bed_id>/skip-prep", methods=["POST"])
+def skip_prep_bed(bed_id):
+    if models.get_bed(bed_id) is None:
+        abort(404)
+    try:
+        models.skip_prep(bed_id)
+    except controller_link.ControllerLinkError as exc:
+        return redirect(url_for("bed_detail", bed_id=bed_id, hw_error=str(exc)))
+    return redirect(url_for("bed_detail", bed_id=bed_id))
+
+
 @app.route("/bed/<int:bed_id>/photo")
 def bed_photo(bed_id):
     bed = models.get_bed(bed_id)

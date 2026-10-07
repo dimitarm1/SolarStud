@@ -708,6 +708,13 @@ body {
 
 .action-form {
   margin: 0;
+  flex: 1;
+  min-width: 0;
+}
+
+.action-row {
+  display: flex;
+  gap: 10px;
 }
 
 /* Session length slider */
@@ -879,6 +886,19 @@ body {
 
 .action-btn--start:hover { filter: brightness(1.06); }
 .action-btn--start .action-icon { color: #1a1206; }
+
+.action-btn:disabled,
+.action-btn:disabled:hover {
+  background: var(--surface-2);
+  border-color: var(--border);
+  color: var(--text-faint);
+  cursor: not-allowed;
+  filter: none;
+}
+
+.action-btn:disabled .action-icon {
+  color: var(--text-faint);
+}
 
 .action-btn--stop {
   border-color: var(--danger);
