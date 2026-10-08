@@ -88,6 +88,54 @@
   </div>
 
   <div class="settings-panel settings-panel--static">
+    <h3 class="settings-panel__title">Чип карти (SLE4442)</h3>
+    <p class="settings-hint settings-hint--lead">
+      Четец за чип карти ACS ACR38/ACR30. Балансът се пази директно на картата (съвместимо със
+      старата програма) — изберете четеца и проверете с бутона отдолу, преди да разчитате на него
+      при плащане.
+    </p>
+
+    <form class="settings-form" method="post" action="{{ url_for('studio_set_chip_reader') }}">
+      <label class="field">
+        <span class="field__label">Четец</span>
+        {% if chip_readers %}
+        <select class="field__input" name="chip_reader_name">
+          <option value="">— Автоматично (първия открит) —</option>
+          {% for reader in chip_readers %}
+          <option value="{{ reader }}" {{ 'selected' if reader == chip_reader_name }}>{{ reader }}</option>
+          {% endfor %}
+        </select>
+        {% else %}
+        <input class="field__input" type="text" name="chip_reader_name" value="{{ chip_reader_name }}"
+               placeholder="Не е открит четец — свържете го и презаредете страницата">
+        {% endif %}
+      </label>
+
+      <button class="action-btn action-btn--start" type="submit">
+        {{ icon('check', 'action-icon') }}
+        <span>Запази</span>
+      </button>
+    </form>
+
+    <p class="settings-hint" style="margin-top:20px;">
+      Поставете карта в четеца и натиснете бутона, за да проверите четенето, без да правите продажба.
+    </p>
+    <button class="action-btn" type="button" id="chip-test-read-btn" style="width:auto;">
+      {{ icon('scan', 'action-icon') }}
+      <span>Прочети тестова карта</span>
+    </button>
+    <div id="chip-test-result" class="data-table-wrap" style="margin-top:14px;" hidden>
+      <table class="data-table">
+        <tbody id="chip-test-result-body"></tbody>
+      </table>
+    </div>
+    <div id="chip-test-error" class="hw-error-banner" style="margin-top:14px;" hidden>
+      {{ icon('warning', 'hw-error-icon') }}
+      <span id="chip-test-error-text"></span>
+    </div>
+  </div>
+
+  <div class="settings-panel settings-panel--static">
     <h3 class="settings-panel__title">Опции за презареждане на карти</h3>
     <p class="settings-hint settings-hint--lead">
       Всяка опция е фиксирана сума виртуален кредит, продавана на фиксирана цена в брой.

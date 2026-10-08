@@ -816,4 +816,62 @@
 
     renderBasket();
   }
+
+  // Chip-card test read on the Studio page - lets staff confirm the
+  // reader/card setup actually works before relying on it for payment.
+  const chipTestReadBtn = document.getElementById("chip-test-read-btn");
+  const chipTestResult = document.getElementById("chip-test-result");
+  const chipTestResultBody = document.getElementById("chip-test-result-body");
+  const chipTestError = document.getElementById("chip-test-error");
+  const chipTestErrorText = document.getElementById("chip-test-error-text");
+
+  if (chipTestReadBtn) {
+    const CHIP_FIELD_LABELS = [
+      ["client_name", "Име на клиента"],
+      ["client_number", "Номер на клиента"],
+      ["balance", "Баланс"],
+      ["card_number", "Номер на картата"],
+      ["studio_name", "Студио"],
+      ["studio_number", "Номер на студиото"],
+      ["psc", "PSC"],
+      ["err_counter", "Брояч за грешки"],
+      ["ok", "Статус"],
+    ];
+
+    chipTestReadBtn.addEventListener("click", async () => {
+      chipTestReadBtn.disabled = true;
+      chipTestError.hidden = true;
+      chipTestResult.hidden = true;
+      try {
+        const res = await fetch("/api/chipcard/read");
+        const data = await res.json();
+        if (!data.ok) {
+          chipTestErrorText.textContent = data.error || "Грешка при четене.";
+          chipTestError.hidden = false;
+          return;
+        }
+        chipTestResultBody.innerHTML = "";
+        CHIP_FIELD_LABELS.forEach(([key, label]) => {
+          let value = data.card[key];
+          if (key === "balance") value = value === null ? "— (невалиден)" : `${value.toFixed(2)} лв`;
+          if (key === "client_number" || key === "card_number") value = value === null ? "— (не е зададен)" : value;
+          if (key === "ok") value = value ? "OK" : "ГРЕШКА / заключена";
+          const row = document.createElement("tr");
+          const th = document.createElement("th");
+          th.scope = "row";
+          th.textContent = label;
+          const td = document.createElement("td");
+          td.textContent = value;
+          row.append(th, td);
+          chipTestResultBody.appendChild(row);
+        });
+        chipTestResult.hidden = false;
+      } catch (err) {
+        chipTestErrorText.textContent = "Мрежова грешка при четене на картата.";
+        chipTestError.hidden = false;
+      } finally {
+        chipTestReadBtn.disabled = false;
+      }
+    });
+  }
 })();

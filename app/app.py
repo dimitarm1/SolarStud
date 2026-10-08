@@ -9,6 +9,7 @@ from pathlib import Path
 
 from flask import Flask, abort, jsonify, redirect, render_template, request, send_file, url_for
 
+import chipcard
 import controller_link
 import db
 import models
@@ -182,6 +183,8 @@ def studio():
         recharge_option_bed_prices={
             option["id"]: sales.list_recharge_option_bed_prices(option["id"]) for option in options
         },
+        chip_readers=chipcard.list_readers(),
+        chip_reader_name=models.get_chip_reader_name(),
     )
 
 
@@ -197,6 +200,21 @@ def studio_set_bed_count():
 def studio_set_serial_port():
     models.set_serial_port(request.form.get("serial_port", ""))
     return redirect(url_for("studio"))
+
+
+@app.route("/studio/chip-reader", methods=["POST"])
+def studio_set_chip_reader():
+    models.set_chip_reader_name(request.form.get("chip_reader_name", ""))
+    return redirect(url_for("studio"))
+
+
+@app.route("/api/chipcard/read")
+def chipcard_read():
+    reader_name = models.get_chip_reader_name() or None
+    try:
+        return jsonify({"ok": True, "card": chipcard.read_card(reader_name)})
+    except chipcard.ChipCardError as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 503
 
 
 @app.route("/studio/recharge-options", methods=["POST"])

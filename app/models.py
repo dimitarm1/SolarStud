@@ -400,6 +400,26 @@ def set_serial_port(port):
     return port
 
 
+def get_chip_reader_name():
+    conn = db.get_connection()
+    try:
+        row = conn.execute("SELECT chip_reader_name FROM settings WHERE id = 1").fetchone()
+        return row["chip_reader_name"] if row is not None else ""
+    finally:
+        conn.close()
+
+
+def set_chip_reader_name(name):
+    name = (name or "").strip()
+    conn = db.get_connection()
+    try:
+        with db.transaction(conn):
+            conn.execute("UPDATE settings SET chip_reader_name = ? WHERE id = 1", (name,))
+    finally:
+        conn.close()
+    return name
+
+
 # --- sessions ------------------------------------------------------------
 
 def _require_serial_port():
