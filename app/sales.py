@@ -128,13 +128,36 @@ def _resolve_session_payment(conn, bed_id, total_min, card_id, requested_card_am
 
 def quote_session_payment(bed_id, total_min, card_id=None, requested_card_amount=0):
     """Read-only preview of what a session would cost - used for a live
-    cash-due readout as staff adjusts the duration/card-amount fields."""
+    cash-due readout as staff adjusts the duration/card-amount fields, and
+    to show what a selected card would have left (in money, and converted
+    to minutes at this bed) once this session's card portion is deducted.
+    With requested_card_amount at its default of 0, "after" is simply the
+    card's current state, which is what a freshly-selected card should show
+    before staff have touched the amount slider at all."""
     conn = db.get_connection()
     try:
-        _, card_amount, cash_amount = _resolve_session_payment(
+        allocations, card_amount, cash_amount = _resolve_session_payment(
             conn, bed_id, total_min, card_id, requested_card_amount
         )
-        return {"card_amount": card_amount, "cash_amount": cash_amount}
+        result = {"card_amount": card_amount, "cash_amount": cash_amount}
+        if card_id:
+            bed = conn.execute("SELECT price_per_min FROM beds WHERE id = ?", (bed_id,)).fetchone()
+            flat_price = bed["price_per_min"] if bed is not None else 0
+            alloc_map = dict(allocations)
+            remaining_balance = 0.0
+            remaining_minutes = 0.0
+            for lot in _card_lots_fifo(conn, card_id):
+                remaining = lot["remaining_amount"] - alloc_map.get(lot["id"], 0.0)
+                remaining_balance += remaining
+                # A lot with no rate for this bed (flat price unconfigured,
+                # falls back to 0) can't be expressed in minutes - simplest
+                # to just omit its contribution than claim "infinite".
+                rate = _bed_rate_for_option(conn, lot["recharge_option_id"], bed_id, flat_price)
+                if rate > 0:
+                    remaining_minutes += remaining / rate
+            result["card_balance_after"] = round(remaining_balance, 2)
+            result["card_minutes_after"] = round(remaining_minutes, 1)
+        return result
     finally:
         conn.close()
 

@@ -1440,6 +1440,16 @@ body {
   color: var(--text-dim);
 }
 
+.payment-section__card-balance {
+  margin: 8px 0 16px;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.payment-section__card-balance strong {
+  color: var(--gold);
+}
+
 .payment-card-results {
   width: 100%;
   margin-top: 8px;

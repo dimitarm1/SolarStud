@@ -346,6 +346,17 @@
     if (dismiss) dismiss.addEventListener("click", () => banner.remove());
   });
 
+  // Barcode-scanned fields elsewhere (e.g. pasting a card number while
+  // issuing or editing a card): the scanner's trailing Enter would
+  // otherwise submit that form immediately, possibly before the other
+  // fields (deposit, name, ...) have been filled in. The card-search field
+  // above has its own smarter Enter handling instead of this generic one.
+  document.querySelectorAll(".js-barcode-field").forEach((input) => {
+    input.addEventListener("keydown", (evt) => {
+      if (evt.key === "Enter") evt.preventDefault();
+    });
+  });
+
   // Session payment: a client card is found by typing part of its number,
   // owner name, or phone (a plain <select> of every active card doesn't
   // scale once a studio has issued hundreds of cards - same reasoning as
@@ -360,6 +371,9 @@
   const paymentCardAmountField = document.getElementById("payment-card-amount-field");
   const paymentCardAmountInput = document.getElementById("payment-card-amount");
   const paymentCashDue = document.getElementById("payment-cash-due");
+  const paymentCardBalanceInfo = document.getElementById("payment-card-balance-info");
+  const paymentCardBalanceAmount = document.getElementById("payment-card-balance-amount");
+  const paymentCardBalanceMinutes = document.getElementById("payment-card-balance-minutes");
   const sessionLengthInput = document.getElementById("session-length");
 
   if (
@@ -381,6 +395,16 @@
       paymentCashDue.textContent = `${cash.toFixed(2)} лв`;
     }
 
+    function renderCardBalanceInfo(data) {
+      if (!paymentCardIdInput.value || data.card_balance_after === undefined) {
+        paymentCardBalanceInfo.hidden = true;
+        return;
+      }
+      paymentCardBalanceAmount.textContent = `${data.card_balance_after.toFixed(2)} лв`;
+      paymentCardBalanceMinutes.textContent = `(≈ ${data.card_minutes_after.toFixed(1)} мин на това легло)`;
+      paymentCardBalanceInfo.hidden = false;
+    }
+
     function fetchQuote() {
       if (!bedId) return;
       const cardId = paymentCardIdInput.value;
@@ -397,6 +421,7 @@
           if (!res.ok) return;
           const data = await res.json();
           paymentCashDue.textContent = `${data.cash_amount.toFixed(2)} лв`;
+          renderCardBalanceInfo(data);
         } catch (err) {
           // leave the local estimate in place on a transient network hiccup
         }
@@ -417,6 +442,7 @@
       selectedBalance = 0;
       paymentCardAmountField.hidden = true;
       paymentCardAmountInput.value = 0;
+      paymentCardBalanceInfo.hidden = true;
       updateCardAmountBounds();
       updateCashDueLocally();
       fetchQuote();
@@ -469,6 +495,24 @@
 
     paymentCardSearchInput.addEventListener("focus", () => {
       if (!paymentCardIdInput.value) runCardSearch(paymentCardSearchInput.value.trim());
+    });
+
+    // A barcode reader "types" the card number into whatever field has
+    // focus and finishes with an Enter keystroke - inside this <form>,
+    // that's enough to submit it immediately (starting the session with
+    // whatever was selected, or with nothing) before staff can react.
+    // Swallow that Enter, and since a scanned number almost always narrows
+    // the search to exactly one card, use it to select that card right
+    // away instead - the staff still presses Start themselves.
+    paymentCardSearchInput.addEventListener("keydown", async (evt) => {
+      if (evt.key !== "Enter") return;
+      evt.preventDefault();
+      clearTimeout(searchTimer);
+      await runCardSearch(paymentCardSearchInput.value.trim());
+      const opts = paymentCardResults.options;
+      if (opts.length === 1 && opts[0].value) {
+        selectCard(opts[0]);
+      }
     });
 
     paymentCardResults.addEventListener("change", () => {

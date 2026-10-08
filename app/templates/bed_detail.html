@@ -154,11 +154,17 @@
                 id="payment-card-search"
                 placeholder="Търси по номер, име или телефон — остави празно за плащане само в брой"
                 autocomplete="off"
+                autofocus
                 data-price-per-min="{{ bed.price_per_min }}"
                 data-bed-id="{{ bed.id }}"
               >
               <select class="controller-picker-select payment-card-results" id="payment-card-results" size="6" hidden></select>
             </label>
+
+            <p class="payment-section__card-balance" id="payment-card-balance-info" hidden>
+              Баланс по картата: <strong id="payment-card-balance-amount">0.00 лв</strong>
+              <span id="payment-card-balance-minutes"></span>
+            </p>
 
             <div class="slider-field" id="payment-card-amount-field" hidden>
               <div class="slider-field__header">
