@@ -437,39 +437,61 @@ def start_session(bed_id, total_min=DEFAULT_SESSION_MINUTES):
 
 
 def start_session_with_payment(bed_id, total_min=DEFAULT_SESSION_MINUTES,
-                                card_id=None, requested_card_amount=0):
-    """Start a session, charging it to card balance, cash, or a mix. For a
-    bed on a real controller address (0-14) this only commits once the
-    controller has confirmed the Set-Time handshake (protocol.md §5) - if
-    that fails, nothing is written and the exception propagates so the
-    caller can surface it, rather than showing a session as running when the
-    physical bed never got the command. The card-lot deduction and the
-    session INSERT run in the same transaction (see
-    sales.consume_card_lots_for_minutes), so a mid-way failure never leaves
-    money taken off a card without a session to show for it, or vice versa.
+                                card_id=None, requested_card_amount=0,
+                                chip_amount=0, chip_reader_name=None):
+    """Start a session, charging it to card balance, cash, or a mix - a
+    virtual card (requested_card_amount, deducted from its FIFO lots) or
+    a physical chip card (chip_amount) are mutually exclusive; the
+    caller should only ever supply one. For a bed on a real controller
+    address (0-14) this only commits once the controller has confirmed
+    the Set-Time handshake (protocol.md §5) - if that fails, nothing is
+    written and the exception propagates so the caller can surface it,
+    rather than showing a session as running when the physical bed
+    never got the command.
+
+    Order of operations matters here: the hardware handshake runs
+    *before* a chip card is actually charged, so a dropped HC-12 link or
+    similar never ends up deducting real money for a session the bed
+    never started. A virtual card's lot deduction, by contrast, runs
+    inside the same database transaction as the session row (see
+    sales.consume_card_lots_for_minutes), so it rolls back automatically
+    on any failure, hardware included - a chip card's balance lives on
+    the physical card itself and can't be rolled back that way, which is
+    exactly why it has to go last.
     """
     total_min = max(MIN_SESSION_MINUTES, min(MAX_SESSION_MINUTES, int(total_min)))
+    use_chip = bool(chip_amount) and float(chip_amount) > 0
+
     conn = db.get_connection()
     try:
         _reap_finished_sessions(conn, bed_id)
-        with db.transaction(conn):
-            bed = conn.execute(
-                "SELECT id, prep_min, cool_min, controller_address, price_per_min FROM beds WHERE id = ?",
-                (bed_id,),
-            ).fetchone()
-            if bed is None:
-                raise ValueError(f"Unknown bed id {bed_id}")
-            if _current_session(conn, bed_id) is not None:
-                return  # a session is already running, nothing to do
+        bed = conn.execute(
+            "SELECT id, prep_min, cool_min, controller_address, price_per_min FROM beds WHERE id = ?",
+            (bed_id,),
+        ).fetchone()
+        if bed is None:
+            raise ValueError(f"Unknown bed id {bed_id}")
+        if _current_session(conn, bed_id) is not None:
+            return  # a session is already running, nothing to do
 
-            card_amount, cash_amount = sales.consume_card_lots_for_minutes(
-                conn, bed_id, total_min, card_id, requested_card_amount
+        if not is_demo_address(bed["controller_address"]):
+            port = _require_serial_port()
+            controller_link.set_time(
+                port, bed["controller_address"], bed["prep_min"], total_min, bed["cool_min"]
             )
 
-            if not is_demo_address(bed["controller_address"]):
-                port = _require_serial_port()
-                controller_link.set_time(
-                    port, bed["controller_address"], bed["prep_min"], total_min, bed["cool_min"]
+        chip_result = None
+        if use_chip:
+            chip_result = sales.charge_chip_card_for_session(
+                bed_id, total_min, chip_amount, chip_reader_name
+            )
+
+        with db.transaction(conn):
+            if use_chip:
+                card_amount, cash_amount = chip_result["chip_amount"], chip_result["cash_amount"]
+            else:
+                card_amount, cash_amount = sales.consume_card_lots_for_minutes(
+                    conn, bed_id, total_min, card_id, requested_card_amount
                 )
 
             cur = conn.execute(
@@ -483,14 +505,16 @@ def start_session_with_payment(bed_id, total_min=DEFAULT_SESSION_MINUTES,
                     bed["cool_min"],
                     cash_amount,
                     card_amount,
-                    card_id if card_amount > 0 else None,
+                    card_id if (not use_chip and card_amount > 0) else None,
                 ),
             )
             description = f"Солариум легло №{bed_id}, {total_min} мин"
+            if use_chip:
+                description += f" (чип карта №{chip_result['client_number']})"
             sales.record_sale(
                 conn, "session_payment", description,
                 cash_amount=cash_amount, card_amount=card_amount,
-                bed_id=bed_id, card_id=card_id if card_amount > 0 else None,
+                bed_id=bed_id, card_id=card_id if (not use_chip and card_amount > 0) else None,
                 session_id=cur.lastrowid,
             )
     finally:

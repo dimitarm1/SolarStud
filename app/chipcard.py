@@ -159,24 +159,40 @@ class _Session:
         if name not in names:
             raise ChipCardError(f'Четецът "{name}" не е открит.')
 
-        # 1. Direct connection, so the reader's vendor control channel is
-        #    open even before any card protocol has been negotiated.
-        hresult, self.hcard, _proto = SCardConnect(
-            self.hcontext, name, SCARD_SHARE_DIRECT, 0
+        # The direct-connect / vendor "set card type" IOCTL / reconnect
+        # dance below is an ACS-specific extension (SLE4442.pas:
+        # SLE4442Init) that only ACS's own PC/SC driver implements. A
+        # reader exposed through the generic CCID driver (as is typical
+        # on Linux, and also common with OMNIKEY/ICC-branded readers on
+        # Windows) reports that in its name and doesn't support this
+        # IOCTL at all - sending it anyway fails with "feature not
+        # supported", so skip straight to a normal shared connection,
+        # exactly as the old program did for such readers.
+        name_upper = name.upper()
+        needs_card_type_select = not any(
+            token in name_upper for token in ("CCID", "OMNIKEY", "ICC")
         )
-        if hresult != SCARD_S_SUCCESS:
-            raise ChipCardError("Поставете карта в четеца.")
 
-        # 2. Tell the reader's firmware to treat the card as an SLE4442
-        #    memory card (ACR30/38-specific).
-        hresult, _resp = SCardControl(
-            self.hcard, _IOCTL_SET_CARD_TYPE, _CARD_TYPE_SLE4442
-        )
-        _check(hresult, "задаване на типа на картата")
+        if needs_card_type_select:
+            # 1. Direct connection, so the reader's vendor control channel
+            #    is open even before any card protocol has been negotiated.
+            hresult, self.hcard, _proto = SCardConnect(
+                self.hcontext, name, SCARD_SHARE_DIRECT, 0
+            )
+            if hresult != SCARD_S_SUCCESS:
+                raise ChipCardError("Поставете карта в четеца.")
 
-        # 3. Reconnect in shared mode, as the pseudo-APDU layer expects.
-        hresult = SCardDisconnect(self.hcard, SCARD_UNPOWER_CARD)
-        _check(hresult, "пресвързване с четеца")
+            # 2. Tell the reader's firmware to treat the card as an
+            #    SLE4442 memory card (ACR30/38-specific).
+            hresult, _resp = SCardControl(
+                self.hcard, _IOCTL_SET_CARD_TYPE, _CARD_TYPE_SLE4442
+            )
+            _check(hresult, "задаване на типа на картата")
+
+            # 3. Reconnect in shared mode, as the pseudo-APDU layer expects.
+            hresult = SCardDisconnect(self.hcard, SCARD_UNPOWER_CARD)
+            _check(hresult, "пресвързване с четеца")
+
         hresult, self.hcard, self.protocol = SCardConnect(
             self.hcontext, name, SCARD_SHARE_SHARED,
             SCARD_PROTOCOL_T0 | SCARD_PROTOCOL_T1,

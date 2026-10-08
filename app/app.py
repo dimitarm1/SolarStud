@@ -86,13 +86,15 @@ def start_bed(bed_id):
     total_min = request.form.get("total_min", type=int, default=models.DEFAULT_SESSION_MINUTES)
     card_id = request.form.get("card_id", type=int, default=None)
     card_amount = request.form.get("card_amount", type=float, default=0.0)
+    chip_amount = request.form.get("chip_amount", type=float, default=0.0)
     try:
         models.start_session_with_payment(
-            bed_id, total_min=total_min, card_id=card_id, requested_card_amount=card_amount
+            bed_id, total_min=total_min, card_id=card_id, requested_card_amount=card_amount,
+            chip_amount=chip_amount, chip_reader_name=models.get_chip_reader_name() or None,
         )
     except controller_link.ControllerLinkError as exc:
         return redirect(url_for("bed_detail", bed_id=bed_id, hw_error=str(exc)))
-    except sales.PaymentError as exc:
+    except (sales.PaymentError, chipcard.ChipCardError) as exc:
         return redirect(url_for("bed_detail", bed_id=bed_id, payment_error=str(exc)))
     return redirect(url_for("bed_detail", bed_id=bed_id))
 
@@ -212,9 +214,28 @@ def studio_set_chip_reader():
 def chipcard_read():
     reader_name = models.get_chip_reader_name() or None
     try:
-        return jsonify({"ok": True, "card": chipcard.read_card(reader_name)})
+        card = chipcard.read_card(reader_name)
     except chipcard.ChipCardError as exc:
         return jsonify({"ok": False, "error": str(exc)}), 503
+    known = sales.find_chip_card_by_client_number(card["client_number"])
+    return jsonify({
+        "ok": True,
+        "card": card,
+        "known": {"name": known["name"], "phone": known["phone"]} if known else None,
+    })
+
+
+@app.route("/api/chipcard/quote")
+def chipcard_quote():
+    bed_id = request.args.get("bed_id", type=int)
+    total_min = request.args.get("total_min", type=int, default=models.DEFAULT_SESSION_MINUTES)
+    chip_amount = request.args.get("chip_amount", type=float, default=0.0)
+    try:
+        return jsonify(sales.quote_chip_session(
+            bed_id, total_min, chip_amount, models.get_chip_reader_name() or None
+        ))
+    except chipcard.ChipCardError as exc:
+        return jsonify({"error": str(exc)}), 503
 
 
 @app.route("/studio/recharge-options", methods=["POST"])
@@ -344,6 +365,7 @@ def cards_page():
         search=search,
         recharge_options=sales.list_recharge_options(),
         error=request.args.get("error"),
+        message=request.args.get("message"),
     )
 
 
@@ -360,6 +382,33 @@ def cards_issue():
     except sales.PaymentError as exc:
         return redirect(url_for("cards_page", error=str(exc)))
     return redirect(url_for("card_detail", card_id=card_id))
+
+
+@app.route("/cards/chip/issue", methods=["POST"])
+def chip_card_issue():
+    try:
+        client_number = sales.issue_chip_card(
+            name=request.form.get("name", ""),
+            phone=request.form.get("phone", ""),
+            deposit_amount=request.form.get("deposit_amount", type=float, default=0.0),
+            recharge_option_id=request.form.get("recharge_option_id", type=int, default=None),
+            reader_name=models.get_chip_reader_name() or None,
+        )
+    except (sales.PaymentError, chipcard.ChipCardError) as exc:
+        return redirect(url_for("cards_page", error=str(exc)))
+    return redirect(url_for("cards_page", message=f"Издадена чип карта №{client_number}."))
+
+
+@app.route("/cards/chip/recharge", methods=["POST"])
+def chip_card_recharge():
+    try:
+        new_balance = sales.recharge_chip_card(
+            recharge_option_id=request.form.get("recharge_option_id", type=int, default=None),
+            reader_name=models.get_chip_reader_name() or None,
+        )
+    except (sales.PaymentError, chipcard.ChipCardError) as exc:
+        return redirect(url_for("cards_page", error=str(exc)))
+    return redirect(url_for("cards_page", message=f"Нов баланс по чип картата: {new_balance:.2f} лв."))
 
 
 @app.route("/cards/<int:card_id>")

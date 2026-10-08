@@ -3,6 +3,7 @@ and the daily sales log."""
 
 from datetime import datetime
 
+import chipcard
 import db
 
 
@@ -491,6 +492,246 @@ def return_card(card_id, force_forfeit_balance=False):
                 )
     finally:
         conn.close()
+
+
+# --- chip cards (SLE4442 hardware) -----------------------------------
+
+# The old program stored each card's issuing location as a studio
+# name/number (for a multi-location chain sharing card stock); this app
+# is single-location, so these are fixed rather than a setting.
+CHIP_STUDIO_NAME = "Solar Studio"
+CHIP_STUDIO_NUMBER = 0
+
+
+def list_chip_cards(search=None, limit=None):
+    """search matches a substring of the client number, card number,
+    phone, or name - same reasoning as list_cards. There is no balance
+    column here: a chip card's money lives on the physical card, read
+    fresh from the reader, never cached in this database."""
+    conn = db.get_connection()
+    try:
+        sql = "SELECT * FROM chip_cards"
+        conditions = []
+        params = []
+        search = (search or "").strip()
+        if search:
+            conditions.append(
+                "(CAST(client_number AS TEXT) LIKE ? OR CAST(card_number AS TEXT) LIKE ? "
+                "OR phone LIKE ? OR name LIKE ?)"
+            )
+            like = f"%{search}%"
+            params.extend([like, like, like, like])
+        if conditions:
+            sql += " WHERE " + " AND ".join(conditions)
+        sql += " ORDER BY id DESC"
+        if limit:
+            sql += " LIMIT ?"
+            params.append(int(limit))
+        return conn.execute(sql, params).fetchall()
+    finally:
+        conn.close()
+
+
+def find_chip_card_by_client_number(client_number):
+    if client_number is None:
+        return None
+    conn = db.get_connection()
+    try:
+        return conn.execute(
+            "SELECT * FROM chip_cards WHERE client_number = ?", (client_number,)
+        ).fetchone()
+    finally:
+        conn.close()
+
+
+def issue_chip_card(name, phone, deposit_amount, recharge_option_id=None, reader_name=None):
+    """Write client identity (and an optional first recharge) onto a
+    card that isn't registered yet. The database record is committed
+    *before* the chip write: a card that exists in our records but
+    failed to actually write is just a retry; real money landing on a
+    card with no record anywhere that it was ever issued is much worse
+    to untangle."""
+    name = (name or "").strip()
+    phone = (phone or "").strip()
+    deposit_amount = max(0.0, float(deposit_amount or 0))
+
+    card = chipcard.read_card(reader_name)
+    if card["client_number"] is not None:
+        raise PaymentError(
+            f"Тази карта вече е издадена (клиент №{card['client_number']}). "
+            "Използвайте презареждане вместо издаване."
+        )
+
+    conn = db.get_connection()
+    try:
+        option = None
+        if recharge_option_id:
+            option = conn.execute(
+                "SELECT * FROM recharge_options WHERE id = ? AND active = 1", (recharge_option_id,)
+            ).fetchone()
+            if option is None:
+                raise PaymentError("Избраната опция за презареждане не съществува или е неактивна.")
+        balance = option["virtual_amount"] if option else 0.0
+
+        with db.transaction(conn):
+            row = conn.execute(
+                "SELECT COALESCE(MAX(client_number), 0) + 1 AS n FROM chip_cards"
+            ).fetchone()
+            client_number = row["n"]
+
+            now = datetime.now().isoformat(timespec="seconds")
+            conn.execute(
+                "INSERT INTO chip_cards (client_number, card_number, name, phone, "
+                "deposit_amount, status, created_at) VALUES (?, ?, ?, ?, ?, 'active', ?)",
+                (client_number, client_number, name, phone, deposit_amount, now),
+            )
+            if deposit_amount > 0:
+                record_sale(
+                    conn, "card_deposit_charge", f"Депозит за чип карта №{client_number}",
+                    cash_amount=deposit_amount,
+                )
+            if option:
+                record_sale(
+                    conn, "card_recharge",
+                    f"Презареждане на чип карта №{client_number}: {option['name']}",
+                    cash_amount=option["cash_price"], virtual_amount=option["virtual_amount"],
+                    recharge_option_id=option["id"],
+                )
+    finally:
+        conn.close()
+
+    try:
+        chipcard.write_card(
+            reader_name, psc=chipcard.DEFAULT_PSC,
+            studio_name=CHIP_STUDIO_NAME, studio_number=CHIP_STUDIO_NUMBER,
+            client_name=name, balance=balance,
+            client_number=client_number, card_number=client_number,
+        )
+    except chipcard.ChipCardError as exc:
+        raise PaymentError(
+            f"Картата е регистрирана в системата (клиент №{client_number}), но записът на "
+            f"чипа се провали: {exc}. Не вадете картата и опитайте презареждане, за да "
+            "довършите записа."
+        ) from exc
+
+    return client_number
+
+
+def recharge_chip_card(recharge_option_id, reader_name=None):
+    """Add a recharge option's virtual amount to whatever's currently on
+    the inserted card. The card's own balance is the source of truth -
+    read fresh, added to, written back - so this is correct even if the
+    card was last used (and its balance changed) by the old program."""
+    card = chipcard.read_card(reader_name)
+    if card["client_number"] is None:
+        raise PaymentError('Картата не е издадена. Използвайте "Издай нова карта".')
+    if card["balance"] is None:
+        raise PaymentError("Балансът на картата не може да бъде прочетен (повредени данни).")
+
+    conn = db.get_connection()
+    try:
+        option = conn.execute(
+            "SELECT * FROM recharge_options WHERE id = ? AND active = 1", (recharge_option_id,)
+        ).fetchone()
+        if option is None:
+            raise PaymentError("Избраната опция за презареждане не съществува или е неактивна.")
+        new_balance = round(card["balance"] + option["virtual_amount"], 2)
+
+        chip_card = conn.execute(
+            "SELECT * FROM chip_cards WHERE client_number = ?", (card["client_number"],)
+        ).fetchone()
+        label = f"№{card['client_number']}"
+        if chip_card and chip_card["name"]:
+            label += f" ({chip_card['name']})"
+
+        with db.transaction(conn):
+            record_sale(
+                conn, "card_recharge", f"Презареждане на чип карта {label}: {option['name']}",
+                cash_amount=option["cash_price"], virtual_amount=option["virtual_amount"],
+                recharge_option_id=option["id"],
+            )
+    finally:
+        conn.close()
+
+    try:
+        chipcard.write_card(reader_name, psc=chipcard.DEFAULT_PSC, balance=new_balance)
+    except chipcard.ChipCardError as exc:
+        raise PaymentError(
+            f"Презареждането е записано в дневника, но записът на чипа се провали: {exc}. "
+            "Не вадете картата и опитайте отново, за да довършите записа."
+        ) from exc
+
+    return new_balance
+
+
+def quote_chip_session(bed_id, total_min, requested_chip_amount, reader_name=None):
+    """Read-only preview, same response shape as quote_session_payment
+    but for a chip card - no write happens here."""
+    conn = db.get_connection()
+    try:
+        bed = conn.execute("SELECT price_per_min FROM beds WHERE id = ?", (bed_id,)).fetchone()
+        if bed is None:
+            raise ValueError(f"Unknown bed id {bed_id}")
+        flat_price = bed["price_per_min"]
+    finally:
+        conn.close()
+
+    card = chipcard.read_card(reader_name)
+    balance = card["balance"] or 0.0
+    total_cost = round(total_min * flat_price, 2)
+    requested_chip_amount = max(0.0, float(requested_chip_amount or 0))
+    chip_amount = round(min(requested_chip_amount, balance, total_cost), 2)
+    cash_amount = round(total_cost - chip_amount, 2)
+    return {
+        "card_amount": chip_amount,
+        "cash_amount": cash_amount,
+        "card_balance_after": round(balance - chip_amount, 2),
+        "client_name": card["client_name"],
+        "client_number": card["client_number"],
+    }
+
+
+def charge_chip_card_for_session(bed_id, total_min, requested_chip_amount, reader_name=None):
+    """Read a chip card, work out how much of `requested_chip_amount` it
+    can actually cover (capped by its balance and the session's total
+    cost), write the reduced balance back to the card, and return the
+    breakdown for the caller to log and start the session with.
+
+    The chip write happens here, before any database write - the
+    opposite order from issuing/recharging (which add value): deducting
+    money risks giving the session away for free if the chip write
+    happened *after* a database step that then failed."""
+    conn = db.get_connection()
+    try:
+        bed = conn.execute("SELECT price_per_min FROM beds WHERE id = ?", (bed_id,)).fetchone()
+        if bed is None:
+            raise ValueError(f"Unknown bed id {bed_id}")
+        flat_price = bed["price_per_min"]
+    finally:
+        conn.close()
+
+    card = chipcard.read_card(reader_name)
+    if card["client_number"] is None:
+        raise PaymentError("Картата не е издадена.")
+    if card["balance"] is None:
+        raise PaymentError("Балансът на картата не може да бъде прочетен (повредени данни).")
+
+    total_cost = round(total_min * flat_price, 2)
+    requested_chip_amount = max(0.0, float(requested_chip_amount or 0))
+    chip_amount = round(min(requested_chip_amount, card["balance"], total_cost), 2)
+    cash_amount = round(total_cost - chip_amount, 2)
+    new_balance = round(card["balance"] - chip_amount, 2)
+
+    if chip_amount > 0:
+        chipcard.write_card(reader_name, psc=chipcard.DEFAULT_PSC, balance=new_balance)
+
+    return {
+        "chip_amount": chip_amount,
+        "cash_amount": cash_amount,
+        "client_number": card["client_number"],
+        "client_name": card["client_name"],
+        "new_balance": new_balance,
+    }
 
 
 # --- cosmetics / products ------------------------------------------------

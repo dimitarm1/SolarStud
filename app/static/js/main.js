@@ -542,6 +542,143 @@
     updateCashDueLocally();
   }
 
+  // Chip card payment on the session-start form - the physical card IS
+  // the balance, so there's no search: just read whatever's inserted.
+  // Mutually exclusive with the virtual card above - picking one clears
+  // the other, since starting a session only ever applies one payment
+  // source (see models.start_session_with_payment).
+  const paymentChipReadBtn = document.getElementById("payment-chip-read-btn");
+  const paymentChipAmountField = document.getElementById("payment-chip-amount-field");
+  const paymentChipAmountInput = document.getElementById("payment-chip-amount");
+  const paymentChipInfo = document.getElementById("payment-chip-info");
+
+  if (paymentChipReadBtn && paymentChipAmountField && paymentChipAmountInput && paymentChipInfo) {
+    const chipBedId = paymentChipReadBtn.dataset.bedId;
+    const chipPricePerMin = parseFloat(paymentChipReadBtn.dataset.pricePerMin || "0");
+    let chipBalance = 0;
+    let chipClientNumber = null;
+    let chipQuoteTimer = null;
+
+    const chipTotalMin = () => (sessionLengthInput ? parseFloat(sessionLengthInput.value || "0") : 0);
+
+    function clearVirtualCardForChip() {
+      if (paymentCardIdInput && paymentCardIdInput.value) {
+        paymentCardIdInput.value = "";
+        if (paymentCardSearchInput) paymentCardSearchInput.value = "";
+        if (paymentCardAmountField) paymentCardAmountField.hidden = true;
+        if (paymentCardAmountInput) paymentCardAmountInput.value = 0;
+        if (paymentCardBalanceInfo) paymentCardBalanceInfo.hidden = true;
+      }
+    }
+
+    function clearChipSelection() {
+      chipClientNumber = null;
+      chipBalance = 0;
+      paymentChipAmountField.hidden = true;
+      paymentChipAmountInput.value = 0;
+    }
+
+    function updateChipAmountBounds() {
+      const max = Math.max(0, Math.min(chipBalance, chipTotalMin() * chipPricePerMin));
+      paymentChipAmountInput.max = max.toFixed(2);
+      if (parseFloat(paymentChipAmountInput.value) > max) {
+        paymentChipAmountInput.value = max;
+      }
+      paymentChipAmountInput.dispatchEvent(new Event("input"));
+    }
+
+    function fetchChipQuote() {
+      if (!chipBedId || chipClientNumber === null) return;
+      const params = new URLSearchParams({
+        bed_id: chipBedId,
+        total_min: chipTotalMin(),
+        chip_amount: paymentChipAmountInput.value || "0",
+      });
+      clearTimeout(chipQuoteTimer);
+      chipQuoteTimer = setTimeout(async () => {
+        try {
+          const res = await fetch(`/api/chipcard/quote?${params.toString()}`);
+          if (!res.ok) return;
+          const data = await res.json();
+          if (data.error) return;
+          if (paymentCashDue) paymentCashDue.textContent = `${data.cash_amount.toFixed(2)} лв`;
+          paymentChipInfo.textContent =
+            `Чип карта №${data.client_number}${data.client_name ? " — " + data.client_name : ""} ` +
+            `— остатък ${data.card_balance_after.toFixed(2)} лв`;
+        } catch (err) {
+          // leave the local estimate in place on a transient network hiccup
+        }
+      }, 150);
+    }
+
+    paymentChipReadBtn.addEventListener("click", async () => {
+      paymentChipReadBtn.disabled = true;
+      try {
+        const res = await fetch("/api/chipcard/read");
+        const data = await res.json();
+        if (!data.ok) {
+          clearChipSelection();
+          paymentChipInfo.textContent = data.error || "Грешка при четене.";
+          paymentChipInfo.hidden = false;
+          return;
+        }
+        const card = data.card;
+        if (card.client_number === null) {
+          clearChipSelection();
+          paymentChipInfo.textContent = "Картата не е издадена. Издайте я от страница Карти.";
+          paymentChipInfo.hidden = false;
+          return;
+        }
+        if (card.balance === null) {
+          clearChipSelection();
+          paymentChipInfo.textContent = "Балансът на картата не може да бъде прочетен.";
+          paymentChipInfo.hidden = false;
+          return;
+        }
+        clearVirtualCardForChip();
+        chipClientNumber = card.client_number;
+        chipBalance = card.balance;
+        const name = (data.known && data.known.name) || card.client_name || "";
+        paymentChipInfo.textContent =
+          `Чип карта №${card.client_number}${name ? " — " + name : ""} — баланс ${card.balance.toFixed(2)} лв`;
+        paymentChipInfo.hidden = false;
+        paymentChipAmountField.hidden = false;
+        updateChipAmountBounds();
+        fetchChipQuote();
+      } catch (err) {
+        clearChipSelection();
+        paymentChipInfo.textContent = "Мрежова грешка при четене на картата.";
+        paymentChipInfo.hidden = false;
+      } finally {
+        paymentChipReadBtn.disabled = false;
+      }
+    });
+
+    paymentChipAmountInput.addEventListener("input", () => {
+      fetchChipQuote();
+    });
+
+    if (sessionLengthInput) {
+      sessionLengthInput.addEventListener("input", () => {
+        if (chipClientNumber !== null) {
+          updateChipAmountBounds();
+          fetchChipQuote();
+        }
+      });
+    }
+
+    // Typing in the virtual-card search (above) means staff want that
+    // instead - drop any chip selection so only one payment source applies.
+    if (paymentCardSearchInput) {
+      paymentCardSearchInput.addEventListener("input", () => {
+        if (chipClientNumber !== null) {
+          clearChipSelection();
+          paymentChipInfo.hidden = true;
+        }
+      });
+    }
+  }
+
   // Collapsible "add product" panel on the Cosmetics page - same show/hide
   // idiom as the bed-settings panel above.
   const productFormToggle = document.getElementById("product-form-toggle");
@@ -871,6 +1008,54 @@
         chipTestError.hidden = false;
       } finally {
         chipTestReadBtn.disabled = false;
+      }
+    });
+  }
+
+  // Chip card (Cards page): one "read" button drives both flows - a
+  // blank/unregistered card gets the issue form, an already-issued one
+  // gets the recharge form, decided by what comes back from the reader.
+  const chipCardReadBtn = document.getElementById("chip-card-read-btn");
+  const chipCardError = document.getElementById("chip-card-error");
+  const chipCardErrorText = document.getElementById("chip-card-error-text");
+  const chipCardInfo = document.getElementById("chip-card-info");
+  const chipIssueForm = document.getElementById("chip-issue-form");
+  const chipRechargeForm = document.getElementById("chip-recharge-form");
+
+  if (chipCardReadBtn) {
+    chipCardReadBtn.addEventListener("click", async () => {
+      chipCardReadBtn.disabled = true;
+      chipCardError.hidden = true;
+      chipCardInfo.hidden = true;
+      chipIssueForm.hidden = true;
+      chipRechargeForm.hidden = true;
+      try {
+        const res = await fetch("/api/chipcard/read");
+        const data = await res.json();
+        if (!data.ok) {
+          chipCardErrorText.textContent = data.error || "Грешка при четене.";
+          chipCardError.hidden = false;
+          return;
+        }
+        const card = data.card;
+        if (card.client_number === null) {
+          chipCardInfo.textContent = "Нова карта - не е издадена все още.";
+          chipCardInfo.hidden = false;
+          chipIssueForm.hidden = false;
+        } else {
+          const name = (data.known && data.known.name) || card.client_name || "";
+          const balanceText = card.balance === null ? "невалиден баланс" : `${card.balance.toFixed(2)} лв`;
+          chipCardInfo.textContent =
+            `Клиент №${card.client_number}${name ? " — " + name : ""} — баланс ${balanceText}` +
+            (card.ok ? "" : " — ВНИМАНИЕ: картата показва грешка/заключване");
+          chipCardInfo.hidden = false;
+          chipRechargeForm.hidden = false;
+        }
+      } catch (err) {
+        chipCardErrorText.textContent = "Мрежова грешка при четене на картата.";
+        chipCardError.hidden = false;
+      } finally {
+        chipCardReadBtn.disabled = false;
       }
     });
   }
