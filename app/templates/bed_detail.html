@@ -147,21 +147,17 @@
             <p class="payment-section__price-hint">Цена: {{ "%.2f"|format(bed.price_per_min) }} лв/мин</p>
             <label class="field">
               <span class="field__label">Плащане с карта</span>
-              <select
+              <input type="hidden" name="card_id" id="payment-card-id" value="">
+              <input
                 class="field__input"
-                name="card_id"
-                id="payment-card-select"
+                type="text"
+                id="payment-card-search"
+                placeholder="Търси по номер, име или телефон — остави празно за плащане само в брой"
+                autocomplete="off"
                 data-price-per-min="{{ bed.price_per_min }}"
                 data-bed-id="{{ bed.id }}"
               >
-                <option value="">— Без карта (само в брой) —</option>
-                {% for card in cards %}
-                <option value="{{ card.id }}" data-balance="{{ card.balance }}">
-                  №{{ card.id }}{% if card.card_number %} ({{ card.card_number }}){% endif %}
-                  — баланс {{ "%.2f"|format(card.balance) }} лв
-                </option>
-                {% endfor %}
-              </select>
+              <select class="controller-picker-select payment-card-results" id="payment-card-results" size="6" hidden></select>
             </label>
 
             <div class="slider-field" id="payment-card-amount-field" hidden>

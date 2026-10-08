@@ -69,7 +69,6 @@ def bed_detail(bed_id):
         demo_address_max=models.MAX_CONTROLLER_ADDRESS,
         hw_error=request.args.get("hw_error"),
         payment_error=request.args.get("payment_error"),
-        cards=sales.list_cards(status="active"),
     )
 
 
@@ -291,15 +290,21 @@ def cosmetics_sell_product(product_id):
     return redirect(url_for("cosmetics_page"))
 
 
+CARDS_DEFAULT_LIMIT = 50
+
+
 @app.route("/cards")
 def cards_page():
+    search = request.args.get("q", "").strip()
     return render_template(
         "cards.html",
         version=VERSION,
         nav_items=NAV_ITEMS,
         bottom_buttons=BOTTOM_BUTTONS,
         server_time=datetime.now().strftime("%H:%M:%S"),
-        cards=sales.list_cards(),
+        cards=sales.list_cards(search=search, limit=CARDS_DEFAULT_LIMIT),
+        cards_default_limit=CARDS_DEFAULT_LIMIT,
+        search=search,
         recharge_options=sales.list_recharge_options(),
         error=request.args.get("error"),
     )
@@ -307,11 +312,16 @@ def cards_page():
 
 @app.route("/cards", methods=["POST"])
 def cards_issue():
-    card_id = sales.issue_card(
-        card_number=request.form.get("card_number", ""),
-        deposit_amount=request.form.get("deposit_amount", type=float, default=0.0),
-        first_recharge_option_id=request.form.get("recharge_option_id", type=int, default=None),
-    )
+    try:
+        card_id = sales.issue_card(
+            card_number=request.form.get("card_number", ""),
+            deposit_amount=request.form.get("deposit_amount", type=float, default=0.0),
+            first_recharge_option_id=request.form.get("recharge_option_id", type=int, default=None),
+            name=request.form.get("name", ""),
+            phone=request.form.get("phone", ""),
+        )
+    except sales.PaymentError as exc:
+        return redirect(url_for("cards_page", error=str(exc)))
     return redirect(url_for("card_detail", card_id=card_id))
 
 
@@ -330,6 +340,20 @@ def card_detail(card_id):
         recharge_options=sales.list_recharge_options(),
         error=request.args.get("error"),
     )
+
+
+@app.route("/cards/<int:card_id>/update", methods=["POST"])
+def card_update_details(card_id):
+    try:
+        sales.update_card_details(
+            card_id,
+            card_number=request.form.get("card_number", ""),
+            name=request.form.get("name", ""),
+            phone=request.form.get("phone", ""),
+        )
+    except sales.PaymentError as exc:
+        return redirect(url_for("card_detail", card_id=card_id, error=str(exc)))
+    return redirect(url_for("card_detail", card_id=card_id))
 
 
 @app.route("/cards/<int:card_id>/recharge", methods=["POST"])
@@ -365,6 +389,25 @@ def protocol():
         entries=sales.list_sales_log(date=date),
         summary=sales.sales_log_summary(date=date),
     )
+
+
+CARD_SEARCH_LIMIT = 20
+
+
+@app.route("/api/cards/search")
+def search_cards():
+    search = request.args.get("q", "").strip()
+    cards = sales.list_cards(status="active", search=search, limit=CARD_SEARCH_LIMIT)
+    results = [
+        {
+            "id": c["id"],
+            "label": " · ".join(part for part in [c["name"], c["phone"], c["card_number"]] if part)
+            or f"№{c['id']}",
+            "balance": c["balance"],
+        }
+        for c in cards
+    ]
+    return jsonify({"cards": results})
 
 
 @app.route("/api/sessions/quote")

@@ -33,6 +33,14 @@
     <form class="settings-form" method="post" action="{{ url_for('cards_issue') }}">
       <div class="settings-grid">
         <label class="field">
+          <span class="field__label">Име на клиента</span>
+          <input class="field__input" type="text" name="name">
+        </label>
+        <label class="field">
+          <span class="field__label">Телефон</span>
+          <input class="field__input" type="text" name="phone">
+        </label>
+        <label class="field">
           <span class="field__label">Номер на картата (по избор)</span>
           <input class="field__input" type="text" name="card_number">
         </label>
@@ -57,11 +65,30 @@
     </form>
   </div>
 
+  <form class="cards-search-form" method="get" action="{{ url_for('cards_page') }}">
+    <label class="field field--row">
+      <span class="field__label">Търсене</span>
+      <input class="field__input" type="text" name="q" value="{{ search }}"
+             placeholder="Номер, име или телефон…">
+    </label>
+    <button class="action-btn" type="submit" style="width:auto;">
+      {{ icon('scan', 'action-icon') }}
+      <span>Търси</span>
+    </button>
+    {% if search %}
+    <a class="back-link" href="{{ url_for('cards_page') }}">Изчисти</a>
+    {% endif %}
+  </form>
+
   {% if cards %}
   <div class="cards-list">
     {% for card in cards %}
     <a class="card-row" href="{{ url_for('card_detail', card_id=card.id) }}">
       <span class="card-row__id">№{{ card.id }}</span>
+      <span class="card-row__name">
+        {{ card.name or "—" }}
+        {% if card.phone %}<span class="card-row__phone">{{ card.phone }}</span>{% endif %}
+      </span>
       <span class="card-row__number">{{ card.card_number or "—" }}</span>
       <span class="card-status-badge {{ 'card-status-badge--active' if card.status == 'active' else 'card-status-badge--returned' }}">
         {{ "Активна" if card.status == 'active' else "Върната" }}
@@ -70,10 +97,15 @@
     </a>
     {% endfor %}
   </div>
+  {% if not search and cards|length >= cards_default_limit %}
+  <p class="settings-hint">
+    Показани са последните {{ cards_default_limit }} карти. Използвайте търсенето отгоре, за да намерите друга.
+  </p>
+  {% endif %}
   {% else %}
   <div class="placeholder">
     {{ icon('card', 'placeholder-icon') }}
-    <p>Все още няма издадени карти</p>
+    <p>{{ "Няма карти, отговарящи на търсенето" if search else "Все още няма издадени карти" }}</p>
   </div>
   {% endif %}
 </section>

@@ -283,19 +283,36 @@ def set_recharge_option_bed_prices(option_id, bed_prices):
 
 # --- cards & lots ------------------------------------------------------
 
-def list_cards(status=None):
+def list_cards(status=None, search=None, limit=None):
+    """search matches a substring of the card number, phone, or name - with
+    a studio's card list easily running into the hundreds or thousands,
+    this is how staff find one instead of scrolling (or, for the session
+    payment picker, typing-to-search instead of facing one giant dropdown).
+    limit caps the result count (newest first) regardless of whether a
+    search was given, so even a broad query can't return an unbounded list."""
     conn = db.get_connection()
     try:
-        query = (
+        sql = (
             "SELECT c.*, COALESCE(SUM(l.remaining_amount), 0) AS balance "
             "FROM cards c LEFT JOIN card_lots l ON l.card_id = c.id"
         )
-        params = ()
+        conditions = []
+        params = []
         if status is not None:
-            query += " WHERE c.status = ?"
-            params = (status,)
-        query += " GROUP BY c.id ORDER BY c.id DESC"
-        return conn.execute(query, params).fetchall()
+            conditions.append("c.status = ?")
+            params.append(status)
+        search = (search or "").strip()
+        if search:
+            conditions.append("(c.card_number LIKE ? OR c.phone LIKE ? OR c.name LIKE ?)")
+            like = f"%{search}%"
+            params.extend([like, like, like])
+        if conditions:
+            sql += " WHERE " + " AND ".join(conditions)
+        sql += " GROUP BY c.id ORDER BY c.id DESC"
+        if limit:
+            sql += " LIMIT ?"
+            params.append(int(limit))
+        return conn.execute(sql, params).fetchall()
     finally:
         conn.close()
 
@@ -331,6 +348,19 @@ def find_card_by_number(card_number):
         conn.close()
 
 
+def _check_card_number_unique(conn, card_number, exclude_card_id=None):
+    if not card_number:
+        return
+    query = "SELECT id FROM cards WHERE card_number = ?"
+    params = [card_number]
+    if exclude_card_id is not None:
+        query += " AND id != ?"
+        params.append(exclude_card_id)
+    existing = conn.execute(query, params).fetchone()
+    if existing is not None:
+        raise PaymentError(f"Вече има карта с номер \"{card_number}\" (№{existing['id']}).")
+
+
 def _add_card_lot(conn, card_id, recharge_option_id):
     option = conn.execute(
         "SELECT * FROM recharge_options WHERE id = ? AND active = 1", (recharge_option_id,)
@@ -351,17 +381,20 @@ def _add_card_lot(conn, card_id, recharge_option_id):
     )
 
 
-def issue_card(card_number, deposit_amount, first_recharge_option_id=None):
+def issue_card(card_number, deposit_amount, first_recharge_option_id=None, name="", phone=""):
     card_number = (card_number or "").strip() or None
     deposit_amount = max(0.0, float(deposit_amount or 0))
+    name = (name or "").strip()
+    phone = (phone or "").strip()
     conn = db.get_connection()
     try:
         with db.transaction(conn):
+            _check_card_number_unique(conn, card_number)
             now = datetime.now().isoformat(timespec="seconds")
             cur = conn.execute(
-                "INSERT INTO cards (card_number, deposit_amount, status, created_at) "
-                "VALUES (?, ?, 'active', ?)",
-                (card_number, deposit_amount, now),
+                "INSERT INTO cards (card_number, deposit_amount, status, created_at, name, phone) "
+                "VALUES (?, ?, 'active', ?, ?, ?)",
+                (card_number, deposit_amount, now, name, phone),
             )
             card_id = cur.lastrowid
             if deposit_amount > 0:
@@ -372,6 +405,22 @@ def issue_card(card_number, deposit_amount, first_recharge_option_id=None):
             if first_recharge_option_id:
                 _add_card_lot(conn, card_id, first_recharge_option_id)
         return card_id
+    finally:
+        conn.close()
+
+
+def update_card_details(card_id, card_number, name, phone):
+    card_number = (card_number or "").strip() or None
+    name = (name or "").strip()
+    phone = (phone or "").strip()
+    conn = db.get_connection()
+    try:
+        with db.transaction(conn):
+            _check_card_number_unique(conn, card_number, exclude_card_id=card_id)
+            conn.execute(
+                "UPDATE cards SET card_number = ?, name = ?, phone = ? WHERE id = ?",
+                (card_number, name, phone, card_id),
+            )
     finally:
         conn.close()
 

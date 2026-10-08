@@ -346,26 +346,32 @@
     if (dismiss) dismiss.addEventListener("click", () => banner.remove());
   });
 
-  // Session payment: the card-amount slider is bounded by the selected
-  // card's balance (and by what the session could possibly cost), and a
-  // cash-due readout updates locally for instant feedback, then refines via
-  // a server quote (which accounts for per-recharge-option bed rates that
-  // the client has no way to compute on its own).
-  const paymentCardSelect = document.getElementById("payment-card-select");
+  // Session payment: a client card is found by typing part of its number,
+  // owner name, or phone (a plain <select> of every active card doesn't
+  // scale once a studio has issued hundreds of cards - same reasoning as
+  // the search box on the Cards page). The card-amount slider is bounded
+  // by the selected card's balance (and by what the session could possibly
+  // cost), and a cash-due readout updates locally for instant feedback,
+  // then refines via a server quote (which accounts for per-recharge-option
+  // bed rates the client has no way to compute on its own).
+  const paymentCardIdInput = document.getElementById("payment-card-id");
+  const paymentCardSearchInput = document.getElementById("payment-card-search");
+  const paymentCardResults = document.getElementById("payment-card-results");
   const paymentCardAmountField = document.getElementById("payment-card-amount-field");
   const paymentCardAmountInput = document.getElementById("payment-card-amount");
   const paymentCashDue = document.getElementById("payment-cash-due");
   const sessionLengthInput = document.getElementById("session-length");
 
-  if (paymentCardSelect && paymentCardAmountField && paymentCardAmountInput && paymentCashDue) {
-    const pricePerMin = parseFloat(paymentCardSelect.dataset.pricePerMin || "0");
-    const bedId = paymentCardSelect.dataset.bedId;
+  if (
+    paymentCardIdInput && paymentCardSearchInput && paymentCardResults &&
+    paymentCardAmountField && paymentCardAmountInput && paymentCashDue
+  ) {
+    const pricePerMin = parseFloat(paymentCardSearchInput.dataset.pricePerMin || "0");
+    const bedId = paymentCardSearchInput.dataset.bedId;
+    let selectedBalance = 0;
+    let searchTimer = null;
     let quoteTimer = null;
 
-    const selectedBalance = () => {
-      const opt = paymentCardSelect.selectedOptions[0];
-      return opt ? parseFloat(opt.dataset.balance || "0") : 0;
-    };
     const totalMin = () => (sessionLengthInput ? parseFloat(sessionLengthInput.value || "0") : 0);
 
     function updateCashDueLocally() {
@@ -377,7 +383,7 @@
 
     function fetchQuote() {
       if (!bedId) return;
-      const cardId = paymentCardSelect.value;
+      const cardId = paymentCardIdInput.value;
       const params = new URLSearchParams({
         bed_id: bedId,
         total_min: totalMin(),
@@ -398,7 +404,7 @@
     }
 
     function updateCardAmountBounds() {
-      const max = Math.max(0, Math.min(selectedBalance(), totalMin() * pricePerMin));
+      const max = Math.max(0, Math.min(selectedBalance, totalMin() * pricePerMin));
       paymentCardAmountInput.max = max.toFixed(2);
       if (parseFloat(paymentCardAmountInput.value) > max) {
         paymentCardAmountInput.value = max;
@@ -406,20 +412,79 @@
       paymentCardAmountInput.dispatchEvent(new Event("input"));
     }
 
-    paymentCardSelect.addEventListener("change", () => {
-      const hasCard = paymentCardSelect.value !== "";
-      paymentCardAmountField.hidden = !hasCard;
-      if (!hasCard) {
-        paymentCardAmountInput.value = 0;
-      }
+    function clearSelection() {
+      paymentCardIdInput.value = "";
+      selectedBalance = 0;
+      paymentCardAmountField.hidden = true;
+      paymentCardAmountInput.value = 0;
       updateCardAmountBounds();
       updateCashDueLocally();
       fetchQuote();
+    }
+
+    function selectCard(option) {
+      paymentCardIdInput.value = option.value;
+      selectedBalance = parseFloat(option.dataset.balance || "0");
+      paymentCardSearchInput.value = option.dataset.label || option.textContent;
+      paymentCardResults.hidden = true;
+      paymentCardAmountField.hidden = false;
+      updateCardAmountBounds();
+      updateCashDueLocally();
+      fetchQuote();
+    }
+
+    async function runCardSearch(q) {
+      try {
+        const res = await fetch(`/api/cards/search?q=${encodeURIComponent(q)}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        paymentCardResults.innerHTML = "";
+        if (!data.cards || data.cards.length === 0) {
+          const opt = document.createElement("option");
+          opt.textContent = "Няма намерени карти";
+          opt.disabled = true;
+          paymentCardResults.appendChild(opt);
+        } else {
+          data.cards.forEach((card) => {
+            const opt = document.createElement("option");
+            opt.value = card.id;
+            opt.dataset.balance = card.balance;
+            opt.dataset.label = card.label;
+            opt.textContent = `${card.label} — баланс ${card.balance.toFixed(2)} лв`;
+            paymentCardResults.appendChild(opt);
+          });
+        }
+        paymentCardResults.hidden = false;
+      } catch (err) {
+        // transient network hiccup - leave whatever results were already shown
+      }
+    }
+
+    paymentCardSearchInput.addEventListener("input", () => {
+      if (paymentCardIdInput.value) clearSelection();
+      const q = paymentCardSearchInput.value.trim();
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => runCardSearch(q), 200);
+    });
+
+    paymentCardSearchInput.addEventListener("focus", () => {
+      if (!paymentCardIdInput.value) runCardSearch(paymentCardSearchInput.value.trim());
+    });
+
+    paymentCardResults.addEventListener("change", () => {
+      const opt = paymentCardResults.selectedOptions[0];
+      if (opt && opt.value) selectCard(opt);
     });
 
     paymentCardAmountInput.addEventListener("input", () => {
       updateCashDueLocally();
       fetchQuote();
+    });
+
+    document.addEventListener("click", (evt) => {
+      if (evt.target !== paymentCardSearchInput && !paymentCardResults.contains(evt.target)) {
+        paymentCardResults.hidden = true;
+      }
     });
 
     if (sessionLengthInput) {
@@ -430,7 +495,6 @@
       });
     }
 
-    updateCardAmountBounds();
     updateCashDueLocally();
   }
 })();

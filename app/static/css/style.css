@@ -1323,9 +1323,46 @@ body {
   min-width: 48px;
 }
 
-.card-row__number {
+.card-row__name {
   flex: 1;
+  min-width: 0;
   font-size: 14px;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-row__phone {
+  color: var(--text-dim);
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.card-row__number {
+  flex-shrink: 0;
+  width: 110px;
+  font-size: 13px;
+  color: var(--text-dim);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cards-search-form {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.cards-search-form .field {
+  flex: 1;
+  min-width: 220px;
+  margin-bottom: 0;
 }
 
 .card-balance {
@@ -1401,6 +1438,17 @@ body {
   margin: -10px 0 16px;
   font-size: 13px;
   color: var(--text-dim);
+}
+
+.payment-card-results {
+  width: 100%;
+  margin-top: 8px;
+  max-height: 170px;
+  font-size: 13px;
+}
+
+.payment-card-results option {
+  padding: 6px 8px;
 }
 
 /* Daily sales protocol */

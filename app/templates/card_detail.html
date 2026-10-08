@@ -29,12 +29,15 @@
   {% endif %}
 
   <div class="detail-title-row">
-    <h2 class="detail-title">Карта №{{ card.id }}{% if card.card_number %} ({{ card.card_number }}){% endif %}</h2>
+    <h2 class="detail-title">{{ card.name or ("Карта №" ~ card.id) }}</h2>
     <span class="card-status-badge {{ 'card-status-badge--active' if card.status == 'active' else 'card-status-badge--returned' }}">
       {{ "Активна" if card.status == 'active' else "Върната" }}
     </span>
   </div>
-  <p class="detail-model">Депозит: {{ "%.2f"|format(card.deposit_amount) }} лв</p>
+  <p class="detail-model">
+    №{{ card.id }}{% if card.card_number %} · {{ card.card_number }}{% endif %}{% if card.phone %} · {{ card.phone }}{% endif %}
+    · Депозит: {{ "%.2f"|format(card.deposit_amount) }} лв
+  </p>
 
   <div class="status-panel">
     <span class="status-badge status-badge--idle">Текущ баланс</span>
@@ -59,6 +62,30 @@
       </table>
     </div>
     {% endif %}
+  </div>
+
+  <div class="settings-panel">
+    <h3 class="settings-panel__title">Данни на клиента</h3>
+    <form class="settings-form" method="post" action="{{ url_for('card_update_details', card_id=card.id) }}">
+      <div class="settings-grid">
+        <label class="field">
+          <span class="field__label">Име на клиента</span>
+          <input class="field__input" type="text" name="name" value="{{ card.name }}">
+        </label>
+        <label class="field">
+          <span class="field__label">Телефон</span>
+          <input class="field__input" type="text" name="phone" value="{{ card.phone }}">
+        </label>
+        <label class="field">
+          <span class="field__label">Номер на картата</span>
+          <input class="field__input" type="text" name="card_number" value="{{ card.card_number or '' }}">
+        </label>
+      </div>
+      <button class="action-btn action-btn--start" type="submit">
+        {{ icon('check', 'action-icon') }}
+        <span>Запази данните</span>
+      </button>
+    </form>
   </div>
 
   {% if card.status == 'active' %}
