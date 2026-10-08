@@ -15,10 +15,17 @@
 
 {% block content %}
 <section class="view view-detail">
-  <a class="back-link" href="{{ url_for('index') }}">
-    {{ icon('back', 'back-icon') }}
-    <span>Назад</span>
-  </a>
+  <div class="detail-topbar">
+    <a class="back-link" href="{{ url_for('index') }}">
+      {{ icon('back', 'back-icon') }}
+      <span>Назад</span>
+    </a>
+    <button class="settings-toggle" type="button" id="product-form-toggle"
+            aria-expanded="{{ 'false' if products else 'true' }}" aria-controls="product-form-panel">
+      {{ icon('plus', 'settings-toggle-icon') }}
+      <span>Нов продукт</span>
+    </button>
+  </div>
 
   {% if error %}
   <div class="hw-error-banner">
@@ -28,7 +35,7 @@
   </div>
   {% endif %}
 
-  <div class="settings-panel settings-panel--static">
+  <div class="settings-panel" id="product-form-panel" {{ 'hidden' if products }}>
     <h3 class="settings-panel__title">Нов продукт</h3>
     <form class="settings-form" method="post" action="{{ url_for('cosmetics_create_product') }}">
       <div class="settings-grid">
@@ -53,41 +60,98 @@
   </div>
 
   {% if products %}
-  <div class="product-grid">
-    {% for product in products %}
-    <div class="product-card">
-      <div class="product-card__header">
-        <h3 class="product-card__name">{{ product.name }}</h3>
-        <span class="product-card__price">{{ "%.2f"|format(product.sale_price) }} лв</span>
+  <div class="pos-layout">
+    <div class="pos-layout__list">
+      <input class="field__input" type="text" id="product-search" placeholder="Търси продукт по име…"
+             autocomplete="off" autofocus>
+      <div class="product-list" id="product-list">
+        {% for product in products %}
+        <div class="product-item">
+          <div class="product-row"
+               data-product-id="{{ product.id }}"
+               data-name="{{ product.name }}"
+               data-price="{{ product.sale_price }}"
+               data-stock="{{ product.stock_qty }}"
+               title="Двоен клик за добавяне в кошницата">
+            <span class="product-row__name">{{ product.name }}</span>
+            <span class="product-row__price">{{ "%.2f"|format(product.sale_price) }} лв</span>
+            <span class="stock-badge {{ 'stock-badge--out' if product.stock_qty == 0 else ('stock-badge--low' if product.stock_qty <= 3 else '') }}">
+              {{ product.stock_qty }} бр.
+            </span>
+            <form class="product-restock-form" method="post" action="{{ url_for('cosmetics_restock_product', product_id=product.id) }}">
+              <input type="number" name="add_qty" value="1" min="1">
+              <button class="product-mini-btn" type="submit" title="Заприходи доставка">
+                {{ icon('plus', 'action-icon') }}
+              </button>
+            </form>
+            <button class="product-mini-btn product-adjust-toggle" type="button" title="Коригирай наличността (инвентаризация)">
+              {{ icon('gear', 'action-icon') }}
+            </button>
+          </div>
+          <form class="product-adjust-form" method="post" hidden
+                action="{{ url_for('cosmetics_adjust_stock', product_id=product.id) }}">
+            <label class="field">
+              <span class="field__label">Преброено количество</span>
+              <input class="field__input" type="number" name="new_stock_qty" min="0" value="{{ product.stock_qty }}" required>
+            </label>
+            <label class="field">
+              <span class="field__label">Причина (по избор)</span>
+              <input class="field__input" type="text" name="reason" placeholder="напр. липса при инвентаризация">
+            </label>
+            <button class="action-btn" type="submit" style="width:auto;">
+              {{ icon('check', 'action-icon') }}
+              <span>Запази корекцията</span>
+            </button>
+          </form>
+        </div>
+        {% endfor %}
       </div>
-      <span class="stock-badge {{ 'stock-badge--out' if product.stock_qty == 0 else ('stock-badge--low' if product.stock_qty <= 3 else '') }}">
-        {{ product.stock_qty }} бр. наличност
-      </span>
-
-      <form class="product-mini-form" method="post" action="{{ url_for('cosmetics_sell_product', product_id=product.id) }}">
-        <input type="number" name="qty" value="1" min="1" max="{{ product.stock_qty }}" required>
-        {% if cards %}
-        <select class="controller-picker-select" name="card_id" style="width:auto;">
-          <option value="">В брой</option>
-          {% for card in cards %}
-          <option value="{{ card.id }}">№{{ card.id }} ({{ "%.2f"|format(card.balance) }} лв)</option>
-          {% endfor %}
-        </select>
-        <input type="number" name="card_amount" step="0.01" min="0" placeholder="сума карта" style="width:120px;">
-        {% endif %}
-        <button class="product-mini-btn" type="submit" title="Продай" {{ 'disabled' if product.stock_qty == 0 }}>
-          {{ icon('check', 'action-icon') }}
-        </button>
-      </form>
-
-      <form class="product-mini-form" method="post" action="{{ url_for('cosmetics_restock_product', product_id=product.id) }}">
-        <input type="number" name="add_qty" value="1" min="1" required>
-        <button class="product-mini-btn" type="submit" title="Заприходи">
-          {{ icon('plus', 'action-icon') }}
-        </button>
-      </form>
     </div>
-    {% endfor %}
+
+    <div class="pos-layout__basket">
+      <h3 class="settings-panel__title">Кошница</h3>
+      <div class="basket-list" id="basket-list">
+        <p class="basket-empty" id="basket-empty">Двоен клик върху продукт отляво, за да го добавите тук.</p>
+      </div>
+      <div class="basket-total-row">
+        <span>Общо</span>
+        <strong id="basket-total">0.00 лв</strong>
+      </div>
+
+      <div class="payment-section">
+        <input type="hidden" id="checkout-card-id" value="">
+        <label class="field">
+          <span class="field__label">Плащане с карта</span>
+          <input class="field__input" type="text" id="checkout-card-search"
+                 placeholder="Търси по номер, име или телефон — остави празно за плащане само в брой"
+                 autocomplete="off">
+          <select class="controller-picker-select payment-card-results" id="checkout-card-results" size="6" hidden></select>
+        </label>
+        <p class="payment-section__card-balance" id="checkout-card-balance-info" hidden>
+          Баланс по картата: <strong id="checkout-card-balance-amount">0.00 лв</strong>
+        </p>
+        <div class="slider-field" id="checkout-card-amount-field" hidden>
+          <div class="slider-field__header">
+            <span class="slider-field__label">Сума с карта</span>
+            <span class="slider-field__value" id="checkout-card-amount-value">0 лв</span>
+          </div>
+          <div class="slider-field__track-wrap">
+            <input class="range-input" type="range" id="checkout-card-amount" min="0" max="0" step="0.5" value="0"
+                   data-value-target="checkout-card-amount-value" data-suffix=" лв">
+          </div>
+        </div>
+        <div class="payment-section__cash-due">
+          <span>Дължимо в брой</span>
+          <strong id="checkout-cash-due">0.00 лв</strong>
+        </div>
+      </div>
+
+      <button class="action-btn action-btn--start" type="button" id="checkout-submit-btn" disabled>
+        {{ icon('check', 'action-icon') }}
+        <span>Финализирай продажбата</span>
+      </button>
+      <form id="checkout-form" method="post" action="{{ url_for('cosmetics_checkout') }}" hidden></form>
+    </div>
   </div>
   {% else %}
   <div class="placeholder">

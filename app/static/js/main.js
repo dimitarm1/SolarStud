@@ -541,4 +541,279 @@
 
     updateCashDueLocally();
   }
+
+  // Collapsible "add product" panel on the Cosmetics page - same show/hide
+  // idiom as the bed-settings panel above.
+  const productFormToggle = document.getElementById("product-form-toggle");
+  const productFormPanel = document.getElementById("product-form-panel");
+  if (productFormToggle && productFormPanel) {
+    productFormToggle.addEventListener("click", () => {
+      const willOpen = productFormPanel.hidden;
+      productFormPanel.hidden = !willOpen;
+      productFormToggle.setAttribute("aria-expanded", String(willOpen));
+      productFormToggle.classList.toggle("settings-toggle--open", willOpen);
+    });
+  }
+
+  // Cosmetics checkout: pick products from a searchable list (double-click
+  // adds one unit), double-click a basket line to remove one, then pay
+  // with an optional card (searched the same way as the session-start
+  // page) plus cash for the rest - built for a catalog of 100+ products,
+  // where a one-card-per-product grid with an inline sell form per item
+  // stopped being usable.
+  const productSearchInput = document.getElementById("product-search");
+  const productListEl = document.getElementById("product-list");
+  const basketListEl = document.getElementById("basket-list");
+  const basketEmptyEl = document.getElementById("basket-empty");
+  const basketTotalEl = document.getElementById("basket-total");
+  const checkoutSubmitBtn = document.getElementById("checkout-submit-btn");
+  const checkoutForm = document.getElementById("checkout-form");
+  const checkoutCardIdInput = document.getElementById("checkout-card-id");
+  const checkoutCardSearchInput = document.getElementById("checkout-card-search");
+  const checkoutCardResults = document.getElementById("checkout-card-results");
+  const checkoutCardAmountField = document.getElementById("checkout-card-amount-field");
+  const checkoutCardAmountInput = document.getElementById("checkout-card-amount");
+  const checkoutCardBalanceInfo = document.getElementById("checkout-card-balance-info");
+  const checkoutCardBalanceAmount = document.getElementById("checkout-card-balance-amount");
+  const checkoutCashDue = document.getElementById("checkout-cash-due");
+
+  if (productListEl && basketListEl) {
+    const basket = new Map(); // product_id (string) -> {id, name, price, qty}
+    let cardBalance = 0;
+    let cardSearchTimer = null;
+
+    function basketTotal() {
+      let total = 0;
+      basket.forEach((line) => { total += line.price * line.qty; });
+      return total;
+    }
+
+    function updateCardAmountBounds() {
+      const max = Math.max(0, Math.min(cardBalance, basketTotal()));
+      checkoutCardAmountInput.max = max.toFixed(2);
+      if (parseFloat(checkoutCardAmountInput.value) > max) {
+        checkoutCardAmountInput.value = max;
+      }
+      checkoutCardAmountInput.dispatchEvent(new Event("input"));
+    }
+
+    function updateCashDue() {
+      const cardAmount = checkoutCardIdInput.value ? parseFloat(checkoutCardAmountInput.value || "0") : 0;
+      const cash = Math.max(0, basketTotal() - cardAmount);
+      checkoutCashDue.textContent = `${cash.toFixed(2)} лв`;
+    }
+
+    function updateCardBalanceInfo() {
+      if (!checkoutCardIdInput.value) {
+        checkoutCardBalanceInfo.hidden = true;
+        return;
+      }
+      // A product sale deducts 1:1 from the card (no per-bed rate to
+      // convert through), so unlike the session-start page this needs no
+      // server round trip - plain local subtraction is exact.
+      const cardAmount = parseFloat(checkoutCardAmountInput.value || "0");
+      checkoutCardBalanceAmount.textContent = `${(cardBalance - cardAmount).toFixed(2)} лв`;
+      checkoutCardBalanceInfo.hidden = false;
+    }
+
+    function renderBasket() {
+      basketListEl.querySelectorAll(".basket-row").forEach((el) => el.remove());
+      let count = 0;
+      basket.forEach((line) => {
+        count += line.qty;
+        const row = document.createElement("div");
+        row.className = "basket-row";
+        row.title = "Двоен клик за премахване на 1 бр.";
+        const nameEl = document.createElement("span");
+        nameEl.className = "basket-row__name";
+        nameEl.textContent = line.name;
+        const qtyEl = document.createElement("span");
+        qtyEl.className = "basket-row__qty";
+        qtyEl.textContent = `x${line.qty}`;
+        const totalEl = document.createElement("span");
+        totalEl.className = "basket-row__total";
+        totalEl.textContent = `${(line.price * line.qty).toFixed(2)} лв`;
+        row.append(nameEl, qtyEl, totalEl);
+        row.addEventListener("dblclick", () => removeFromBasket(line.id));
+        basketListEl.appendChild(row);
+      });
+      basketEmptyEl.hidden = count > 0;
+      basketTotalEl.textContent = `${basketTotal().toFixed(2)} лв`;
+      checkoutSubmitBtn.disabled = count === 0;
+      updateCardAmountBounds();
+      updateCashDue();
+      updateCardBalanceInfo();
+    }
+
+    function addToBasket(row) {
+      const id = row.dataset.productId;
+      const stock = parseInt(row.dataset.stock, 10);
+      const existing = basket.get(id);
+      const qty = existing ? existing.qty : 0;
+      if (qty >= stock) return; // can't add past the stock on hand
+      basket.set(id, { id, name: row.dataset.name, price: parseFloat(row.dataset.price), qty: qty + 1 });
+      renderBasket();
+    }
+
+    function removeFromBasket(id) {
+      const existing = basket.get(id);
+      if (!existing) return;
+      if (existing.qty <= 1) {
+        basket.delete(id);
+      } else {
+        existing.qty -= 1;
+      }
+      renderBasket();
+    }
+
+    productListEl.querySelectorAll(".product-row").forEach((row) => {
+      row.addEventListener("dblclick", (evt) => {
+        if (evt.target.closest(".product-restock-form") || evt.target.closest(".product-adjust-toggle")) return;
+        addToBasket(row);
+      });
+    });
+
+    // Stock correction (e.g. after a physical inventory count finds less
+    // on the shelf than the system expects) - a small per-row toggle
+    // reveals a form to set the counted quantity directly, with an
+    // optional reason, rather than making staff compute +/- deltas.
+    productListEl.querySelectorAll(".product-adjust-toggle").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const panel = btn.closest(".product-item").querySelector(".product-adjust-form");
+        if (panel) panel.hidden = !panel.hidden;
+      });
+    });
+
+    if (productSearchInput) {
+      productSearchInput.addEventListener("input", () => {
+        const q = productSearchInput.value.trim().toLowerCase();
+        productListEl.querySelectorAll(".product-row").forEach((row) => {
+          const item = row.closest(".product-item");
+          item.hidden = q.length > 0 && !row.dataset.name.toLowerCase().includes(q);
+        });
+      });
+    }
+
+    // Card payment - the same type-to-search picker as the session-start
+    // page (see above), reused as-is via the generic /api/cards/search endpoint.
+    function clearCardSelection() {
+      checkoutCardIdInput.value = "";
+      cardBalance = 0;
+      checkoutCardAmountField.hidden = true;
+      checkoutCardAmountInput.value = 0;
+      updateCardAmountBounds();
+      updateCashDue();
+      updateCardBalanceInfo();
+    }
+
+    function selectCheckoutCard(option) {
+      checkoutCardIdInput.value = option.value;
+      cardBalance = parseFloat(option.dataset.balance || "0");
+      checkoutCardSearchInput.value = option.dataset.label || option.textContent;
+      checkoutCardResults.hidden = true;
+      checkoutCardAmountField.hidden = false;
+      updateCardAmountBounds();
+      updateCashDue();
+      updateCardBalanceInfo();
+    }
+
+    async function runCheckoutCardSearch(q) {
+      try {
+        const res = await fetch(`/api/cards/search?q=${encodeURIComponent(q)}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        checkoutCardResults.innerHTML = "";
+        if (!data.cards || data.cards.length === 0) {
+          const opt = document.createElement("option");
+          opt.textContent = "Няма намерени карти";
+          opt.disabled = true;
+          checkoutCardResults.appendChild(opt);
+        } else {
+          data.cards.forEach((card) => {
+            const opt = document.createElement("option");
+            opt.value = card.id;
+            opt.dataset.balance = card.balance;
+            opt.dataset.label = card.label;
+            opt.textContent = `${card.label} — баланс ${card.balance.toFixed(2)} лв`;
+            checkoutCardResults.appendChild(opt);
+          });
+        }
+        checkoutCardResults.hidden = false;
+      } catch (err) {
+        // transient network hiccup - leave whatever results were already shown
+      }
+    }
+
+    checkoutCardSearchInput.addEventListener("input", () => {
+      if (checkoutCardIdInput.value) clearCardSelection();
+      const q = checkoutCardSearchInput.value.trim();
+      clearTimeout(cardSearchTimer);
+      cardSearchTimer = setTimeout(() => runCheckoutCardSearch(q), 200);
+    });
+
+    checkoutCardSearchInput.addEventListener("focus", () => {
+      if (!checkoutCardIdInput.value) runCheckoutCardSearch(checkoutCardSearchInput.value.trim());
+    });
+
+    // Same barcode-scanner accommodation as the session-start card field:
+    // swallow the scanner's trailing Enter and use it to select the scan's
+    // (usually unambiguous) single match instead of letting it fall
+    // through to some other default action on the page.
+    checkoutCardSearchInput.addEventListener("keydown", async (evt) => {
+      if (evt.key !== "Enter") return;
+      evt.preventDefault();
+      clearTimeout(cardSearchTimer);
+      await runCheckoutCardSearch(checkoutCardSearchInput.value.trim());
+      const opts = checkoutCardResults.options;
+      if (opts.length === 1 && opts[0].value) {
+        selectCheckoutCard(opts[0]);
+      }
+    });
+
+    checkoutCardResults.addEventListener("change", () => {
+      const opt = checkoutCardResults.selectedOptions[0];
+      if (opt && opt.value) selectCheckoutCard(opt);
+    });
+
+    checkoutCardAmountInput.addEventListener("input", () => {
+      updateCashDue();
+      updateCardBalanceInfo();
+    });
+
+    document.addEventListener("click", (evt) => {
+      if (evt.target !== checkoutCardSearchInput && !checkoutCardResults.contains(evt.target)) {
+        checkoutCardResults.hidden = true;
+      }
+    });
+
+    checkoutSubmitBtn.addEventListener("click", () => {
+      if (basket.size === 0) return;
+      checkoutForm.innerHTML = "";
+      basket.forEach((line) => {
+        const pid = document.createElement("input");
+        pid.type = "hidden";
+        pid.name = "product_id";
+        pid.value = line.id;
+        checkoutForm.appendChild(pid);
+        const qty = document.createElement("input");
+        qty.type = "hidden";
+        qty.name = "qty";
+        qty.value = line.qty;
+        checkoutForm.appendChild(qty);
+      });
+      const cid = document.createElement("input");
+      cid.type = "hidden";
+      cid.name = "card_id";
+      cid.value = checkoutCardIdInput.value || "";
+      checkoutForm.appendChild(cid);
+      const camt = document.createElement("input");
+      camt.type = "hidden";
+      camt.name = "card_amount";
+      camt.value = checkoutCardAmountInput.value || "0";
+      checkoutForm.appendChild(camt);
+      checkoutForm.submit();
+    });
+
+    renderBasket();
+  }
 })();

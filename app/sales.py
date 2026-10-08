@@ -554,8 +554,10 @@ def set_product_active(product_id, active):
 
 
 def restock_product(product_id, add_qty):
-    """Inventory replenishment, not a sale - deliberately not written to
-    sales_log, which is an income/outcome ledger, not a stock ledger."""
+    """Inventory replenishment (a new delivery arrived) - deliberately not
+    written to sales_log, which is an income/outcome ledger, not a stock
+    ledger, and a routine delivery needs no explanation. A downward
+    correction is a different thing entirely - see adjust_stock."""
     add_qty = int(add_qty)
     if add_qty <= 0:
         return
@@ -567,30 +569,83 @@ def restock_product(product_id, add_qty):
         conn.close()
 
 
-def sell_product(product_id, qty, card_id=None, card_amount=0):
-    qty = int(qty)
-    if qty <= 0:
-        raise PaymentError("Количеството трябва да е поне 1.")
+def adjust_stock(product_id, new_stock_qty, reason=""):
+    """Correct a product's stock to a specific counted value - e.g. after a
+    physical inventory finds less on the shelf than the system expects
+    (shrinkage, breakage, a past counting error). Unlike restock_product
+    this can move stock down as well as up, and unlike a routine delivery
+    it's not self-explanatory, so it IS written to sales_log (as a
+    zero-money entry carrying the before/after counts and whatever reason
+    staff gave) so a manager reviewing the daily protocol can see exactly
+    when and why a correction was made, not just that stock changed."""
+    new_stock_qty = max(0, int(new_stock_qty))
+    reason = (reason or "").strip()
     conn = db.get_connection()
     try:
         with db.transaction(conn):
             product = conn.execute("SELECT * FROM products WHERE id = ?", (product_id,)).fetchone()
             if product is None:
                 raise PaymentError("Продуктът не съществува.")
-            if product["stock_qty"] < qty:
-                raise PaymentError(
-                    f"Няма достатъчно наличност от \"{product['name']}\" ({product['stock_qty']} бр.)."
-                )
-            total = round(product["sale_price"] * qty, 2)
+            old_qty = product["stock_qty"]
+            delta = new_stock_qty - old_qty
+            if delta == 0:
+                return
+            conn.execute("UPDATE products SET stock_qty = ? WHERE id = ?", (new_stock_qty, product_id))
+            description = f"Корекция на наличност: {product['name']} {old_qty} → {new_stock_qty} бр."
+            if reason:
+                description += f" ({reason})"
+            record_sale(conn, "stock_adjustment", description, qty=delta, product_id=product_id)
+    finally:
+        conn.close()
+
+
+def sell_products(items, card_id=None, card_amount=0):
+    """Check out a whole basket in one atomic transaction. items: iterable
+    of (product_id, qty) pairs. Stock is validated for every line up front
+    so a multi-item sale never partially applies; one combined sales_log
+    line is recorded for the whole basket (its description already lists
+    everything sold, and a row per item would clutter the daily protocol
+    for what is, from the register's point of view, a single sale)."""
+    conn = db.get_connection()
+    try:
+        with db.transaction(conn):
+            lines = []
+            total = 0.0
+            total_qty = 0
+            for product_id, qty in items:
+                qty = int(qty)
+                if qty <= 0:
+                    continue
+                product = conn.execute("SELECT * FROM products WHERE id = ?", (product_id,)).fetchone()
+                if product is None:
+                    raise PaymentError("Продуктът не съществува.")
+                if product["stock_qty"] < qty:
+                    raise PaymentError(
+                        f"Няма достатъчно наличност от \"{product['name']}\" ({product['stock_qty']} бр.)."
+                    )
+                lines.append((product, qty))
+                total += product["sale_price"] * qty
+                total_qty += qty
+
+            if not lines:
+                raise PaymentError("Кошницата е празна.")
+
+            total = round(total, 2)
             actual_card_amount = 0.0
             if card_id and card_amount and float(card_amount) > 0:
                 actual_card_amount = _deduct_card_money_fifo(conn, card_id, min(float(card_amount), total))
             cash_amount = round(total - actual_card_amount, 2)
-            conn.execute("UPDATE products SET stock_qty = stock_qty - ? WHERE id = ?", (qty, product_id))
+
+            for product, qty in lines:
+                conn.execute(
+                    "UPDATE products SET stock_qty = stock_qty - ? WHERE id = ?", (qty, product["id"])
+                )
+
+            description = ", ".join(f"{product['name']} x{qty}" for product, qty in lines)
             record_sale(
-                conn, "product_sale", f"Продажба: {product['name']} x{qty}",
+                conn, "product_sale", f"Продажба: {description}",
                 cash_amount=cash_amount, card_amount=actual_card_amount,
-                qty=qty, product_id=product_id, card_id=card_id,
+                qty=total_qty, card_id=card_id,
             )
     finally:
         conn.close()

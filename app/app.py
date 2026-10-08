@@ -239,7 +239,6 @@ def cosmetics_page():
         bottom_buttons=BOTTOM_BUTTONS,
         server_time=datetime.now().strftime("%H:%M:%S"),
         products=sales.list_products(),
-        cards=sales.list_cards(status="active"),
         error=request.args.get("error"),
     )
 
@@ -270,18 +269,32 @@ def cosmetics_restock_product(product_id):
     return redirect(url_for("cosmetics_page"))
 
 
+@app.route("/cosmetics/products/<int:product_id>/adjust-stock", methods=["POST"])
+def cosmetics_adjust_stock(product_id):
+    try:
+        sales.adjust_stock(
+            product_id,
+            new_stock_qty=request.form.get("new_stock_qty", type=int, default=0),
+            reason=request.form.get("reason", ""),
+        )
+    except sales.PaymentError as exc:
+        return redirect(url_for("cosmetics_page", error=str(exc)))
+    return redirect(url_for("cosmetics_page"))
+
+
 @app.route("/cosmetics/products/<int:product_id>/retire", methods=["POST"])
 def cosmetics_retire_product(product_id):
     sales.set_product_active(product_id, 0)
     return redirect(url_for("cosmetics_page"))
 
 
-@app.route("/cosmetics/products/<int:product_id>/sell", methods=["POST"])
-def cosmetics_sell_product(product_id):
+@app.route("/cosmetics/checkout", methods=["POST"])
+def cosmetics_checkout():
+    product_ids = request.form.getlist("product_id", type=int)
+    qtys = request.form.getlist("qty", type=int)
     try:
-        sales.sell_product(
-            product_id,
-            qty=request.form.get("qty", type=int, default=1),
+        sales.sell_products(
+            zip(product_ids, qtys),
             card_id=request.form.get("card_id", type=int, default=None),
             card_amount=request.form.get("card_amount", type=float, default=0.0),
         )
