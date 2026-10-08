@@ -1,4 +1,9 @@
 import os
+import threading
+import time
+import urllib.error
+import urllib.request
+import webbrowser
 from datetime import datetime
 from pathlib import Path
 
@@ -11,6 +16,7 @@ import sales
 
 ALLOWED_IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp", ".svg"}
 DEBUG = True
+PORT = 5000
 
 app = Flask(__name__)
 db.init_db()
@@ -442,11 +448,41 @@ def status():
     )
 
 
-if __name__ == "__main__":
-    # Under the debug reloader there are two processes: a parent monitor
-    # (WERKZEUG_RUN_MAIN unset) and the child that actually serves requests
-    # (WERKZEUG_RUN_MAIN="true"). Only start the scheduler in the process
-    # that will actually stick around, so it doesn't run twice.
-    if not DEBUG or os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+def run_server(debug=DEBUG, open_browser=False):
+    """Start the server. Shared by `python app.py` (dev workflow: debug
+    mode, auto-reload) and run.py (the double-click launcher: no debug
+    mode, no reloader, opens the browser once the server answers).
+
+    Under the debug reloader there are two processes: a parent monitor
+    (WERKZEUG_RUN_MAIN unset) and the child that actually serves requests
+    (WERKZEUG_RUN_MAIN="true"). The backup scheduler and the browser-open
+    both only run in the process that will actually stick around, so
+    neither fires twice.
+    """
+    is_main_process = not debug or os.environ.get("WERKZEUG_RUN_MAIN") == "true"
+
+    if is_main_process:
         db.start_backup_scheduler()
-    app.run(debug=DEBUG, host="0.0.0.0", port=5000)
+
+    if open_browser and is_main_process:
+        _open_browser_when_ready(f"http://127.0.0.1:{PORT}/")
+
+    app.run(debug=debug, use_reloader=debug, host="0.0.0.0", port=PORT)
+
+
+def _open_browser_when_ready(url, timeout_seconds=15):
+    def wait_and_open():
+        deadline = time.monotonic() + timeout_seconds
+        while time.monotonic() < deadline:
+            try:
+                urllib.request.urlopen(url, timeout=0.5)
+                break
+            except (OSError, urllib.error.URLError):
+                time.sleep(0.25)  # server socket isn't listening yet - keep polling
+        webbrowser.open(url)
+
+    threading.Thread(target=wait_and_open, daemon=True).start()
+
+
+if __name__ == "__main__":
+    run_server(debug=DEBUG)
