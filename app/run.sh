@@ -25,7 +25,18 @@ fi
 
 if ! "$PYTHON" -c "import flask" >/dev/null 2>&1; then
     echo "Installing dependencies for the first run - this only happens once..."
-    "$PYTHON" -m pip install -r requirements.txt
+    if ! "$PYTHON" -m pip install -r requirements.txt; then
+        echo
+        echo "Dependency installation failed."
+        echo "If the error above mentions winscard.h, pcsclite.h, or failing to"
+        echo "build pyscard (the chip-card reader library), install the system"
+        echo "packages it needs first, then run this again:"
+        echo "    sudo apt install libpcsclite-dev pcscd"
+        echo "(use your distro's equivalent package names if not Debian/Ubuntu)."
+        echo "For any other error, check your internet connection and try again."
+        read -r -p "Press Enter to close..." _
+        exit 1
+    fi
 fi
 
 "$PYTHON" run.py
