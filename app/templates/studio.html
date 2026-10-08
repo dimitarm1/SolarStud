@@ -5,12 +5,10 @@
 
 {% block sidebar %}
 <nav class="sidebar">
+  {% set page_urls = {'studio': url_for('studio'), 'cosmetics': url_for('cosmetics_page'),
+                       'cards': url_for('cards_page'), 'tanning': url_for('index')} %}
   {% for item in nav_items %}
-    {% if item.id == 'studio' %}
-      {{ nav_link(item, 'studio', url_for('studio')) }}
-    {% else %}
-      {{ nav_link(item, 'studio', url_for('index')) }}
-    {% endif %}
+    {{ nav_link(item, 'studio', page_urls[item.id]) }}
   {% endfor %}
 </nav>
 {% endblock %}
@@ -88,15 +86,123 @@
       </button>
     </form>
   </div>
+
+  <div class="settings-panel settings-panel--static">
+    <h3 class="settings-panel__title">Опции за презареждане на карти</h3>
+    <p class="settings-hint settings-hint--lead">
+      Всяка опция е фиксирана сума виртуален кредит, продавана на фиксирана цена в брой.
+    </p>
+
+    {% if recharge_options %}
+    {% for option in recharge_options %}
+    <form id="option-form-{{ option.id }}" method="post"
+          action="{{ url_for('studio_update_recharge_option', option_id=option.id) }}"></form>
+    {% endfor %}
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Име</th>
+            <th>Виртуален кредит</th>
+            <th>Цена в брой</th>
+            <th>Статус</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for option in recharge_options %}
+          <tr>
+            <td><input class="field__input" form="option-form-{{ option.id }}" type="text" name="name" value="{{ option.name }}" required></td>
+            <td><input class="field__input" form="option-form-{{ option.id }}" type="number" step="0.01" min="0.01" name="virtual_amount" value="{{ option.virtual_amount }}" required></td>
+            <td><input class="field__input" form="option-form-{{ option.id }}" type="number" step="0.01" min="0" name="cash_price" value="{{ option.cash_price }}" required></td>
+            <td>{{ "Активна" if option.active else "Неактивна" }}</td>
+            <td style="white-space:nowrap;">
+              <button class="action-btn" form="option-form-{{ option.id }}" type="submit" style="width:auto;" title="Запази">
+                {{ icon('check', 'action-icon') }}
+              </button>
+              <form method="post" action="{{ url_for('studio_set_recharge_option_active', option_id=option.id) }}" style="display:inline;">
+                <input type="hidden" name="active" value="{{ 0 if option.active else 1 }}">
+                <button class="settings-toggle" type="submit">{{ "Деактивирай" if option.active else "Активирай" }}</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+
+    <form class="settings-form" method="post" action="{{ url_for('studio_create_recharge_option') }}" style="margin-top:20px;">
+      <div class="settings-grid">
+        <label class="field">
+          <span class="field__label">Име</span>
+          <input class="field__input" type="text" name="name" required>
+        </label>
+        <label class="field">
+          <span class="field__label">Виртуален кредит</span>
+          <input class="field__input" type="number" step="0.01" min="0.01" name="virtual_amount" required>
+        </label>
+        <label class="field">
+          <span class="field__label">Цена в брой</span>
+          <input class="field__input" type="number" step="0.01" min="0" name="cash_price" required>
+        </label>
+      </div>
+      <button class="action-btn action-btn--start" type="submit">
+        {{ icon('plus', 'action-icon') }}
+        <span>Добави опция</span>
+      </button>
+    </form>
+  </div>
+
+  {% if recharge_options %}
+  <div class="settings-panel settings-panel--static">
+    <h3 class="settings-panel__title">Цени по легла за опциите</h3>
+    <p class="settings-hint settings-hint--lead">
+      Цена на минута за всяко легло при плащане с карта, заредена чрез съответната опция. Празно поле
+      означава да се ползва стандартната цена на леглото.
+    </p>
+
+    {% for option in recharge_options %}
+    <form method="post" action="{{ url_for('studio_set_recharge_option_bed_prices', option_id=option.id) }}" style="margin-bottom:16px;">
+      <div class="price-matrix-wrap">
+        <table class="data-table price-matrix">
+          <thead>
+            <tr>
+              <th>{{ option.name }}</th>
+              {% for bed in beds %}
+              <th>{{ bed.number }}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>лв/мин</td>
+              {% for bed in beds %}
+              <td>
+                <input type="number" step="0.01" min="0" name="bed_{{ bed.id }}"
+                       value="{{ recharge_option_bed_prices.get(option.id, {}).get(bed.id, '') }}"
+                       placeholder="{{ bed.price_per_min }}">
+              </td>
+              {% endfor %}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <button class="action-btn" type="submit" style="width:auto; margin-top:10px;">
+        {{ icon('check', 'action-icon') }}
+        <span>Запази цените за "{{ option.name }}"</span>
+      </button>
+    </form>
+    {% endfor %}
+  </div>
+  {% endif %}
 </section>
 {% endblock %}
 
 {% block bottom_buttons %}
+{% set page_urls = {'studio': url_for('studio'), 'cosmetics': url_for('cosmetics_page'),
+                     'cards': url_for('cards_page'), 'protocol': url_for('protocol')} %}
 {% for btn in bottom_buttons %}
-  {% if btn.id == 'studio' %}
-    {{ bottom_link(btn, url_for('studio')) }}
-  {% else %}
-    {{ bottom_link(btn, url_for('index')) }}
-  {% endif %}
+  {{ bottom_link(btn, page_urls[btn.id]) }}
 {% endfor %}
 {% endblock %}

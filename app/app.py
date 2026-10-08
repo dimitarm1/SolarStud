@@ -7,6 +7,7 @@ from flask import Flask, abort, jsonify, redirect, render_template, request, sen
 import controller_link
 import db
 import models
+import sales
 
 ALLOWED_IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp", ".svg"}
 DEBUG = True
@@ -67,6 +68,8 @@ def bed_detail(bed_id):
         demo_address_min=models.MIN_DEMO_CONTROLLER_ADDRESS,
         demo_address_max=models.MAX_CONTROLLER_ADDRESS,
         hw_error=request.args.get("hw_error"),
+        payment_error=request.args.get("payment_error"),
+        cards=sales.list_cards(status="active"),
     )
 
 
@@ -75,10 +78,16 @@ def start_bed(bed_id):
     if models.get_bed(bed_id) is None:
         abort(404)
     total_min = request.form.get("total_min", type=int, default=models.DEFAULT_SESSION_MINUTES)
+    card_id = request.form.get("card_id", type=int, default=None)
+    card_amount = request.form.get("card_amount", type=float, default=0.0)
     try:
-        models.start_session(bed_id, total_min=total_min)
+        models.start_session_with_payment(
+            bed_id, total_min=total_min, card_id=card_id, requested_card_amount=card_amount
+        )
     except controller_link.ControllerLinkError as exc:
         return redirect(url_for("bed_detail", bed_id=bed_id, hw_error=str(exc)))
+    except sales.PaymentError as exc:
+        return redirect(url_for("bed_detail", bed_id=bed_id, payment_error=str(exc)))
     return redirect(url_for("bed_detail", bed_id=bed_id))
 
 
@@ -127,6 +136,7 @@ def update_bed_settings(bed_id):
         cool_min=request.form.get("cool_min", type=int, default=models.MIN_COOL_MINUTES),
         picture_path=request.form.get("picture_path", ""),
         controller_address=request.form.get("controller_address", ""),
+        price_per_min=request.form.get("price_per_min", type=float, default=0.0),
     )
     return redirect(url_for("bed_detail", bed_id=bed_id))
 
@@ -150,6 +160,8 @@ def scan_controllers():
 
 @app.route("/studio")
 def studio():
+    beds = models.list_beds()
+    options = sales.list_recharge_options(include_inactive=True)
     return render_template(
         "studio.html",
         version=VERSION,
@@ -160,6 +172,11 @@ def studio():
         bed_count_min=models.MIN_BEDS,
         bed_count_max=models.MAX_BEDS,
         serial_port=models.get_serial_port(),
+        beds=beds,
+        recharge_options=options,
+        recharge_option_bed_prices={
+            option["id"]: sales.list_recharge_option_bed_prices(option["id"]) for option in options
+        },
     )
 
 
@@ -175,6 +192,188 @@ def studio_set_bed_count():
 def studio_set_serial_port():
     models.set_serial_port(request.form.get("serial_port", ""))
     return redirect(url_for("studio"))
+
+
+@app.route("/studio/recharge-options", methods=["POST"])
+def studio_create_recharge_option():
+    sales.create_recharge_option(
+        name=request.form.get("name", ""),
+        virtual_amount=request.form.get("virtual_amount", type=float, default=0.0),
+        cash_price=request.form.get("cash_price", type=float, default=0.0),
+    )
+    return redirect(url_for("studio"))
+
+
+@app.route("/studio/recharge-options/<int:option_id>/update", methods=["POST"])
+def studio_update_recharge_option(option_id):
+    sales.update_recharge_option(
+        option_id,
+        name=request.form.get("name", ""),
+        virtual_amount=request.form.get("virtual_amount", type=float, default=0.0),
+        cash_price=request.form.get("cash_price", type=float, default=0.0),
+    )
+    return redirect(url_for("studio"))
+
+
+@app.route("/studio/recharge-options/<int:option_id>/active", methods=["POST"])
+def studio_set_recharge_option_active(option_id):
+    sales.set_recharge_option_active(option_id, request.form.get("active", type=int, default=1))
+    return redirect(url_for("studio"))
+
+
+@app.route("/studio/recharge-options/<int:option_id>/bed-prices", methods=["POST"])
+def studio_set_recharge_option_bed_prices(option_id):
+    bed_prices = {}
+    for bed in models.list_beds():
+        raw = request.form.get(f"bed_{bed['id']}", "").strip()
+        bed_prices[bed["id"]] = float(raw) if raw else None
+    sales.set_recharge_option_bed_prices(option_id, bed_prices)
+    return redirect(url_for("studio"))
+
+
+@app.route("/cosmetics")
+def cosmetics_page():
+    return render_template(
+        "cosmetics.html",
+        version=VERSION,
+        nav_items=NAV_ITEMS,
+        bottom_buttons=BOTTOM_BUTTONS,
+        server_time=datetime.now().strftime("%H:%M:%S"),
+        products=sales.list_products(),
+        cards=sales.list_cards(status="active"),
+        error=request.args.get("error"),
+    )
+
+
+@app.route("/cosmetics/products", methods=["POST"])
+def cosmetics_create_product():
+    sales.create_product(
+        name=request.form.get("name", ""),
+        sale_price=request.form.get("sale_price", type=float, default=0.0),
+        initial_stock=request.form.get("initial_stock", type=int, default=0),
+    )
+    return redirect(url_for("cosmetics_page"))
+
+
+@app.route("/cosmetics/products/<int:product_id>/update", methods=["POST"])
+def cosmetics_update_product(product_id):
+    sales.update_product(
+        product_id,
+        name=request.form.get("name", ""),
+        sale_price=request.form.get("sale_price", type=float, default=0.0),
+    )
+    return redirect(url_for("cosmetics_page"))
+
+
+@app.route("/cosmetics/products/<int:product_id>/restock", methods=["POST"])
+def cosmetics_restock_product(product_id):
+    sales.restock_product(product_id, request.form.get("add_qty", type=int, default=0))
+    return redirect(url_for("cosmetics_page"))
+
+
+@app.route("/cosmetics/products/<int:product_id>/retire", methods=["POST"])
+def cosmetics_retire_product(product_id):
+    sales.set_product_active(product_id, 0)
+    return redirect(url_for("cosmetics_page"))
+
+
+@app.route("/cosmetics/products/<int:product_id>/sell", methods=["POST"])
+def cosmetics_sell_product(product_id):
+    try:
+        sales.sell_product(
+            product_id,
+            qty=request.form.get("qty", type=int, default=1),
+            card_id=request.form.get("card_id", type=int, default=None),
+            card_amount=request.form.get("card_amount", type=float, default=0.0),
+        )
+    except sales.PaymentError as exc:
+        return redirect(url_for("cosmetics_page", error=str(exc)))
+    return redirect(url_for("cosmetics_page"))
+
+
+@app.route("/cards")
+def cards_page():
+    return render_template(
+        "cards.html",
+        version=VERSION,
+        nav_items=NAV_ITEMS,
+        bottom_buttons=BOTTOM_BUTTONS,
+        server_time=datetime.now().strftime("%H:%M:%S"),
+        cards=sales.list_cards(),
+        recharge_options=sales.list_recharge_options(),
+        error=request.args.get("error"),
+    )
+
+
+@app.route("/cards", methods=["POST"])
+def cards_issue():
+    card_id = sales.issue_card(
+        card_number=request.form.get("card_number", ""),
+        deposit_amount=request.form.get("deposit_amount", type=float, default=0.0),
+        first_recharge_option_id=request.form.get("recharge_option_id", type=int, default=None),
+    )
+    return redirect(url_for("card_detail", card_id=card_id))
+
+
+@app.route("/cards/<int:card_id>")
+def card_detail(card_id):
+    card = sales.get_card(card_id)
+    if card is None:
+        abort(404)
+    return render_template(
+        "card_detail.html",
+        version=VERSION,
+        nav_items=NAV_ITEMS,
+        bottom_buttons=BOTTOM_BUTTONS,
+        server_time=datetime.now().strftime("%H:%M:%S"),
+        card=card,
+        recharge_options=sales.list_recharge_options(),
+        error=request.args.get("error"),
+    )
+
+
+@app.route("/cards/<int:card_id>/recharge", methods=["POST"])
+def card_recharge(card_id):
+    try:
+        sales.recharge_card(card_id, request.form.get("recharge_option_id", type=int, default=None))
+    except sales.PaymentError as exc:
+        return redirect(url_for("card_detail", card_id=card_id, error=str(exc)))
+    return redirect(url_for("card_detail", card_id=card_id))
+
+
+@app.route("/cards/<int:card_id>/return", methods=["POST"])
+def card_return(card_id):
+    try:
+        sales.return_card(
+            card_id, force_forfeit_balance=request.form.get("force_forfeit_balance", default="") == "1"
+        )
+    except sales.PaymentError as exc:
+        return redirect(url_for("card_detail", card_id=card_id, error=str(exc)))
+    return redirect(url_for("cards_page"))
+
+
+@app.route("/protocol")
+def protocol():
+    date = request.args.get("date") or datetime.now().strftime("%Y-%m-%d")
+    return render_template(
+        "protocol.html",
+        version=VERSION,
+        nav_items=NAV_ITEMS,
+        bottom_buttons=BOTTOM_BUTTONS,
+        server_time=datetime.now().strftime("%H:%M:%S"),
+        date=date,
+        entries=sales.list_sales_log(date=date),
+        summary=sales.sales_log_summary(date=date),
+    )
+
+
+@app.route("/api/sessions/quote")
+def quote_session():
+    bed_id = request.args.get("bed_id", type=int)
+    total_min = request.args.get("total_min", type=int, default=models.DEFAULT_SESSION_MINUTES)
+    card_id = request.args.get("card_id", type=int)
+    card_amount = request.args.get("card_amount", type=float, default=0.0)
+    return jsonify(sales.quote_session_payment(bed_id, total_min, card_id, card_amount))
 
 
 @app.route("/api/status")

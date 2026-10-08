@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% from "icons.html" import icon, nav_link, bottom_link %}
+
+{% block title %}Solar Studio — Cosmetics{% endblock %}
+
+{% block sidebar %}
+<nav class="sidebar">
+  {% set page_urls = {'studio': url_for('studio'), 'cosmetics': url_for('cosmetics_page'),
+                       'cards': url_for('cards_page'), 'tanning': url_for('index')} %}
+  {% for item in nav_items %}
+    {{ nav_link(item, 'cosmetics', page_urls[item.id]) }}
+  {% endfor %}
+</nav>
+{% endblock %}
+
+{% block content %}
+<section class="view view-detail">
+  <a class="back-link" href="{{ url_for('index') }}">
+    {{ icon('back', 'back-icon') }}
+    <span>Назад</span>
+  </a>
+
+  {% if error %}
+  <div class="hw-error-banner">
+    {{ icon('warning', 'hw-error-icon') }}
+    <span>{{ error }}</span>
+    <button class="hw-error-dismiss" type="button" aria-label="Затвори">{{ icon('close', 'hw-error-dismiss-icon') }}</button>
+  </div>
+  {% endif %}
+
+  <div class="settings-panel settings-panel--static">
+    <h3 class="settings-panel__title">Нов продукт</h3>
+    <form class="settings-form" method="post" action="{{ url_for('cosmetics_create_product') }}">
+      <div class="settings-grid">
+        <label class="field">
+          <span class="field__label">Име</span>
+          <input class="field__input" type="text" name="name" required>
+        </label>
+        <label class="field">
+          <span class="field__label">Цена</span>
+          <input class="field__input" type="number" step="0.01" min="0" name="sale_price" required>
+        </label>
+        <label class="field">
+          <span class="field__label">Начална наличност</span>
+          <input class="field__input" type="number" step="1" min="0" name="initial_stock" value="0">
+        </label>
+      </div>
+      <button class="action-btn action-btn--start" type="submit">
+        {{ icon('plus', 'action-icon') }}
+        <span>Добави продукт</span>
+      </button>
+    </form>
+  </div>
+
+  {% if products %}
+  <div class="product-grid">
+    {% for product in products %}
+    <div class="product-card">
+      <div class="product-card__header">
+        <h3 class="product-card__name">{{ product.name }}</h3>
+        <span class="product-card__price">{{ "%.2f"|format(product.sale_price) }} лв</span>
+      </div>
+      <span class="stock-badge {{ 'stock-badge--out' if product.stock_qty == 0 else ('stock-badge--low' if product.stock_qty <= 3 else '') }}">
+        {{ product.stock_qty }} бр. наличност
+      </span>
+
+      <form class="product-mini-form" method="post" action="{{ url_for('cosmetics_sell_product', product_id=product.id) }}">
+        <input type="number" name="qty" value="1" min="1" max="{{ product.stock_qty }}" required>
+        {% if cards %}
+        <select class="controller-picker-select" name="card_id" style="width:auto;">
+          <option value="">В брой</option>
+          {% for card in cards %}
+          <option value="{{ card.id }}">№{{ card.id }} ({{ "%.2f"|format(card.balance) }} лв)</option>
+          {% endfor %}
+        </select>
+        <input type="number" name="card_amount" step="0.01" min="0" placeholder="сума карта" style="width:120px;">
+        {% endif %}
+        <button class="product-mini-btn" type="submit" title="Продай" {{ 'disabled' if product.stock_qty == 0 }}>
+          {{ icon('check', 'action-icon') }}
+        </button>
+      </form>
+
+      <form class="product-mini-form" method="post" action="{{ url_for('cosmetics_restock_product', product_id=product.id) }}">
+        <input type="number" name="add_qty" value="1" min="1" required>
+        <button class="product-mini-btn" type="submit" title="Заприходи">
+          {{ icon('plus', 'action-icon') }}
+        </button>
+      </form>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="placeholder">
+    {{ icon('leaf', 'placeholder-icon') }}
+    <p>Все още няма добавени продукти</p>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}
+
+{% block bottom_buttons %}
+{% set page_urls = {'studio': url_for('studio'), 'cosmetics': url_for('cosmetics_page'),
+                     'cards': url_for('cards_page'), 'protocol': url_for('protocol')} %}
+{% for btn in bottom_buttons %}
+  {{ bottom_link(btn, page_urls[btn.id]) }}
+{% endfor %}
+{% endblock %}

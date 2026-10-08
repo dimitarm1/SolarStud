@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% from "icons.html" import icon, nav_link, bottom_link %}
+
+{% block title %}Solar Studio — Cards{% endblock %}
+
+{% block sidebar %}
+<nav class="sidebar">
+  {% set page_urls = {'studio': url_for('studio'), 'cosmetics': url_for('cosmetics_page'),
+                       'cards': url_for('cards_page'), 'tanning': url_for('index')} %}
+  {% for item in nav_items %}
+    {{ nav_link(item, 'cards', page_urls[item.id]) }}
+  {% endfor %}
+</nav>
+{% endblock %}
+
+{% block content %}
+<section class="view view-detail">
+  <a class="back-link" href="{{ url_for('index') }}">
+    {{ icon('back', 'back-icon') }}
+    <span>Назад</span>
+  </a>
+
+  {% if error %}
+  <div class="hw-error-banner">
+    {{ icon('warning', 'hw-error-icon') }}
+    <span>{{ error }}</span>
+    <button class="hw-error-dismiss" type="button" aria-label="Затвори">{{ icon('close', 'hw-error-dismiss-icon') }}</button>
+  </div>
+  {% endif %}
+
+  <div class="settings-panel settings-panel--static">
+    <h3 class="settings-panel__title">Издай нова карта</h3>
+    <form class="settings-form" method="post" action="{{ url_for('cards_issue') }}">
+      <div class="settings-grid">
+        <label class="field">
+          <span class="field__label">Номер на картата (по избор)</span>
+          <input class="field__input" type="text" name="card_number">
+        </label>
+        <label class="field">
+          <span class="field__label">Депозит</span>
+          <input class="field__input" type="number" step="0.01" min="0" name="deposit_amount" value="0">
+        </label>
+        <label class="field">
+          <span class="field__label">Първо презареждане (по избор)</span>
+          <select class="field__input" name="recharge_option_id">
+            <option value="">— Без —</option>
+            {% for option in recharge_options %}
+            <option value="{{ option.id }}">{{ option.name }} ({{ option.virtual_amount }} лв за {{ option.cash_price }} лв)</option>
+            {% endfor %}
+          </select>
+        </label>
+      </div>
+      <button class="action-btn action-btn--start" type="submit">
+        {{ icon('plus', 'action-icon') }}
+        <span>Издай карта</span>
+      </button>
+    </form>
+  </div>
+
+  {% if cards %}
+  <div class="cards-list">
+    {% for card in cards %}
+    <a class="card-row" href="{{ url_for('card_detail', card_id=card.id) }}">
+      <span class="card-row__id">№{{ card.id }}</span>
+      <span class="card-row__number">{{ card.card_number or "—" }}</span>
+      <span class="card-status-badge {{ 'card-status-badge--active' if card.status == 'active' else 'card-status-badge--returned' }}">
+        {{ "Активна" if card.status == 'active' else "Върната" }}
+      </span>
+      <span class="card-balance">{{ "%.2f"|format(card.balance) }} лв</span>
+    </a>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="placeholder">
+    {{ icon('card', 'placeholder-icon') }}
+    <p>Все още няма издадени карти</p>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}
+
+{% block bottom_buttons %}
+{% set page_urls = {'studio': url_for('studio'), 'cosmetics': url_for('cosmetics_page'),
+                     'cards': url_for('cards_page'), 'protocol': url_for('protocol')} %}
+{% for btn in bottom_buttons %}
+  {{ bottom_link(btn, page_urls[btn.id]) }}
+{% endfor %}
+{% endblock %}

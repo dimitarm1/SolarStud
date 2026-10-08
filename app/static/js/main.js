@@ -338,10 +338,99 @@
     }
   }
 
-  // Hardware-error banner dismiss (set via ?hw_error= on the bed detail page)
-  const hwErrorDismiss = document.getElementById("hw-error-dismiss");
-  const hwErrorBanner = document.getElementById("hw-error-banner");
-  if (hwErrorDismiss && hwErrorBanner) {
-    hwErrorDismiss.addEventListener("click", () => hwErrorBanner.remove());
+  // Error banner dismiss (hw_error / payment_error / generic ?error= on
+  // various pages) - class-based so more than one banner can appear on a
+  // page without id collisions.
+  document.querySelectorAll(".hw-error-banner").forEach((banner) => {
+    const dismiss = banner.querySelector(".hw-error-dismiss");
+    if (dismiss) dismiss.addEventListener("click", () => banner.remove());
+  });
+
+  // Session payment: the card-amount slider is bounded by the selected
+  // card's balance (and by what the session could possibly cost), and a
+  // cash-due readout updates locally for instant feedback, then refines via
+  // a server quote (which accounts for per-recharge-option bed rates that
+  // the client has no way to compute on its own).
+  const paymentCardSelect = document.getElementById("payment-card-select");
+  const paymentCardAmountField = document.getElementById("payment-card-amount-field");
+  const paymentCardAmountInput = document.getElementById("payment-card-amount");
+  const paymentCashDue = document.getElementById("payment-cash-due");
+  const sessionLengthInput = document.getElementById("session-length");
+
+  if (paymentCardSelect && paymentCardAmountField && paymentCardAmountInput && paymentCashDue) {
+    const pricePerMin = parseFloat(paymentCardSelect.dataset.pricePerMin || "0");
+    const bedId = paymentCardSelect.dataset.bedId;
+    let quoteTimer = null;
+
+    const selectedBalance = () => {
+      const opt = paymentCardSelect.selectedOptions[0];
+      return opt ? parseFloat(opt.dataset.balance || "0") : 0;
+    };
+    const totalMin = () => (sessionLengthInput ? parseFloat(sessionLengthInput.value || "0") : 0);
+
+    function updateCashDueLocally() {
+      const flatTotal = totalMin() * pricePerMin;
+      const cardAmount = parseFloat(paymentCardAmountInput.value || "0");
+      const cash = Math.max(0, flatTotal - cardAmount);
+      paymentCashDue.textContent = `${cash.toFixed(2)} лв`;
+    }
+
+    function fetchQuote() {
+      if (!bedId) return;
+      const cardId = paymentCardSelect.value;
+      const params = new URLSearchParams({
+        bed_id: bedId,
+        total_min: totalMin(),
+        card_id: cardId || "",
+        card_amount: cardId ? paymentCardAmountInput.value || "0" : "0",
+      });
+      clearTimeout(quoteTimer);
+      quoteTimer = setTimeout(async () => {
+        try {
+          const res = await fetch(`/api/sessions/quote?${params.toString()}`);
+          if (!res.ok) return;
+          const data = await res.json();
+          paymentCashDue.textContent = `${data.cash_amount.toFixed(2)} лв`;
+        } catch (err) {
+          // leave the local estimate in place on a transient network hiccup
+        }
+      }, 150);
+    }
+
+    function updateCardAmountBounds() {
+      const max = Math.max(0, Math.min(selectedBalance(), totalMin() * pricePerMin));
+      paymentCardAmountInput.max = max.toFixed(2);
+      if (parseFloat(paymentCardAmountInput.value) > max) {
+        paymentCardAmountInput.value = max;
+      }
+      paymentCardAmountInput.dispatchEvent(new Event("input"));
+    }
+
+    paymentCardSelect.addEventListener("change", () => {
+      const hasCard = paymentCardSelect.value !== "";
+      paymentCardAmountField.hidden = !hasCard;
+      if (!hasCard) {
+        paymentCardAmountInput.value = 0;
+      }
+      updateCardAmountBounds();
+      updateCashDueLocally();
+      fetchQuote();
+    });
+
+    paymentCardAmountInput.addEventListener("input", () => {
+      updateCashDueLocally();
+      fetchQuote();
+    });
+
+    if (sessionLengthInput) {
+      sessionLengthInput.addEventListener("input", () => {
+        updateCardAmountBounds();
+        updateCashDueLocally();
+        fetchQuote();
+      });
+    }
+
+    updateCardAmountBounds();
+    updateCashDueLocally();
   }
 })();

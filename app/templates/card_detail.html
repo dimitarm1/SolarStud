@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% from "icons.html" import icon, nav_link, bottom_link %}
+
+{% block title %}Solar Studio — Card {{ card.id }}{% endblock %}
+
+{% block sidebar %}
+<nav class="sidebar">
+  {% set page_urls = {'studio': url_for('studio'), 'cosmetics': url_for('cosmetics_page'),
+                       'cards': url_for('cards_page'), 'tanning': url_for('index')} %}
+  {% for item in nav_items %}
+    {{ nav_link(item, 'cards', page_urls[item.id]) }}
+  {% endfor %}
+</nav>
+{% endblock %}
+
+{% block content %}
+<section class="view view-detail">
+  <a class="back-link" href="{{ url_for('cards_page') }}">
+    {{ icon('back', 'back-icon') }}
+    <span>Назад</span>
+  </a>
+
+  {% if error %}
+  <div class="hw-error-banner">
+    {{ icon('warning', 'hw-error-icon') }}
+    <span>{{ error }}</span>
+    <button class="hw-error-dismiss" type="button" aria-label="Затвори">{{ icon('close', 'hw-error-dismiss-icon') }}</button>
+  </div>
+  {% endif %}
+
+  <div class="detail-title-row">
+    <h2 class="detail-title">Карта №{{ card.id }}{% if card.card_number %} ({{ card.card_number }}){% endif %}</h2>
+    <span class="card-status-badge {{ 'card-status-badge--active' if card.status == 'active' else 'card-status-badge--returned' }}">
+      {{ "Активна" if card.status == 'active' else "Върната" }}
+    </span>
+  </div>
+  <p class="detail-model">Депозит: {{ "%.2f"|format(card.deposit_amount) }} лв</p>
+
+  <div class="status-panel">
+    <span class="status-badge status-badge--idle">Текущ баланс</span>
+    <p class="card-balance-large">{{ "%.2f"|format(card.balance) }} лв</p>
+
+    {% if card.lots %}
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr><th>Опция</th><th>Заредено</th><th>Остатък</th><th>Дата</th></tr>
+        </thead>
+        <tbody>
+          {% for lot in card.lots %}
+          <tr>
+            <td>{{ lot.recharge_option_name or "—" }}</td>
+            <td>{{ "%.2f"|format(lot.virtual_amount) }} лв</td>
+            <td>{{ "%.2f"|format(lot.remaining_amount) }} лв</td>
+            <td>{{ lot.created_at }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+  </div>
+
+  {% if card.status == 'active' %}
+  <div class="settings-panel">
+    <h3 class="settings-panel__title">Презареди картата</h3>
+    <form class="settings-form" method="post" action="{{ url_for('card_recharge', card_id=card.id) }}">
+      <label class="field">
+        <span class="field__label">Опция за презареждане</span>
+        <select class="field__input" name="recharge_option_id" required>
+          {% for option in recharge_options %}
+          <option value="{{ option.id }}">{{ option.name }} ({{ option.virtual_amount }} лв за {{ option.cash_price }} лв)</option>
+          {% endfor %}
+        </select>
+      </label>
+      <button class="action-btn action-btn--start" type="submit">
+        {{ icon('card', 'action-icon') }}
+        <span>Презареди</span>
+      </button>
+    </form>
+  </div>
+
+  <div class="settings-panel">
+    <h3 class="settings-panel__title">Върни картата</h3>
+    <p class="settings-hint settings-hint--lead">
+      Депозитът от {{ "%.2f"|format(card.deposit_amount) }} лв се връща на клиента.
+      {% if card.balance > 0 %}Картата има оставащ баланс {{ "%.2f"|format(card.balance) }} лв.{% endif %}
+    </p>
+    <form class="settings-form" method="post" action="{{ url_for('card_return', card_id=card.id) }}">
+      {% if card.balance > 0 %}
+      <label class="field field--row">
+        <input type="checkbox" name="force_forfeit_balance" value="1" required>
+        <span class="field__label field__label--inline">Анулирай оставащия баланс от {{ "%.2f"|format(card.balance) }} лв</span>
+      </label>
+      {% endif %}
+      <button class="action-btn action-btn--stop" type="submit">
+        {{ icon('power', 'action-icon') }}
+        <span>Върни картата</span>
+      </button>
+    </form>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}
+
+{% block bottom_buttons %}
+{% set page_urls = {'studio': url_for('studio'), 'cosmetics': url_for('cosmetics_page'),
+                     'cards': url_for('cards_page'), 'protocol': url_for('protocol')} %}
+{% for btn in bottom_buttons %}
+  {{ bottom_link(btn, page_urls[btn.id]) }}
+{% endfor %}
+{% endblock %}

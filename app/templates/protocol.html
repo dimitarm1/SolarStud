@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% from "icons.html" import icon, nav_link, bottom_link %}
+
+{% block title %}Solar Studio — Protocol{% endblock %}
+
+{% block sidebar %}
+<nav class="sidebar">
+  {% set page_urls = {'studio': url_for('studio'), 'cosmetics': url_for('cosmetics_page'),
+                       'cards': url_for('cards_page'), 'tanning': url_for('index')} %}
+  {% for item in nav_items %}
+    {{ nav_link(item, '', page_urls[item.id]) }}
+  {% endfor %}
+</nav>
+{% endblock %}
+
+{% block content %}
+<section class="view view-detail">
+  <a class="back-link" href="{{ url_for('index') }}">
+    {{ icon('back', 'back-icon') }}
+    <span>Назад</span>
+  </a>
+
+  {% set kind_labels = {
+    'session_payment': 'Солариум',
+    'product_sale': 'Продажба',
+    'card_recharge': 'Презареждане',
+    'card_deposit_charge': 'Депозит',
+    'card_deposit_refund': 'Връщане на депозит',
+    'card_balance_forfeit': 'Анулиран баланс',
+  } %}
+
+  <form class="protocol-date-form" method="get" action="{{ url_for('protocol') }}">
+    <label class="field field--row">
+      <span class="field__label">Дата</span>
+      <input class="field__input" type="date" name="date" value="{{ date }}" onchange="this.form.submit()">
+    </label>
+  </form>
+
+  <div class="protocol-summary">
+    <div class="protocol-summary__item"><span>В брой</span><strong>{{ "%.2f"|format(summary.totals.cash_total) }} лв</strong></div>
+    <div class="protocol-summary__item"><span>С карта</span><strong>{{ "%.2f"|format(summary.totals.card_total) }} лв</strong></div>
+    <div class="protocol-summary__item"><span>Презаредена стойност</span><strong>{{ "%.2f"|format(summary.totals.virtual_total) }} лв</strong></div>
+  </div>
+
+  {% if entries %}
+  <div class="protocol-table-wrap">
+    <table class="protocol-table">
+      <thead>
+        <tr><th>Час</th><th>Тип</th><th>Описание</th><th>В брой</th><th>С карта</th></tr>
+      </thead>
+      <tbody>
+        {% for entry in entries %}
+        <tr>
+          <td>{{ entry.created_at.split("T")[1] if "T" in entry.created_at else entry.created_at }}</td>
+          <td><span class="protocol-kind-badge protocol-kind-badge--{{ entry.kind }}">{{ kind_labels.get(entry.kind, entry.kind) }}</span></td>
+          <td>{{ entry.description }}</td>
+          <td class="amount--cash">{{ "%.2f"|format(entry.cash_amount) }} лв</td>
+          <td class="amount--card">{{ "%.2f"|format(entry.card_amount) }} лв</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="placeholder">
+    {{ icon('protocol', 'placeholder-icon') }}
+    <p>Няма записи за тази дата</p>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}
+
+{% block bottom_buttons %}
+{% set page_urls = {'studio': url_for('studio'), 'cosmetics': url_for('cosmetics_page'),
+                     'cards': url_for('cards_page'), 'protocol': url_for('protocol')} %}
+{% for btn in bottom_buttons %}
+  {{ bottom_link(btn, page_urls[btn.id]) }}
+{% endfor %}
+{% endblock %}

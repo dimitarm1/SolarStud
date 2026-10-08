@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 
 import controller_link
 import db
+import sales
 
 # Addresses 0-14 are real physical bus addresses (see controller_link /
 # protocol.md; 15 is reserved - the firmware logs it differently
@@ -230,6 +231,8 @@ def _serialize(bed_row, session_row):
         bed["prep_min_session"] = session_row["prep_min"]
         bed["active_min_session"] = session_row["total_min"]
         bed["cool_min_session"] = session_row["cool_min"]
+        bed["cash_amount_session"] = session_row["cash_amount"]
+        bed["card_amount_session"] = session_row["card_amount"]
     else:
         bed["status"] = "idle"
     return bed
@@ -287,9 +290,10 @@ def is_demo_address(controller_address):
 
 
 def update_bed_settings(bed_id, number, model, prep_min, cool_min, picture_path,
-                         controller_address=""):
+                         controller_address="", price_per_min=0):
     prep_min = max(MIN_PREP_MINUTES, min(MAX_PREP_MINUTES, int(prep_min)))
     cool_min = max(MIN_COOL_MINUTES, min(MAX_COOL_MINUTES, int(cool_min)))
+    price_per_min = max(0.0, float(price_per_min or 0))
     # Pasting a path from a terminal or file manager often brings along
     # wrapping quotes (e.g. '/path/with spaces/file.jpg') - strip those
     # rather than storing a path that will never match a real file.
@@ -308,7 +312,7 @@ def update_bed_settings(bed_id, number, model, prep_min, cool_min, picture_path,
                 raise ValueError(f"Unknown bed id {bed_id}")
             conn.execute(
                 "UPDATE beds SET number = ?, model = ?, prep_min = ?, cool_min = ?, "
-                "picture_path = ?, controller_address = ? WHERE id = ?",
+                "picture_path = ?, controller_address = ?, price_per_min = ? WHERE id = ?",
                 (
                     number or bed["number"],
                     model or bed["model"],
@@ -316,6 +320,7 @@ def update_bed_settings(bed_id, number, model, prep_min, cool_min, picture_path,
                     cool_min,
                     picture_path,
                     controller_address,
+                    price_per_min,
                     bed_id,
                 ),
             )
@@ -407,18 +412,29 @@ def _require_serial_port():
 
 
 def start_session(bed_id, total_min=DEFAULT_SESSION_MINUTES):
-    """Start a session. For a bed on a real controller address (0-14) this
-    only commits once the controller has confirmed the Set-Time handshake
-    (protocol.md §5) - if that fails, nothing is written and the exception
-    propagates so the caller can surface it, rather than showing a session
-    as running when the physical bed never got the command."""
+    """Start a session with no payment attached (e.g. a free/demo run)."""
+    return start_session_with_payment(bed_id, total_min=total_min)
+
+
+def start_session_with_payment(bed_id, total_min=DEFAULT_SESSION_MINUTES,
+                                card_id=None, requested_card_amount=0):
+    """Start a session, charging it to card balance, cash, or a mix. For a
+    bed on a real controller address (0-14) this only commits once the
+    controller has confirmed the Set-Time handshake (protocol.md §5) - if
+    that fails, nothing is written and the exception propagates so the
+    caller can surface it, rather than showing a session as running when the
+    physical bed never got the command. The card-lot deduction and the
+    session INSERT run in the same transaction (see
+    sales.consume_card_lots_for_minutes), so a mid-way failure never leaves
+    money taken off a card without a session to show for it, or vice versa.
+    """
     total_min = max(MIN_SESSION_MINUTES, min(MAX_SESSION_MINUTES, int(total_min)))
     conn = db.get_connection()
     try:
         _reap_finished_sessions(conn, bed_id)
         with db.transaction(conn):
             bed = conn.execute(
-                "SELECT id, prep_min, cool_min, controller_address FROM beds WHERE id = ?",
+                "SELECT id, prep_min, cool_min, controller_address, price_per_min FROM beds WHERE id = ?",
                 (bed_id,),
             ).fetchone()
             if bed is None:
@@ -426,22 +442,36 @@ def start_session(bed_id, total_min=DEFAULT_SESSION_MINUTES):
             if _current_session(conn, bed_id) is not None:
                 return  # a session is already running, nothing to do
 
+            card_amount, cash_amount = sales.consume_card_lots_for_minutes(
+                conn, bed_id, total_min, card_id, requested_card_amount
+            )
+
             if not is_demo_address(bed["controller_address"]):
                 port = _require_serial_port()
                 controller_link.set_time(
                     port, bed["controller_address"], bed["prep_min"], total_min, bed["cool_min"]
                 )
 
-            conn.execute(
-                "INSERT INTO sessions (bed_id, started_at, total_min, prep_min, cool_min, status) "
-                "VALUES (?, ?, ?, ?, ?, 'running')",
+            cur = conn.execute(
+                "INSERT INTO sessions (bed_id, started_at, total_min, prep_min, cool_min, status, "
+                "cash_amount, card_amount, card_id) VALUES (?, ?, ?, ?, ?, 'running', ?, ?, ?)",
                 (
                     bed_id,
                     datetime.now().isoformat(timespec="seconds"),
                     total_min,
                     bed["prep_min"],
                     bed["cool_min"],
+                    cash_amount,
+                    card_amount,
+                    card_id if card_amount > 0 else None,
                 ),
+            )
+            description = f"Солариум легло №{bed_id}, {total_min} мин"
+            sales.record_sale(
+                conn, "session_payment", description,
+                cash_amount=cash_amount, card_amount=card_amount,
+                bed_id=bed_id, card_id=card_id if card_amount > 0 else None,
+                session_id=cur.lastrowid,
             )
     finally:
         conn.close()

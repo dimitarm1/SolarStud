@@ -3,12 +3,10 @@
 
 {% block sidebar %}
 <nav class="sidebar">
+  {% set page_urls = {'studio': url_for('studio'), 'cosmetics': url_for('cosmetics_page'),
+                       'cards': url_for('cards_page'), 'tanning': url_for('index')} %}
   {% for item in nav_items %}
-    {% if item.id == 'studio' %}
-      {{ nav_link(item, 'tanning', url_for('studio')) }}
-    {% else %}
-      {{ nav_button(item, 'tanning') }}
-    {% endif %}
+    {{ nav_link(item, 'tanning', page_urls[item.id]) }}
   {% endfor %}
 </nav>
 {% endblock %}
@@ -45,21 +43,12 @@
     {% endfor %}
   </div>
 </section>
-
-<section class="view view--placeholder" id="view-cosmetics" data-view="cosmetics" hidden>
-  <div class="placeholder">{{ icon('leaf', 'placeholder-icon') }}<p>Козметика</p></div>
-</section>
-<section class="view view--placeholder" id="view-cards" data-view="cards" hidden>
-  <div class="placeholder">{{ icon('card', 'placeholder-icon') }}<p>Карти</p></div>
-</section>
 {% endblock %}
 
 {% block bottom_buttons %}
+{% set page_urls = {'studio': url_for('studio'), 'cosmetics': url_for('cosmetics_page'),
+                     'cards': url_for('cards_page'), 'protocol': url_for('protocol')} %}
 {% for btn in bottom_buttons %}
-  {% if btn.id == 'studio' %}
-    {{ bottom_link(btn, url_for('studio')) }}
-  {% else %}
-    {{ bottom_button(btn) }}
-  {% endif %}
+  {{ bottom_link(btn, page_urls[btn.id]) }}
 {% endfor %}
 {% endblock %}

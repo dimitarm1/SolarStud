@@ -5,12 +5,10 @@
 
 {% block sidebar %}
 <nav class="sidebar">
+  {% set page_urls = {'studio': url_for('studio'), 'cosmetics': url_for('cosmetics_page'),
+                       'cards': url_for('cards_page'), 'tanning': url_for('index')} %}
   {% for item in nav_items %}
-    {% if item.id == 'studio' %}
-      {{ nav_link(item, 'tanning', url_for('studio')) }}
-    {% else %}
-      {{ nav_link(item, 'tanning', url_for('index')) }}
-    {% endif %}
+    {{ nav_link(item, 'tanning', page_urls[item.id]) }}
   {% endfor %}
 </nav>
 {% endblock %}
@@ -29,10 +27,20 @@
   </div>
 
   {% if hw_error %}
-  <div class="hw-error-banner" id="hw-error-banner">
+  <div class="hw-error-banner">
     {{ icon('warning', 'hw-error-icon') }}
     <span>{{ hw_error }}</span>
-    <button class="hw-error-dismiss" type="button" id="hw-error-dismiss" aria-label="Затвори">
+    <button class="hw-error-dismiss" type="button" aria-label="Затвори">
+      {{ icon('close', 'hw-error-dismiss-icon') }}
+    </button>
+  </div>
+  {% endif %}
+
+  {% if payment_error %}
+  <div class="hw-error-banner">
+    {{ icon('warning', 'hw-error-icon') }}
+    <span>{{ payment_error }}</span>
+    <button class="hw-error-dismiss" type="button" aria-label="Затвори">
       {{ icon('close', 'hw-error-dismiss-icon') }}
     </button>
   </div>
@@ -62,6 +70,14 @@
            data-active-min="{{ bed.active_min_session }}"
            data-cool-min="{{ bed.cool_min_session }}">
         <span class="status-badge status-badge--{{ bed.stage }}">{{ stage_labels[bed.stage] }}</span>
+        {% if bed.card_amount_session or bed.cash_amount_session %}
+        <p class="payment-section__paid-line">
+          Платено:
+          {% if bed.card_amount_session %}{{ "%.2f"|format(bed.card_amount_session) }} лв карта{% endif %}
+          {% if bed.card_amount_session and bed.cash_amount_session %} + {% endif %}
+          {% if bed.cash_amount_session %}{{ "%.2f"|format(bed.cash_amount_session) }} лв в брой{% endif %}
+        </p>
+        {% endif %}
         <div class="bed-remaining">
           {{ icon('clock', 'remaining-icon') }}
           <span class="remaining-text">Остават {{ bed.remaining_min }} мин</span>
@@ -126,6 +142,55 @@
             се добавят автоматично.
           </p>
           {% endif %}
+
+          <div class="payment-section">
+            <p class="payment-section__price-hint">Цена: {{ "%.2f"|format(bed.price_per_min) }} лв/мин</p>
+            <label class="field">
+              <span class="field__label">Плащане с карта</span>
+              <select
+                class="field__input"
+                name="card_id"
+                id="payment-card-select"
+                data-price-per-min="{{ bed.price_per_min }}"
+                data-bed-id="{{ bed.id }}"
+              >
+                <option value="">— Без карта (само в брой) —</option>
+                {% for card in cards %}
+                <option value="{{ card.id }}" data-balance="{{ card.balance }}">
+                  №{{ card.id }}{% if card.card_number %} ({{ card.card_number }}){% endif %}
+                  — баланс {{ "%.2f"|format(card.balance) }} лв
+                </option>
+                {% endfor %}
+              </select>
+            </label>
+
+            <div class="slider-field" id="payment-card-amount-field" hidden>
+              <div class="slider-field__header">
+                <span class="slider-field__label">Сума с карта</span>
+                <span class="slider-field__value" id="card-amount-value">0 лв</span>
+              </div>
+              <div class="slider-field__track-wrap">
+                <input
+                  class="range-input"
+                  type="range"
+                  name="card_amount"
+                  id="payment-card-amount"
+                  min="0"
+                  max="0"
+                  step="0.5"
+                  value="0"
+                  data-value-target="card-amount-value"
+                  data-suffix=" лв"
+                >
+              </div>
+            </div>
+
+            <div class="payment-section__cash-due">
+              <span>Дължимо в брой</span>
+              <strong id="payment-cash-due">{{ "%.2f"|format(bed.price_per_min * session_default) }} лв</strong>
+            </div>
+          </div>
+
           <button class="action-btn action-btn--start" type="submit">
             {{ icon('power', 'action-icon') }}
             <span>Старт на сесията</span>
@@ -177,6 +242,12 @@
           </div>
         </div>
       </div>
+
+      <label class="field">
+        <span class="field__label">Цена на минута</span>
+        <input class="field__input" type="number" step="0.01" min="0" name="price_per_min"
+               value="{{ bed.price_per_min }}">
+      </label>
 
       <label class="field">
         <span class="field__label">Адрес на контролера</span>
@@ -238,11 +309,9 @@
 {% endblock %}
 
 {% block bottom_buttons %}
+{% set page_urls = {'studio': url_for('studio'), 'cosmetics': url_for('cosmetics_page'),
+                     'cards': url_for('cards_page'), 'protocol': url_for('protocol')} %}
 {% for btn in bottom_buttons %}
-  {% if btn.id == 'studio' %}
-    {{ bottom_link(btn, url_for('studio')) }}
-  {% else %}
-    {{ bottom_link(btn, url_for('index')) }}
-  {% endif %}
+  {{ bottom_link(btn, page_urls[btn.id]) }}
 {% endfor %}
 {% endblock %}
