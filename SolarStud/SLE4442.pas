@@ -33,6 +33,7 @@ var
     cBAtrLen: DWORD;
     abc1, abc2, abc3, abc4: integer;
     readerName: AnsiString;
+    CardReadOK: Boolean; // True only if the last SLE4442ReadCardInfo read everything successfully
 
 procedure ClearBuffers();
 //procedure InitMenu();
@@ -46,16 +47,16 @@ function InputOK(checkType: integer): boolean;
 function TrimInput(InString: string): string;
 procedure SLE4442ShowCardInPaiment();
 procedure SLE4442Timer3();
-procedure SLE4442ReadCardInfo();
-procedure SLE4442WriteCardInfo();
+function SLE4442ReadCardInfo(): Boolean;
+function SLE4442WriteCardInfo(): Boolean;
 procedure SLE4442ShowCardInfo();
 function SLE4442Submit(): Boolean;
 procedure SLE4442Init();
 procedure SLE4442Deinit();
 procedure ClearCard();
 procedure SLE4442ChangePIN();
-procedure SLE4442Read(addr: integer; length: integer);
-procedure SLE4442Write(addr: integer; len: integer);
+function SLE4442Read(addr: integer; length: integer): Boolean;
+function SLE4442Write(addr: integer; len: integer): Boolean;
 
 implementation
 uses SetLang;
@@ -331,7 +332,7 @@ begin
 
 end;
 
-procedure SLE4442Read(addr: integer; length: integer);
+function SLE4442Read(addr: integer; length: integer): Boolean;
 var
     tmpStr: string;
     indx: integer;
@@ -351,17 +352,22 @@ begin
         tmpStr := tmpStr + Format('%.02X ', [SendBuff[indx]]);
     retCode := SendAPDUandDisplay(2, tmpStr);
     if retCode <> SCARD_S_SUCCESS then
+    begin
+        Data := '';
+        SLE4442Read := False;
         Exit;
+    end;
 
     // 3. Display data read from card into Data textbox
     tmpStr := '';
     for indx := 0 to SendBuff[4] - 1 do
         tmpStr := tmpStr + chr(RecvBuff[indx]);
     Data := tmpStr;
+    SLE4442Read := True;
 
 end;
 
-procedure SLE4442Write(addr: integer; len: integer);
+function SLE4442Write(addr: integer; len: integer): Boolean;
 var
     tmpStr: string;
     indx: integer;
@@ -392,9 +398,13 @@ begin
         tmpStr := tmpStr + Format('%.02X ', [SendBuff[indx]]);
     retCode := SendAPDUandDisplay(2, tmpStr);
     if retCode <> SCARD_S_SUCCESS then
+    begin
+        SLE4442Write := False;
         Exit;
+    end;
 
     Data := '';
+    SLE4442Write := True;
 
 end;
 
@@ -511,20 +521,21 @@ begin
 
 end;
 
-procedure SLE4442WriteCardInfo();
+function SLE4442WriteCardInfo(): Boolean;
 var
-    Result: string;
     Buff: Real;
     Temp: Integer;
+    WriteOK: Boolean;
 begin
+    WriteOK := True;
     Data := LeftStr(Card.StudioName, 16);
-    SLE4442Write($80, $0F); // Запис на име на студиото на адрес 80-8f
+    WriteOK := SLE4442Write($80, $0F) and WriteOK; // Запис на име на студиото на адрес 80-8f
 
     Data := char(Card.StudioNomer);
-    SLE4442Write($F9, $01); // Запис на номер на студиото
+    WriteOK := SLE4442Write($F9, $01) and WriteOK; // Запис на номер на студиото
 
     Data := LeftStr(Card.ClientName, 32);
-    SLE4442Write($90, $1F); // Запис на име на клиента
+    WriteOK := SLE4442Write($90, $1F) and WriteOK; // Запис на име на клиента
 
     //FmtStr(Result,'%4.2f',[Card.Balans]);
     if Card.Balans < 0 then
@@ -536,13 +547,13 @@ begin
     SendBuff[6] := Byte((Temp - SendBuff[5] * 256 * 256) div 256);
     SendBuff[7] := Byte((Temp - SendBuff[5] * 256 * 256 - SendBuff[6] * 256));
     Data := '';
-    SLE4442Write($B0, $03); // Запис на баланс
+    WriteOK := SLE4442Write($B0, $03) and WriteOK; // Запис на баланс
 
     Data := '';
     SendBuff[5] := Byte(StrToInt('$' + (LeftStr(Card.PIN, 2))));
     SendBuff[6] := Byte(StrToInt('$' + (MidStr(Card.PIN, 3, 2))));
     SendBuff[7] := Byte(StrToInt('$' + (MidStr(Card.PIN, 5, 2))));
-    SLE4442Write($FA, $03); // Запис на PIN-код
+    WriteOK := SLE4442Write($FA, $03) and WriteOK; // Запис на PIN-код
 
     SendBuff[5] := Byte(Card.CardNomer div (256 * 256));
     SendBuff[6] := Byte((Card.CardNomer - SendBuff[5] * 256 * 256) div 256);
@@ -555,7 +566,7 @@ begin
         SendBuff[7] := 255;
     end;
     Data := '';
-    SLE4442Write($FD, $03); // Запис на номер на карта
+    WriteOK := SLE4442Write($FD, $03) and WriteOK; // Запис на номер на карта
 
     SendBuff[5] := Byte(Card.ClientNomer div (256 * 256));
     SendBuff[6] := Byte((Card.ClientNomer - SendBuff[5] * 256 * 256) div 256);
@@ -568,22 +579,51 @@ begin
         SendBuff[7] := 255;
     end;
     Data := '';
-    SLE4442Write($F6, $03); // Запис на номер на клиент
+    WriteOK := SLE4442Write($F6, $03) and WriteOK; // Запис на номер на клиент
 
+    SLE4442WriteCardInfo := WriteOK;
 end;
 
-procedure SLE4442ReadCardInfo();
+// Reads a 3 byte big endian value from the card. Values above MaxVal
+// (blank card is $FFFFFF) are reported as -1.
+function SLE4442ReadInt24(addr: integer; MaxVal: integer; var Value: integer): Boolean;
 var
     i: Integer;
-    Result: string;
-    Buff: Real;
     Temp: Integer;
-    AResult: Pointer;
-    Result2: integer;
-    StudioNomer: integer;
+    HexStr: string;
+begin
+    SLE4442ReadInt24 := False;
+    if not SLE4442Read(addr, $03) then
+        Exit;
+    HexStr := '$';
+    for i := 0 to 2 do
+        HexStr := HexStr + Format('%.2X', [(RecvBuff[i])]);
+    if not TryStrToInt(HexStr, Temp) then
+        Temp := 0;
+    if Temp > MaxVal then
+        Temp := -1;
+    Value := Temp;
+    SLE4442ReadInt24 := True;
+end;
+
+// Returns False (and leaves Card untouched) if any part of the card
+// could not be read. A failed read must never look like an empty card.
+function SLE4442ReadCardInfo(): Boolean;
+var
+    Zero: string;
+    Temp: Integer;
     tmpStr: string;
     indx: integer;
+    lStudioName: string;
+    lStudioNomer: Integer;
+    lClientName: string;
+    lBalans: Integer;
+    lPIN: string;
+    lCardNomer: Integer;
+    lClientNomer: Integer;
 begin
+    CardReadOK := False;
+    SLE4442ReadCardInfo := False;
     if IsChipCard then
     begin
 
@@ -603,58 +643,42 @@ begin
         if retCode <> SCARD_S_SUCCESS then
             Exit;
         retCode := SendAPDUandDisplay(2, tmpStr);
-        RecvBuff[0] := RecvBuff[0];
 
-        SLE4442Read($80, $0F); // Четене на име на студиото на адрес 80-8f
-        Result := #0;
-        Temp := Pos(Result, Data) - 1;
-        Card.StudioName := LeftStr(Data, Temp);
+        Zero := #0;
+        if not SLE4442Read($80, $0F) then Exit; // ime na studioto 80-8f
+        Temp := Pos(Zero, Data) - 1;
+        lStudioName := LeftStr(Data, Temp);
 
-        SLE4442Read($F9, $01); // Четене на номер на студиото
-        Card.StudioNomer := ord(Data[1]);
+        if not SLE4442Read($F9, $01) then Exit; // nomer na studioto
+        lStudioNomer := ord(Data[1]);
 
-        SLE4442Read($90, $1F); // Четене на име на клиента
-        Temp := Pos(Result, Data) - 1;
-        Card.ClientName := LeftStr(Data, Temp);
+        if not SLE4442Read($90, $1F) then Exit; // ime na klienta
+        Temp := Pos(Zero, Data) - 1;
+        lClientName := LeftStr(Data, Temp);
 
-        SLE4442Read($B0, $03); // Четене на баланс
-        Data := '$';
-        for i := 0 to 2 do
-            Data := Data + Format('%.2X', [(RecvBuff[i])]);
-        if not TryStrToInt(Data, Temp) then
-            Temp := 0;
-        if Temp > 65535 then
-            Temp := -1;
-        Card.Balans := Temp / 100;
+        // Balance, card number and client number are all 3 bytes wide
+        if not SLE4442ReadInt24($B0, 16777214, lBalans) then Exit;
 
-        SLE4442Read($FA, $03); // Четене на PIN-код
-        Address := IntToHex(Byte(RecvBuff[0]), 2);
-        Card.PIN := IntToHex(Byte(RecvBuff[0]), 2) + IntToHex(Byte(RecvBuff[1]),
+        if not SLE4442Read($FA, $03) then Exit; // PIN
+        lPIN := IntToHex(Byte(RecvBuff[0]), 2) + IntToHex(Byte(RecvBuff[1]),
             2) + IntToHex(Byte(RecvBuff[2]), 2);
 
-        SLE4442Read($FD, $03); // Четене на номер на карта
-        Data := '$';
-        for i := 0 to 2 do
-            Data := Data + Format('%.2X', [(RecvBuff[i])]);
-        if not TryStrToInt(Data, Temp) then
-            Temp := 0;
-        if Temp > 65535 then
-            Temp := -1;
-        Card.CardNomer := Temp;
+        if not SLE4442ReadInt24($FD, 16777214, lCardNomer) then Exit;
 
-        SLE4442Read($F6, $03); // Четене на номер на клиент
-        Data := '$';
-        for i := 0 to 2 do
-            Data := Data + Format('%.2X', [(RecvBuff[i])]);
-        if not TryStrToInt(Data, Temp) then
-            Temp := 0;
-        if Temp > 16777214 then
-            Temp := -1;
-        Card.ClientNomer := Temp;
-        if Card.ClientNomer < 0 then
-            Card.ClientNomer := 0;
+        if not SLE4442ReadInt24($F6, 16777214, lClientNomer) then Exit;
+        if lClientNomer < 0 then
+            lClientNomer := 0;
+
+        // Everything was read - now update the card state
+        Card.StudioName := lStudioName;
+        Card.StudioNomer := lStudioNomer;
+        Card.ClientName := lClientName;
+        Card.Balans := lBalans / 100;
+        Address := Copy(lPIN, 1, 2);
+        Card.PIN := lPIN;
+        Card.CardNomer := lCardNomer;
+        Card.ClientNomer := lClientNomer;
         CardNomer := Card.ClientNomer;
-        //if not TryStrToInt(Data,Card.CardNomer) then Card.CardNomer:=0;
         if SLE4442ReadCounter then
         begin
             Card.ErrCounter := RecvBuff[0];
@@ -665,6 +689,8 @@ begin
             Card.ErrCounter := -99;
             Card.ConStatus := -99;
         end;
+        CardReadOK := True;
+        SLE4442ReadCardInfo := True;
     end;
 end;
 
@@ -864,7 +890,15 @@ begin
 
                 MainForm.Label137.Caption := GetMessage('M84'); //'Има Карта!';
                 MainForm.Label137.Font.Color := clGreen;
-                SLE4442ReadCardInfo();
+                if not SLE4442ReadCardInfo() then
+                begin
+                    // Read failed - do not trust Card data, retry on next tick
+                    MainForm.Label137.Caption := GetMessage('M83');
+                    MainForm.Label137.Font.Color := clOlive;
+                    Card.ClientNomer := -1;
+                    _Q.Free;
+                    Exit;
+                end;
                 SLE4442ShowCardInfo();
                 if (card.StudioNomer =
                     MainForm.Internet.FieldValues['StudioNomer']) then

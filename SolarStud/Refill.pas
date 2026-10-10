@@ -175,6 +175,8 @@ begin
                 Card.Balans := 0;
             end;
 //            Card.Balans := Card.Balans + MainForm.KARTI.FieldValues['SUMA'];
+            if Card.Balans < 0 then
+                Card.Balans := 0; // blank card
             Card.Balans := Card.Balans + Suma; // Add new card refill sum
             if (MainForm.KARTICHIP.FieldValues['COUNTER'] = -1) then
             begin

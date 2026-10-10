@@ -5954,8 +5954,12 @@ end;
 procedure TMainForm.ZarezdaneButtonClick(Sender: TObject);
 var
     Balans1: real;
+    BalansBefore: real;
     Result2: Integer;
     HasCard: Boolean;
+    SubmitOK: Boolean;
+    WriteVerified: Boolean;
+    Attempt: Integer;
 begin //Зареждане
     if not (QKlienti.RecordCount = 1) and not IsReader then
         Exit;
@@ -5971,6 +5975,17 @@ begin //Зареждане
         QKlienti.Active := False;
         QKlienti.Active := True;
         Qklienti.Locate('NOMER', CardNomer, []);
+    end;
+    if IsReader and (AdvPageControl1.ActivePageIndex <> 17) then
+    begin
+        // Always work with fresh card data - never refill on a stale or failed read
+        IsChipCard := True;
+        if not SLE4442ReadCardInfo() then
+        begin
+            Application.MessageBox(PChar('Card read error. Remove and re-insert the card and try again.'),
+                PChar('Warning'), MB_OK);
+            Exit;
+        end;
     end;
     if not IsReader then
         Card.NewCard := KARTICHIP.FieldValues['COUNTER'] = -1
@@ -6060,6 +6075,7 @@ begin //Зареждане
     end;
     sol1.StartTransaction;
 
+    BalansBefore := Card.Balans;
     RefillForm.ShowModal;
     if RefillForm.ModalResult = mrOK then
     begin
@@ -6085,7 +6101,15 @@ begin //Зареждане
         end;
         Balans1 := Card.Balans;
         Data := Card.PIN; //'ffffff';
-        SLE4442Submit();  // Check if really a chip card 
+        SubmitOK := SLE4442Submit();  // Check if really a chip card
+        if IsReader and IsChipCard and not SubmitOK then
+        begin
+            // PIN not accepted - the card can not be written
+            sol1.Rollback;
+            Application.MessageBox(PChar(GetMessage('M73')), PChar('Warning'),
+                MB_OK);
+            Exit;
+        end;
         if IsChipCard and (Card.ErrCounter > 5) then
         begin
             Card.CardNomer := Card.ClientNomer; //QKlienti.FieldValues['NOMER'];
@@ -6100,8 +6124,29 @@ begin //Зареждане
             end;
             SLE4442ChangePIN();
             Card.PIN := Internet.FieldValues['PIN'];
-            SLE4442WriteCardInfo();
-            SLE4442ReadCardInfo();
+            WriteVerified := False;
+            Attempt := 0;
+            while (Attempt < 3) and not WriteVerified do
+            begin
+                Inc(Attempt);
+                Card.Balans := Balans1;
+                SLE4442WriteCardInfo();
+                // Read back and verify that the card really holds the new balance
+                WriteVerified := SLE4442ReadCardInfo() and
+                    (Abs(Card.Balans - Balans1) < 0.02);
+            end;
+            if not WriteVerified then
+            begin
+                // Undo the sale and try to restore the old balance on the card
+                sol1.Rollback;
+                Card.Balans := BalansBefore;
+                SLE4442WriteCardInfo();
+                SLE4442ReadCardInfo();
+                Application.MessageBox(PChar(GetMessage('M73')), PChar('Warning'),
+                    MB_OK);
+                SLE4442ShowCardInfo();
+                Exit;
+            end;
         end
         else
         begin
@@ -6136,7 +6181,7 @@ begin //Зареждане
             KARTICHIP.Post;
             Balans1 := Card.balans;
         end;
-        if ((Card.Balans - Balans1) < 2) then
+        if Abs(Card.Balans - Balans1) < 2 then
             sol1.Commit(True)
         else
         begin
