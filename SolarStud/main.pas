@@ -5991,25 +5991,75 @@ begin
     DBLUCombo1.Visible := TRUE;
 end;
 
+// Temporary diagnostics: records why ZarezdaneButtonClick returns.
+// Tries the exe folder first, then the temp folder, then C:\
+procedure RefillLog(Step: Integer; Extra: string = '');
+var
+    F: TextFile;
+    Dirs: array[0..2] of string;
+    TempPath: array[0..MAX_PATH] of Char;
+    Line: string;
+    d: Integer;
+    FileName: string;
+begin
+    GetTempPath(MAX_PATH, TempPath);
+    Dirs[0] := ExtractFilePath(ParamStr(0));
+    Dirs[1] := string(TempPath);
+    Dirs[2] := 'C:\';
+    Line := FormatDateTime('yyyy-mm-dd hh:nn:ss', Now) +
+        ' step=' + IntToStr(Step) +
+        ' IsReader=' + BoolToStr(IsReader, True) +
+        ' IsChipCard=' + BoolToStr(IsChipCard, True) +
+        ' CardReadOK=' + BoolToStr(CardReadOK, True) +
+        ' ClientNomer=' + IntToStr(Card.ClientNomer) +
+        ' CardNomer=' + IntToStr(Card.CardNomer) +
+        ' Balans=' + FloatToStr(Card.Balans) +
+        ' ErrCounter=' + IntToStr(Card.ErrCounter) +
+        ' ConStatus=' + IntToStr(Card.ConStatus) +
+        ' PIN=' + Card.PIN +
+        ' StudioNomer=' + IntToStr(Card.StudioNomer) +
+        ' NewCard=' + BoolToStr(Card.NewCard, True) + ' ' + Extra;
+    OutputDebugString(PChar('RefillLog ' + Line));
+    Application.MessageBox(PChar('REFILL step ' + IntToStr(Step) + #13#10 + Line), PChar('Debug'), MB_OK);
+    for d := 0 to 2 do
+    begin
+        try
+            FileName := Dirs[d] + 'refill_debug.log';
+            AssignFile(F, FileName);
+            if FileExists(FileName) then
+                Append(F)
+            else
+                Rewrite(F);
+            try
+                WriteLn(F, Line);
+            finally
+                CloseFile(F);
+            end;
+            Exit; // written
+        except
+        end;
+    end;
+end;
+
 procedure TMainForm.ZarezdaneButtonClick(Sender: TObject);
 var
     Balans1: real;
     BalansBefore: real;
     Result2: Integer;
     HasCard: Boolean;
-    SubmitOK: Boolean;
     WriteVerified: Boolean;
     Attempt: Integer;
 begin //Зареждане
+    RefillLog(0);
     if not (QKlienti.RecordCount = 1) and not IsReader then
-        Exit;
+        begin RefillLog(1); Exit; end;
     if(QKlienti.RecordCount = 0) then
     begin
       NovKlientButtonClick(Sender);
-      Exit;
+      begin RefillLog(2); Exit; end;
     end;
     if KARTICHIP.FieldValues['ENDDATE'] > 0 then
-        Exit;
+        begin RefillLog(3); Exit; end;
     if( CardNomer <> 0) then
     begin
         QKlienti.Active := False;
@@ -6024,7 +6074,7 @@ begin //Зареждане
         begin
             Application.MessageBox(PChar('Card read error. Remove and re-insert the card and try again.'),
                 PChar('Warning'), MB_OK);
-            Exit;
+            begin RefillLog(4); Exit; end;
         end;
     end;
     if not IsReader then
@@ -6064,7 +6114,7 @@ begin //Зареждане
         begin
             Application.MessageBox(PChar('Поставете карта!!!'),
                 PChar('Warning'), MB_OK);
-            Exit;
+            begin RefillLog(5); Exit; end;
         end;
         Data := Card.PIN; //'ffffff';
         if Card.ErrCounter > 2 then
@@ -6079,7 +6129,7 @@ begin //Зареждане
                 Application.MessageBox(PChar('ERROR - Replace Card!!!'),
                     PChar('Warning'), MB_OK);
             end;
-            exit;
+            begin RefillLog(6); Exit; end;
         end;
         if (Card.CardNomer > 0) and (Card.ClientNomer <>
             QKlienti.FieldValues['NOMER']) then
@@ -6088,12 +6138,12 @@ begin //Зареждане
             Application.MessageBox(PChar(GetMessage('M75')), PChar('Warning'),
                 MB_OK);
             // SLE4442ReadCardInfo();SLE4442ShowCardInfo();
-            exit;
+            begin RefillLog(7); Exit; end;
         end;
         if (Card.PIN <> Internet.FieldValues['PIN']) and not Card.NewCard then
         begin
             Application.MessageBox(PChar('Тази карта не може да бъде използвана в това студио!'), PChar(''), MB_OK);
-            exit;
+            begin RefillLog(8); Exit; end;
         end;
         if (Card.StudioNomer <> Internet.FieldValues['STUDIONOMER']) and not Card.NewCard then
         begin
@@ -6101,7 +6151,7 @@ begin //Зареждане
             Application.MessageBox(PChar(GetMessage('M74')), PChar('Warning'),
                 MB_OK);
             // SLE4442ReadCardInfo();SLE4442ShowCardInfo();
-            exit;
+            begin RefillLog(9); Exit; end;
         end;
     end;
 
@@ -6142,15 +6192,10 @@ begin //Зареждане
         end;
         Balans1 := Card.Balans;
         Data := Card.PIN; //'ffffff';
-        SubmitOK := SLE4442Submit();  // Check if really a chip card
-        if IsReader and IsChipCard and not SubmitOK then
-        begin
-            // PIN not accepted - the card can not be written
-            sol1.Rollback;
-            Application.MessageBox(PChar(GetMessage('M73')), PChar('Warning'),
-                MB_OK);
-            Exit;
-        end;
+        // The result of Submit is not reliable (the reader does not always answer
+        // 90 00 for a correct PIN) - the error counter and the write verification
+        // below decide whether the card could be written
+        SLE4442Submit();  // Check if really a chip card
         if IsChipCard and (Card.ErrCounter > 5) then
         begin
             Card.CardNomer := Card.ClientNomer; //QKlienti.FieldValues['NOMER'];
@@ -6161,7 +6206,7 @@ begin //Зареждане
                     PChar(''));
                 if sol1.InTransaction then
                     sol1.Rollback;
-                Exit;
+                begin RefillLog(11); Exit; end;
             end;
             SLE4442ChangePIN();
             Card.PIN := Internet.FieldValues['PIN'];
@@ -6175,9 +6220,15 @@ begin //Зареждане
                 // Read back and verify that the card really holds the new balance
                 WriteVerified := SLE4442ReadCardInfo() and
                     (Abs(Card.Balans - Balans1) < 0.02);
+                if not WriteVerified then
+                    RefillLog(50 + Attempt, 'verify failed: CardReadOK=' +
+                        BoolToStr(CardReadOK, True) + ' Balans1=' +
+                        FloatToStr(Balans1) + ' BalansBefore=' +
+                        FloatToStr(BalansBefore));
             end;
             if not WriteVerified then
             begin
+                RefillLog(96, 'write not verified');
                 // Undo the sale and try to restore the old balance on the card
                 sol1.Rollback;
                 Card.Balans := BalansBefore;
@@ -6186,7 +6237,7 @@ begin //Зареждане
                 Application.MessageBox(PChar(GetMessage('M73')), PChar('Warning'),
                     MB_OK);
                 SLE4442ShowCardInfo();
-                Exit;
+                begin RefillLog(12); Exit; end;
             end;
         end
         else
@@ -6226,6 +6277,8 @@ begin //Зареждане
             sol1.Commit(True)
         else
         begin
+            RefillLog(97, 'final check failed: Balans1=' + FloatToStr(Balans1) +
+                ' BalansBefore=' + FloatToStr(BalansBefore));
             sol1.Rollback;
             //  Application.MessageBox(PChar('Картата не е записана правилно!'),PChar('Warning'),MB_OK);
             Application.MessageBox(PChar(GetMessage('M73')), PChar('Warning'),
@@ -6233,12 +6286,16 @@ begin //Зареждане
         end;
     end
     else
+    begin
+        RefillLog(98); // refill dialog was not confirmed (ModalResult <> mrOK)
         sol1.Rollback;
+    end;
     if IsChipCard then
     begin
         SLE4442ReadCardInfo();
         SLE4442ShowCardInfo();
     end;
+    RefillLog(99); // normal end
 
 end;
 
