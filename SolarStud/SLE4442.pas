@@ -663,7 +663,9 @@ begin
         lPIN := IntToHex(Byte(RecvBuff[0]), 2) + IntToHex(Byte(RecvBuff[1]),
             2) + IntToHex(Byte(RecvBuff[2]), 2);
 
-        if not SLE4442ReadInt24($FD, 16777214, lCardNomer) then Exit;
+        // Numbers from $FF0000 up are a blank card (FFFFFF) or a card cleared by
+        // an older version that left the last byte behind - treat as no number
+        if not SLE4442ReadInt24($FD, $FEFFFF, lCardNomer) then Exit;
 
         if not SLE4442ReadInt24($F6, 16777214, lClientNomer) then Exit;
         if lClientNomer < 0 then
@@ -1041,6 +1043,13 @@ begin
         RecvBuff[indx + 5] := $FF;
     end;
     SLE4442Write($C0, $3F); // Запис
+    // $BF and $FF are not covered by the two blocks above. $FF is the last byte
+    // of the card number - leaving it makes a cleared card differ from a new one.
+    Data := '';
+    SendBuff[5] := $FF;
+    SLE4442Write($BF, $01);
+    SendBuff[5] := $FF;
+    SLE4442Write($FF, $01);
 
 end;
 

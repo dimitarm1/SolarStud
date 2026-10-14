@@ -3687,6 +3687,8 @@ end;
 procedure TMainForm.FormKeyPress(Sender: TObject; var Key: Char);
 var
     len: integer;
+    _Qc: TABSQuery;
+    HasUnusedChipCard: Boolean;
 begin
     if (AdvPageControl1.ActivePageIndex in [18, 15, 3, 1, 4]) then
     begin
@@ -3704,15 +3706,29 @@ begin
                 except;
                 end;
             end
-            else if (Length(BarCodReaderBuff) > 5) then
+            else if (Length(BarCodReaderBuff) > 5) and Timer6.Enabled then
             begin
+                // Timer6 enabled means the digits were typed/scanned just now -
+                // a stale buffer must never be taken as a barcode
                 try
                     CardNomer := StrToInt(Rightstr(BarCodReaderBuff, MaxBarcodeDigits));
                     if (AdvPageControl1.ActivePageIndex = 1) then
                     begin
                         // Add new klient?
                         AdvPageControl1.ActivePageIndex := 18;
-                        AddStokaButtonClick(2);
+                        // Create a new chip card item only if there is no
+                        // unconfigured one (price 0) left from a previous scan
+                        _Qc := TABSQuery.Create(nil);
+                        try
+                            _Qc.DatabaseName := 'sol1';
+                            _Qc.SQL.SetText(PChar('select STOKAKOD from STOKI where STOKATIP = "C" and STOKACENA = 0'));
+                            _Qc.Open;
+                            HasUnusedChipCard := not _Qc.IsEmpty;
+                        finally
+                            _Qc.Free;
+                        end;
+                        if not HasUnusedChipCard then
+                            AddStokaButtonClick(2);
                     end;
 //                    if (AdvPageControl1.ActivePageIndex = 4) then
 //                    begin
@@ -3722,6 +3738,8 @@ begin
                     Timer3.Enabled := true;
                 except;
                 end;
+                BarCodReaderBuff := ''; // consume the barcode - one scan, one action
+                Timer6.Enabled := false;
             end
             else
                 keyBuff := '';
@@ -5031,7 +5049,11 @@ var
     Result2: integer;
     _Q: TABSQUery;
 begin // Delete klient
-    if KARTICHIP.FieldValues['SUMA'] <> 0 then
+    // A card in the reader that belongs to nobody (blank or left half cleared)
+    // can only be cleaned - there is no klient to delete
+    if (IsChipCard and (Label137.Font.Color = clGreen) and CardReadOK and
+        (Card.ClientNomer <= 0) and (Card.CardNomer < 0)) or
+        (KARTICHIP.FieldValues['SUMA'] <> 0) then
     begin
         NuliraneChipCartaButtonClick(Sender);
         exit;
@@ -5870,10 +5892,21 @@ procedure TMainForm.NuliraneChipCartaButtonClick(Sender: TObject);
 var
     KartaNomer: Integer;
     IsOK: Integer;
+    Orphan: Boolean;
 
 begin
-    if(IsChipCard) then
+    // A card without owner and card number and without balance holds nothing
+    // to protect (blank card or one left half cleared) - it must always be
+    // possible to clear it, regardless of studio and PIN
+    Orphan := IsChipCard and (Card.ClientNomer <= 0) and (Card.CardNomer < 0)
+        and (Card.Balans <= 0);
+    if Orphan then
     begin
+        // fall through to the clear step
+    end
+    else if(IsChipCard) then
+    begin
+     IsOK := 0;
      if ((Card.StudioNomer <> Internet.FieldValues['STUDIONOMER']))
       {  or
      (KARTICHIP.fieldvalues['suma']>0)}then
@@ -5885,11 +5918,17 @@ begin
           SLE4442ShowCardInfo();
           if ((IsOK <> MROK) or (PasswordForm.ShowModal <> MROK)) then
               exit;
+          IsOK := MROK;
       end;
-      if(Card.PIN <> Internet.FieldValues['PIN']) then
+      if((IsOK <> MROK) and (Card.PIN <> Internet.FieldValues['PIN'])) then
       begin
-        Application.MessageBox(PChar('Тази карта не може да бъде използвана в това студио!'), PChar(''), MB_OK);
-        exit;
+        // Card from another studio or a damaged one: the card's own PIN is used
+        // to clear it below, so only the administrator password is required
+        IsOK := Application.MessageBox(PChar(GetMessage('M78')),
+            PChar('Warning'), MB_OKCANCEL);
+        if ((IsOK <> MROK) or (PasswordForm.ShowModal <> MROK)) then
+            exit;
+        IsOK := MROK;
       end;
     end
     else if not (MainForm.STOKI.Locate('STOKATIP', 'D', [])) then
@@ -5902,11 +5941,14 @@ begin
         = IDOK then
     begin
         //Картата ще бъде изчистена!?
-        KARTICHIP.Edit;
-        KARTICHIP.FieldValues['COUNTER'] := 0;
-        KARTICHIP.FieldValues['DISCOUNT'] := 0;
-        KARTICHIP.FieldValues['SUMA'] := 0;
-        KARTICHIP.Post;
+        if (not Orphan) and (KARTICHIP.RecordCount > 0) then
+        begin
+            KARTICHIP.Edit;
+            KARTICHIP.FieldValues['COUNTER'] := 0;
+            KARTICHIP.FieldValues['DISCOUNT'] := 0;
+            KARTICHIP.FieldValues['SUMA'] := 0;
+            KARTICHIP.Post;
+        end;
         if not IsChipCard then
         begin
             ReturnDeposit(KARTICHIP.FieldValues['KLIENTNOMER']);
@@ -5923,12 +5965,10 @@ begin
             else
             begin
                 KartaNomer := Card.CardNomer;
+                // ClearCard sets the PIN to ffffff and fills the data area with $FF,
+                // exactly like a new card. Do not write anything back afterwards.
                 ClearCard();
                 SLE4442ReadCardInfo();
-                Data := 'ffffff';
-                SLE4442ChangePIN();
-                Card.PIN := 'ffffff'; //Internet.FieldValues['PIN'];
-                SLE4442WriteCardInfo();
                 SLE4442ShowCardInfo();
                 if ((Card.CardNomer < 0) and (KartaNomer > 0)) then
                 begin //successful cleaning - return deposit
@@ -5954,8 +5994,12 @@ end;
 procedure TMainForm.ZarezdaneButtonClick(Sender: TObject);
 var
     Balans1: real;
+    BalansBefore: real;
     Result2: Integer;
     HasCard: Boolean;
+    SubmitOK: Boolean;
+    WriteVerified: Boolean;
+    Attempt: Integer;
 begin //Зареждане
     if not (QKlienti.RecordCount = 1) and not IsReader then
         Exit;
@@ -5972,11 +6016,23 @@ begin //Зареждане
         QKlienti.Active := True;
         Qklienti.Locate('NOMER', CardNomer, []);
     end;
+    if IsReader and (AdvPageControl1.ActivePageIndex <> 17) then
+    begin
+        // Always work with fresh card data - never refill on a stale or failed read
+        IsChipCard := True;
+        if not SLE4442ReadCardInfo() then
+        begin
+            Application.MessageBox(PChar('Card read error. Remove and re-insert the card and try again.'),
+                PChar('Warning'), MB_OK);
+            Exit;
+        end;
+    end;
     if not IsReader then
         Card.NewCard := KARTICHIP.FieldValues['COUNTER'] = -1
     else
         Card.NewCard := (Card.CardNomer = -1);
     HasCard := Card.ClientNomer > 0;
+    // A blank card or a half cleared one reads as CardNomer = -1
     if IsReader and (Card.CardNomer < 0) then
         HasCard := true;
 
@@ -6060,6 +6116,7 @@ begin //Зареждане
     end;
     sol1.StartTransaction;
 
+    BalansBefore := Card.Balans;
     RefillForm.ShowModal;
     if RefillForm.ModalResult = mrOK then
     begin
@@ -6085,7 +6142,15 @@ begin //Зареждане
         end;
         Balans1 := Card.Balans;
         Data := Card.PIN; //'ffffff';
-        SLE4442Submit();  // Check if really a chip card 
+        SubmitOK := SLE4442Submit();  // Check if really a chip card
+        if IsReader and IsChipCard and not SubmitOK then
+        begin
+            // PIN not accepted - the card can not be written
+            sol1.Rollback;
+            Application.MessageBox(PChar(GetMessage('M73')), PChar('Warning'),
+                MB_OK);
+            Exit;
+        end;
         if IsChipCard and (Card.ErrCounter > 5) then
         begin
             Card.CardNomer := Card.ClientNomer; //QKlienti.FieldValues['NOMER'];
@@ -6100,8 +6165,29 @@ begin //Зареждане
             end;
             SLE4442ChangePIN();
             Card.PIN := Internet.FieldValues['PIN'];
-            SLE4442WriteCardInfo();
-            SLE4442ReadCardInfo();
+            WriteVerified := False;
+            Attempt := 0;
+            while (Attempt < 3) and not WriteVerified do
+            begin
+                Inc(Attempt);
+                Card.Balans := Balans1;
+                SLE4442WriteCardInfo();
+                // Read back and verify that the card really holds the new balance
+                WriteVerified := SLE4442ReadCardInfo() and
+                    (Abs(Card.Balans - Balans1) < 0.02);
+            end;
+            if not WriteVerified then
+            begin
+                // Undo the sale and try to restore the old balance on the card
+                sol1.Rollback;
+                Card.Balans := BalansBefore;
+                SLE4442WriteCardInfo();
+                SLE4442ReadCardInfo();
+                Application.MessageBox(PChar(GetMessage('M73')), PChar('Warning'),
+                    MB_OK);
+                SLE4442ShowCardInfo();
+                Exit;
+            end;
         end
         else
         begin
@@ -6136,7 +6222,7 @@ begin //Зареждане
             KARTICHIP.Post;
             Balans1 := Card.balans;
         end;
-        if ((Card.Balans - Balans1) < 2) then
+        if Abs(Card.Balans - Balans1) < 2 then
             sol1.Commit(True)
         else
         begin
