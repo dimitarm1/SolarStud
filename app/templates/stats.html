@@ -71,7 +71,10 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<!-- Vendored locally (not CDN) so the shop's machine doesn't need internet
+     to open this page - Chart.js 4.4.1, MIT license, unmodified build from
+     https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js -->
+<script src="{{ url_for('static', filename='js/vendor/chart-4.4.1.umd.min.js') }}"></script>
 <script>
   window.STATS_CONFIG = {
     breakdownLabels: {{ breakdowns | tojson }},
