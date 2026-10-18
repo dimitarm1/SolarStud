@@ -20,6 +20,21 @@
     <span>Назад</span>
   </a>
 
+  {% if error %}
+  <div class="hw-error-banner">
+    {{ icon('warning', 'hw-error-icon') }}
+    <span>{{ error }}</span>
+    <button class="hw-error-dismiss" type="button" aria-label="Затвори">{{ icon('close', 'hw-error-dismiss-icon') }}</button>
+  </div>
+  {% endif %}
+  {% if message %}
+  <div class="hw-error-banner info-banner">
+    {{ icon('check', 'hw-error-icon') }}
+    <span>{{ message }}</span>
+    <button class="hw-error-dismiss" type="button" aria-label="Затвори">{{ icon('close', 'hw-error-dismiss-icon') }}</button>
+  </div>
+  {% endif %}
+
   <div class="settings-panel settings-panel--static">
     <h3 class="settings-panel__title">Настройки на студиото</h3>
     <p class="settings-hint settings-hint--lead">
@@ -111,6 +126,63 @@
         {% endif %}
       </label>
 
+      <button class="action-btn action-btn--start" type="submit">
+        {{ icon('check', 'action-icon') }}
+        <span>Запази</span>
+      </button>
+    </form>
+
+    <p class="settings-hint settings-hint--lead" style="margin-top:20px;">
+      Идентичност на това студио, записвана върху всяка издадена тук карта. Във верига от студиа
+      всички използват един и същ защитен код (PSC), но всяко има свой номер — той се показва в
+      дневника, когато използвана тук карта е издадена от друго студио.
+    </p>
+    <form class="settings-form" method="post" action="{{ url_for('studio_set_chip_studio_identity') }}">
+      <div class="settings-grid">
+        <label class="field">
+          <span class="field__label">Име на студиото</span>
+          <input class="field__input" type="text" name="chip_studio_name" value="{{ chip_studio_identity.name }}">
+        </label>
+        <label class="field">
+          <span class="field__label">Номер на студиото</span>
+          <input class="field__input" type="number" min="0" max="255" name="chip_studio_number"
+                 value="{{ chip_studio_identity.number }}">
+        </label>
+      </div>
+      <button class="action-btn action-btn--start" type="submit">
+        {{ icon('check', 'action-icon') }}
+        <span>Запази</span>
+      </button>
+    </form>
+
+    <p class="settings-hint settings-hint--lead" style="margin-top:20px;">
+      Номерата на другите клонове от веригата (ако има такива) — <strong>това не е реалната защита</strong>,
+      тя е общият защитен код (PSC), но позволява на приложението да откаже запис върху непозната карта
+      (напр. от конкурент), без изобщо да пробва PSC и да рискува опит върху чужд хардуер. Разделете
+      номерата със запетая.
+    </p>
+    <form class="settings-form" method="post" action="{{ url_for('studio_set_chip_known_studios') }}">
+      <label class="field">
+        <span class="field__label">Разрешени номера на студия от веригата</span>
+        <input class="field__input" type="text" name="chip_known_studio_numbers"
+               value="{{ chip_known_studio_numbers }}" placeholder="напр. 1, 2, 3">
+      </label>
+      <button class="action-btn action-btn--start" type="submit">
+        {{ icon('check', 'action-icon') }}
+        <span>Запази</span>
+      </button>
+    </form>
+
+    <p class="settings-hint settings-hint--lead" style="margin-top:20px;">
+      Защитният код (PSC), с който всяко студио от веригата отключва картите на клиентите. Записва се
+      на всяка новоиздадена тук карта — пазете го поверително, но е нужен за всички клонове на веригата.
+    </p>
+    <form class="settings-form" method="post" action="{{ url_for('studio_set_chip_psc') }}">
+      <label class="field">
+        <span class="field__label">PSC на веригата (6 шестнадесетични цифри)</span>
+        <input class="field__input" type="text" name="chip_studio_psc" value="{{ chip_psc }}"
+               maxlength="6" placeholder="напр. A1B2C3">
+      </label>
       <button class="action-btn action-btn--start" type="submit">
         {{ icon('check', 'action-icon') }}
         <span>Запази</span>
@@ -249,7 +321,8 @@
 
 {% block bottom_buttons %}
 {% set page_urls = {'studio': url_for('studio'), 'cosmetics': url_for('cosmetics_page'),
-                     'cards': url_for('cards_page'), 'protocol': url_for('protocol')} %}
+                     'cards': url_for('cards_page'), 'protocol': url_for('protocol'),
+                     'stats': url_for('stats_page')} %}
 {% for btn in bottom_buttons %}
   {{ bottom_link(btn, page_urls[btn.id]) }}
 {% endfor %}

@@ -495,12 +495,49 @@ def return_card(card_id, force_forfeit_balance=False):
 
 
 # --- chip cards (SLE4442 hardware) -----------------------------------
+#
+# A chain of studios can share one card stock: every studio uses the same
+# PSC, but each has its own studio number stamped onto a card at issue
+# time (models.get_chip_studio_identity/set_chip_studio_identity). When a
+# card presented here carries a different studio number than this
+# location's own, that's noted in the sales log - see _studio_note.
 
-# The old program stored each card's issuing location as a studio
-# name/number (for a multi-location chain sharing card stock); this app
-# is single-location, so these are fixed rather than a setting.
-CHIP_STUDIO_NAME = "Solar Studio"
-CHIP_STUDIO_NUMBER = 0
+def _studio_note(card_studio_number, this_studio_number):
+    if card_studio_number is None or card_studio_number == this_studio_number:
+        return ""
+    return f" (карта от студио №{card_studio_number})"
+
+
+# A freshly erased SLE4442's memory reads back as all-1 bits, i.e. 0xFF -
+# the chip's own "nothing written here yet" state, regardless of who
+# manufactured the card.
+_BLANK_STUDIO_NUMBER = 0xFF
+
+
+def _require_known_studio(card, allowed_studio_numbers, allow_blank=False):
+    """Refuse to attempt a write against a card whose studio number isn't
+    one this location recognizes (models.get_chip_known_studio_numbers).
+    This is *not* the real security check - the shared PSC is what
+    actually proves a card belongs to the chain, and that's enforced by
+    the VERIFY call itself (chipcard._Session.verify_psc) regardless of
+    this. What this adds is a free, read-only pre-filter: studio_number
+    costs nothing to check, while a wrong PSC can only be discovered by
+    attempting a VERIFY, which spends one of the card's 3 tries if it's
+    wrong - so an obviously unrelated card (a competitor's, or any other
+    system built on the same chip) gets turned away before that attempt
+    ever happens, rather than after burning one of its tries.
+    allow_blank additionally accepts a virgin/erased card, for issuing a
+    brand new one."""
+    studio_number = card["studio_number"]
+    if studio_number in allowed_studio_numbers:
+        return
+    if allow_blank and studio_number == _BLANK_STUDIO_NUMBER:
+        return
+    raise PaymentError(
+        f"Тази карта е от непознато студио (№{studio_number}) - може да не е част от "
+        "веригата, или изобщо да не е наша карта. Ако наистина е от друг клон, добавете "
+        "номера му в настройките на студиото, преди да продължите."
+    )
 
 
 def list_chip_cards(search=None, limit=None):
@@ -544,13 +581,34 @@ def find_chip_card_by_client_number(client_number):
         conn.close()
 
 
-def issue_chip_card(name, phone, deposit_amount, recharge_option_id=None, reader_name=None):
+def _card_psc_bytes(card):
+    """The PSC needed to unlock a write isn't a fixed default - the old
+    program keeps a copy of whatever it actually set alongside the rest
+    of a card's data (see chipcard.PSC_COPY_ADDR), precisely so later
+    writes always send the right code instead of guessing. Using the
+    wrong one doesn't just fail - each wrong attempt burns one of the
+    chip's 3 tries before it locks permanently, so this is read from the
+    card itself on every write rather than assumed."""
+    return bytes.fromhex(card["psc"])
+
+
+def issue_chip_card(name, phone, deposit_amount, recharge_option_id=None, reader_name=None,
+                     studio_name="Solar Studio", studio_number=0, *, allowed_studio_numbers,
+                     chain_psc=None):
     """Write client identity (and an optional first recharge) onto a
-    card that isn't registered yet. The database record is committed
-    *before* the chip write: a card that exists in our records but
-    failed to actually write is just a retry; real money landing on a
-    card with no record anywhere that it was ever issued is much worse
-    to untangle."""
+    card that isn't registered yet, stamped with this studio's own
+    identity (studio_name/studio_number - see models.get_chip_studio_identity).
+    If `chain_psc` differs from whatever security code is already on the
+    card (typically the universal default FFFFFF, for a truly blank
+    card), it's changed to `chain_psc` as part of the same write - this
+    is how a card actually ends up protected by this chain's real secret
+    instead of staying at the public default forever (see
+    models.get_chip_psc/set_chip_psc).
+
+    The database record is committed *before* the chip write: a card
+    that exists in our records but failed to actually write is just a
+    retry; real money landing on a card with no record anywhere that it
+    was ever issued is much worse to untangle."""
     name = (name or "").strip()
     phone = (phone or "").strip()
     deposit_amount = max(0.0, float(deposit_amount or 0))
@@ -561,6 +619,7 @@ def issue_chip_card(name, phone, deposit_amount, recharge_option_id=None, reader
             f"Тази карта вече е издадена (клиент №{card['client_number']}). "
             "Използвайте презареждане вместо издаване."
         )
+    _require_known_studio(card, allowed_studio_numbers, allow_blank=True)
 
     conn = db.get_connection()
     try:
@@ -600,10 +659,13 @@ def issue_chip_card(name, phone, deposit_amount, recharge_option_id=None, reader
     finally:
         conn.close()
 
+    current_psc = _card_psc_bytes(card)
+    psc_to_set = chain_psc if (chain_psc is not None and chain_psc != current_psc) else None
+
     try:
         chipcard.write_card(
-            reader_name, psc=chipcard.DEFAULT_PSC,
-            studio_name=CHIP_STUDIO_NAME, studio_number=CHIP_STUDIO_NUMBER,
+            reader_name, psc=current_psc, new_psc=psc_to_set,
+            studio_name=studio_name, studio_number=studio_number,
             client_name=name, balance=balance,
             client_number=client_number, card_number=client_number,
         )
@@ -617,16 +679,19 @@ def issue_chip_card(name, phone, deposit_amount, recharge_option_id=None, reader
     return client_number
 
 
-def recharge_chip_card(recharge_option_id, reader_name=None):
+def recharge_chip_card(recharge_option_id, reader_name=None, this_studio_number=0, *,
+                        allowed_studio_numbers):
     """Add a recharge option's virtual amount to whatever's currently on
     the inserted card. The card's own balance is the source of truth -
     read fresh, added to, written back - so this is correct even if the
-    card was last used (and its balance changed) by the old program."""
+    card was last used (and its balance changed) by the old program, or
+    by a different studio in the same chain (see _studio_note)."""
     card = chipcard.read_card(reader_name)
     if card["client_number"] is None:
         raise PaymentError('Картата не е издадена. Използвайте "Издай нова карта".')
     if card["balance"] is None:
         raise PaymentError("Балансът на картата не може да бъде прочетен (повредени данни).")
+    _require_known_studio(card, allowed_studio_numbers)
 
     conn = db.get_connection()
     try:
@@ -643,6 +708,7 @@ def recharge_chip_card(recharge_option_id, reader_name=None):
         label = f"№{card['client_number']}"
         if chip_card and chip_card["name"]:
             label += f" ({chip_card['name']})"
+        label += _studio_note(card["studio_number"], this_studio_number)
 
         with db.transaction(conn):
             record_sale(
@@ -654,7 +720,7 @@ def recharge_chip_card(recharge_option_id, reader_name=None):
         conn.close()
 
     try:
-        chipcard.write_card(reader_name, psc=chipcard.DEFAULT_PSC, balance=new_balance)
+        chipcard.write_card(reader_name, psc=_card_psc_bytes(card), balance=new_balance)
     except chipcard.ChipCardError as exc:
         raise PaymentError(
             f"Презареждането е записано в дневника, но записът на чипа се провали: {exc}. "
@@ -662,6 +728,50 @@ def recharge_chip_card(recharge_option_id, reader_name=None):
         ) from exc
 
     return new_balance
+
+
+def clear_chip_card(reader_name=None, *, allowed_studio_numbers):
+    """Wipe a card's client data and reset its security code back to the
+    universal default (FFFFFF) - mirrors the old program's ClearCard(),
+    for retiring a card (client leaving, card damaged and being
+    reissued, a mistaken issue, ...) without destroying the physical
+    card; a cleared card can be handed straight back through "Издай нова
+    карта". Needs the card's own current PSC to unlock, read fresh like
+    every other write here - if that PSC is wrong, there is nothing this
+    app can do about it; SLE4442 has no master override.
+
+    allow_blank=True on the studio check: clearing an already-blank card
+    is harmless and occasionally useful (e.g. to also blank its studio
+    number/name after a failed partial write).
+
+    Wipes the card's ENTIRE 256-byte memory to 0xFF (chipcard.blank_card),
+    not just the fields this app knows about - a true factory reset,
+    regardless of what any program ever wrote there."""
+    card = chipcard.read_card(reader_name)
+    _require_known_studio(card, allowed_studio_numbers, allow_blank=True)
+    client_number = card["client_number"]
+
+    try:
+        chipcard.blank_card(reader_name, psc=_card_psc_bytes(card), new_psc=chipcard.DEFAULT_PSC)
+    except chipcard.ChipCardError as exc:
+        raise PaymentError(f"Неуспешно нулиране на картата: {exc}") from exc
+
+    if client_number is not None:
+        conn = db.get_connection()
+        try:
+            with db.transaction(conn):
+                conn.execute(
+                    "UPDATE chip_cards SET status = 'returned', returned_at = ? "
+                    "WHERE client_number = ? AND status = 'active'",
+                    (datetime.now().isoformat(timespec="seconds"), client_number),
+                )
+                record_sale(
+                    conn, "chip_card_cleared", f"Нулирана чип карта №{client_number}",
+                )
+        finally:
+            conn.close()
+
+    return client_number
 
 
 def quote_chip_session(bed_id, total_min, requested_chip_amount, reader_name=None):
@@ -691,7 +801,8 @@ def quote_chip_session(bed_id, total_min, requested_chip_amount, reader_name=Non
     }
 
 
-def charge_chip_card_for_session(bed_id, total_min, requested_chip_amount, reader_name=None):
+def charge_chip_card_for_session(bed_id, total_min, requested_chip_amount, reader_name=None,
+                                  this_studio_number=0, *, allowed_studio_numbers):
     """Read a chip card, work out how much of `requested_chip_amount` it
     can actually cover (capped by its balance and the session's total
     cost), write the reduced balance back to the card, and return the
@@ -715,6 +826,7 @@ def charge_chip_card_for_session(bed_id, total_min, requested_chip_amount, reade
         raise PaymentError("Картата не е издадена.")
     if card["balance"] is None:
         raise PaymentError("Балансът на картата не може да бъде прочетен (повредени данни).")
+    _require_known_studio(card, allowed_studio_numbers)
 
     total_cost = round(total_min * flat_price, 2)
     requested_chip_amount = max(0.0, float(requested_chip_amount or 0))
@@ -723,7 +835,7 @@ def charge_chip_card_for_session(bed_id, total_min, requested_chip_amount, reade
     new_balance = round(card["balance"] - chip_amount, 2)
 
     if chip_amount > 0:
-        chipcard.write_card(reader_name, psc=chipcard.DEFAULT_PSC, balance=new_balance)
+        chipcard.write_card(reader_name, psc=_card_psc_bytes(card), balance=new_balance)
 
     return {
         "chip_amount": chip_amount,
@@ -731,6 +843,7 @@ def charge_chip_card_for_session(bed_id, total_min, requested_chip_amount, reade
         "client_number": card["client_number"],
         "client_name": card["client_name"],
         "new_balance": new_balance,
+        "studio_note": _studio_note(card["studio_number"], this_studio_number),
     }
 
 
@@ -843,10 +956,13 @@ def adjust_stock(product_id, new_stock_qty, reason=""):
 def sell_products(items, card_id=None, card_amount=0):
     """Check out a whole basket in one atomic transaction. items: iterable
     of (product_id, qty) pairs. Stock is validated for every line up front
-    so a multi-item sale never partially applies; one combined sales_log
-    line is recorded for the whole basket (its description already lists
-    everything sold, and a row per item would clutter the daily protocol
-    for what is, from the register's point of view, a single sale)."""
+    so a multi-item sale never partially applies. One sales_log row is
+    recorded per line item (not one combined row for the whole basket),
+    each carrying its own product_id and a proportional cash/card split
+    (the last line absorbs any rounding remainder, so the per-line
+    amounts always sum exactly to the basket's real cash/card totals) -
+    this is what lets cosmetics statistics break revenue/count down by
+    product rather than only seeing a basket-level total."""
     conn = db.get_connection()
     try:
         with db.transaction(conn):
@@ -882,12 +998,22 @@ def sell_products(items, card_id=None, card_amount=0):
                     "UPDATE products SET stock_qty = stock_qty - ? WHERE id = ?", (qty, product["id"])
                 )
 
-            description = ", ".join(f"{product['name']} x{qty}" for product, qty in lines)
-            record_sale(
-                conn, "product_sale", f"Продажба: {description}",
-                cash_amount=cash_amount, card_amount=actual_card_amount,
-                qty=total_qty, card_id=card_id,
-            )
+            remaining_cash, remaining_card = cash_amount, actual_card_amount
+            for idx, (product, qty) in enumerate(lines):
+                if idx == len(lines) - 1:
+                    line_cash, line_card = remaining_cash, remaining_card
+                else:
+                    line_total = round(product["sale_price"] * qty, 2)
+                    share = line_total / total if total > 0 else 0
+                    line_card = round(actual_card_amount * share, 2)
+                    line_cash = round(line_total - line_card, 2)
+                    remaining_cash = round(remaining_cash - line_cash, 2)
+                    remaining_card = round(remaining_card - line_card, 2)
+                record_sale(
+                    conn, "product_sale", f"Продажба: {product['name']} x{qty}",
+                    cash_amount=line_cash, card_amount=line_card,
+                    qty=qty, card_id=card_id, product_id=product["id"],
+                )
     finally:
         conn.close()
 

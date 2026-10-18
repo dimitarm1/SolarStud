@@ -420,6 +420,117 @@ def set_chip_reader_name(name):
     return name
 
 
+def get_chip_studio_identity():
+    conn = db.get_connection()
+    try:
+        row = conn.execute(
+            "SELECT chip_studio_name, chip_studio_number FROM settings WHERE id = 1"
+        ).fetchone()
+        if row is None:
+            return {"name": "Solar Studio", "number": 0}
+        return {"name": row["chip_studio_name"], "number": row["chip_studio_number"]}
+    finally:
+        conn.close()
+
+
+def set_chip_studio_identity(name, number):
+    name = (name or "").strip() or "Solar Studio"
+    number = max(0, min(255, int(number or 0)))
+    conn = db.get_connection()
+    try:
+        with db.transaction(conn):
+            conn.execute(
+                "UPDATE settings SET chip_studio_name = ?, chip_studio_number = ? WHERE id = 1",
+                (name, number),
+            )
+    finally:
+        conn.close()
+    return {"name": name, "number": number}
+
+
+def get_chip_known_studio_numbers_text():
+    """The raw, as-typed setting (for display/editing) - use
+    get_chip_known_studio_numbers() for the resolved set used by the
+    actual pre-filter check."""
+    conn = db.get_connection()
+    try:
+        row = conn.execute(
+            "SELECT chip_known_studio_numbers FROM settings WHERE id = 1"
+        ).fetchone()
+        return row["chip_known_studio_numbers"] if row is not None else ""
+    finally:
+        conn.close()
+
+
+def get_chip_known_studio_numbers():
+    """This studio's own number (get_chip_studio_identity) is always
+    implicitly included - the extra numbers here are other branches in
+    the same chain (same shared PSC) whose cards should also be
+    accepted. Not a security boundary by itself (the PSC is what
+    actually proves chain membership) - just a cheap, read-only
+    pre-filter so a write is never attempted against an unrelated card
+    on the strength of studio_number alone (see sales._require_known_studio)."""
+    conn = db.get_connection()
+    try:
+        row = conn.execute(
+            "SELECT chip_studio_number, chip_known_studio_numbers FROM settings WHERE id = 1"
+        ).fetchone()
+        if row is None:
+            return {0}
+        numbers = {row["chip_studio_number"]}
+        for part in (row["chip_known_studio_numbers"] or "").split(","):
+            part = part.strip()
+            if part.isdigit():
+                numbers.add(int(part))
+        return numbers
+    finally:
+        conn.close()
+
+
+def set_chip_known_studio_numbers(text):
+    text = (text or "").strip()
+    conn = db.get_connection()
+    try:
+        with db.transaction(conn):
+            conn.execute(
+                "UPDATE settings SET chip_known_studio_numbers = ? WHERE id = 1", (text,)
+            )
+    finally:
+        conn.close()
+    return text
+
+
+def get_chip_psc():
+    """This chain's actual shared secret PSC (plain 6-hex-digit text,
+    e.g. 'A1B2C3') - written onto every newly issued card
+    (sales.issue_chip_card) so cards end up protected by a real secret
+    instead of staying at the universal default FFFFFF every blank
+    SLE4442 starts with."""
+    conn = db.get_connection()
+    try:
+        row = conn.execute("SELECT chip_studio_psc FROM settings WHERE id = 1").fetchone()
+        return row["chip_studio_psc"] if row is not None else "FFFFFF"
+    finally:
+        conn.close()
+
+
+def set_chip_psc(text):
+    """Non-hex characters are stripped and the result uppercased; a
+    value that isn't exactly 6 hex digits after that is rejected rather
+    than saved; a short/malformed PSC would make every future card
+    write fail, not just this one."""
+    cleaned = "".join(ch for ch in (text or "").strip().upper() if ch in "0123456789ABCDEF")
+    if len(cleaned) != 6:
+        raise ValueError("Защитният код (PSC) трябва да е точно 6 шестнадесетични цифри (0-9, A-F).")
+    conn = db.get_connection()
+    try:
+        with db.transaction(conn):
+            conn.execute("UPDATE settings SET chip_studio_psc = ? WHERE id = 1", (cleaned,))
+    finally:
+        conn.close()
+    return cleaned
+
+
 # --- sessions ------------------------------------------------------------
 
 def _require_serial_port():
@@ -483,7 +594,9 @@ def start_session_with_payment(bed_id, total_min=DEFAULT_SESSION_MINUTES,
         chip_result = None
         if use_chip:
             chip_result = sales.charge_chip_card_for_session(
-                bed_id, total_min, chip_amount, chip_reader_name
+                bed_id, total_min, chip_amount, chip_reader_name,
+                this_studio_number=get_chip_studio_identity()["number"],
+                allowed_studio_numbers=get_chip_known_studio_numbers(),
             )
 
         with db.transaction(conn):
@@ -510,7 +623,7 @@ def start_session_with_payment(bed_id, total_min=DEFAULT_SESSION_MINUTES,
             )
             description = f"Солариум легло №{bed_id}, {total_min} мин"
             if use_chip:
-                description += f" (чип карта №{chip_result['client_number']})"
+                description += f", чип карта №{chip_result['client_number']}{chip_result['studio_note']}"
             sales.record_sale(
                 conn, "session_payment", description,
                 cash_amount=cash_amount, card_amount=card_amount,

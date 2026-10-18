@@ -4,7 +4,7 @@ import time
 import urllib.error
 import urllib.request
 import webbrowser
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 from flask import Flask, abort, jsonify, redirect, render_template, request, send_file, url_for
@@ -14,6 +14,7 @@ import controller_link
 import db
 import models
 import sales
+import stats
 
 ALLOWED_IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp", ".svg"}
 DEBUG = True
@@ -33,6 +34,7 @@ NAV_ITEMS = [
 
 BOTTOM_BUTTONS = [
     {"id": "protocol", "label": "Протокол", "icon": "protocol"},
+    {"id": "stats", "label": "Статистика", "icon": "chart"},
     {"id": "cosmetics", "label": "Козметика", "icon": "leaf"},
     {"id": "cards", "label": "Карти", "icon": "card"},
     {"id": "studio", "label": "Студио", "icon": "home"},
@@ -187,6 +189,11 @@ def studio():
         },
         chip_readers=chipcard.list_readers(),
         chip_reader_name=models.get_chip_reader_name(),
+        chip_studio_identity=models.get_chip_studio_identity(),
+        chip_known_studio_numbers=models.get_chip_known_studio_numbers_text(),
+        chip_psc=models.get_chip_psc(),
+        error=request.args.get("error"),
+        message=request.args.get("message"),
     )
 
 
@@ -208,6 +215,30 @@ def studio_set_serial_port():
 def studio_set_chip_reader():
     models.set_chip_reader_name(request.form.get("chip_reader_name", ""))
     return redirect(url_for("studio"))
+
+
+@app.route("/studio/chip-studio-identity", methods=["POST"])
+def studio_set_chip_studio_identity():
+    models.set_chip_studio_identity(
+        request.form.get("chip_studio_name", ""),
+        request.form.get("chip_studio_number", type=int, default=0),
+    )
+    return redirect(url_for("studio"))
+
+
+@app.route("/studio/chip-known-studios", methods=["POST"])
+def studio_set_chip_known_studios():
+    models.set_chip_known_studio_numbers(request.form.get("chip_known_studio_numbers", ""))
+    return redirect(url_for("studio"))
+
+
+@app.route("/studio/chip-psc", methods=["POST"])
+def studio_set_chip_psc():
+    try:
+        models.set_chip_psc(request.form.get("chip_studio_psc", ""))
+    except ValueError as exc:
+        return redirect(url_for("studio", error=str(exc)))
+    return redirect(url_for("studio", message="Защитният код (PSC) на веригата е запазен."))
 
 
 @app.route("/api/chipcard/read")
@@ -366,6 +397,7 @@ def cards_page():
         recharge_options=sales.list_recharge_options(),
         error=request.args.get("error"),
         message=request.args.get("message"),
+        chip_refresh=request.args.get("chip_refresh") == "1",
     )
 
 
@@ -386,6 +418,7 @@ def cards_issue():
 
 @app.route("/cards/chip/issue", methods=["POST"])
 def chip_card_issue():
+    identity = models.get_chip_studio_identity()
     try:
         client_number = sales.issue_chip_card(
             name=request.form.get("name", ""),
@@ -393,10 +426,15 @@ def chip_card_issue():
             deposit_amount=request.form.get("deposit_amount", type=float, default=0.0),
             recharge_option_id=request.form.get("recharge_option_id", type=int, default=None),
             reader_name=models.get_chip_reader_name() or None,
+            studio_name=identity["name"], studio_number=identity["number"],
+            allowed_studio_numbers=models.get_chip_known_studio_numbers(),
+            chain_psc=bytes.fromhex(models.get_chip_psc()),
         )
     except (sales.PaymentError, chipcard.ChipCardError) as exc:
         return redirect(url_for("cards_page", error=str(exc)))
-    return redirect(url_for("cards_page", message=f"Издадена чип карта №{client_number}."))
+    return redirect(url_for(
+        "cards_page", message=f"Издадена чип карта №{client_number}.", chip_refresh="1"
+    ))
 
 
 @app.route("/cards/chip/recharge", methods=["POST"])
@@ -405,10 +443,30 @@ def chip_card_recharge():
         new_balance = sales.recharge_chip_card(
             recharge_option_id=request.form.get("recharge_option_id", type=int, default=None),
             reader_name=models.get_chip_reader_name() or None,
+            this_studio_number=models.get_chip_studio_identity()["number"],
+            allowed_studio_numbers=models.get_chip_known_studio_numbers(),
         )
     except (sales.PaymentError, chipcard.ChipCardError) as exc:
         return redirect(url_for("cards_page", error=str(exc)))
-    return redirect(url_for("cards_page", message=f"Нов баланс по чип картата: {new_balance:.2f} лв."))
+    return redirect(url_for(
+        "cards_page", message=f"Нов баланс по чип картата: {new_balance:.2f} лв.", chip_refresh="1"
+    ))
+
+
+@app.route("/cards/chip/clear", methods=["POST"])
+def chip_card_clear():
+    try:
+        client_number = sales.clear_chip_card(
+            reader_name=models.get_chip_reader_name() or None,
+            allowed_studio_numbers=models.get_chip_known_studio_numbers(),
+        )
+    except (sales.PaymentError, chipcard.ChipCardError) as exc:
+        return redirect(url_for("cards_page", error=str(exc)))
+    message = (
+        f"Картата (бивш клиент №{client_number}) е нулирана и може да бъде издадена наново."
+        if client_number is not None else "Картата е нулирана."
+    )
+    return redirect(url_for("cards_page", message=message, chip_refresh="1"))
 
 
 @app.route("/cards/<int:card_id>")
@@ -475,6 +533,43 @@ def protocol():
         entries=sales.list_sales_log(date=date),
         summary=sales.sales_log_summary(date=date),
     )
+
+
+@app.route("/stats")
+def stats_page():
+    date_to = request.args.get("date_to") or datetime.now().strftime("%Y-%m-%d")
+    date_from = request.args.get("date_from") or (datetime.now() - timedelta(days=30)).strftime("%Y-%m-%d")
+    return render_template(
+        "stats.html",
+        version=VERSION,
+        nav_items=NAV_ITEMS,
+        bottom_buttons=BOTTOM_BUTTONS,
+        server_time=datetime.now().strftime("%H:%M:%S"),
+        metrics=stats.METRICS,
+        breakdowns=stats.BREAKDOWNS,
+        allowed_breakdowns={m["id"]: [b["id"] for b in stats.allowed_breakdowns(m["id"])] for m in stats.METRICS},
+        split_by_bed_breakdowns={
+            m["id"]: [b["id"] for b in stats.BREAKDOWNS if stats.supports_split_by_bed(m["id"], b["id"])]
+            for m in stats.METRICS
+        },
+        date_from=date_from,
+        date_to=date_to,
+    )
+
+
+@app.route("/api/stats/report")
+def api_stats_report():
+    metric = request.args.get("metric", stats.METRICS[0]["id"])
+    breakdown = request.args.get("breakdown", "none")
+    date_from = request.args.get("date_from")
+    date_to = request.args.get("date_to")
+    split_by_bed = request.args.get("split_by_bed") == "1"
+    if not date_from or not date_to:
+        return jsonify({"error": "Моля, изберете период (начална и крайна дата)."}), 400
+    try:
+        return jsonify(stats.run_report(metric, breakdown, date_from, date_to, split_by_bed=split_by_bed))
+    except ValueError as exc:
+        return jsonify({"error": str(exc)}), 400
 
 
 CARD_SEARCH_LIMIT = 20

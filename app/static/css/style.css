@@ -18,6 +18,19 @@
   --phase-prep: var(--gold);
   --phase-active: var(--danger);
   --phase-cooling: var(--blue-glow);
+
+  /* Categorical chart series - fixed order, validated (dataviz skill's six
+     checks) against this app's actual --surface (#14222e): lightness band,
+     chroma floor, CVD + normal-vision separation, contrast all pass. Assign
+     in this order, never cycled/reassigned by value. */
+  --series-1: #3987e5; /* blue */
+  --series-2: #d95926; /* orange */
+  --series-3: #199e70; /* aqua */
+  --series-4: #c98500; /* yellow */
+  --series-5: #d55181; /* magenta */
+  --series-6: #008300; /* green */
+  --series-7: #9085e9; /* violet */
+  --series-8: #e66767; /* red */
 }
 
 * { box-sizing: border-box; }
@@ -1671,6 +1684,46 @@ body {
 .protocol-kind-badge--card_deposit_refund,
 .protocol-kind-badge--card_balance_forfeit { background: rgba(226, 72, 61, 0.16); color: #ff9a90; }
 .protocol-kind-badge--stock_adjustment { background: rgba(159, 176, 189, 0.16); color: var(--text-dim); border: 1px solid var(--border); }
+
+/* Statistics */
+.stats-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: flex-end;
+  margin-bottom: 20px;
+}
+
+.stats-filters .field { min-width: 160px; }
+
+.stats-filters .field--row {
+  min-width: auto;
+  padding-bottom: 10px;
+}
+
+.stats-chart-panel {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  padding: 20px;
+}
+
+.stats-chart-canvas-wrap {
+  position: relative;
+  height: 360px;
+}
+
+.stats-empty {
+  text-align: center;
+  color: var(--text-faint);
+  padding: 40px 0;
+}
+
+@media (max-width: 720px) {
+  .stats-filters { flex-direction: column; align-items: stretch; }
+  .stats-filters .field { min-width: 0; }
+  .stats-chart-canvas-wrap { height: 280px; }
+}
 
 @media (max-width: 900px) {
   .pos-layout { flex-direction: column; }

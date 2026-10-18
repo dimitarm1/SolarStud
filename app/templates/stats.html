@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% from "icons.html" import icon, nav_link, bottom_link %}
+
+{% block title %}Solar Studio — Статистика{% endblock %}
+
+{% block sidebar %}
+<nav class="sidebar">
+  {% set page_urls = {'studio': url_for('studio'), 'cosmetics': url_for('cosmetics_page'),
+                       'cards': url_for('cards_page'), 'tanning': url_for('index')} %}
+  {% for item in nav_items %}
+    {{ nav_link(item, '', page_urls[item.id]) }}
+  {% endfor %}
+</nav>
+{% endblock %}
+
+{% block content %}
+<section class="view view-detail">
+  <a class="back-link" href="{{ url_for('index') }}">
+    {{ icon('back', 'back-icon') }}
+    <span>Назад</span>
+  </a>
+
+  <div id="stats-error" class="hw-error-banner" hidden>
+    {{ icon('warning', 'hw-error-icon') }}
+    <span id="stats-error-text"></span>
+  </div>
+
+  <form class="stats-filters" onsubmit="return false;">
+    <label class="field">
+      <span class="field__label">Показател</span>
+      <select class="field__input" id="stats-metric">
+        {% for m in metrics %}
+        <option value="{{ m.id }}">{{ m.label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label class="field">
+      <span class="field__label">Разбивка</span>
+      <select class="field__input" id="stats-breakdown"></select>
+    </label>
+    <label class="field field--row" id="stats-split-by-bed-field" hidden>
+      <input type="checkbox" id="stats-split-by-bed">
+      <span class="field__label field__label--inline">Разбивка по легло</span>
+    </label>
+    <label class="field">
+      <span class="field__label">От дата</span>
+      <input class="field__input" type="date" id="stats-date-from" value="{{ date_from }}">
+    </label>
+    <label class="field">
+      <span class="field__label">До дата</span>
+      <input class="field__input" type="date" id="stats-date-to" value="{{ date_to }}">
+    </label>
+  </form>
+
+  <div class="stats-chart-panel">
+    <div class="stats-chart-canvas-wrap">
+      <canvas id="stats-chart"></canvas>
+    </div>
+    <div class="stats-empty" id="stats-empty" hidden>Няма данни за избрания период.</div>
+  </div>
+</section>
+{% endblock %}
+
+{% block bottom_buttons %}
+{% set page_urls = {'studio': url_for('studio'), 'cosmetics': url_for('cosmetics_page'),
+                     'cards': url_for('cards_page'), 'protocol': url_for('protocol'),
+                     'stats': url_for('stats_page')} %}
+{% for btn in bottom_buttons %}
+  {{ bottom_link(btn, page_urls[btn.id]) }}
+{% endfor %}
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+  window.STATS_CONFIG = {
+    breakdownLabels: {{ breakdowns | tojson }},
+    allowedBreakdowns: {{ allowed_breakdowns | tojson }},
+    splitByBedBreakdowns: {{ split_by_bed_breakdowns | tojson }},
+    reportUrl: {{ url_for('api_stats_report') | tojson }},
+  };
+</script>
+<script src="{{ url_for('static', filename='js/stats.js') }}"></script>
+{% endblock %}

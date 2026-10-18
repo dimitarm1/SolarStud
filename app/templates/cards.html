@@ -42,7 +42,8 @@
       ако вече е издадена, ще можете да я презаредите. Настройката на четеца е в страница Студио.
     </p>
 
-    <button class="action-btn" type="button" id="chip-card-read-btn" style="width:auto;">
+    <button class="action-btn" type="button" id="chip-card-read-btn" style="width:auto;"
+            data-auto-refresh="{{ 'true' if chip_refresh else 'false' }}">
       {{ icon('scan', 'action-icon') }}
       <span>Прочети чип карта</span>
     </button>
@@ -52,7 +53,11 @@
       <span id="chip-card-error-text"></span>
     </div>
 
-    <p id="chip-card-info" class="settings-hint" style="margin-top:14px;" hidden></p>
+    <div id="chip-card-info" class="data-table-wrap" style="margin-top:14px;" hidden>
+      <table class="data-table">
+        <tbody id="chip-card-info-body"></tbody>
+      </table>
+    </div>
 
     <form id="chip-issue-form" class="settings-form" method="post"
           action="{{ url_for('chip_card_issue') }}" hidden style="margin-top:14px;">
@@ -98,6 +103,19 @@
       <button class="action-btn action-btn--start" type="submit">
         {{ icon('card', 'action-icon') }}
         <span>Презареди чип картата</span>
+      </button>
+    </form>
+
+    <form id="chip-clear-form" class="settings-form" method="post"
+          action="{{ url_for('chip_card_clear') }}" hidden style="margin-top:14px;"
+          onsubmit="return confirm('Да изтрия ли всички данни от картата (име, баланс, номера) и да нулирам защитния код? Това не може да се отмени.');">
+      <p class="settings-hint">
+        Изтрива името, баланса и номерата от картата и връща защитния код към стандартния (за повторно
+        издаване). Не засяга депозита — върнете го на клиента отделно, ако е приложимо.
+      </p>
+      <button class="action-btn action-btn--stop" type="submit">
+        {{ icon('power', 'action-icon') }}
+        <span>Нулирай картата</span>
       </button>
     </form>
   </div>
@@ -187,7 +205,8 @@
 
 {% block bottom_buttons %}
 {% set page_urls = {'studio': url_for('studio'), 'cosmetics': url_for('cosmetics_page'),
-                     'cards': url_for('cards_page'), 'protocol': url_for('protocol')} %}
+                     'cards': url_for('cards_page'), 'protocol': url_for('protocol'),
+                     'stats': url_for('stats_page')} %}
 {% for btn in bottom_buttons %}
   {{ bottom_link(btn, page_urls[btn.id]) }}
 {% endfor %}

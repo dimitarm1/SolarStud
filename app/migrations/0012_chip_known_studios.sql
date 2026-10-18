@@ -1,0 +1,11 @@
+-- Extra studio numbers (beyond this location's own, see
+-- 0011_chip_studio_identity) recognized as part of the same card chain.
+-- This is *not* what actually determines chain membership - the shared
+-- PSC is (see sales._card_psc_bytes / chipcard verify_psc) - but
+-- studio_number can be read for free, while a PSC mismatch can only be
+-- discovered by attempting a VERIFY, which costs one of a card's 3 tries
+-- if it's wrong. Checking studio_number first (sales._require_known_studio)
+-- means an obviously unrelated card - a competitor's, or any other
+-- system using the same chip - gets turned away before any VERIFY is
+-- even attempted against it.
+ALTER TABLE settings ADD COLUMN chip_known_studio_numbers TEXT NOT NULL DEFAULT '';

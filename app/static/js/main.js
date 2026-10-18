@@ -954,6 +954,42 @@
     renderBasket();
   }
 
+  // Shared chip-card result table - used by both the Studio test-read
+  // panel and the Cards page's issue/recharge panel, so a card's full
+  // detail (including the PSC and studio identity, needed for a chain of
+  // studios sharing one PSC - see sales.py's _studio_note) always looks
+  // the same wherever it's read.
+  const CHIP_FIELD_LABELS = [
+    ["client_name", "Име на клиента"],
+    ["client_number", "Номер на клиента"],
+    ["balance", "Баланс"],
+    ["card_number", "Номер на картата"],
+    ["studio_name", "Студио"],
+    ["studio_number", "Номер на студиото"],
+    ["psc", "PSC"],
+    ["err_counter", "Брояч за грешки"],
+    ["ok", "Статус"],
+  ];
+
+  function renderChipCardTableRows(tbody, card, knownName) {
+    tbody.innerHTML = "";
+    CHIP_FIELD_LABELS.forEach(([key, label]) => {
+      let value = card[key];
+      if (key === "client_name" && knownName) value = knownName;
+      if (key === "balance") value = value === null ? "— (невалиден)" : `${value.toFixed(2)} лв`;
+      if (key === "client_number" || key === "card_number") value = value === null ? "— (не е зададен)" : value;
+      if (key === "ok") value = value ? "OK" : "ГРЕШКА / заключена";
+      const row = document.createElement("tr");
+      const th = document.createElement("th");
+      th.scope = "row";
+      th.textContent = label;
+      const td = document.createElement("td");
+      td.textContent = value;
+      row.append(th, td);
+      tbody.appendChild(row);
+    });
+  }
+
   // Chip-card test read on the Studio page - lets staff confirm the
   // reader/card setup actually works before relying on it for payment.
   const chipTestReadBtn = document.getElementById("chip-test-read-btn");
@@ -963,18 +999,6 @@
   const chipTestErrorText = document.getElementById("chip-test-error-text");
 
   if (chipTestReadBtn) {
-    const CHIP_FIELD_LABELS = [
-      ["client_name", "Име на клиента"],
-      ["client_number", "Номер на клиента"],
-      ["balance", "Баланс"],
-      ["card_number", "Номер на картата"],
-      ["studio_name", "Студио"],
-      ["studio_number", "Номер на студиото"],
-      ["psc", "PSC"],
-      ["err_counter", "Брояч за грешки"],
-      ["ok", "Статус"],
-    ];
-
     chipTestReadBtn.addEventListener("click", async () => {
       chipTestReadBtn.disabled = true;
       chipTestError.hidden = true;
@@ -987,21 +1011,7 @@
           chipTestError.hidden = false;
           return;
         }
-        chipTestResultBody.innerHTML = "";
-        CHIP_FIELD_LABELS.forEach(([key, label]) => {
-          let value = data.card[key];
-          if (key === "balance") value = value === null ? "— (невалиден)" : `${value.toFixed(2)} лв`;
-          if (key === "client_number" || key === "card_number") value = value === null ? "— (не е зададен)" : value;
-          if (key === "ok") value = value ? "OK" : "ГРЕШКА / заключена";
-          const row = document.createElement("tr");
-          const th = document.createElement("th");
-          th.scope = "row";
-          th.textContent = label;
-          const td = document.createElement("td");
-          td.textContent = value;
-          row.append(th, td);
-          chipTestResultBody.appendChild(row);
-        });
+        renderChipCardTableRows(chipTestResultBody, data.card, data.known && data.known.name);
         chipTestResult.hidden = false;
       } catch (err) {
         chipTestErrorText.textContent = "Мрежова грешка при четене на картата.";
@@ -1015,20 +1025,28 @@
   // Chip card (Cards page): one "read" button drives both flows - a
   // blank/unregistered card gets the issue form, an already-issued one
   // gets the recharge form, decided by what comes back from the reader.
+  // After a successful issue/recharge the page reloads (plain POST
+  // +redirect, like every other form here) with a data-auto-refresh flag
+  // on this button, so the full card detail reappears automatically
+  // instead of staff having to press "read" again to see what just
+  // changed.
   const chipCardReadBtn = document.getElementById("chip-card-read-btn");
   const chipCardError = document.getElementById("chip-card-error");
   const chipCardErrorText = document.getElementById("chip-card-error-text");
   const chipCardInfo = document.getElementById("chip-card-info");
+  const chipCardInfoBody = document.getElementById("chip-card-info-body");
   const chipIssueForm = document.getElementById("chip-issue-form");
   const chipRechargeForm = document.getElementById("chip-recharge-form");
+  const chipClearForm = document.getElementById("chip-clear-form");
 
   if (chipCardReadBtn) {
-    chipCardReadBtn.addEventListener("click", async () => {
+    async function readChipCard() {
       chipCardReadBtn.disabled = true;
       chipCardError.hidden = true;
       chipCardInfo.hidden = true;
       chipIssueForm.hidden = true;
       chipRechargeForm.hidden = true;
+      chipClearForm.hidden = true;
       try {
         const res = await fetch("/api/chipcard/read");
         const data = await res.json();
@@ -1038,18 +1056,13 @@
           return;
         }
         const card = data.card;
+        renderChipCardTableRows(chipCardInfoBody, card, data.known && data.known.name);
+        chipCardInfo.hidden = false;
         if (card.client_number === null) {
-          chipCardInfo.textContent = "Нова карта - не е издадена все още.";
-          chipCardInfo.hidden = false;
           chipIssueForm.hidden = false;
         } else {
-          const name = (data.known && data.known.name) || card.client_name || "";
-          const balanceText = card.balance === null ? "невалиден баланс" : `${card.balance.toFixed(2)} лв`;
-          chipCardInfo.textContent =
-            `Клиент №${card.client_number}${name ? " — " + name : ""} — баланс ${balanceText}` +
-            (card.ok ? "" : " — ВНИМАНИЕ: картата показва грешка/заключване");
-          chipCardInfo.hidden = false;
           chipRechargeForm.hidden = false;
+          chipClearForm.hidden = false;
         }
       } catch (err) {
         chipCardErrorText.textContent = "Мрежова грешка при четене на картата.";
@@ -1057,6 +1070,11 @@
       } finally {
         chipCardReadBtn.disabled = false;
       }
-    });
+    }
+
+    chipCardReadBtn.addEventListener("click", readChipCard);
+    if (chipCardReadBtn.dataset.autoRefresh === "true") {
+      readChipCard();
+    }
   }
 })();
