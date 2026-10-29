@@ -467,7 +467,7 @@ def return_card(card_id, force_forfeit_balance=False):
             balance = _card_balance(conn, card_id)
             if balance > 0 and not force_forfeit_balance:
                 raise PaymentError(
-                    f"Картата има оставащ баланс {balance:.2f} лв. Изразходвайте го или "
+                    f"Картата има оставащ баланс {balance:.2f} €. Изразходвайте го или "
                     "отбележете анулиране на баланса, за да продължите с връщането."
                 )
             now = datetime.now().isoformat(timespec="seconds")

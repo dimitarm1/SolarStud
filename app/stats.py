@@ -16,15 +16,15 @@ import db
 WEEKDAY_LABELS = ["Пон", "Вт", "Сря", "Чет", "Пет", "Съб", "Нед"]
 
 METRICS = [
-    {"id": "tanning_revenue", "label": "Приходи от солариум", "unit": "лв", "source": "sessions"},
+    {"id": "tanning_revenue", "label": "Приходи от солариум", "unit": "€", "source": "sessions"},
     {"id": "visits", "label": "Посещения", "unit": "брой", "source": "sessions"},
     {"id": "tanning_hours", "label": "Отработени часове", "unit": "часове", "source": "sessions"},
-    {"id": "cosmetics_revenue", "label": "Приходи от козметика", "unit": "лв", "source": "cosmetics"},
+    {"id": "cosmetics_revenue", "label": "Приходи от козметика", "unit": "€", "source": "cosmetics"},
     {"id": "cosmetics_count", "label": "Продадена козметика", "unit": "брой", "source": "cosmetics"},
-    {"id": "services_revenue", "label": "Приходи от услуги", "unit": "лв", "source": "services"},
+    {"id": "services_revenue", "label": "Приходи от услуги", "unit": "€", "source": "services"},
     {"id": "services_count", "label": "Извършени услуги", "unit": "брой", "source": "services"},
     {"id": "cards_count", "label": "Продадени/презаредени карти", "unit": "брой", "source": "cards"},
-    {"id": "total_revenue", "label": "Общо приходи (всичко)", "unit": "лв", "source": "total"},
+    {"id": "total_revenue", "label": "Общо приходи (всичко)", "unit": "€", "source": "total"},
 ]
 
 BREAKDOWNS = [

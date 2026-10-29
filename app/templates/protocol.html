@@ -39,9 +39,9 @@
   </form>
 
   <div class="protocol-summary">
-    <div class="protocol-summary__item"><span>В брой</span><strong>{{ "%.2f"|format(summary.totals.cash_total) }} лв</strong></div>
-    <div class="protocol-summary__item"><span>С карта</span><strong>{{ "%.2f"|format(summary.totals.card_total) }} лв</strong></div>
-    <div class="protocol-summary__item"><span>Презаредена стойност</span><strong>{{ "%.2f"|format(summary.totals.virtual_total) }} лв</strong></div>
+    <div class="protocol-summary__item"><span>В брой</span><strong>{{ "%.2f"|format(summary.totals.cash_total) }} €</strong></div>
+    <div class="protocol-summary__item"><span>С карта</span><strong>{{ "%.2f"|format(summary.totals.card_total) }} €</strong></div>
+    <div class="protocol-summary__item"><span>Презаредена стойност</span><strong>{{ "%.2f"|format(summary.totals.virtual_total) }} €</strong></div>
   </div>
 
   {% if entries %}
@@ -56,8 +56,8 @@
           <td>{{ entry.created_at.split("T")[1] if "T" in entry.created_at else entry.created_at }}</td>
           <td><span class="protocol-kind-badge protocol-kind-badge--{{ entry.kind }}">{{ kind_labels.get(entry.kind, entry.kind) }}</span></td>
           <td>{{ entry.description }}</td>
-          <td class="amount--cash">{{ "%.2f"|format(entry.cash_amount) }} лв</td>
-          <td class="amount--card">{{ "%.2f"|format(entry.card_amount) }} лв</td>
+          <td class="amount--cash">{{ "%.2f"|format(entry.cash_amount) }} €</td>
+          <td class="amount--card">{{ "%.2f"|format(entry.card_amount) }} €</td>
         </tr>
         {% endfor %}
       </tbody>

@@ -73,9 +73,9 @@
         {% if bed.card_amount_session or bed.cash_amount_session %}
         <p class="payment-section__paid-line">
           Платено:
-          {% if bed.card_amount_session %}{{ "%.2f"|format(bed.card_amount_session) }} лв карта{% endif %}
+          {% if bed.card_amount_session %}{{ "%.2f"|format(bed.card_amount_session) }} € карта{% endif %}
           {% if bed.card_amount_session and bed.cash_amount_session %} + {% endif %}
-          {% if bed.cash_amount_session %}{{ "%.2f"|format(bed.cash_amount_session) }} лв в брой{% endif %}
+          {% if bed.cash_amount_session %}{{ "%.2f"|format(bed.cash_amount_session) }} € в брой{% endif %}
         </p>
         {% endif %}
         <div class="bed-remaining">
@@ -144,7 +144,7 @@
           {% endif %}
 
           <div class="payment-section">
-            <p class="payment-section__price-hint">Цена: {{ "%.2f"|format(bed.price_per_min) }} лв/мин</p>
+            <p class="payment-section__price-hint">Цена: {{ "%.2f"|format(bed.price_per_min) }} €/мин</p>
             <label class="field">
               <span class="field__label">Плащане с карта</span>
               <input type="hidden" name="card_id" id="payment-card-id" value="">
@@ -162,14 +162,14 @@
             </label>
 
             <p class="payment-section__card-balance" id="payment-card-balance-info" hidden>
-              Баланс по картата: <strong id="payment-card-balance-amount">0.00 лв</strong>
+              Баланс по картата: <strong id="payment-card-balance-amount">0.00 €</strong>
               <span id="payment-card-balance-minutes"></span>
             </p>
 
             <div class="slider-field" id="payment-card-amount-field" hidden>
               <div class="slider-field__header">
                 <span class="slider-field__label">Сума с карта</span>
-                <span class="slider-field__value" id="card-amount-value">0 лв</span>
+                <span class="slider-field__value" id="card-amount-value">0 €</span>
               </div>
               <div class="slider-field__track-wrap">
                 <input
@@ -182,7 +182,7 @@
                   step="0.5"
                   value="0"
                   data-value-target="card-amount-value"
-                  data-suffix=" лв"
+                  data-suffix=" €"
                 >
               </div>
             </div>
@@ -205,7 +205,7 @@
             <div class="slider-field" id="payment-chip-amount-field" hidden>
               <div class="slider-field__header">
                 <span class="slider-field__label">Сума от чип картата</span>
-                <span class="slider-field__value" id="chip-amount-value">0 лв</span>
+                <span class="slider-field__value" id="chip-amount-value">0 €</span>
               </div>
               <div class="slider-field__track-wrap">
                 <input
@@ -218,14 +218,14 @@
                   step="0.5"
                   value="0"
                   data-value-target="chip-amount-value"
-                  data-suffix=" лв"
+                  data-suffix=" €"
                 >
               </div>
             </div>
 
             <div class="payment-section__cash-due">
               <span>Дължимо в брой</span>
-              <strong id="payment-cash-due">{{ "%.2f"|format(bed.price_per_min * session_default) }} лв</strong>
+              <strong id="payment-cash-due">{{ "%.2f"|format(bed.price_per_min * session_default) }} €</strong>
             </div>
           </div>
 

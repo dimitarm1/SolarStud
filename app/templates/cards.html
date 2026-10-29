@@ -79,7 +79,7 @@
           <select class="field__input" name="recharge_option_id">
             <option value="">— Без —</option>
             {% for option in recharge_options %}
-            <option value="{{ option.id }}">{{ option.name }} ({{ option.virtual_amount }} лв за {{ option.cash_price }} лв)</option>
+            <option value="{{ option.id }}">{{ option.name }} ({{ option.virtual_amount }} € за {{ option.cash_price }} €)</option>
             {% endfor %}
           </select>
         </label>
@@ -96,7 +96,7 @@
         <span class="field__label">Опция за презареждане</span>
         <select class="field__input" name="recharge_option_id" required>
           {% for option in recharge_options %}
-          <option value="{{ option.id }}">{{ option.name }} ({{ option.virtual_amount }} лв за {{ option.cash_price }} лв)</option>
+          <option value="{{ option.id }}">{{ option.name }} ({{ option.virtual_amount }} € за {{ option.cash_price }} €)</option>
           {% endfor %}
         </select>
       </label>
@@ -145,7 +145,7 @@
           <select class="field__input" name="recharge_option_id">
             <option value="">— Без —</option>
             {% for option in recharge_options %}
-            <option value="{{ option.id }}">{{ option.name }} ({{ option.virtual_amount }} лв за {{ option.cash_price }} лв)</option>
+            <option value="{{ option.id }}">{{ option.name }} ({{ option.virtual_amount }} € за {{ option.cash_price }} €)</option>
             {% endfor %}
           </select>
         </label>
@@ -185,7 +185,7 @@
       <span class="card-status-badge {{ 'card-status-badge--active' if card.status == 'active' else 'card-status-badge--returned' }}">
         {{ "Активна" if card.status == 'active' else "Върната" }}
       </span>
-      <span class="card-balance">{{ "%.2f"|format(card.balance) }} лв</span>
+      <span class="card-balance">{{ "%.2f"|format(card.balance) }} €</span>
     </a>
     {% endfor %}
   </div>

@@ -70,7 +70,7 @@
                data-price="{{ service.sale_price }}"
                title="Двоен клик за добавяне в кошницата">
             <span class="product-row__name">{{ service.name }}</span>
-            <span class="product-row__price">{{ "%.2f"|format(service.sale_price) }} лв</span>
+            <span class="product-row__price">{{ "%.2f"|format(service.sale_price) }} €</span>
             <form class="product-restock-form" method="post"
                   action="{{ url_for('services_retire_service', service_id=service.id) }}">
               <button class="product-mini-btn" type="submit" title="Премахни услугата от каталога">
@@ -109,7 +109,7 @@
       </div>
       <div class="basket-total-row">
         <span>Общо</span>
-        <strong id="basket-total">0.00 лв</strong>
+        <strong id="basket-total">0.00 €</strong>
       </div>
 
       <div class="payment-section">
@@ -122,21 +122,21 @@
           <select class="controller-picker-select payment-card-results" id="checkout-card-results" size="6" hidden></select>
         </label>
         <p class="payment-section__card-balance" id="checkout-card-balance-info" hidden>
-          Баланс по картата: <strong id="checkout-card-balance-amount">0.00 лв</strong>
+          Баланс по картата: <strong id="checkout-card-balance-amount">0.00 €</strong>
         </p>
         <div class="slider-field" id="checkout-card-amount-field" hidden>
           <div class="slider-field__header">
             <span class="slider-field__label">Сума с карта</span>
-            <span class="slider-field__value" id="checkout-card-amount-value">0 лв</span>
+            <span class="slider-field__value" id="checkout-card-amount-value">0 €</span>
           </div>
           <div class="slider-field__track-wrap">
             <input class="range-input" type="range" id="checkout-card-amount" min="0" max="0" step="0.5" value="0"
-                   data-value-target="checkout-card-amount-value" data-suffix=" лв">
+                   data-value-target="checkout-card-amount-value" data-suffix=" €">
           </div>
         </div>
         <div class="payment-section__cash-due">
           <span>Дължимо в брой</span>
-          <strong id="checkout-cash-due">0.00 лв</strong>
+          <strong id="checkout-cash-due">0.00 €</strong>
         </div>
       </div>
 

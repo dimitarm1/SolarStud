@@ -392,7 +392,7 @@
       const flatTotal = totalMin() * pricePerMin;
       const cardAmount = parseFloat(paymentCardAmountInput.value || "0");
       const cash = Math.max(0, flatTotal - cardAmount);
-      paymentCashDue.textContent = `${cash.toFixed(2)} лв`;
+      paymentCashDue.textContent = `${cash.toFixed(2)} €`;
     }
 
     function renderCardBalanceInfo(data) {
@@ -400,7 +400,7 @@
         paymentCardBalanceInfo.hidden = true;
         return;
       }
-      paymentCardBalanceAmount.textContent = `${data.card_balance_after.toFixed(2)} лв`;
+      paymentCardBalanceAmount.textContent = `${data.card_balance_after.toFixed(2)} €`;
       paymentCardBalanceMinutes.textContent = `(≈ ${data.card_minutes_after.toFixed(1)} мин на това легло)`;
       paymentCardBalanceInfo.hidden = false;
     }
@@ -420,7 +420,7 @@
           const res = await fetch(`/api/sessions/quote?${params.toString()}`);
           if (!res.ok) return;
           const data = await res.json();
-          paymentCashDue.textContent = `${data.cash_amount.toFixed(2)} лв`;
+          paymentCashDue.textContent = `${data.cash_amount.toFixed(2)} €`;
           renderCardBalanceInfo(data);
         } catch (err) {
           // leave the local estimate in place on a transient network hiccup
@@ -476,7 +476,7 @@
             opt.value = card.id;
             opt.dataset.balance = card.balance;
             opt.dataset.label = card.label;
-            opt.textContent = `${card.label} — баланс ${card.balance.toFixed(2)} лв`;
+            opt.textContent = `${card.label} — баланс ${card.balance.toFixed(2)} €`;
             paymentCardResults.appendChild(opt);
           });
         }
@@ -601,10 +601,10 @@
           if (!res.ok) return;
           const data = await res.json();
           if (data.error) return;
-          if (paymentCashDue) paymentCashDue.textContent = `${data.cash_amount.toFixed(2)} лв`;
+          if (paymentCashDue) paymentCashDue.textContent = `${data.cash_amount.toFixed(2)} €`;
           paymentChipInfo.textContent =
             `Чип карта №${data.client_number}${data.client_name ? " — " + data.client_name : ""} ` +
-            `— остатък ${data.card_balance_after.toFixed(2)} лв`;
+            `— остатък ${data.card_balance_after.toFixed(2)} €`;
         } catch (err) {
           // leave the local estimate in place on a transient network hiccup
         }
@@ -640,7 +640,7 @@
         chipBalance = card.balance;
         const name = (data.known && data.known.name) || card.client_name || "";
         paymentChipInfo.textContent =
-          `Чип карта №${card.client_number}${name ? " — " + name : ""} — баланс ${card.balance.toFixed(2)} лв`;
+          `Чип карта №${card.client_number}${name ? " — " + name : ""} — баланс ${card.balance.toFixed(2)} €`;
         paymentChipInfo.hidden = false;
         paymentChipAmountField.hidden = false;
         updateChipAmountBounds();
@@ -748,7 +748,7 @@
     function updateCashDue() {
       const cardAmount = checkoutCardIdInput.value ? parseFloat(checkoutCardAmountInput.value || "0") : 0;
       const cash = Math.max(0, basketTotal() - cardAmount);
-      checkoutCashDue.textContent = `${cash.toFixed(2)} лв`;
+      checkoutCashDue.textContent = `${cash.toFixed(2)} €`;
     }
 
     function updateCardBalanceInfo() {
@@ -760,7 +760,7 @@
       // convert through), so unlike the session-start page this needs no
       // server round trip - plain local subtraction is exact.
       const cardAmount = parseFloat(checkoutCardAmountInput.value || "0");
-      checkoutCardBalanceAmount.textContent = `${(cardBalance - cardAmount).toFixed(2)} лв`;
+      checkoutCardBalanceAmount.textContent = `${(cardBalance - cardAmount).toFixed(2)} €`;
       checkoutCardBalanceInfo.hidden = false;
     }
 
@@ -780,13 +780,13 @@
         qtyEl.textContent = `x${line.qty}`;
         const totalEl = document.createElement("span");
         totalEl.className = "basket-row__total";
-        totalEl.textContent = `${(line.price * line.qty).toFixed(2)} лв`;
+        totalEl.textContent = `${(line.price * line.qty).toFixed(2)} €`;
         row.append(nameEl, qtyEl, totalEl);
         row.addEventListener("dblclick", () => removeFromBasket(line.id));
         basketListEl.appendChild(row);
       });
       basketEmptyEl.hidden = count > 0;
-      basketTotalEl.textContent = `${basketTotal().toFixed(2)} лв`;
+      basketTotalEl.textContent = `${basketTotal().toFixed(2)} €`;
       checkoutSubmitBtn.disabled = count === 0;
       updateCardAmountBounds();
       updateCashDue();
@@ -882,7 +882,7 @@
             opt.value = card.id;
             opt.dataset.balance = card.balance;
             opt.dataset.label = card.label;
-            opt.textContent = `${card.label} — баланс ${card.balance.toFixed(2)} лв`;
+            opt.textContent = `${card.label} — баланс ${card.balance.toFixed(2)} €`;
             checkoutCardResults.appendChild(opt);
           });
         }
@@ -991,7 +991,7 @@
     CHIP_FIELD_LABELS.forEach(([key, label]) => {
       let value = card[key];
       if (key === "client_name" && knownName) value = knownName;
-      if (key === "balance") value = value === null ? "— (невалиден)" : `${value.toFixed(2)} лв`;
+      if (key === "balance") value = value === null ? "— (невалиден)" : `${value.toFixed(2)} €`;
       if (key === "client_number" || key === "card_number") value = value === null ? "— (не е зададен)" : value;
       if (key === "ok") value = value ? "OK" : "ГРЕШКА / заключена";
       const row = document.createElement("tr");

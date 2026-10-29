@@ -36,12 +36,12 @@
   </div>
   <p class="detail-model">
     №{{ card.id }}{% if card.card_number %} · {{ card.card_number }}{% endif %}{% if card.phone %} · {{ card.phone }}{% endif %}
-    · Депозит: {{ "%.2f"|format(card.deposit_amount) }} лв
+    · Депозит: {{ "%.2f"|format(card.deposit_amount) }} €
   </p>
 
   <div class="status-panel">
     <span class="status-badge status-badge--idle">Текущ баланс</span>
-    <p class="card-balance-large">{{ "%.2f"|format(card.balance) }} лв</p>
+    <p class="card-balance-large">{{ "%.2f"|format(card.balance) }} €</p>
 
     {% if card.lots %}
     <div class="data-table-wrap">
@@ -53,8 +53,8 @@
           {% for lot in card.lots %}
           <tr>
             <td>{{ lot.recharge_option_name or "—" }}</td>
-            <td>{{ "%.2f"|format(lot.virtual_amount) }} лв</td>
-            <td>{{ "%.2f"|format(lot.remaining_amount) }} лв</td>
+            <td>{{ "%.2f"|format(lot.virtual_amount) }} €</td>
+            <td>{{ "%.2f"|format(lot.remaining_amount) }} €</td>
             <td>{{ lot.created_at }}</td>
           </tr>
           {% endfor %}
@@ -96,7 +96,7 @@
         <span class="field__label">Опция за презареждане</span>
         <select class="field__input" name="recharge_option_id" required>
           {% for option in recharge_options %}
-          <option value="{{ option.id }}">{{ option.name }} ({{ option.virtual_amount }} лв за {{ option.cash_price }} лв)</option>
+          <option value="{{ option.id }}">{{ option.name }} ({{ option.virtual_amount }} € за {{ option.cash_price }} €)</option>
           {% endfor %}
         </select>
       </label>
@@ -110,14 +110,14 @@
   <div class="settings-panel">
     <h3 class="settings-panel__title">Върни картата</h3>
     <p class="settings-hint settings-hint--lead">
-      Депозитът от {{ "%.2f"|format(card.deposit_amount) }} лв се връща на клиента.
-      {% if card.balance > 0 %}Картата има оставащ баланс {{ "%.2f"|format(card.balance) }} лв.{% endif %}
+      Депозитът от {{ "%.2f"|format(card.deposit_amount) }} € се връща на клиента.
+      {% if card.balance > 0 %}Картата има оставащ баланс {{ "%.2f"|format(card.balance) }} €.{% endif %}
     </p>
     <form class="settings-form" method="post" action="{{ url_for('card_return', card_id=card.id) }}">
       {% if card.balance > 0 %}
       <label class="field field--row">
         <input type="checkbox" name="force_forfeit_balance" value="1" required>
-        <span class="field__label field__label--inline">Анулирай оставащия баланс от {{ "%.2f"|format(card.balance) }} лв</span>
+        <span class="field__label field__label--inline">Анулирай оставащия баланс от {{ "%.2f"|format(card.balance) }} €</span>
       </label>
       {% endif %}
       <button class="action-btn action-btn--stop" type="submit">

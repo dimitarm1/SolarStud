@@ -504,7 +504,7 @@ def chip_card_recharge():
     except (sales.PaymentError, chipcard.ChipCardError) as exc:
         return redirect(url_for("cards_page", error=str(exc)))
     return redirect(url_for(
-        "cards_page", message=f"Нов баланс по чип картата: {new_balance:.2f} лв.", chip_refresh="1"
+        "cards_page", message=f"Нов баланс по чип картата: {new_balance:.2f} €.", chip_refresh="1"
     ))
 
 
