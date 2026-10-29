@@ -583,6 +583,7 @@ _HISTORY_KIND_LABELS = {
     "card_deposit_charge": "Депозит",
     "card_deposit_refund": "Връщане на депозит",
     "card_balance_forfeit": "Анулиран баланс",
+    "stock_adjustment": "Корекция на наличност",
     "chip_card_cleared": "Нулиране на картата",
 }
 
@@ -657,6 +658,23 @@ def protocol():
         date=date,
         entries=sales.list_sales_log(date=date),
         summary=sales.sales_log_summary(date=date),
+        kind_labels=_HISTORY_KIND_LABELS,
+    )
+
+
+@app.route("/protocol/print")
+def protocol_print():
+    date = request.args.get("date") or datetime.now().strftime("%Y-%m-%d")
+    summary = sales.sales_log_summary(date=date)
+    return render_template(
+        "card_print.html",
+        title=f"Дневен отчет — {date}",
+        header_lines=[],
+        note=None,
+        kind_labels=_HISTORY_KIND_LABELS,
+        history=sales.list_sales_log(date=date),
+        totals=summary["totals"],
+        generated_at=datetime.now().strftime("%d.%m.%Y %H:%M"),
     )
 
 

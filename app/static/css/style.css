@@ -1685,6 +1685,7 @@ body {
 .protocol-kind-badge--card_deposit_refund,
 .protocol-kind-badge--card_balance_forfeit { background: rgba(226, 72, 61, 0.16); color: #ff9a90; }
 .protocol-kind-badge--stock_adjustment { background: rgba(159, 176, 189, 0.16); color: var(--text-dim); border: 1px solid var(--border); }
+.protocol-kind-badge--chip_card_cleared { background: rgba(226, 72, 61, 0.16); color: #ff9a90; border: 1px solid var(--border); }
 
 /* Statistics */
 .stats-filters {
