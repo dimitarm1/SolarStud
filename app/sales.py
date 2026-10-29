@@ -50,16 +50,16 @@ def _require_active_card(conn, card_id):
 
 
 def record_sale(conn, kind, description, cash_amount=0, card_amount=0, virtual_amount=None,
-                  qty=None, bed_id=None, card_id=None, product_id=None, session_id=None,
-                  recharge_option_id=None):
+                  qty=None, bed_id=None, card_id=None, product_id=None, service_id=None,
+                  session_id=None, recharge_option_id=None):
     conn.execute(
         "INSERT INTO sales_log (created_at, kind, description, cash_amount, card_amount, "
-        "virtual_amount, qty, bed_id, card_id, product_id, session_id, recharge_option_id) "
-        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        "virtual_amount, qty, bed_id, card_id, product_id, service_id, session_id, "
+        "recharge_option_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
         (
             datetime.now().isoformat(timespec="seconds"), kind, description,
             round(cash_amount, 2), round(card_amount, 2), virtual_amount, qty,
-            bed_id, card_id, product_id, session_id, recharge_option_id,
+            bed_id, card_id, product_id, service_id, session_id, recharge_option_id,
         ),
     )
 
@@ -1013,6 +1013,117 @@ def sell_products(items, card_id=None, card_amount=0):
                     conn, "product_sale", f"Продажба: {product['name']} x{qty}",
                     cash_amount=line_cash, card_amount=line_card,
                     qty=qty, card_id=card_id, product_id=product["id"],
+                )
+    finally:
+        conn.close()
+
+
+# --- services --------------------------------------------------------------
+# A second sellable category alongside cosmetics, for the other things
+# beauty studios combined with tanning typically sell (haircut, manicure/
+# pedicure, facial/derma care, massage, waxing, ...). No stock concept -
+# a service isn't a physical item to run out of, so there's no restock/
+# adjust_stock counterpart here.
+
+def list_services(include_inactive=False):
+    conn = db.get_connection()
+    try:
+        query = "SELECT * FROM services"
+        if not include_inactive:
+            query += " WHERE active = 1"
+        query += " ORDER BY name"
+        return conn.execute(query).fetchall()
+    finally:
+        conn.close()
+
+
+def get_service(service_id):
+    conn = db.get_connection()
+    try:
+        return conn.execute("SELECT * FROM services WHERE id = ?", (service_id,)).fetchone()
+    finally:
+        conn.close()
+
+
+def create_service(name, sale_price):
+    name = (name or "").strip()
+    conn = db.get_connection()
+    try:
+        with db.transaction(conn):
+            conn.execute(
+                "INSERT INTO services (name, sale_price, created_at) VALUES (?, ?, ?)",
+                (name, max(0.0, float(sale_price)), datetime.now().isoformat(timespec="seconds")),
+            )
+    finally:
+        conn.close()
+
+
+def update_service(service_id, name, sale_price):
+    name = (name or "").strip()
+    conn = db.get_connection()
+    try:
+        with db.transaction(conn):
+            conn.execute(
+                "UPDATE services SET name = ?, sale_price = ? WHERE id = ?",
+                (name, max(0.0, float(sale_price)), service_id),
+            )
+    finally:
+        conn.close()
+
+
+def set_service_active(service_id, active):
+    conn = db.get_connection()
+    try:
+        with db.transaction(conn):
+            conn.execute("UPDATE services SET active = ? WHERE id = ?", (1 if active else 0, service_id))
+    finally:
+        conn.close()
+
+
+def sell_services(items, card_id=None, card_amount=0):
+    """Check out a basket of performed services in one atomic transaction -
+    same shape as sell_products (one sales_log row per line item, with a
+    proportional cash/card split that sums exactly), minus every
+    stock-related step, since there's no stock to validate or decrement."""
+    conn = db.get_connection()
+    try:
+        with db.transaction(conn):
+            lines = []
+            total = 0.0
+            for service_id, qty in items:
+                qty = int(qty)
+                if qty <= 0:
+                    continue
+                service = conn.execute("SELECT * FROM services WHERE id = ?", (service_id,)).fetchone()
+                if service is None:
+                    raise PaymentError("Услугата не съществува.")
+                lines.append((service, qty))
+                total += service["sale_price"] * qty
+
+            if not lines:
+                raise PaymentError("Кошницата е празна.")
+
+            total = round(total, 2)
+            actual_card_amount = 0.0
+            if card_id and card_amount and float(card_amount) > 0:
+                actual_card_amount = _deduct_card_money_fifo(conn, card_id, min(float(card_amount), total))
+            cash_amount = round(total - actual_card_amount, 2)
+
+            remaining_cash, remaining_card = cash_amount, actual_card_amount
+            for idx, (service, qty) in enumerate(lines):
+                if idx == len(lines) - 1:
+                    line_cash, line_card = remaining_cash, remaining_card
+                else:
+                    line_total = round(service["sale_price"] * qty, 2)
+                    share = line_total / total if total > 0 else 0
+                    line_card = round(actual_card_amount * share, 2)
+                    line_cash = round(line_total - line_card, 2)
+                    remaining_cash = round(remaining_cash - line_cash, 2)
+                    remaining_card = round(remaining_card - line_card, 2)
+                record_sale(
+                    conn, "service_sale", f"Услуга: {service['name']} x{qty}",
+                    cash_amount=line_cash, card_amount=line_card,
+                    qty=qty, card_id=card_id, service_id=service["id"],
                 )
     finally:
         conn.close()

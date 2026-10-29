@@ -28,6 +28,7 @@ VERSION = "V1.2"
 NAV_ITEMS = [
     {"id": "tanning", "label": "Солариум", "icon": "sun"},
     {"id": "cosmetics", "label": "Козметика", "icon": "leaf"},
+    {"id": "services", "label": "Услуги", "icon": "sparkle"},
     {"id": "cards", "label": "Карти", "icon": "card"},
     {"id": "studio", "label": "Студио", "icon": "home"},
 ]
@@ -36,6 +37,7 @@ BOTTOM_BUTTONS = [
     {"id": "protocol", "label": "Протокол", "icon": "protocol"},
     {"id": "stats", "label": "Статистика", "icon": "chart"},
     {"id": "cosmetics", "label": "Козметика", "icon": "leaf"},
+    {"id": "services", "label": "Услуги", "icon": "sparkle"},
     {"id": "cards", "label": "Карти", "icon": "card"},
     {"id": "studio", "label": "Студио", "icon": "home"},
 ]
@@ -377,6 +379,59 @@ def cosmetics_checkout():
     except sales.PaymentError as exc:
         return redirect(url_for("cosmetics_page", error=str(exc)))
     return redirect(url_for("cosmetics_page"))
+
+
+@app.route("/services")
+def services_page():
+    return render_template(
+        "services.html",
+        version=VERSION,
+        nav_items=NAV_ITEMS,
+        bottom_buttons=BOTTOM_BUTTONS,
+        server_time=datetime.now().strftime("%H:%M:%S"),
+        services=sales.list_services(),
+        error=request.args.get("error"),
+    )
+
+
+@app.route("/services/services", methods=["POST"])
+def services_create_service():
+    sales.create_service(
+        name=request.form.get("name", ""),
+        sale_price=request.form.get("sale_price", type=float, default=0.0),
+    )
+    return redirect(url_for("services_page"))
+
+
+@app.route("/services/services/<int:service_id>/update", methods=["POST"])
+def services_update_service(service_id):
+    sales.update_service(
+        service_id,
+        name=request.form.get("name", ""),
+        sale_price=request.form.get("sale_price", type=float, default=0.0),
+    )
+    return redirect(url_for("services_page"))
+
+
+@app.route("/services/services/<int:service_id>/retire", methods=["POST"])
+def services_retire_service(service_id):
+    sales.set_service_active(service_id, 0)
+    return redirect(url_for("services_page"))
+
+
+@app.route("/services/checkout", methods=["POST"])
+def services_checkout():
+    service_ids = request.form.getlist("service_id", type=int)
+    qtys = request.form.getlist("qty", type=int)
+    try:
+        sales.sell_services(
+            zip(service_ids, qtys),
+            card_id=request.form.get("card_id", type=int, default=None),
+            card_amount=request.form.get("card_amount", type=float, default=0.0),
+        )
+    except sales.PaymentError as exc:
+        return redirect(url_for("services_page", error=str(exc)))
+    return redirect(url_for("services_page"))
 
 
 CARDS_DEFAULT_LIMIT = 50

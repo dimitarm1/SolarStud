@@ -679,27 +679,38 @@
     }
   }
 
-  // Collapsible "add product" panel on the Cosmetics page - same show/hide
-  // idiom as the bed-settings panel above.
-  const productFormToggle = document.getElementById("product-form-toggle");
-  const productFormPanel = document.getElementById("product-form-panel");
-  if (productFormToggle && productFormPanel) {
-    productFormToggle.addEventListener("click", () => {
-      const willOpen = productFormPanel.hidden;
-      productFormPanel.hidden = !willOpen;
-      productFormToggle.setAttribute("aria-expanded", String(willOpen));
-      productFormToggle.classList.toggle("settings-toggle--open", willOpen);
+  // Collapsible "add product"/"add service" panel on the Cosmetics and
+  // Services pages - same show/hide idiom as the bed-settings panel above.
+  function initCollapsibleFormToggle(toggleId, panelId) {
+    const toggle = document.getElementById(toggleId);
+    const panel = document.getElementById(panelId);
+    if (!toggle || !panel) return;
+    toggle.addEventListener("click", () => {
+      const willOpen = panel.hidden;
+      panel.hidden = !willOpen;
+      toggle.setAttribute("aria-expanded", String(willOpen));
+      toggle.classList.toggle("settings-toggle--open", willOpen);
     });
   }
+  initCollapsibleFormToggle("product-form-toggle", "product-form-panel");
+  initCollapsibleFormToggle("service-form-toggle", "service-form-panel");
 
-  // Cosmetics checkout: pick products from a searchable list (double-click
-  // adds one unit), double-click a basket line to remove one, then pay
-  // with an optional card (searched the same way as the session-start
-  // page) plus cash for the rest - built for a catalog of 100+ products,
-  // where a one-card-per-product grid with an inline sell form per item
-  // stopped being usable.
-  const productSearchInput = document.getElementById("product-search");
-  const productListEl = document.getElementById("product-list");
+  // Basket checkout: pick items from a searchable list (double-click adds
+  // one unit), double-click a basket line to remove one, then pay with an
+  // optional card (searched the same way as the session-start page) plus
+  // cash for the rest - built for a catalog of 100+ items, where a
+  // one-card-per-item grid with an inline sell form per item stopped
+  // being usable. Shared by Cosmetics (products, stock-limited - items
+  // carry a data-stock cap) and Services (no stock concept at all - a
+  // row with no data-stock attribute parses as NaN, and qty >= NaN is
+  // always false, so the same cap check is naturally a no-op for them).
+  // The two pages never share a tab, so it's safe for them to also share
+  // the basket/checkout element ids below (basket-list, checkout-*) -
+  // only the item-list ids and the hidden field name submitted differ,
+  // which is what cfg parameterizes.
+  function initPosBasket(cfg) {
+  const productSearchInput = document.getElementById(cfg.searchId);
+  const productListEl = document.getElementById(cfg.listId);
   const basketListEl = document.getElementById("basket-list");
   const basketEmptyEl = document.getElementById("basket-empty");
   const basketTotalEl = document.getElementById("basket-total");
@@ -929,7 +940,7 @@
       basket.forEach((line) => {
         const pid = document.createElement("input");
         pid.type = "hidden";
-        pid.name = "product_id";
+        pid.name = cfg.hiddenFieldName;
         pid.value = line.id;
         checkoutForm.appendChild(pid);
         const qty = document.createElement("input");
@@ -953,6 +964,10 @@
 
     renderBasket();
   }
+  }
+
+  initPosBasket({ searchId: "product-search", listId: "product-list", hiddenFieldName: "product_id" });
+  initPosBasket({ searchId: "service-search", listId: "service-list", hiddenFieldName: "service_id" });
 
   // Shared chip-card result table - used by both the Studio test-read
   // panel and the Cards page's issue/recharge panel, so a card's full

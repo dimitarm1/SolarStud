@@ -21,6 +21,8 @@ METRICS = [
     {"id": "tanning_hours", "label": "Отработени часове", "unit": "часове", "source": "sessions"},
     {"id": "cosmetics_revenue", "label": "Приходи от козметика", "unit": "лв", "source": "cosmetics"},
     {"id": "cosmetics_count", "label": "Продадена козметика", "unit": "брой", "source": "cosmetics"},
+    {"id": "services_revenue", "label": "Приходи от услуги", "unit": "лв", "source": "services"},
+    {"id": "services_count", "label": "Извършени услуги", "unit": "брой", "source": "services"},
     {"id": "cards_count", "label": "Продадени/презаредени карти", "unit": "брой", "source": "cards"},
     {"id": "total_revenue", "label": "Общо приходи (всичко)", "unit": "лв", "source": "total"},
 ]
@@ -33,6 +35,7 @@ BREAKDOWNS = [
     {"id": "month", "label": "По месец"},
     {"id": "bed", "label": "По легло"},
     {"id": "product", "label": "По продукт"},
+    {"id": "service", "label": "По услуга"},
     {"id": "recharge_option", "label": "По вид презареждане"},
 ]
 
@@ -40,6 +43,7 @@ BREAKDOWNS = [
 _ALLOWED_BREAKDOWNS = {
     "sessions": ["none", "date", "weekday", "hour", "month", "bed"],
     "cosmetics": ["none", "date", "weekday", "month", "product"],
+    "services": ["none", "date", "weekday", "month", "service"],
     "cards": ["none", "date", "weekday", "month", "recharge_option"],
     "total": ["none", "date", "weekday", "month"],
 }
@@ -56,6 +60,8 @@ _METRIC_VALUE_EXPR = {
     "tanning_hours": "ROUND(SUM(total_min) / 60.0, 2)",
     "cosmetics_revenue": "ROUND(SUM(cash_amount + card_amount), 2)",
     "cosmetics_count": "COALESCE(SUM(qty), 0)",
+    "services_revenue": "ROUND(SUM(cash_amount + card_amount), 2)",
+    "services_count": "COALESCE(SUM(qty), 0)",
     "cards_count": "COUNT(*)",
     "total_revenue": "ROUND(SUM(cash_amount + card_amount), 2)",
 }
@@ -148,6 +154,8 @@ def _run_sales_log(conn, metric_id, breakdown_id, date_from, date_to):
     kind_filter = {
         "cosmetics_revenue": "product_sale",
         "cosmetics_count": "product_sale",
+        "services_revenue": "service_sale",
+        "services_count": "service_sale",
         "cards_count": "card_recharge",
         "total_revenue": None,
     }[metric_id]
@@ -171,6 +179,15 @@ def _run_sales_log(conn, metric_id, breakdown_id, date_from, date_to):
             f"SELECT products.name AS label, {value_expr} AS v FROM sales_log "
             f"JOIN products ON products.id = sales_log.product_id {where} "
             "AND sales_log.product_id IS NOT NULL GROUP BY sales_log.product_id ORDER BY v DESC",
+            params,
+        ).fetchall()
+        return [r["label"] for r in rows], [[r["v"] or 0 for r in rows]]
+
+    if breakdown_id == "service":
+        rows = conn.execute(
+            f"SELECT services.name AS label, {value_expr} AS v FROM sales_log "
+            f"JOIN services ON services.id = sales_log.service_id {where} "
+            "AND sales_log.service_id IS NOT NULL GROUP BY sales_log.service_id ORDER BY v DESC",
             params,
         ).fetchall()
         return [r["label"] for r in rows], [[r["v"] or 0 for r in rows]]

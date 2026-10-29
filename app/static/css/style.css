@@ -1679,6 +1679,7 @@ body {
 
 .protocol-kind-badge--session_payment { background: rgba(79, 214, 255, 0.14); color: var(--blue-glow); }
 .protocol-kind-badge--product_sale { background: rgba(159, 176, 189, 0.14); color: var(--text-dim); }
+.protocol-kind-badge--service_sale { background: rgba(25, 158, 112, 0.16); color: var(--series-3); }
 .protocol-kind-badge--card_recharge,
 .protocol-kind-badge--card_deposit_charge { background: rgba(232, 179, 78, 0.16); color: var(--gold); }
 .protocol-kind-badge--card_deposit_refund,

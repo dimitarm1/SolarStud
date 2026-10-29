@@ -5,7 +5,7 @@
 
 {% block sidebar %}
 <nav class="sidebar">
-  {% set page_urls = {'studio': url_for('studio'), 'cosmetics': url_for('cosmetics_page'),
+  {% set page_urls = {'studio': url_for('studio'), 'cosmetics': url_for('cosmetics_page'), 'services': url_for('services_page'),
                        'cards': url_for('cards_page'), 'tanning': url_for('index')} %}
   {% for item in nav_items %}
     {{ nav_link(item, 'tanning', page_urls[item.id]) }}
@@ -347,7 +347,7 @@
 {% endblock %}
 
 {% block bottom_buttons %}
-{% set page_urls = {'studio': url_for('studio'), 'cosmetics': url_for('cosmetics_page'),
+{% set page_urls = {'studio': url_for('studio'), 'cosmetics': url_for('cosmetics_page'), 'services': url_for('services_page'),
                      'cards': url_for('cards_page'), 'protocol': url_for('protocol'),
                      'stats': url_for('stats_page')} %}
 {% for btn in bottom_buttons %}
