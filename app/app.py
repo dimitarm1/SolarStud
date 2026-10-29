@@ -575,6 +575,76 @@ def card_return(card_id):
     return redirect(url_for("cards_page"))
 
 
+_HISTORY_KIND_LABELS = {
+    "session_payment": "Солариум",
+    "product_sale": "Продажба",
+    "service_sale": "Услуга",
+    "card_recharge": "Презареждане",
+    "card_deposit_charge": "Депозит",
+    "card_deposit_refund": "Връщане на депозит",
+    "card_balance_forfeit": "Анулиран баланс",
+    "chip_card_cleared": "Нулиране на картата",
+}
+
+
+def _history_totals(rows):
+    return {
+        "cash_total": sum(r["cash_amount"] for r in rows),
+        "card_total": sum(r["card_amount"] for r in rows),
+        "virtual_total": sum(r["virtual_amount"] or 0 for r in rows),
+    }
+
+
+@app.route("/cards/<int:card_id>/print")
+def card_print(card_id):
+    card = sales.get_card(card_id)
+    if card is None:
+        abort(404)
+    history = sales.card_history(card_id=card_id)
+    header_lines = [f"Карта №{card['id']}"]
+    if card["card_number"]:
+        header_lines.append(f"Номер: {card['card_number']}")
+    if card["phone"]:
+        header_lines.append(f"Телефон: {card['phone']}")
+    return render_template(
+        "card_print.html",
+        title=card["name"] or f"Карта №{card['id']}",
+        header_lines=header_lines,
+        note=None,
+        kind_labels=_HISTORY_KIND_LABELS,
+        history=history,
+        totals=_history_totals(history),
+        generated_at=datetime.now().strftime("%d.%m.%Y %H:%M"),
+    )
+
+
+@app.route("/cards/chip/print")
+def chip_card_print():
+    client_number = request.args.get("client_number", type=int)
+    studio_number = request.args.get("studio_number", type=int)
+    if client_number is None or studio_number is None:
+        abort(400)
+    name = request.args.get("name", "")
+    phone = request.args.get("phone", "")
+    history = sales.card_history(chip_client_number=client_number, chip_studio_number=studio_number)
+    header_lines = [f"Чип карта №{client_number}", f"Студио №{studio_number}"]
+    if phone:
+        header_lines.append(f"Телефон: {phone}")
+    return render_template(
+        "card_print.html",
+        title=name or f"Чип карта №{client_number}",
+        header_lines=header_lines,
+        note=(
+            "Показана е само историята, записана в тази студио. Ако картата е била "
+            "използвана и в други студиа от веригата, тези записи не са налични тук."
+        ),
+        kind_labels=_HISTORY_KIND_LABELS,
+        history=history,
+        totals=_history_totals(history),
+        generated_at=datetime.now().strftime("%d.%m.%Y %H:%M"),
+    )
+
+
 @app.route("/protocol")
 def protocol():
     date = request.args.get("date") or datetime.now().strftime("%Y-%m-%d")

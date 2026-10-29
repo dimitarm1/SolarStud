@@ -15,10 +15,16 @@
 
 {% block content %}
 <section class="view view-detail">
-  <a class="back-link" href="{{ url_for('cards_page') }}">
-    {{ icon('back', 'back-icon') }}
-    <span>Назад</span>
-  </a>
+  <div class="detail-topbar">
+    <a class="back-link" href="{{ url_for('cards_page') }}">
+      {{ icon('back', 'back-icon') }}
+      <span>Назад</span>
+    </a>
+    <a class="settings-toggle" href="{{ url_for('card_print', card_id=card.id) }}" target="_blank" rel="noopener">
+      {{ icon('protocol', 'settings-toggle-icon') }}
+      <span>Печат на история</span>
+    </a>
+  </div>
 
   {% if error %}
   <div class="hw-error-banner">

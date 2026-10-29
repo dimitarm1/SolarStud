@@ -629,6 +629,8 @@ def start_session_with_payment(bed_id, total_min=DEFAULT_SESSION_MINUTES,
                 cash_amount=cash_amount, card_amount=card_amount,
                 bed_id=bed_id, card_id=card_id if (not use_chip and card_amount > 0) else None,
                 session_id=cur.lastrowid,
+                chip_client_number=chip_result["client_number"] if use_chip else None,
+                chip_studio_number=chip_result["studio_number"] if use_chip else None,
             )
     finally:
         conn.close()

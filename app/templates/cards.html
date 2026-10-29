@@ -59,6 +59,12 @@
       </table>
     </div>
 
+    <a id="chip-print-history-link" class="action-btn" style="width:auto; margin-top:14px;" hidden
+       target="_blank" rel="noopener">
+      {{ icon('protocol', 'action-icon') }}
+      <span>Печат на история</span>
+    </a>
+
     <form id="chip-issue-form" class="settings-form" method="post"
           action="{{ url_for('chip_card_issue') }}" hidden style="margin-top:14px;">
       <div class="settings-grid">
@@ -116,6 +122,27 @@
       <button class="action-btn action-btn--stop" type="submit">
         {{ icon('power', 'action-icon') }}
         <span>Нулирай картата</span>
+      </button>
+    </form>
+
+    <p class="settings-hint settings-hint--lead" style="margin-top:18px;">
+      Печат на история по номер — за карта от друго студио във веригата, или когато
+      картата не е в четеца. Показва само записите в тази студио.
+    </p>
+    <form class="settings-form" method="get" action="{{ url_for('chip_card_print') }}">
+      <div class="settings-grid">
+        <label class="field">
+          <span class="field__label">Номер на клиента</span>
+          <input class="field__input" type="number" step="1" min="0" name="client_number" required>
+        </label>
+        <label class="field">
+          <span class="field__label">Номер на студиото</span>
+          <input class="field__input" type="number" step="1" min="0" max="255" name="studio_number" required>
+        </label>
+      </div>
+      <button class="action-btn" type="submit" style="width:auto;" formtarget="_blank">
+        {{ icon('protocol', 'action-icon') }}
+        <span>Печат на история</span>
       </button>
     </form>
   </div>

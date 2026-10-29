@@ -1053,6 +1053,7 @@
   const chipIssueForm = document.getElementById("chip-issue-form");
   const chipRechargeForm = document.getElementById("chip-recharge-form");
   const chipClearForm = document.getElementById("chip-clear-form");
+  const chipPrintHistoryLink = document.getElementById("chip-print-history-link");
 
   if (chipCardReadBtn) {
     async function readChipCard() {
@@ -1062,6 +1063,7 @@
       chipIssueForm.hidden = true;
       chipRechargeForm.hidden = true;
       chipClearForm.hidden = true;
+      if (chipPrintHistoryLink) chipPrintHistoryLink.hidden = true;
       try {
         const res = await fetch("/api/chipcard/read");
         const data = await res.json();
@@ -1078,6 +1080,17 @@
         } else {
           chipRechargeForm.hidden = false;
           chipClearForm.hidden = false;
+          if (chipPrintHistoryLink) {
+            const name = (data.known && data.known.name) || card.client_name || "";
+            const phone = (data.known && data.known.phone) || "";
+            const params = new URLSearchParams({
+              client_number: card.client_number,
+              studio_number: card.studio_number,
+              name, phone,
+            });
+            chipPrintHistoryLink.href = `/cards/chip/print?${params}`;
+            chipPrintHistoryLink.hidden = false;
+          }
         }
       } catch (err) {
         chipCardErrorText.textContent = "Мрежова грешка при четене на картата.";

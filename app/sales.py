@@ -51,15 +51,18 @@ def _require_active_card(conn, card_id):
 
 def record_sale(conn, kind, description, cash_amount=0, card_amount=0, virtual_amount=None,
                   qty=None, bed_id=None, card_id=None, product_id=None, service_id=None,
-                  session_id=None, recharge_option_id=None):
+                  session_id=None, recharge_option_id=None, chip_client_number=None,
+                  chip_studio_number=None):
     conn.execute(
         "INSERT INTO sales_log (created_at, kind, description, cash_amount, card_amount, "
         "virtual_amount, qty, bed_id, card_id, product_id, service_id, session_id, "
-        "recharge_option_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        "recharge_option_id, chip_client_number, chip_studio_number) "
+        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
         (
             datetime.now().isoformat(timespec="seconds"), kind, description,
             round(cash_amount, 2), round(card_amount, 2), virtual_amount, qty,
             bed_id, card_id, product_id, service_id, session_id, recharge_option_id,
+            chip_client_number, chip_studio_number,
         ),
     )
 
@@ -648,6 +651,7 @@ def issue_chip_card(name, phone, deposit_amount, recharge_option_id=None, reader
                 record_sale(
                     conn, "card_deposit_charge", f"Депозит за чип карта №{client_number}",
                     cash_amount=deposit_amount,
+                    chip_client_number=client_number, chip_studio_number=studio_number,
                 )
             if option:
                 record_sale(
@@ -655,6 +659,7 @@ def issue_chip_card(name, phone, deposit_amount, recharge_option_id=None, reader
                     f"Презареждане на чип карта №{client_number}: {option['name']}",
                     cash_amount=option["cash_price"], virtual_amount=option["virtual_amount"],
                     recharge_option_id=option["id"],
+                    chip_client_number=client_number, chip_studio_number=studio_number,
                 )
     finally:
         conn.close()
@@ -715,6 +720,7 @@ def recharge_chip_card(recharge_option_id, reader_name=None, this_studio_number=
                 conn, "card_recharge", f"Презареждане на чип карта {label}: {option['name']}",
                 cash_amount=option["cash_price"], virtual_amount=option["virtual_amount"],
                 recharge_option_id=option["id"],
+                chip_client_number=card["client_number"], chip_studio_number=card["studio_number"],
             )
     finally:
         conn.close()
@@ -767,6 +773,7 @@ def clear_chip_card(reader_name=None, *, allowed_studio_numbers):
                 )
                 record_sale(
                     conn, "chip_card_cleared", f"Нулирана чип карта №{client_number}",
+                    chip_client_number=client_number, chip_studio_number=card["studio_number"],
                 )
         finally:
             conn.close()
@@ -843,6 +850,7 @@ def charge_chip_card_for_session(bed_id, total_min, requested_chip_amount, reade
         "client_number": card["client_number"],
         "client_name": card["client_name"],
         "new_balance": new_balance,
+        "studio_number": card["studio_number"],
         "studio_note": _studio_note(card["studio_number"], this_studio_number),
     }
 
@@ -1164,5 +1172,34 @@ def sales_log_summary(date=None):
                 "virtual_total": sum(r["virtual_total"] for r in rows),
             },
         }
+    finally:
+        conn.close()
+
+
+def card_history(*, card_id=None, chip_client_number=None, chip_studio_number=None):
+    """Every local sales_log row tied to one card, oldest first - for the
+    printable payment/recharge history. Virtual cards are looked up by
+    card_id; chip cards by the (chip_client_number, chip_studio_number)
+    pair, which is what's actually stable for one physical card's whole
+    life (see migration 0015) - client_number alone isn't unique across
+    a chain, since each studio allocates it independently.
+
+    This can only ever return what happened at THIS studio's own
+    database - a card used at a sibling studio in the same chain has
+    history there too, invisible here. Callers printing this should say
+    so, not imply it's the card's complete lifetime history."""
+    conn = db.get_connection()
+    try:
+        if card_id is not None:
+            where, params = "card_id = ?", [card_id]
+        elif chip_client_number is not None and chip_studio_number is not None:
+            where, params = "chip_client_number = ? AND chip_studio_number = ?", [
+                chip_client_number, chip_studio_number,
+            ]
+        else:
+            return []
+        return conn.execute(
+            f"SELECT * FROM sales_log WHERE {where} ORDER BY created_at", params
+        ).fetchall()
     finally:
         conn.close()
