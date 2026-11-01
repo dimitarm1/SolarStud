@@ -245,15 +245,6 @@
       </button>
     </form>
   </div>
-  {#- Yes/No confirmation for forms marked data-confirm (see main.js) - the
-      browser's own confirm() can't label its buttons. -#}
-  <dialog class="confirm-dialog" id="confirm-dialog">
-    <p class="confirm-dialog__text" id="confirm-dialog-text"></p>
-    <div class="confirm-dialog__actions">
-      <button class="action-btn" type="button" id="confirm-dialog-no">Не</button>
-      <button class="action-btn action-btn--stop" type="button" id="confirm-dialog-yes">Да, изтрий</button>
-    </div>
-  </dialog>
 </section>
 {% endblock %}
 

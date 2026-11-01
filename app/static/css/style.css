@@ -1420,12 +1420,25 @@ body {
 .product-row:hover { background: var(--surface-2); }
 
 .product-adjust-form {
+  padding: 0 14px 14px;
+}
+
+/* The gear panel can hold several small forms (Cosmetics: name/price, stock
+   correction, remove), each laid out as one wrapping row. */
+.product-adjust-form,
+.product-adjust-form__section {
   display: flex;
   align-items: flex-end;
   gap: 14px;
   flex-wrap: wrap;
-  padding: 0 14px 14px;
 }
+
+.product-adjust-form:has(.product-adjust-form__section) {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.product-adjust-form__section { margin: 0; }
 
 .product-adjust-form .field {
   margin-bottom: 0;

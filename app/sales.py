@@ -975,6 +975,8 @@ def create_product(name, sale_price, initial_stock=0):
 
 def update_product(product_id, name, sale_price):
     name = (name or "").strip()
+    if not name:
+        return  # the form requires a name; never blank one out
     conn = db.get_connection()
     try:
         with db.transaction(conn):

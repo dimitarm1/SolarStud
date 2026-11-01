@@ -88,21 +88,52 @@
               {{ icon('gear', 'action-icon') }}
             </button>
           </div>
-          <form class="product-adjust-form" method="post" hidden
-                action="{{ url_for('cosmetics_adjust_stock', product_id=product.id) }}">
-            <label class="field">
-              <span class="field__label">Преброено количество</span>
-              <input class="field__input" type="number" name="new_stock_qty" min="0" value="{{ product.stock_qty }}" required>
-            </label>
-            <label class="field">
-              <span class="field__label">Причина (по избор)</span>
-              <input class="field__input" type="text" name="reason" placeholder="напр. липса при инвентаризация">
-            </label>
-            <button class="action-btn" type="submit" style="width:auto;">
-              {{ icon('check', 'action-icon') }}
-              <span>Запази корекцията</span>
-            </button>
-          </form>
+          <div class="product-adjust-form" hidden>
+            <form class="product-adjust-form__section" method="post"
+                  action="{{ url_for('cosmetics_update_product', product_id=product.id) }}">
+              <label class="field">
+                <span class="field__label">Име</span>
+                <input class="field__input" type="text" name="name" value="{{ product.name }}" required>
+              </label>
+              <label class="field">
+                <span class="field__label">Цена</span>
+                <input class="field__input" type="number" step="0.01" min="0" name="sale_price"
+                       value="{{ '%.2f'|format(product.sale_price) }}" required>
+              </label>
+              <button class="action-btn" type="submit" style="width:auto;">
+                {{ icon('check', 'action-icon') }}
+                <span>Запази</span>
+              </button>
+            </form>
+            <form class="product-adjust-form__section" method="post"
+                  action="{{ url_for('cosmetics_adjust_stock', product_id=product.id) }}">
+              <label class="field">
+                <span class="field__label">Преброено количество</span>
+                <input class="field__input" type="number" name="new_stock_qty" min="0" value="{{ product.stock_qty }}" required>
+              </label>
+              <label class="field">
+                <span class="field__label">Причина (по избор)</span>
+                <input class="field__input" type="text" name="reason" placeholder="напр. липса при инвентаризация">
+              </label>
+              <button class="action-btn" type="submit" style="width:auto;">
+                {{ icon('check', 'action-icon') }}
+                <span>Запази корекцията</span>
+              </button>
+            </form>
+            {% set remove_text %}Да премахна ли „{{ product.name }}“ от списъка с продукти?{% if product.stock_qty > 0 %}
+
+В системата има още {{ product.stock_qty }} бр. наличност.{% endif %}
+
+Историята на продажбите се запазва.{% endset %}
+            <form class="product-adjust-form__section" method="post"
+                  action="{{ url_for('cosmetics_retire_product', product_id=product.id) }}"
+                  data-confirm="{{ remove_text }}" data-confirm-yes="Да, премахни">
+              <button class="action-btn action-btn--stop" type="submit" style="width:auto;">
+                {{ icon('close', 'action-icon') }}
+                <span>Премахни продукта</span>
+              </button>
+            </form>
+          </div>
         </div>
         {% endfor %}
       </div>

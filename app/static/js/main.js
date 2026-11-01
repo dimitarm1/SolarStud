@@ -661,6 +661,7 @@
         evt.preventDefault();
         pendingForm = form;
         document.getElementById("confirm-dialog-text").textContent = form.dataset.confirm;
+        document.getElementById("confirm-dialog-yes").textContent = form.dataset.confirmYes || "Да, изтрий";
         confirmDialog.showModal();
         document.getElementById("confirm-dialog-no").focus();
       });
