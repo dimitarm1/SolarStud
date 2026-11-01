@@ -987,6 +987,11 @@ body {
 
 .drum-picker__viewport::-webkit-scrollbar { display: none; }
 
+.drum-picker__viewport:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
 .drum-picker__list {
   padding: 28px 0;
 }

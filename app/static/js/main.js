@@ -59,17 +59,30 @@
 
   function initDrumPicker(input) {
     const valueEl = document.getElementById(input.dataset.valueTarget);
-    if (!valueEl) return;
+    if (!valueEl) return null;
     const min = Number(input.min);
     const max = Number(input.max);
 
     const viewport = document.createElement("div");
     viewport.className = "drum-picker__viewport";
+    // One tab stop for the whole drum, not one per value - 35 stops to
+    // tab past just to get from session length to the Start button would
+    // make keyboard use worse, not better. Arrow keys (wired below) are
+    // the actual keyboard interaction once it's focused, same as a
+    // native <input type="range">, so it's marked up as the nearest ARIA
+    // equivalent for a discrete value picker.
+    viewport.tabIndex = 0;
+    viewport.setAttribute("role", "spinbutton");
+    viewport.setAttribute("aria-valuemin", String(min));
+    viewport.setAttribute("aria-valuemax", String(max));
+    const fieldLabel = input.closest(".slider-field")?.querySelector(".slider-field__label");
+    if (fieldLabel) viewport.setAttribute("aria-label", fieldLabel.textContent.trim());
     const list = document.createElement("div");
     list.className = "drum-picker__list";
     for (let v = min; v <= max; v++) {
       const item = document.createElement("button");
       item.type = "button";
+      item.tabIndex = -1; // reachable by click/touch only - see viewport.tabIndex above
       item.className = "drum-picker__item";
       item.textContent = String(v);
       item.dataset.value = String(v);
@@ -93,6 +106,7 @@
       });
       const item = list.querySelector(`[data-value="${value}"]`);
       if (item) item.classList.add("drum-picker__item--active");
+      viewport.setAttribute("aria-valuenow", String(value));
     }
 
     function scrollToValue(value, smooth) {
@@ -126,10 +140,35 @@
     });
 
     viewport.addEventListener("keydown", (evt) => {
+      // A native <input> submits its form on Enter; a plain div (what
+      // the drum's viewport is, for scroll-snap) never does, no matter
+      // its tabIndex - has to be wired up by hand to match.
+      // requestSubmit() (not submit()) so it goes through the normal
+      // submit button rather than bypassing it, same end result as
+      // clicking "Старт на сесията" (or "Запази настройките" for the
+      // prep/cool drums, which live in the settings form instead) by hand.
+      if (evt.key === "Enter") {
+        evt.preventDefault();
+        viewport.closest("form")?.requestSubmit();
+        return;
+      }
       if (evt.key !== "ArrowUp" && evt.key !== "ArrowDown") return;
       evt.preventDefault();
+      // Same "set .value, dispatch a real input event" path as a tick
+      // click (below) or dragging the native slider - the input's own
+      // "input" listener (above) is what actually moves the drum, via an
+      // instant (non-smooth) scroll. Driving the scroll directly from
+      // here instead, smoothly, raced against rapid repeated key presses:
+      // a smooth scroll fires many intermediate "scroll" events, each
+      // resetting that listener's settle timer, so a quick burst of
+      // arrow presses could leave it never settling - and therefore
+      // never actually reaching input.value - at all.
       const delta = evt.key === "ArrowUp" ? -1 : 1;
-      scrollToValue(Number(input.value) + delta, true);
+      const clamped = Math.max(min, Math.min(max, Number(input.value) + delta));
+      if (clamped !== Number(input.value)) {
+        input.value = String(clamped);
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+      }
     });
 
     input.addEventListener("input", () => {
@@ -142,14 +181,30 @@
     const resync = () => scrollToValue(Number(input.value), false);
     drumResyncFns.push(resync);
     resync();
+    return viewport;
   }
 
-  document.querySelectorAll('.range-input[data-drum="true"]').forEach(initDrumPicker);
+  // Keyboard flow for starting a session: Tab reaches a bed card on the
+  // main screen and Enter opens it (both native <a> behavior, no JS
+  // needed) - landing here, on session length, is the next natural step,
+  // so its drum is focused automatically rather than making a keyboard
+  // user tab past the card-search field first to reach it. initDrumPicker
+  // runs once per input (not twice for session-length) and its return
+  // value is kept around just long enough to find that one by id.
+  const drumViewports = new Map();
+  document.querySelectorAll('.range-input[data-drum="true"]').forEach((input) => {
+    const viewport = initDrumPicker(input);
+    if (viewport) drumViewports.set(input.id, viewport);
+  });
+  drumViewports.get("session-length")?.focus();
 
   // Clicking a tick-mark number jumps the slider straight there - same
   // "set .value, dispatch a real input event" approach as the drum
-  // picker above, so it's automatically in sync with both.
+  // picker above, so it's automatically in sync with both. Not a tab
+  // stop of its own (see drum items above, same reasoning) - the drum's
+  // arrow keys already reach every value a tick would jump to.
   document.querySelectorAll(".slider-field__tick[data-for]").forEach((tick) => {
+    tick.tabIndex = -1;
     const input = document.getElementById(tick.dataset.for);
     if (!input) return;
     tick.addEventListener("click", () => {
