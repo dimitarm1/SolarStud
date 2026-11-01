@@ -36,7 +36,7 @@
   {% endif %}
 
   <div class="settings-panel settings-panel--static">
-    <h3 class="settings-panel__title">Издай нова виртуална карта</h3>
+    <h3 class="settings-panel__title">Издай нова баркод карта</h3>
     <form class="settings-form" method="post" action="{{ url_for('cards_issue') }}">
       <div class="settings-grid">
         <label class="field">
@@ -67,7 +67,7 @@
       </div>
       <button class="action-btn action-btn--start" type="submit">
         {{ icon('plus', 'action-icon') }}
-        <span>Издай карта</span>
+        <span>Издай баркод карта</span>
       </button>
     </form>
   </div>
@@ -76,7 +76,7 @@
     <label class="field field--row">
       <span class="field__label">Търсене</span>
       <input class="field__input" type="text" name="q" value="{{ search }}"
-             placeholder="Номер, име или телефон…">
+             placeholder="Сканирай баркод или търси по име, телефон…">
     </label>
     <button class="action-btn" type="submit" style="width:auto;">
       {{ icon('scan', 'action-icon') }}

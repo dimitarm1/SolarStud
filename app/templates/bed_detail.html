@@ -152,13 +152,13 @@
           <div class="payment-section">
             <p class="payment-section__price-hint">Цена: {{ "%.2f"|format(bed.price_per_min) }} €/мин</p>
             <label class="field">
-              <span class="field__label">Плащане с карта</span>
+              <span class="field__label">Плащане с баркод карта</span>
               <input type="hidden" name="card_id" id="payment-card-id" value="">
               <input
                 class="field__input"
                 type="text"
                 id="payment-card-search"
-                placeholder="Търси по номер, име или телефон — остави празно за плащане само в брой"
+                placeholder="Сканирай баркод или търси по име, телефон — остави празно за плащане само в брой"
                 autocomplete="off"
                 data-price-per-min="{{ bed.price_per_min }}"
                 data-bed-id="{{ bed.id }}"
@@ -173,8 +173,8 @@
 
             <div class="slider-field" id="payment-card-amount-field" hidden>
               <div class="slider-field__header">
-                <span class="slider-field__label">Сума с карта</span>
-                <span class="slider-field__value payment-amount-max" id="card-amount-value" title="Двоен клик – цялата сума с карта">0.00 €</span>
+                <span class="slider-field__label">Сума с баркод карта</span>
+                <span class="slider-field__value payment-amount-max" id="card-amount-value" title="Двоен клик – цялата сума с баркод карта">0.00 €</span>
               </div>
               <div class="slider-field__track-wrap">
                 <input

@@ -210,7 +210,7 @@
   <div class="settings-panel settings-panel--static">
     <h3 class="settings-panel__title">Опции за презареждане на карти</h3>
     <p class="settings-hint settings-hint--lead">
-      Всяка опция е фиксирана сума виртуален кредит, продавана на фиксирана цена в брой.
+      Всяка опция е фиксирана сума кредит, продавана на фиксирана цена в брой.
     </p>
 
     {% if recharge_options %}
@@ -223,7 +223,7 @@
         <thead>
           <tr>
             <th>Име</th>
-            <th>Виртуален кредит</th>
+            <th>Кредит</th>
             <th>Цена в брой</th>
             <th>Статус</th>
             <th></th>
@@ -259,7 +259,7 @@
           <input class="field__input" type="text" name="name" required>
         </label>
         <label class="field">
-          <span class="field__label">Виртуален кредит</span>
+          <span class="field__label">Кредит</span>
           <input class="field__input" type="number" step="0.01" min="0.01" name="virtual_amount" required>
         </label>
         <label class="field">

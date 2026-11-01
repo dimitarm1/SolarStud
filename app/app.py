@@ -654,14 +654,14 @@ def card_print(card_id):
     if card is None:
         abort(404)
     history = sales.card_history(card_id=card_id)
-    header_lines = [f"Карта №{card['id']}"]
+    header_lines = [f"Баркод карта №{card['id']}"]
     if card["card_number"]:
         header_lines.append(f"Номер: {card['card_number']}")
     if card["phone"]:
         header_lines.append(f"Телефон: {card['phone']}")
     return render_template(
         "card_print.html",
-        title=card["name"] or f"Карта №{card['id']}",
+        title=card["name"] or f"Баркод карта №{card['id']}",
         header_lines=header_lines,
         note=None,
         kind_labels=_HISTORY_KIND_LABELS,

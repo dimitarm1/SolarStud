@@ -35,7 +35,7 @@
   {% endif %}
 
   <div class="detail-title-row">
-    <h2 class="detail-title">{{ card.name or ("Карта №" ~ card.id) }}</h2>
+    <h2 class="detail-title">{{ card.name or ("Баркод карта №" ~ card.id) }}</h2>
     <span class="card-status-badge {{ 'card-status-badge--active' if card.status == 'active' else 'card-status-badge--returned' }}">
       {{ "Активна" if card.status == 'active' else "Върната" }}
     </span>
