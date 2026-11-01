@@ -90,18 +90,36 @@
   {% if cards %}
   <div class="cards-list">
     {% for card in cards %}
-    <a class="card-row" href="{{ url_for('card_detail', card_id=card.id) }}">
-      <span class="card-row__id">№{{ card.id }}</span>
-      <span class="card-row__name">
-        {{ card.name or "—" }}
-        {% if card.phone %}<span class="card-row__phone">{{ card.phone }}</span>{% endif %}
-      </span>
-      <span class="card-row__number">{{ card.card_number or "—" }}</span>
-      <span class="card-status-badge {{ 'card-status-badge--active' if card.status == 'active' else 'card-status-badge--returned' }}">
-        {{ "Активна" if card.status == 'active' else "Върната" }}
-      </span>
-      <span class="card-balance">{{ "%.2f"|format(card.balance) }} €</span>
-    </a>
+    <div class="card-row-item">
+      <a class="card-row" href="{{ url_for('card_detail', card_id=card.id) }}">
+        <span class="card-row__id">№{{ card.id }}</span>
+        <span class="card-row__name">
+          {{ card.name or "—" }}
+          {% if card.phone %}<span class="card-row__phone">{{ card.phone }}</span>{% endif %}
+        </span>
+        <span class="card-row__number">{{ card.card_number or "—" }}</span>
+        <span class="card-status-badge {{ 'card-status-badge--active' if card.status == 'active' else 'card-status-badge--returned' }}">
+          {{ "Активна" if card.status == 'active' else "Върната" }}
+        </span>
+        <span class="card-balance">{{ "%.2f"|format(card.balance) }} €</span>
+      </a>
+      {% if card.balance > 0 %}
+      {% set blocked_text %}Картата №{{ card.id }} има баланс {{ "%.2f"|format(card.balance) }} € и не може да бъде изтрита. Изразходвайте баланса или върнете картата с анулиране на баланса.{% endset %}
+      {% set onsubmit = "alert(" ~ blocked_text|tojson ~ "); return false;" %}
+      {% else %}
+      {% set confirm_text %}Да изтрия ли картата №{{ card.id }}{% if card.name %} ({{ card.name|safe }}){% endif %}?{% if card.status == 'active' and card.deposit_amount > 0 %}
+
+Депозитът от {{ "%.2f"|format(card.deposit_amount) }} € ще бъде върнат на клиента в брой.{% endif %}
+
+Изтриването се записва в протокола. Това не може да се отмени.{% endset %}
+      {% set onsubmit = "return confirm(" ~ confirm_text|tojson ~ ");" %}
+      {% endif %}
+      <form class="card-row__delete" method="post" action="{{ url_for('card_delete', card_id=card.id) }}"
+            onsubmit='{{ onsubmit }}'>
+        <input type="hidden" name="q" value="{{ search }}">
+        <button class="card-status-badge card-status-badge--delete" type="submit">Изтрий</button>
+      </form>
+    </div>
     {% endfor %}
   </div>
   {% if cards|length >= cards_default_limit %}

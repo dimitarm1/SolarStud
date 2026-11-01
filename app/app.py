@@ -627,6 +627,19 @@ def card_return(card_id):
     return redirect(url_for("cards_page"))
 
 
+@app.route("/cards/<int:card_id>/delete", methods=["POST"])
+def card_delete(card_id):
+    search = request.form.get("q", "").strip()
+    try:
+        refund = sales.delete_card(card_id)
+    except sales.PaymentError as exc:
+        return redirect(url_for("cards_page", q=search or None, error=str(exc)))
+    message = f"Картата №{card_id} е изтрита."
+    if refund > 0:
+        message += f" Върнете на клиента депозита от {refund:.2f} € в брой."
+    return redirect(url_for("cards_page", q=search or None, message=message))
+
+
 _HISTORY_KIND_LABELS = {
     "session_payment": "Солариум",
     "product_sale": "Продажба",
@@ -637,6 +650,7 @@ _HISTORY_KIND_LABELS = {
     "card_balance_forfeit": "Анулиран баланс",
     "stock_adjustment": "Корекция на наличност",
     "chip_card_cleared": "Нулиране на картата",
+    "card_deleted": "Изтрита карта",
 }
 
 

@@ -497,6 +497,43 @@ def return_card(card_id, force_forfeit_balance=False):
         conn.close()
 
 
+def delete_card(card_id):
+    """Remove a card from the system entirely, recording it in the protocol.
+    Refused while it still holds a balance, so money is never silently lost
+    - spend it or return the card (forfeiting the balance, which gets
+    logged) first. An active card's deposit is refunded in cash and logged,
+    same as return_card; a returned card's deposit was already refunded
+    then. Its lots go with it (ON DELETE CASCADE); sales_log and sessions
+    rows stay for the protocol and statistics, just no longer linked to a
+    card (ON DELETE SET NULL) - hence the descriptions name the card.
+
+    Returns the deposit amount refunded (0 if none)."""
+    conn = db.get_connection()
+    try:
+        with db.transaction(conn):
+            card = conn.execute("SELECT * FROM cards WHERE id = ?", (card_id,)).fetchone()
+            if card is None:
+                raise PaymentError("Картата не съществува.")
+            balance = _card_balance(conn, card_id)
+            if balance > 0:
+                raise PaymentError(
+                    f"Картата №{card_id} има оставащ баланс {balance:.2f} €. Изразходвайте го или "
+                    "върнете картата с анулиране на баланса, преди да я изтриете."
+                )
+            who = f" ({card['name']})" if card["name"] else ""
+            refund = card["deposit_amount"] if card["status"] == "active" else 0.0
+            if refund > 0:
+                record_sale(
+                    conn, "card_deposit_refund", f"Връщане на депозит за карта №{card_id}{who}",
+                    cash_amount=-refund, card_id=card_id,
+                )
+            record_sale(conn, "card_deleted", f"Изтрита карта №{card_id}{who}", card_id=card_id)
+            conn.execute("DELETE FROM cards WHERE id = ?", (card_id,))
+        return refund
+    finally:
+        conn.close()
+
+
 # --- chip cards (SLE4442 hardware) -----------------------------------
 #
 # A chain of studios can share one card stock: every studio uses the same

@@ -1582,21 +1582,35 @@ body {
   scrollbar-color: var(--text-dim) transparent;
 }
 
-.card-row { flex-shrink: 0; }
-
-.card-row {
+/* One list row: the card link plus its Delete button beside it (a button
+   can't live inside the <a>). The border sits on the wrapper so both parts
+   share it, and hovering either one highlights the whole row. */
+.card-row-item {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 14px 18px;
+  flex-shrink: 0;
   border-bottom: 1px solid var(--border);
-  text-decoration: none;
-  color: inherit;
   transition: background 0.15s;
 }
 
-.card-row:last-child { border-bottom: none; }
-.card-row:hover { background: var(--surface-2); }
+.card-row-item:last-child { border-bottom: none; }
+.card-row-item:hover { background: var(--surface-2); }
+
+.card-row {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 0 14px 18px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.card-row__delete {
+  margin: 0;
+  padding: 0 18px 0 16px;
+}
 
 .card-row__id {
   font-weight: 700;
@@ -1685,6 +1699,20 @@ body {
 .card-status-badge--returned {
   background: rgba(159, 176, 189, 0.12);
   color: var(--text-dim);
+}
+
+.card-status-badge--delete {
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+  background: rgba(226, 72, 61, 0.14);
+  color: var(--danger);
+  transition: background 0.15s;
+}
+
+.card-status-badge--delete:hover,
+.card-status-badge--delete:focus-visible {
+  background: rgba(226, 72, 61, 0.28);
 }
 
 /* Session payment section on the bed detail start form */
@@ -1834,7 +1862,8 @@ body {
 .protocol-kind-badge--card_deposit_refund,
 .protocol-kind-badge--card_balance_forfeit { background: rgba(226, 72, 61, 0.16); color: #ff9a90; }
 .protocol-kind-badge--stock_adjustment { background: rgba(159, 176, 189, 0.16); color: var(--text-dim); border: 1px solid var(--border); }
-.protocol-kind-badge--chip_card_cleared { background: rgba(226, 72, 61, 0.16); color: #ff9a90; border: 1px solid var(--border); }
+.protocol-kind-badge--chip_card_cleared,
+.protocol-kind-badge--card_deleted { background: rgba(226, 72, 61, 0.16); color: #ff9a90; border: 1px solid var(--border); }
 
 /* Statistics */
 .stats-filters {
