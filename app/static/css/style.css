@@ -1703,6 +1703,13 @@ body {
   color: var(--text-dim);
 }
 
+/* Double-click targets: card amount -> all on card, cash due -> all in cash. */
+.payment-amount-max,
+.payment-section__cash-due {
+  cursor: pointer;
+  user-select: none;
+}
+
 .payment-section__cash-due strong {
   color: var(--gold);
   font-size: 15px;

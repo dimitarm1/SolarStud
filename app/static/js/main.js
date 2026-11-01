@@ -38,7 +38,8 @@
       const max = Number(input.max);
       const pct = max > min ? ((value - min) / (max - min)) * 100 : 0;
       input.style.setProperty("--fill", `${pct}%`);
-      if (valueEl) valueEl.textContent = `${value}${suffix}`;
+      const shown = input.dataset.decimals ? value.toFixed(Number(input.dataset.decimals)) : value;
+      if (valueEl) valueEl.textContent = `${shown}${suffix}`;
     };
     input.addEventListener("input", update);
     update();
@@ -650,8 +651,14 @@
     const pricePerMin = parseFloat(paymentCardSearchInput.dataset.pricePerMin || "0");
     const bedId = paymentCardSearchInput.dataset.bedId;
     let selectedBalance = 0;
+    // Card balance is used first: a freshly selected card starts at the
+    // most it can cover, and keeps tracking that maximum as the session
+    // length changes - until staff deliberately move the slider below it.
+    let cardAtMax = true;
     let searchTimer = null;
     let quoteTimer = null;
+    const paymentCardAmountValue = document.getElementById("card-amount-value");
+    const paymentCashDueRow = document.getElementById("payment-cash-due-row");
 
     const totalMin = () => (sessionLengthInput ? parseFloat(sessionLengthInput.value || "0") : 0);
 
@@ -698,9 +705,16 @@
     function updateCardAmountBounds() {
       const max = Math.max(0, Math.min(selectedBalance, totalMin() * pricePerMin));
       paymentCardAmountInput.max = max.toFixed(2);
-      if (parseFloat(paymentCardAmountInput.value) > max) {
-        paymentCardAmountInput.value = max;
+      if (cardAtMax || parseFloat(paymentCardAmountInput.value) > max) {
+        paymentCardAmountInput.value = max.toFixed(2);
       }
+      paymentCardAmountInput.dispatchEvent(new Event("input"));
+    }
+
+    function setCardAmount(toMax) {
+      if (!paymentCardIdInput.value) return;
+      cardAtMax = toMax;
+      paymentCardAmountInput.value = toMax ? paymentCardAmountInput.max : 0;
       paymentCardAmountInput.dispatchEvent(new Event("input"));
     }
 
@@ -721,6 +735,7 @@
       paymentCardSearchInput.value = option.dataset.label || option.textContent;
       paymentCardResults.hidden = true;
       paymentCardAmountField.hidden = false;
+      cardAtMax = true;
       updateCardAmountBounds();
       updateCashDueLocally();
       fetchQuote();
@@ -787,10 +802,22 @@
       if (opt && opt.value) selectCard(opt);
     });
 
-    paymentCardAmountInput.addEventListener("input", () => {
+    paymentCardAmountInput.addEventListener("input", (evt) => {
+      // Only a real drag/keypress changes the preference - programmatic
+      // updates (synthetic events) already set cardAtMax themselves.
+      if (evt.isTrusted) {
+        cardAtMax = parseFloat(paymentCardAmountInput.value) >= parseFloat(paymentCardAmountInput.max);
+      }
       updateCashDueLocally();
       fetchQuote();
     });
+
+    if (paymentCardAmountValue) {
+      paymentCardAmountValue.addEventListener("dblclick", () => setCardAmount(true));
+    }
+    if (paymentCashDueRow) {
+      paymentCashDueRow.addEventListener("dblclick", () => setCardAmount(false));
+    }
 
     document.addEventListener("click", (evt) => {
       if (evt.target !== paymentCardSearchInput && !paymentCardResults.contains(evt.target)) {
@@ -825,6 +852,9 @@
     let chipBalance = 0;
     let chipClientNumber = null;
     let chipQuoteTimer = null;
+    let chipAtMax = true; // same card-first rule as the virtual card above
+    const paymentChipAmountValue = document.getElementById("chip-amount-value");
+    const paymentChipCashDueRow = document.getElementById("payment-cash-due-row");
 
     const chipTotalMin = () => (sessionLengthInput ? parseFloat(sessionLengthInput.value || "0") : 0);
 
@@ -848,9 +878,16 @@
     function updateChipAmountBounds() {
       const max = Math.max(0, Math.min(chipBalance, chipTotalMin() * chipPricePerMin));
       paymentChipAmountInput.max = max.toFixed(2);
-      if (parseFloat(paymentChipAmountInput.value) > max) {
-        paymentChipAmountInput.value = max;
+      if (chipAtMax || parseFloat(paymentChipAmountInput.value) > max) {
+        paymentChipAmountInput.value = max.toFixed(2);
       }
+      paymentChipAmountInput.dispatchEvent(new Event("input"));
+    }
+
+    function setChipAmount(toMax) {
+      if (chipClientNumber === null) return;
+      chipAtMax = toMax;
+      paymentChipAmountInput.value = toMax ? paymentChipAmountInput.max : 0;
       paymentChipAmountInput.dispatchEvent(new Event("input"));
     }
 
@@ -910,6 +947,7 @@
           `Чип карта №${card.client_number}${name ? " — " + name : ""} — баланс ${card.balance.toFixed(2)} €`;
         paymentChipInfo.hidden = false;
         paymentChipAmountField.hidden = false;
+        chipAtMax = true;
         updateChipAmountBounds();
         fetchChipQuote();
       } catch (err) {
@@ -921,9 +959,19 @@
       }
     });
 
-    paymentChipAmountInput.addEventListener("input", () => {
+    paymentChipAmountInput.addEventListener("input", (evt) => {
+      if (evt.isTrusted) {
+        chipAtMax = parseFloat(paymentChipAmountInput.value) >= parseFloat(paymentChipAmountInput.max);
+      }
       fetchChipQuote();
     });
+
+    if (paymentChipAmountValue) {
+      paymentChipAmountValue.addEventListener("dblclick", () => setChipAmount(true));
+    }
+    if (paymentChipCashDueRow) {
+      paymentChipCashDueRow.addEventListener("dblclick", () => setChipAmount(false));
+    }
 
     if (sessionLengthInput) {
       sessionLengthInput.addEventListener("input", () => {
