@@ -1148,7 +1148,8 @@ def list_sales_log(date=None, kind=None):
         if kind:
             query += " AND kind = ?"
             params.append(kind)
-        query += " ORDER BY created_at"
+        # Most recent first; id breaks ties between rows logged in the same second.
+        query += " ORDER BY created_at DESC, id DESC"
         return conn.execute(query, params).fetchall()
     finally:
         conn.close()
