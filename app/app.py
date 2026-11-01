@@ -18,7 +18,11 @@ import sales
 import stats
 
 ALLOWED_IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp", ".svg"}
-BED_PHOTOS_DIR = Path(__file__).resolve().parent / "static" / "bed_photos"
+# Under db.DATA_DIR (persistent, frozen-build-aware - see db._persistent_base_dir),
+# not static/: an uploaded photo is runtime state the app itself wrote,
+# not a bundled build asset, and a packaged .exe's static/ folder is a
+# fresh temp-dir extraction on every launch, gone on exit.
+BED_PHOTOS_DIR = db.DATA_DIR / "bed_photos"
 MAX_BED_PHOTO_BYTES = 15 * 1024 * 1024  # 15MB - generous for a phone photo, not a dumping ground
 DEBUG = True
 PORT = 5000
@@ -167,9 +171,12 @@ def bed_photo_upload(bed_id):
     restriction - the same one the field's own hint text already
     explains), so there's no way to "autofill the path" from a drop.
     What a drop CAN give us is the file's actual bytes, so instead we
-    upload and store those ourselves under static/bed_photos/ and hand
-    back a /static/... URL, which is one of the two forms the existing
-    picture_path field already accepts (see models._picture_src).
+    upload and store those ourselves under BED_PHOTOS_DIR and hand back
+    its real absolute path - the exact same thing a manually-typed local
+    path already is, so it's served the exact same way, through
+    /bed/<id>/photo rather than Flask's own static file handling (which,
+    like static/ itself, would mean a packaged .exe re-serving a stale
+    bundled copy instead of this file, or not finding it at all).
 
     This only saves the file to disk - it does NOT touch the database,
     so a drop behaves like typing into the text field: it still needs
@@ -202,10 +209,10 @@ def bed_photo_upload(bed_id):
 
     BED_PHOTOS_DIR.mkdir(parents=True, exist_ok=True)
     filename = f"bed{bed_id}_{uuid.uuid4().hex[:12]}{ext}"
-    photo.save(BED_PHOTOS_DIR / filename)
+    saved_path = BED_PHOTOS_DIR / filename
+    photo.save(saved_path)
 
-    picture_path = f"/static/bed_photos/{filename}"
-    return jsonify({"ok": True, "picture_path": picture_path})
+    return jsonify({"ok": True, "picture_path": str(saved_path)})
 
 
 @app.route("/bed/<int:bed_id>/settings", methods=["POST"])

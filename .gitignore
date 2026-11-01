@@ -3,8 +3,6 @@ __pycache__/
 venv/
 .venv/
 
-# Runtime SQLite database and its backups
+# Runtime SQLite database, its backups, and uploaded bed photos
+# (app/app.py: bed_photo_upload) - all under db.DATA_DIR
 data/
-
-# Bed photos uploaded via drag-and-drop (app/app.py: bed_photo_upload)
-app/static/bed_photos/

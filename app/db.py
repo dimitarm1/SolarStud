@@ -3,6 +3,7 @@
 import re
 import shutil
 import sqlite3
+import sys
 import threading
 import time
 from contextlib import contextmanager
@@ -10,7 +11,24 @@ from datetime import datetime
 from pathlib import Path
 
 APP_DIR = Path(__file__).resolve().parent
-DATA_DIR = APP_DIR.parent / "data"
+
+
+def _persistent_base_dir():
+    """Directory to anchor persistent, writable state against (the
+    database, its backups, uploaded bed photos) - APP_DIR's own parent
+    normally, same as always. A packaged PyInstaller onefile .exe is the
+    exception: APP_DIR would resolve *inside* the temp directory that
+    bundled source re-extracts to on every single launch and deletes on
+    exit, so anchoring persistent data there would silently lose it every
+    restart. sys.frozen is PyInstaller's (and py2exe's) own marker for
+    "this is a packaged build"; sys.executable is the real .exe's actual
+    location on disk in that case, which does persist."""
+    if getattr(sys, "frozen", False):
+        return Path(sys.executable).resolve().parent
+    return APP_DIR.parent
+
+
+DATA_DIR = _persistent_base_dir() / "data"
 BACKUP_DIR = DATA_DIR / "backups"
 MIGRATIONS_DIR = APP_DIR / "migrations"
 DB_PATH = DATA_DIR / "solar_studio.db"

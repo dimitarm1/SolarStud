@@ -582,8 +582,13 @@
           showPhotoError(data.error || "Качването се провали.");
           return;
         }
+        // picture_path is the server's real absolute filesystem path now
+        // (see app.py's bed_photo_upload - it's served through
+        // /bed/<id>/photo, the same as a manually-typed path, not a
+        // browser-loadable URL), so only the text field takes it; the
+        // local blob preview from above is already showing the right
+        // image and needs no update now that the upload's done.
         picturePathInput.value = data.picture_path;
-        if (previewImg) previewImg.src = data.picture_path;
       } catch (err) {
         showPhotoError("Мрежова грешка при качване на файла.");
       }
