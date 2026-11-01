@@ -437,16 +437,64 @@ def issue_card(card_number, deposit_amount, first_recharge_option_id=None, name=
 
 
 def update_card_details(card_id, card_number, name, phone):
+    """Edit a card's contact details. The barcode can only be filled in here
+    while the card doesn't have one yet (it's optional at issue); changing an
+    existing barcode means a new physical card, which goes through
+    replace_card so the new deposit is charged and logged."""
     card_number = (card_number or "").strip() or None
     name = (name or "").strip()
     phone = (phone or "").strip()
     conn = db.get_connection()
     try:
         with db.transaction(conn):
+            card = conn.execute("SELECT card_number FROM cards WHERE id = ?", (card_id,)).fetchone()
+            if card is None:
+                raise PaymentError("Картата не съществува.")
+            if card["card_number"]:
+                card_number = card["card_number"]
             _check_card_number_unique(conn, card_number, exclude_card_id=card_id)
             conn.execute(
                 "UPDATE cards SET card_number = ?, name = ?, phone = ? WHERE id = ?",
                 (card_number, name, phone, card_id),
+            )
+    finally:
+        conn.close()
+
+
+def replace_card(card_id, new_card_number, deposit_amount):
+    """Move a customer onto a new physical barcode card, keeping their
+    balance and history - for when the old card is lost. The customer pays
+    a new deposit in cash; the old card's deposit stays with the studio as
+    compensation for the lost card, so the card still holds just one
+    refundable deposit (the new one) for return/delete. Both the barcode
+    change and the deposit go in the protocol."""
+    new_card_number = (new_card_number or "").strip()
+    deposit_amount = max(0.0, round(float(deposit_amount or 0), 2))
+    if not new_card_number:
+        raise PaymentError("Въведете или сканирайте баркода на новата карта.")
+    conn = db.get_connection()
+    try:
+        with db.transaction(conn):
+            card = _require_active_card(conn, card_id)
+            old_number = card["card_number"]
+            if new_card_number == old_number:
+                raise PaymentError("Новият баркод е същият като досегашния.")
+            _check_card_number_unique(conn, new_card_number, exclude_card_id=card_id)
+            conn.execute(
+                "UPDATE cards SET card_number = ?, deposit_amount = ? WHERE id = ?",
+                (new_card_number, deposit_amount, card_id),
+            )
+            who = f" ({card['name']})" if card["name"] else ""
+            # Deposit first, so the replacement itself tops the newest-first protocol.
+            if deposit_amount > 0:
+                record_sale(
+                    conn, "card_deposit_charge", f"Депозит за нова карта №{card_id}{who} (замяна)",
+                    cash_amount=deposit_amount, card_id=card_id,
+                )
+            record_sale(
+                conn, "card_replaced",
+                f"Замяна на карта №{card_id}{who}: баркод {old_number or '—'} → {new_card_number}",
+                card_id=card_id,
             )
     finally:
         conn.close()

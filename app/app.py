@@ -607,6 +607,19 @@ def card_update_details(card_id):
     return redirect(url_for("card_detail", card_id=card_id))
 
 
+@app.route("/cards/<int:card_id>/replace", methods=["POST"])
+def card_replace(card_id):
+    try:
+        sales.replace_card(
+            card_id,
+            new_card_number=request.form.get("card_number", ""),
+            deposit_amount=request.form.get("deposit_amount", type=float, default=0.0),
+        )
+    except sales.PaymentError as exc:
+        return redirect(url_for("card_detail", card_id=card_id, error=str(exc)))
+    return redirect(url_for("card_detail", card_id=card_id))
+
+
 @app.route("/cards/<int:card_id>/recharge", methods=["POST"])
 def card_recharge(card_id):
     try:
@@ -651,6 +664,7 @@ _HISTORY_KIND_LABELS = {
     "stock_adjustment": "Корекция на наличност",
     "chip_card_cleared": "Нулиране на картата",
     "card_deleted": "Изтрита карта",
+    "card_replaced": "Замяна на карта",
 }
 
 

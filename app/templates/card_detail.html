@@ -84,9 +84,17 @@
         </label>
         <label class="field">
           <span class="field__label">Номер на картата</span>
-          <input class="field__input js-barcode-field" type="text" name="card_number" value="{{ card.card_number or '' }}">
+          {% if card.card_number %}
+          <input class="field__input" type="text" value="{{ card.card_number }}" readonly
+                 title="За нова физическа карта използвайте „Замени картата“ по-долу.">
+          {% else %}
+          <input class="field__input js-barcode-field" type="text" name="card_number" value="">
+          {% endif %}
         </label>
       </div>
+      {% if card.card_number and card.status == 'active' %}
+      <p class="settings-hint">Баркодът се сменя само при нова физическа карта — с „Замени картата“ по-долу.</p>
+      {% endif %}
       <button class="action-btn action-btn--start" type="submit">
         {{ icon('check', 'action-icon') }}
         <span>Запази данните</span>
@@ -112,6 +120,41 @@
       </button>
     </form>
   </div>
+
+  {% if card.card_number %}
+  <div class="settings-panel">
+    <h3 class="settings-panel__title">Замени картата</h3>
+    <p class="settings-hint settings-hint--lead">
+      При загубена карта: клиентът получава нова физическа карта със същия баланс и история и плаща
+      нов депозит в брой. Досегашният депозит от {{ "%.2f"|format(card.deposit_amount) }} € не се връща.
+    </p>
+    {% set confirm_head %}Да заменя ли картата №{{ card.id }}{% if card.name %} ({{ card.name|safe }}){% endif %} с нова?
+
+Клиентът плаща нов депозит от {% endset %}
+    {% set confirm_tail %} € в брой. Досегашният депозит от {{ "%.2f"|format(card.deposit_amount) }} € не се връща.
+
+Замяната се записва в протокола.{% endset %}
+    <form class="settings-form" method="post" action="{{ url_for('card_replace', card_id=card.id) }}"
+          onsubmit='return confirm({{ confirm_head|tojson }} + Number(this.deposit_amount.value || 0).toFixed(2) + {{ confirm_tail|tojson }});'>
+      <div class="settings-grid">
+        <label class="field">
+          <span class="field__label">Баркод на новата карта</span>
+          <input class="field__input js-barcode-field" type="text" name="card_number" required
+                 placeholder="Сканирайте новата карта">
+        </label>
+        <label class="field">
+          <span class="field__label">Нов депозит</span>
+          <input class="field__input" type="number" step="0.01" min="0" name="deposit_amount"
+                 value="{{ '%.2f'|format(card.deposit_amount) }}">
+        </label>
+      </div>
+      <button class="action-btn" type="submit" style="width:auto;">
+        {{ icon('card', 'action-icon') }}
+        <span>Замени картата</span>
+      </button>
+    </form>
+  </div>
+  {% endif %}
 
   <div class="settings-panel">
     <h3 class="settings-panel__title">Върни картата</h3>
