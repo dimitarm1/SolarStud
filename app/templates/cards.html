@@ -103,19 +103,15 @@
         </span>
         <span class="card-balance">{{ "%.2f"|format(card.balance) }} €</span>
       </a>
-      {% if card.balance > 0 %}
-      {% set blocked_text %}Картата №{{ card.id }} има баланс {{ "%.2f"|format(card.balance) }} € и не може да бъде изтрита. Изразходвайте баланса или върнете картата с анулиране на баланса.{% endset %}
-      {% set onsubmit = "alert(" ~ blocked_text|tojson ~ "); return false;" %}
-      {% else %}
-      {% set confirm_text %}Да изтрия ли картата №{{ card.id }}{% if card.name %} ({{ card.name|safe }}){% endif %}?{% if card.status == 'active' and card.deposit_amount > 0 %}
+      {% set confirm_text %}Да изтрия ли картата №{{ card.id }}{% if card.name %} ({{ card.name }}){% endif %}?{% if card.balance > 0 %}
+
+На картата има оставащ баланс {{ "%.2f"|format(card.balance) }} €, който ще бъде изтрит заедно с нея.{% endif %}{% if card.status == 'active' and card.deposit_amount > 0 %}
 
 Депозитът от {{ "%.2f"|format(card.deposit_amount) }} € ще бъде върнат на клиента в брой.{% endif %}
 
 Изтриването се записва в протокола. Това не може да се отмени.{% endset %}
-      {% set onsubmit = "return confirm(" ~ confirm_text|tojson ~ ");" %}
-      {% endif %}
       <form class="card-row__delete" method="post" action="{{ url_for('card_delete', card_id=card.id) }}"
-            onsubmit='{{ onsubmit }}'>
+            data-confirm="{{ confirm_text }}">
         <input type="hidden" name="q" value="{{ search }}">
         <button class="card-status-badge card-status-badge--delete" type="submit">Изтрий</button>
       </form>
@@ -249,6 +245,15 @@
       </button>
     </form>
   </div>
+  {#- Yes/No confirmation for forms marked data-confirm (see main.js) - the
+      browser's own confirm() can't label its buttons. -#}
+  <dialog class="confirm-dialog" id="confirm-dialog">
+    <p class="confirm-dialog__text" id="confirm-dialog-text"></p>
+    <div class="confirm-dialog__actions">
+      <button class="action-btn" type="button" id="confirm-dialog-no">Не</button>
+      <button class="action-btn action-btn--stop" type="button" id="confirm-dialog-yes">Да, изтрий</button>
+    </div>
+  </dialog>
 </section>
 {% endblock %}
 

@@ -547,13 +547,14 @@ def return_card(card_id, force_forfeit_balance=False):
 
 def delete_card(card_id):
     """Remove a card from the system entirely, recording it in the protocol.
-    Refused while it still holds a balance, so money is never silently lost
-    - spend it or return the card (forfeiting the balance, which gets
-    logged) first. An active card's deposit is refunded in cash and logged,
-    same as return_card; a returned card's deposit was already refunded
-    then. Its lots go with it (ON DELETE CASCADE); sales_log and sessions
-    rows stay for the protocol and statistics, just no longer linked to a
-    card (ON DELETE SET NULL) - hence the descriptions name the card.
+    Any balance left on it simply goes with it - in practice it's a few
+    cents, so (by the studio's choice) it gets no forfeit entry of its own;
+    the operator already confirmed the amount in the delete dialog. An
+    active card's deposit is refunded in cash and logged, same as
+    return_card; a returned card's deposit was already refunded then. Its
+    lots go with it (ON DELETE CASCADE); sales_log and sessions rows stay
+    for the protocol and statistics, just no longer linked to a card
+    (ON DELETE SET NULL) - hence the descriptions name the card.
 
     Returns the deposit amount refunded (0 if none)."""
     conn = db.get_connection()
@@ -562,12 +563,6 @@ def delete_card(card_id):
             card = conn.execute("SELECT * FROM cards WHERE id = ?", (card_id,)).fetchone()
             if card is None:
                 raise PaymentError("Картата не съществува.")
-            balance = _card_balance(conn, card_id)
-            if balance > 0:
-                raise PaymentError(
-                    f"Картата №{card_id} има оставащ баланс {balance:.2f} €. Изразходвайте го или "
-                    "върнете картата с анулиране на баланса, преди да я изтриете."
-                )
             who = f" ({card['name']})" if card["name"] else ""
             refund = card["deposit_amount"] if card["status"] == "active" else 0.0
             if refund > 0:

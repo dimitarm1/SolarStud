@@ -650,6 +650,29 @@
     return Math.max(0, parseFloat(input.value || "0") - base);
   }
 
+  // Forms with data-confirm ask first in a Yes/No dialog (#confirm-dialog)
+  // rather than the browser's confirm(), whose OK/Cancel can't be relabeled.
+  // "Не" is focused by default, so a stray Enter never deletes anything.
+  const confirmDialog = document.getElementById("confirm-dialog");
+  if (confirmDialog) {
+    let pendingForm = null;
+    document.querySelectorAll("form[data-confirm]").forEach((form) => {
+      form.addEventListener("submit", (evt) => {
+        evt.preventDefault();
+        pendingForm = form;
+        document.getElementById("confirm-dialog-text").textContent = form.dataset.confirm;
+        confirmDialog.showModal();
+        document.getElementById("confirm-dialog-no").focus();
+      });
+    });
+    document.getElementById("confirm-dialog-no").addEventListener("click", () => confirmDialog.close());
+    document.getElementById("confirm-dialog-yes").addEventListener("click", () => {
+      confirmDialog.close();
+      if (pendingForm) pendingForm.submit(); // submit() skips the listener above
+    });
+    // Esc closes the dialog natively without submitting - same as "Не".
+  }
+
   const extendToggle = document.getElementById("extend-toggle");
   const extendPanel = document.getElementById("extend-panel");
   if (extendToggle && extendPanel) {
