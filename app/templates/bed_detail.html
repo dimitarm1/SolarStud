@@ -125,11 +125,13 @@
                 value="{{ session_default }}"
                 data-value-target="session-length-value"
                 data-suffix=" мин"
+                data-drum="true"
                 style="--fill: {{ ((session_default - session_min) / (session_max - session_min) * 100) }}%"
               >
               <div class="slider-field__ticks">
                 {% for t in [session_min, 5, 10, 15, 20, 25, 30, session_max] %}
-                <span class="slider-field__tick" style="left: {{ ((t - session_min) / (session_max - session_min) * 100) }}%">{{ t }}</span>
+                <button type="button" class="slider-field__tick" data-for="session-length" data-value="{{ t }}"
+                        style="left: {{ ((t - session_min) / (session_max - session_min) * 100) }}%">{{ t }}</button>
                 {% endfor %}
               </div>
             </div>
@@ -262,8 +264,14 @@
           <div class="slider-field__track-wrap">
             <input class="range-input" type="range" name="prep_min" id="prep-min"
                    min="{{ prep_min_bound }}" max="{{ prep_max_bound }}" step="1" value="{{ bed.prep_min }}"
-                   data-value-target="prep-min-value" data-suffix=" мин"
+                   data-value-target="prep-min-value" data-suffix=" мин" data-drum="true"
                    style="--fill: {{ ((bed.prep_min - prep_min_bound) / (prep_max_bound - prep_min_bound) * 100) }}%">
+            <div class="slider-field__ticks">
+              {% for t in range(prep_min_bound, prep_max_bound + 1) %}
+              <button type="button" class="slider-field__tick" data-for="prep-min" data-value="{{ t }}"
+                      style="left: {{ ((t - prep_min_bound) / (prep_max_bound - prep_min_bound) * 100) }}%">{{ t }}</button>
+              {% endfor %}
+            </div>
           </div>
         </div>
 
@@ -275,8 +283,14 @@
           <div class="slider-field__track-wrap">
             <input class="range-input" type="range" name="cool_min" id="cool-min"
                    min="{{ cool_min_bound }}" max="{{ cool_max_bound }}" step="1" value="{{ bed.cool_min }}"
-                   data-value-target="cool-min-value" data-suffix=" мин"
+                   data-value-target="cool-min-value" data-suffix=" мин" data-drum="true"
                    style="--fill: {{ ((bed.cool_min - cool_min_bound) / (cool_max_bound - cool_min_bound) * 100) }}%">
+            <div class="slider-field__ticks">
+              {% for t in range(cool_min_bound, cool_max_bound + 1) %}
+              <button type="button" class="slider-field__tick" data-for="cool-min" data-value="{{ t }}"
+                      style="left: {{ ((t - cool_min_bound) / (cool_max_bound - cool_min_bound) * 100) }}%">{{ t }}</button>
+              {% endfor %}
+            </div>
           </div>
         </div>
       </div>

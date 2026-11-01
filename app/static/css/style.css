@@ -900,15 +900,88 @@ body {
   right: 0;
   top: 16px;
   height: 16px;
+  /* The row itself stays click-through (it's an overlay across the
+     whole track), but each tick button below opts back in with its
+     own pointer-events so the numbers are individually clickable. */
   pointer-events: none;
 }
 
 .slider-field__tick {
+  all: unset;
   position: absolute;
   transform: translateX(-50%);
   font-size: 11px;
   color: var(--text-faint);
   font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  pointer-events: auto;
+  padding: 2px 4px;
+  margin: -2px -4px;
+  border-radius: 4px;
+  transition: color 0.1s, background 0.1s;
+}
+
+.slider-field__tick:hover,
+.slider-field__tick:focus-visible {
+  color: var(--gold);
+  background: rgba(232, 179, 78, 0.12);
+}
+
+/* Drum picker - a scroll-snap wheel that replaces the plain-text value
+   badge on session-length/prep-min/cool-min (see initDrumPicker in
+   main.js). A second, more precise way to set the same underlying
+   range input that dragging the slider or clicking a tick already do,
+   all three kept in sync through the input's own native "input" event. */
+.drum-picker__viewport {
+  position: relative;
+  width: 64px;
+  height: 84px;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  scrollbar-width: none;
+  border-radius: var(--radius-sm);
+  background: rgba(12, 24, 32, 0.6);
+  border: 1px solid var(--border);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 28px, #000 56px, transparent 84px);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 28px, #000 56px, transparent 84px);
+}
+
+.drum-picker__viewport::-webkit-scrollbar { display: none; }
+
+.drum-picker__list {
+  padding: 28px 0;
+}
+
+.drum-picker__item {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 28px;
+  scroll-snap-align: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.drum-picker__item--active {
+  color: var(--gold);
+}
+
+.drum-picker__highlight {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 28px;
+  height: 28px;
+  border-top: 1px solid var(--gold-soft);
+  border-bottom: 1px solid var(--gold-soft);
+  background: rgba(232, 179, 78, 0.08);
+  pointer-events: none;
 }
 
 .action-btn {

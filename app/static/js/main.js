@@ -44,6 +44,120 @@
     update();
   });
 
+  // Drum picker: a scroll-snap vertical wheel, replacing the plain-text
+  // value badge on session-length/prep-min/cool-min (data-drum="true")
+  // with a spinnable one. It's a second, more precise way to set the
+  // same underlying range input that dragging the slider or clicking a
+  // tick mark already do - all three stay in sync purely through the
+  // input's own native "input" event, so neither this nor the tick
+  // handler below needs to know about price recompute, fill %, or any
+  // other listener already attached elsewhere (session-length's cash-due
+  // recompute, for one) - dispatching that event is enough for all of
+  // it to just happen, same as if the slider had been dragged by hand.
+  const DRUM_ROW_H = 28;
+  const drumResyncFns = [];
+
+  function initDrumPicker(input) {
+    const valueEl = document.getElementById(input.dataset.valueTarget);
+    if (!valueEl) return;
+    const min = Number(input.min);
+    const max = Number(input.max);
+
+    const viewport = document.createElement("div");
+    viewport.className = "drum-picker__viewport";
+    const list = document.createElement("div");
+    list.className = "drum-picker__list";
+    for (let v = min; v <= max; v++) {
+      const item = document.createElement("button");
+      item.type = "button";
+      item.className = "drum-picker__item";
+      item.textContent = String(v);
+      item.dataset.value = String(v);
+      list.appendChild(item);
+    }
+    viewport.appendChild(list);
+    const highlight = document.createElement("div");
+    highlight.className = "drum-picker__highlight";
+    viewport.appendChild(highlight);
+    const container = document.createElement("div");
+    container.className = "drum-picker";
+    container.appendChild(viewport);
+    valueEl.replaceWith(container);
+
+    let syncingFromInput = false;
+    let settleTimer = null;
+
+    function setActiveItem(value) {
+      list.querySelectorAll(".drum-picker__item--active").forEach((el) => {
+        el.classList.remove("drum-picker__item--active");
+      });
+      const item = list.querySelector(`[data-value="${value}"]`);
+      if (item) item.classList.add("drum-picker__item--active");
+    }
+
+    function scrollToValue(value, smooth) {
+      const clamped = Math.max(min, Math.min(max, Math.round(value)));
+      viewport.scrollTo({ top: (clamped - min) * DRUM_ROW_H, behavior: smooth ? "smooth" : "auto" });
+      setActiveItem(clamped);
+    }
+
+    function valueFromScroll() {
+      const idx = Math.round(viewport.scrollTop / DRUM_ROW_H);
+      return min + Math.max(0, Math.min(max - min, idx));
+    }
+
+    viewport.addEventListener("scroll", () => {
+      if (syncingFromInput) return;
+      clearTimeout(settleTimer);
+      settleTimer = setTimeout(() => {
+        const value = valueFromScroll();
+        setActiveItem(value);
+        if (Number(input.value) !== value) {
+          input.value = String(value);
+          input.dispatchEvent(new Event("input", { bubbles: true }));
+        }
+      }, 120);
+    });
+
+    list.addEventListener("click", (evt) => {
+      const item = evt.target.closest(".drum-picker__item");
+      if (!item) return;
+      scrollToValue(Number(item.dataset.value), true);
+    });
+
+    viewport.addEventListener("keydown", (evt) => {
+      if (evt.key !== "ArrowUp" && evt.key !== "ArrowDown") return;
+      evt.preventDefault();
+      const delta = evt.key === "ArrowUp" ? -1 : 1;
+      scrollToValue(Number(input.value) + delta, true);
+    });
+
+    input.addEventListener("input", () => {
+      syncingFromInput = true;
+      scrollToValue(Number(input.value), false);
+      clearTimeout(settleTimer);
+      settleTimer = setTimeout(() => { syncingFromInput = false; }, 150);
+    });
+
+    const resync = () => scrollToValue(Number(input.value), false);
+    drumResyncFns.push(resync);
+    resync();
+  }
+
+  document.querySelectorAll('.range-input[data-drum="true"]').forEach(initDrumPicker);
+
+  // Clicking a tick-mark number jumps the slider straight there - same
+  // "set .value, dispatch a real input event" approach as the drum
+  // picker above, so it's automatically in sync with both.
+  document.querySelectorAll(".slider-field__tick[data-for]").forEach((tick) => {
+    const input = document.getElementById(tick.dataset.for);
+    if (!input) return;
+    tick.addEventListener("click", () => {
+      input.value = tick.dataset.value;
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+  });
+
   // Settings panel toggle on the bed detail page
   const settingsToggle = document.getElementById("settings-toggle");
   const settingsPanel = document.getElementById("bed-settings-panel");
@@ -53,6 +167,11 @@
       settingsPanel.hidden = !willOpen;
       settingsToggle.setAttribute("aria-expanded", String(willOpen));
       settingsToggle.classList.toggle("settings-toggle--open", willOpen);
+      // prep-min/cool-min's drum pickers were initialized while this
+      // panel was hidden (display:none) - scrolling a hidden element
+      // doesn't reliably stick, so re-apply their position now that it
+      // actually has layout.
+      if (willOpen) drumResyncFns.forEach((fn) => fn());
     });
   }
 
