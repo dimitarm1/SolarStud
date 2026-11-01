@@ -11,10 +11,23 @@
 <div class="panel">
 
   <div class="titlebar">
-    <div class="brand">
-      {{ icon('sun', 'brand-icon') }}
-      <span class="brand-name">SOLAR STUDIO</span>
-      <span class="brand-version">{{ version }}</span>
+    <div class="titlebar-left">
+      <div class="brand">
+        {{ icon('sun', 'brand-icon') }}
+        <span class="brand-name">SOLAR STUDIO</span>
+        <span class="brand-version">{{ version }}</span>
+      </div>
+      {% if current_user %}
+      <div class="titlebar-user">
+        {{ icon('user', 'titlebar-user-icon') }}
+        <span class="titlebar-user-name">
+          {{ current_user.username }} ({{ 'Администратор' if current_user.role == 'admin' else 'Оператор' }})
+        </span>
+        <form method="post" action="{{ url_for('logout') }}">
+          <button class="titlebar-user-logout" type="submit">Изход</button>
+        </form>
+      </div>
+      {% endif %}
     </div>
     <div class="window-controls">
       <button class="win-btn" type="button" aria-label="Минимизиране">{{ icon('minimize') }}</button>

@@ -8,8 +8,9 @@ import webbrowser
 from datetime import datetime, timedelta
 from pathlib import Path
 
-from flask import Flask, abort, jsonify, redirect, render_template, request, send_file, url_for
+from flask import Flask, abort, g, jsonify, redirect, render_template, request, send_file, session, url_for
 
+import auth
 import chipcard
 import controller_link
 import db
@@ -28,6 +29,10 @@ DEBUG = True
 PORT = 5000
 
 app = Flask(__name__)
+# Freshly random on every process start (never persisted) - so a restart
+# always invalidates old session cookies, which is exactly what "the
+# operator must enter his password on program start" needs.
+app.secret_key = os.urandom(24)
 db.init_db()
 
 VERSION = "V1.2"
@@ -47,7 +52,61 @@ BOTTOM_BUTTONS = [
     {"id": "services", "label": "Услуги", "icon": "sparkle"},
     {"id": "cards", "label": "Карти", "icon": "card"},
     {"id": "studio", "label": "Студио", "icon": "home"},
+    {"id": "users", "label": "Потребители", "icon": "user"},
 ]
+
+# Endpoints reachable with no login at all, even once users exist.
+_PUBLIC_ENDPOINTS = {"login", "logout", "static"}
+
+
+@app.before_request
+def _require_login():
+    if request.endpoint in _PUBLIC_ENDPOINTS or request.endpoint is None:
+        return None
+    if not auth.any_active_admin_exists():
+        g.current_user = None
+        return None
+    user_id = session.get("user_id")
+    user = auth.get_user(user_id) if user_id is not None else None
+    if user is None or not user["active"]:
+        session.clear()
+        return redirect(url_for("login", next=request.path))
+    g.current_user = user
+    return None
+
+
+@app.context_processor
+def _inject_current_user():
+    return {"current_user": getattr(g, "current_user", None)}
+
+
+@app.errorhandler(403)
+def _forbidden(exc):
+    return render_template("403.html", version=VERSION, server_time=datetime.now().strftime("%H:%M:%S")), 403
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        user = auth.verify_login(request.form.get("username", ""), request.form.get("password", ""))
+        if user is None:
+            return render_template(
+                "login.html", version=VERSION, server_time=datetime.now().strftime("%H:%M:%S"),
+                error="Грешно потребителско име или парола.",
+                next=request.form.get("next", ""),
+            )
+        session["user_id"] = user["id"]
+        return redirect(request.form.get("next") or url_for("index"))
+    return render_template(
+        "login.html", version=VERSION, server_time=datetime.now().strftime("%H:%M:%S"),
+        error=None, next=request.args.get("next", ""),
+    )
+
+
+@app.route("/logout", methods=["POST"])
+def logout():
+    session.clear()
+    return redirect(url_for("login"))
 
 
 @app.route("/")
@@ -216,6 +275,7 @@ def bed_photo_upload(bed_id):
 
 
 @app.route("/bed/<int:bed_id>/settings", methods=["POST"])
+@auth.admin_required
 def update_bed_settings(bed_id):
     if models.get_bed(bed_id) is None:
         abort(404)
@@ -250,6 +310,7 @@ def scan_controllers():
 
 
 @app.route("/studio")
+@auth.admin_required
 def studio():
     beds = models.list_beds()
     options = sales.list_recharge_options(include_inactive=True)
@@ -279,6 +340,7 @@ def studio():
 
 
 @app.route("/studio/bed-count", methods=["POST"])
+@auth.admin_required
 def studio_set_bed_count():
     current = models.get_bed_count()
     count = request.form.get("bed_count", type=int, default=current)
@@ -287,18 +349,21 @@ def studio_set_bed_count():
 
 
 @app.route("/studio/serial-port", methods=["POST"])
+@auth.admin_required
 def studio_set_serial_port():
     models.set_serial_port(request.form.get("serial_port", ""))
     return redirect(url_for("studio"))
 
 
 @app.route("/studio/chip-reader", methods=["POST"])
+@auth.admin_required
 def studio_set_chip_reader():
     models.set_chip_reader_name(request.form.get("chip_reader_name", ""))
     return redirect(url_for("studio"))
 
 
 @app.route("/studio/chip-studio-identity", methods=["POST"])
+@auth.admin_required
 def studio_set_chip_studio_identity():
     models.set_chip_studio_identity(
         request.form.get("chip_studio_name", ""),
@@ -308,12 +373,14 @@ def studio_set_chip_studio_identity():
 
 
 @app.route("/studio/chip-known-studios", methods=["POST"])
+@auth.admin_required
 def studio_set_chip_known_studios():
     models.set_chip_known_studio_numbers(request.form.get("chip_known_studio_numbers", ""))
     return redirect(url_for("studio"))
 
 
 @app.route("/studio/chip-psc", methods=["POST"])
+@auth.admin_required
 def studio_set_chip_psc():
     try:
         models.set_chip_psc(request.form.get("chip_studio_psc", ""))
@@ -351,6 +418,7 @@ def chipcard_quote():
 
 
 @app.route("/studio/recharge-options", methods=["POST"])
+@auth.admin_required
 def studio_create_recharge_option():
     sales.create_recharge_option(
         name=request.form.get("name", ""),
@@ -361,6 +429,7 @@ def studio_create_recharge_option():
 
 
 @app.route("/studio/recharge-options/<int:option_id>/update", methods=["POST"])
+@auth.admin_required
 def studio_update_recharge_option(option_id):
     sales.update_recharge_option(
         option_id,
@@ -372,12 +441,14 @@ def studio_update_recharge_option(option_id):
 
 
 @app.route("/studio/recharge-options/<int:option_id>/active", methods=["POST"])
+@auth.admin_required
 def studio_set_recharge_option_active(option_id):
     sales.set_recharge_option_active(option_id, request.form.get("active", type=int, default=1))
     return redirect(url_for("studio"))
 
 
 @app.route("/studio/recharge-options/<int:option_id>/bed-prices", methods=["POST"])
+@auth.admin_required
 def studio_set_recharge_option_bed_prices(option_id):
     bed_prices = {}
     for bed in models.list_beds():
@@ -401,6 +472,7 @@ def cosmetics_page():
 
 
 @app.route("/cosmetics/products", methods=["POST"])
+@auth.admin_required
 def cosmetics_create_product():
     sales.create_product(
         name=request.form.get("name", ""),
@@ -411,6 +483,7 @@ def cosmetics_create_product():
 
 
 @app.route("/cosmetics/products/<int:product_id>/update", methods=["POST"])
+@auth.admin_required
 def cosmetics_update_product(product_id):
     sales.update_product(
         product_id,
@@ -421,12 +494,14 @@ def cosmetics_update_product(product_id):
 
 
 @app.route("/cosmetics/products/<int:product_id>/restock", methods=["POST"])
+@auth.admin_required
 def cosmetics_restock_product(product_id):
     sales.restock_product(product_id, request.form.get("add_qty", type=int, default=0))
     return redirect(url_for("cosmetics_page"))
 
 
 @app.route("/cosmetics/products/<int:product_id>/adjust-stock", methods=["POST"])
+@auth.admin_required
 def cosmetics_adjust_stock(product_id):
     try:
         sales.adjust_stock(
@@ -440,6 +515,7 @@ def cosmetics_adjust_stock(product_id):
 
 
 @app.route("/cosmetics/products/<int:product_id>/retire", methods=["POST"])
+@auth.admin_required
 def cosmetics_retire_product(product_id):
     sales.set_product_active(product_id, 0)
     return redirect(url_for("cosmetics_page"))
@@ -474,6 +550,7 @@ def services_page():
 
 
 @app.route("/services/services", methods=["POST"])
+@auth.admin_required
 def services_create_service():
     sales.create_service(
         name=request.form.get("name", ""),
@@ -483,6 +560,7 @@ def services_create_service():
 
 
 @app.route("/services/services/<int:service_id>/update", methods=["POST"])
+@auth.admin_required
 def services_update_service(service_id):
     sales.update_service(
         service_id,
@@ -493,6 +571,7 @@ def services_update_service(service_id):
 
 
 @app.route("/services/services/<int:service_id>/retire", methods=["POST"])
+@auth.admin_required
 def services_retire_service(service_id):
     sales.set_service_active(service_id, 0)
     return redirect(url_for("services_page"))
@@ -754,6 +833,7 @@ def chip_card_print():
 
 
 @app.route("/protocol")
+@auth.admin_required
 def protocol():
     date = request.args.get("date") or datetime.now().strftime("%Y-%m-%d")
     return render_template(
@@ -770,6 +850,7 @@ def protocol():
 
 
 @app.route("/protocol/print")
+@auth.admin_required
 def protocol_print():
     date = request.args.get("date") or datetime.now().strftime("%Y-%m-%d")
     summary = sales.sales_log_summary(date=date)
@@ -786,6 +867,7 @@ def protocol_print():
 
 
 @app.route("/stats")
+@auth.admin_required
 def stats_page():
     date_to = request.args.get("date_to") or datetime.now().strftime("%Y-%m-%d")
     date_from = request.args.get("date_from") or (datetime.now() - timedelta(days=30)).strftime("%Y-%m-%d")
@@ -808,6 +890,7 @@ def stats_page():
 
 
 @app.route("/api/stats/report")
+@auth.admin_required
 def api_stats_report():
     metric = request.args.get("metric", stats.METRICS[0]["id"])
     breakdown = request.args.get("breakdown", "none")
@@ -820,6 +903,62 @@ def api_stats_report():
         return jsonify(stats.run_report(metric, breakdown, date_from, date_to, split_by_bed=split_by_bed))
     except ValueError as exc:
         return jsonify({"error": str(exc)}), 400
+
+
+@app.route("/users")
+@auth.admin_required
+def users_page():
+    return render_template(
+        "users.html",
+        version=VERSION,
+        nav_items=NAV_ITEMS,
+        bottom_buttons=BOTTOM_BUTTONS,
+        server_time=datetime.now().strftime("%H:%M:%S"),
+        users=auth.list_users(),
+        no_admin_yet=not auth.any_active_admin_exists(),
+        error=request.args.get("error"),
+        message=request.args.get("message"),
+    )
+
+
+@app.route("/users", methods=["POST"])
+@auth.admin_required
+def users_create():
+    try:
+        auth.create_user(
+            username=request.form.get("username", ""),
+            password=request.form.get("password", ""),
+            role=request.form.get("role", "user"),
+        )
+    except auth.AuthError as exc:
+        return redirect(url_for("users_page", error=str(exc)))
+    return redirect(url_for("users_page", message="Потребителят е добавен."))
+
+
+@app.route("/users/<int:user_id>/update", methods=["POST"])
+@auth.admin_required
+def users_update(user_id):
+    try:
+        auth.update_user(
+            user_id,
+            username=request.form.get("username"),
+            role=request.form.get("role"),
+            new_password=request.form.get("new_password") or None,
+            active=request.form.get("active", type=int, default=0),
+        )
+    except auth.AuthError as exc:
+        return redirect(url_for("users_page", error=str(exc)))
+    return redirect(url_for("users_page", message="Потребителят е обновен."))
+
+
+@app.route("/users/<int:user_id>/delete", methods=["POST"])
+@auth.admin_required
+def users_delete(user_id):
+    try:
+        auth.delete_user(user_id)
+    except auth.AuthError as exc:
+        return redirect(url_for("users_page", error=str(exc)))
+    return redirect(url_for("users_page", message="Потребителят е изтрит."))
 
 
 CARD_SEARCH_LIMIT = 20

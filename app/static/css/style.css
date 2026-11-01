@@ -2015,3 +2015,88 @@ body {
   font-size: 12px;
   color: var(--text-faint);
 }
+
+/* --- Login / user accounts (auth.py, app.py's before_request) --------- */
+
+.titlebar-left {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.titlebar-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.titlebar-user-icon {
+  width: 14px;
+  height: 14px;
+  color: var(--gold);
+  flex-shrink: 0;
+}
+
+.titlebar-user-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+.titlebar-user-logout {
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-dim);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.titlebar-user-logout:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.login-view {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+}
+
+.login-card {
+  display: flex;
+  flex-direction: column;
+  width: min(360px, 90%);
+  padding: 28px;
+  background: linear-gradient(180deg, var(--surface) 0%, #101c27 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.login-card__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.login-card__brand h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.login-card__icon {
+  width: 22px;
+  height: 22px;
+  color: var(--gold);
+}
