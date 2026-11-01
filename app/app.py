@@ -3,6 +3,7 @@ import threading
 import time
 import urllib.error
 import urllib.request
+import uuid
 import webbrowser
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -17,6 +18,8 @@ import sales
 import stats
 
 ALLOWED_IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp", ".svg"}
+BED_PHOTOS_DIR = Path(__file__).resolve().parent / "static" / "bed_photos"
+MAX_BED_PHOTO_BYTES = 15 * 1024 * 1024  # 15MB - generous for a phone photo, not a dumping ground
 DEBUG = True
 PORT = 5000
 
@@ -134,6 +137,55 @@ def bed_photo(bed_id):
     if path.suffix.lower() not in ALLOWED_IMAGE_EXTENSIONS or not path.is_file():
         abort(404)
     return send_file(path, conditional=True)
+
+
+@app.route("/bed/<int:bed_id>/photo/upload", methods=["POST"])
+def bed_photo_upload(bed_id):
+    """Drag-and-drop / file-picker counterpart to the manual "Път до
+    изображение" field: browsers never expose a dropped/picked file's
+    real filesystem path (a deliberate, unbypassable security
+    restriction - the same one the field's own hint text already
+    explains), so there's no way to "autofill the path" from a drop.
+    What a drop CAN give us is the file's actual bytes, so instead we
+    upload and store those ourselves under static/bed_photos/ and hand
+    back a /static/... URL, which is one of the two forms the existing
+    picture_path field already accepts (see models._picture_src).
+
+    This only saves the file to disk - it does NOT touch the database,
+    so a drop behaves like typing into the text field: it still needs
+    "Запази настройките" to actually stick, same as every other field
+    on this form, and a dropped-then-abandoned file is just an orphan
+    on disk rather than a half-saved bed record."""
+    if models.get_bed(bed_id) is None:
+        abort(404)
+    photo = request.files.get("photo")
+    if photo is None or not photo.filename:
+        return jsonify({"ok": False, "error": "Няма избран файл."}), 400
+
+    ext = Path(photo.filename).suffix.lower()
+    if ext not in ALLOWED_IMAGE_EXTENSIONS:
+        return jsonify({
+            "ok": False,
+            "error": f"Неподдържан файлов формат ({ext or '?'}). Позволени: "
+                     + ", ".join(sorted(ALLOWED_IMAGE_EXTENSIONS)),
+        }), 400
+
+    photo.seek(0, os.SEEK_END)
+    size = photo.tell()
+    photo.seek(0)
+    if size > MAX_BED_PHOTO_BYTES:
+        return jsonify({
+            "ok": False,
+            "error": f"Файлът е твърде голям ({size // (1024 * 1024)}MB, максимум "
+                     f"{MAX_BED_PHOTO_BYTES // (1024 * 1024)}MB).",
+        }), 400
+
+    BED_PHOTOS_DIR.mkdir(parents=True, exist_ok=True)
+    filename = f"bed{bed_id}_{uuid.uuid4().hex[:12]}{ext}"
+    photo.save(BED_PHOTOS_DIR / filename)
+
+    picture_path = f"/static/bed_photos/{filename}"
+    return jsonify({"ok": True, "picture_path": picture_path})
 
 
 @app.route("/bed/<int:bed_id>/settings", methods=["POST"])

@@ -338,6 +338,85 @@
     }
   }
 
+  // Bed photo drag-and-drop: browsers never expose a dropped file's real
+  // filesystem path (the same restriction the field's own hint text
+  // explains), so a drop can't "autofill the path" the way pasting one
+  // does - instead it uploads the file's actual bytes to the server
+  // (see /bed/<id>/photo/upload in app.py) and fills the text field with
+  // the resulting /static/... URL, same as if that path had been typed.
+  // Only the file touches disk here; it's still not saved to the bed's
+  // record until "Запази настройките" is submitted, same as every other
+  // field on this form.
+  const photoDropZone = document.getElementById("photo-drop-zone");
+  if (photoDropZone) {
+    const picturePathInput = document.getElementById("picture-path-input");
+    const photoFileInput = document.getElementById("photo-file-input");
+    const photoBrowseBtn = document.getElementById("photo-browse-btn");
+    const photoUploadError = document.getElementById("photo-upload-error");
+    const photoUploadErrorText = document.getElementById("photo-upload-error-text");
+    const uploadUrl = photoDropZone.dataset.uploadUrl;
+    let previewObjectUrl = null;
+
+    function showPhotoError(message) {
+      photoUploadErrorText.textContent = message;
+      photoUploadError.hidden = false;
+    }
+
+    async function uploadPhoto(file) {
+      photoUploadError.hidden = true;
+      if (!file.type.startsWith("image/")) {
+        showPhotoError("Файлът не изглежда да е изображение.");
+        return;
+      }
+
+      // Instant local preview while the upload is in flight, so staff
+      // sees feedback immediately rather than waiting on the round trip.
+      if (previewObjectUrl) URL.revokeObjectURL(previewObjectUrl);
+      previewObjectUrl = URL.createObjectURL(file);
+      const previewImg = document.querySelector(".bed-photo");
+      if (previewImg) previewImg.src = previewObjectUrl;
+
+      const formData = new FormData();
+      formData.append("photo", file);
+      try {
+        const res = await fetch(uploadUrl, { method: "POST", body: formData });
+        const data = await res.json();
+        if (!data.ok) {
+          showPhotoError(data.error || "Качването се провали.");
+          return;
+        }
+        picturePathInput.value = data.picture_path;
+        if (previewImg) previewImg.src = data.picture_path;
+      } catch (err) {
+        showPhotoError("Мрежова грешка при качване на файла.");
+      }
+    }
+
+    photoBrowseBtn.addEventListener("click", () => photoFileInput.click());
+    photoFileInput.addEventListener("change", () => {
+      if (photoFileInput.files[0]) uploadPhoto(photoFileInput.files[0]);
+      photoFileInput.value = "";
+    });
+
+    ["dragenter", "dragover"].forEach((evtName) => {
+      photoDropZone.addEventListener(evtName, (evt) => {
+        evt.preventDefault();
+        photoDropZone.classList.add("photo-drop-zone--active");
+      });
+    });
+    ["dragleave", "dragend"].forEach((evtName) => {
+      photoDropZone.addEventListener(evtName, () => {
+        photoDropZone.classList.remove("photo-drop-zone--active");
+      });
+    });
+    photoDropZone.addEventListener("drop", (evt) => {
+      evt.preventDefault();
+      photoDropZone.classList.remove("photo-drop-zone--active");
+      const file = evt.dataTransfer.files[0];
+      if (file) uploadPhoto(file);
+    });
+  }
+
   // Error banner dismiss (hw_error / payment_error / generic ?error= on
   // various pages) - class-based so more than one banner can appear on a
   // page without id collisions.

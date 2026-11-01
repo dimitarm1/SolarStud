@@ -329,11 +329,26 @@
 
       <label class="field">
         <span class="field__label">Път до изображение</span>
-        <input class="field__input" type="text" name="picture_path" value="{{ bed.picture_path }}"
-               placeholder="/home/user/images/bed1.jpg или C:\Studio\Images\bed1.jpg">
+        <div class="photo-drop-zone" id="photo-drop-zone" data-upload-url="{{ url_for('bed_photo_upload', bed_id=bed.id) }}">
+          <input class="field__input" type="text" name="picture_path" id="picture-path-input"
+                 value="{{ bed.picture_path }}"
+                 placeholder="/home/user/images/bed1.jpg или C:\Studio\Images\bed1.jpg">
+          <button class="photo-drop-zone__browse-btn" type="button" id="photo-browse-btn">
+            {{ icon('plus', 'action-icon') }}
+            <span>Избери файл</span>
+          </button>
+          <input type="file" id="photo-file-input" accept="image/*" hidden>
+          <p class="photo-drop-zone__hint">...или плъзнете и пуснете файл тук</p>
+        </div>
+        <div id="photo-upload-error" class="hw-error-banner" style="margin-top:10px;" hidden>
+          {{ icon('warning', 'hw-error-icon') }}
+          <span id="photo-upload-error-text"></span>
+        </div>
         <span class="field__hint">
-          Поради съображения за сигурност браузърите не могат да разкрият пълния локален път до файл,
-          затова го поставете или въведете тук. Оставете празно, за да се използва илюстрацията по подразбиране.
+          Поради съображения за сигурност браузърите не могат да разкрият пълния локален път до файл при
+          плъзгане — затова пуснатият файл се качва и се съхранява от приложението, а полето се попълва
+          автоматично. Все пак можете да въведете или поставите път ръчно. И в двата случая промяната
+          важи едва след "Запази настройките". Оставете празно, за да се използва илюстрацията по подразбиране.
         </span>
       </label>
 

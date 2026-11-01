@@ -5,3 +5,6 @@ venv/
 
 # Runtime SQLite database and its backups
 data/
+
+# Bed photos uploaded via drag-and-drop (app/app.py: bed_photo_upload)
+app/static/bed_photos/

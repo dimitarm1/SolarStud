@@ -389,8 +389,14 @@ body {
   z-index: 2;
   width: calc(100% - 16px);
   height: calc(100% - 16px);
-  object-fit: cover;
-  object-position: center top;
+  /* contain, not cover: the index grid card's box is narrow and tall
+     (built around the abstract vertical-tube illustration, ~0.58:1),
+     while an uploaded product photo is typically landscape - cover
+     would blow it up to fill that box and crop almost everything
+     except a thin vertical sliver. contain always shows the whole
+     photo, letterboxed, regardless of the box's own proportions. */
+  object-fit: contain;
+  object-position: center center;
   background: #0f1c26;
   border-radius: 16px;
   border: 1px solid #33475a;
@@ -582,11 +588,22 @@ body {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 32px;
-  align-items: center;
+  /* stretch (grid's own default - restored here since it was overridden
+     to center below), not center: the right column's content sets the
+     row's height, which is often well over 320px (card search results,
+     payment panels, settings...). A fixed-height image box centered in
+     that tall row just floats with empty space above and below it. */
+  align-items: stretch;
 }
 
 .detail-illustration {
-  height: 320px;
+  /* A floor, not a fixed height: it now stretches to match the row
+     (i.e. the right column's actual content height) via align-items:
+     stretch above, and never shrinks below this even when that column
+     is short. object-fit: contain on the photo itself (see .bed-photo)
+     means it always looks right regardless of how tall the box ends
+     up being. */
+  min-height: 320px;
   border-radius: var(--radius-md);
 }
 
@@ -1734,4 +1751,50 @@ body {
 
 @media (max-width: 720px) {
   .card-row { flex-wrap: wrap; }
+}
+
+/* Bed photo drop zone */
+.photo-drop-zone {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.photo-drop-zone--active {
+  border-color: var(--gold-soft);
+  background: rgba(232, 179, 78, 0.06);
+}
+
+.photo-drop-zone .field__input {
+  flex: 1 1 260px;
+  min-width: 0;
+}
+
+.photo-drop-zone__browse-btn {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--gold-soft);
+  background: var(--surface-2);
+  color: var(--gold);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.photo-drop-zone__browse-btn:hover { background: #1e3444; }
+
+.photo-drop-zone__hint {
+  flex-basis: 100%;
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-faint);
 }
