@@ -188,6 +188,11 @@
   // off abruptly), so the label should say that rather than "Stop session"
   // - pressing it again once cooling is the second chance that actually ends it.
   const STOP_LABELS = { prep: "Спри сесията", active: "Спри и охлади", cooling: "Прекрати сесията" };
+  const LINK_STATUS_LABELS = {
+    online: "Връзка с контролера: активна",
+    offline: "Няма връзка с контролера",
+    unknown: "Връзката с контролера още не е проверена",
+  };
 
   function startCardTicker(el, { onFinish } = {}) {
     if (el._tickerTimer) {
@@ -352,6 +357,15 @@
         // keep counting smoothly rather than fighting it every 3 seconds.
         if (stageChanged || driftedTooFar) {
           applyBedState(card, bed);
+        }
+        // The link dot updates every poll regardless - whether a real
+        // bed's controller is answering can change independently of
+        // session state (it can go offline mid-session, too), and a
+        // demo bed never has one to begin with (bed.link_status is null).
+        const dot = card.querySelector(".link-dot");
+        if (dot && bed.link_status) {
+          dot.className = `link-dot link-dot--${bed.link_status}`;
+          dot.title = LINK_STATUS_LABELS[bed.link_status] || "";
         }
       });
     }

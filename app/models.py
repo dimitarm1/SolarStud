@@ -177,6 +177,18 @@ _last_hw_poll_duration = 0.0
 HW_POLL_MIN_GAP_SECONDS = 0.5  # floor, so even one fast-responding bed doesn't get hit back-to-back
 HW_POLL_SAFETY_FACTOR = 1.5  # headroom above the last measured poll duration
 
+# Per-address last-known reachability, for the main screen's connectivity
+# indicator - separate from session reconciliation above (which only cares
+# about *session* drift, and already silently no-ops when a bed doesn't
+# reply). An address with no entry here has never been polled this run
+# (serial port not configured yet, or the app just started).
+_link_status = {}  # {controller_address: True (replied) / False (didn't)}
+
+
+def _record_link_status(addresses, live_results):
+    for address in addresses:
+        _link_status[address] = live_results.get(address) is not None
+
 
 def _reconcile_real_beds(conn, bed_rows):
     """Query live status for every real bed in one shared connection and
@@ -187,24 +199,49 @@ def _reconcile_real_beds(conn, bed_rows):
     real_beds = [b for b in bed_rows if not is_demo_address(b["controller_address"])]
     if not real_beds:
         return
+    addresses = [b["controller_address"] for b in real_beds]
     now = time.monotonic()
     required_gap = max(HW_POLL_MIN_GAP_SECONDS, _last_hw_poll_duration * HW_POLL_SAFETY_FACTOR)
     if now - _last_hw_poll_monotonic < required_gap:
         return
     port = get_serial_port()
     if not port:
+        # Nothing to poll with at all - every real bed is unreachable by
+        # definition, not just "unknown" (which would otherwise read as
+        # the dim/neutral first-run state even though this is a real,
+        # ongoing problem - port was never set up, or got cleared).
+        for address in addresses:
+            _link_status[address] = False
         return
     _last_hw_poll_monotonic = now
     try:
-        live_results = controller_link.query_many(
-            port, [b["controller_address"] for b in real_beds]
-        )
+        live_results = controller_link.query_many(port, addresses)
     except controller_link.ControllerLinkError:
+        # The port itself failed to open (e.g. the USB-serial adapter was
+        # unplugged) - every real bed is unreachable, not just "whatever
+        # it last was", or a bed that was online right up until the port
+        # died would keep showing a stale "online" forever.
+        for address in addresses:
+            _link_status[address] = False
         return
     finally:
         _last_hw_poll_duration = time.monotonic() - now
+    _record_link_status(addresses, live_results)
     for bed in real_beds:
         _reconcile_with_hardware(conn, bed, live_results.get(bed["controller_address"]))
+
+
+def _link_status_for(controller_address):
+    """None for a demo bed (no hardware concept applies at all) or one
+    missing its address; "unknown" before the first poll this run has had
+    a chance to reach it; otherwise "online"/"offline" from the most
+    recent poll - see _record_link_status."""
+    if is_demo_address(controller_address):
+        return None
+    online = _link_status.get(controller_address)
+    if online is None:
+        return "unknown"
+    return "online" if online else "offline"
 
 
 def _picture_src(bed_id, picture_path):
@@ -223,6 +260,7 @@ def _serialize(bed_row, session_row):
     bed = dict(bed_row)
     bed["picture_src"] = _picture_src(bed_row["id"], bed_row["picture_path"])
     bed["is_demo"] = is_demo_address(bed_row["controller_address"])
+    bed["link_status"] = _link_status_for(bed_row["controller_address"])
     if session_row is not None:
         stage, remaining_min = _stage_and_remaining(session_row)
         bed["status"] = "running"

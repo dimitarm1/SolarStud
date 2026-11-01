@@ -12,6 +12,7 @@
   --text-faint: #6d8494;
   --blue-glow: #4fd6ff;
   --danger: #e2483d;
+  --success: #3ecf7a;
   --radius-lg: 22px;
   --radius-md: 14px;
   --radius-sm: 10px;
@@ -241,6 +242,7 @@ body {
 .bed-grid--wrapped .bed-card:nth-child(8) { grid-column: 8 / span 2; }
 
 .bed-card {
+  position: relative;
   background: linear-gradient(180deg, var(--surface) 0%, #101c27 100%);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
@@ -252,6 +254,43 @@ body {
   color: inherit;
   cursor: pointer;
   transition: transform 0.12s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Hardware link indicator - a real bed's controller may simply be
+   switched off, with nothing else on screen to show that (session state
+   just silently falls back to whatever the DB last knew - see
+   models._link_status_for). Demo beds have no hardware concept at all,
+   so they get no dot rather than a permanently-green or -gray one that
+   would mean nothing. */
+.link-dot {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  z-index: 3;
+}
+
+.link-dot--online {
+  background: var(--success);
+  box-shadow: 0 0 6px 1px rgba(62, 207, 122, 0.7);
+}
+
+.link-dot--offline {
+  background: var(--danger);
+  box-shadow: 0 0 6px 1px rgba(226, 72, 61, 0.7);
+}
+
+.link-dot--unknown {
+  background: var(--text-faint);
+}
+
+.link-dot--inline {
+  position: static;
+  display: inline-block;
+  margin-right: 6px;
+  vertical-align: middle;
 }
 
 .bed-card:hover {

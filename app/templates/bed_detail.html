@@ -55,7 +55,11 @@
         {% if bed.is_demo %}
         <span class="mode-badge mode-badge--demo">Демо</span>
         {% else %}
-        <span class="mode-badge mode-badge--real">Адрес {{ bed.controller_address }}</span>
+        <span class="mode-badge mode-badge--real" id="bed-link-badge">
+          <span class="link-dot link-dot--inline link-dot--{{ bed.link_status }}" id="bed-link-dot"
+                title="{{ {'online': 'Връзка с контролера: активна', 'offline': 'Няма връзка с контролера', 'unknown': 'Връзката с контролера още не е проверена'}[bed.link_status] }}"></span>
+          Адрес {{ bed.controller_address }}
+        </span>
         {% endif %}
       </div>
       <p class="detail-model">{{ bed.model }}</p>

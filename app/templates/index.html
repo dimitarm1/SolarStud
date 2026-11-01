@@ -25,6 +25,10 @@
        data-active-min="{{ bed.active_min_session }}"
        data-cool-min="{{ bed.cool_min_session }}"
        {% endif %}>
+      {% if bed.link_status %}
+      <span class="link-dot link-dot--{{ bed.link_status }}"
+            title="{{ {'online': 'Връзка с контролера: активна', 'offline': 'Няма връзка с контролера', 'unknown': 'Връзката с контролера още не е проверена'}[bed.link_status] }}"></span>
+      {% endif %}
       <header class="bed-card__header">
         <h3>{{ bed.number }}</h3>
         <p>{{ bed.model }}</p>
