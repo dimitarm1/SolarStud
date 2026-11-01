@@ -1568,13 +1568,21 @@ body {
 }
 
 /* Cards list + detail */
+/* Shows 10 rows (54px each incl. border, +2px for the list's own border),
+   then scrolls inside the list so a long customer list doesn't push the
+   chip card panel far down the page. */
 .cards-list {
   display: flex;
   flex-direction: column;
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  overflow: hidden;
+  max-height: 542px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--text-dim) transparent;
 }
+
+.card-row { flex-shrink: 0; }
 
 .card-row {
   display: flex;

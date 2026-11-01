@@ -104,9 +104,13 @@
     </a>
     {% endfor %}
   </div>
-  {% if not search and cards|length >= cards_default_limit %}
+  {% if cards|length >= cards_default_limit %}
   <p class="settings-hint">
+    {% if search %}
+    Показани са първите {{ cards_default_limit }} съвпадения. Уточнете търсенето, за да намерите търсената карта.
+    {% else %}
     Показани са последните {{ cards_default_limit }} карти. Използвайте търсенето отгоре, за да намерите друга.
+    {% endif %}
   </p>
   {% endif %}
   {% else %}
