@@ -1,5 +1,6 @@
 """Domain queries for beds, studio settings, and tanning sessions."""
 
+import math
 import time
 from datetime import datetime, timedelta
 
@@ -256,7 +257,19 @@ def _picture_src(bed_id, picture_path):
     return f"/bed/{bed_id}/photo"
 
 
-def _serialize(bed_row, session_row):
+def _session_main_known(conn, session_id):
+    """Whether a session's main (tanning) time is actually known. Only
+    sessions started from this app are - they always get a session_payment
+    row in the protocol, even at 0 €. One the reconciler picked up after it
+    was started on the controller itself only has a guessed main time (the
+    controller's Status reply doesn't carry it during prep)."""
+    return conn.execute(
+        "SELECT 1 FROM sales_log WHERE session_id = ? AND kind = 'session_payment' LIMIT 1",
+        (session_id,),
+    ).fetchone() is not None
+
+
+def _serialize(conn, bed_row, session_row):
     bed = dict(bed_row)
     bed["picture_src"] = _picture_src(bed_row["id"], bed_row["picture_path"])
     bed["is_demo"] = is_demo_address(bed_row["controller_address"])
@@ -271,6 +284,7 @@ def _serialize(bed_row, session_row):
         bed["cool_min_session"] = session_row["cool_min"]
         bed["cash_amount_session"] = session_row["cash_amount"]
         bed["card_amount_session"] = session_row["card_amount"]
+        bed["main_known"] = _session_main_known(conn, session_row["id"])
     else:
         bed["status"] = "idle"
     return bed
@@ -284,7 +298,7 @@ def list_beds():
         _reap_finished_sessions(conn)
         beds = conn.execute("SELECT * FROM beds ORDER BY sort_order").fetchall()
         _reconcile_real_beds(conn, beds)
-        return [_serialize(bed, _current_session(conn, bed["id"])) for bed in beds]
+        return [_serialize(conn, bed, _current_session(conn, bed["id"])) for bed in beds]
     finally:
         conn.close()
 
@@ -297,7 +311,7 @@ def get_bed(bed_id):
         if bed is None:
             return None
         _reconcile_real_beds(conn, [bed])
-        return _serialize(bed, _current_session(conn, bed_id))
+        return _serialize(conn, bed, _current_session(conn, bed_id))
     finally:
         conn.close()
 
@@ -784,5 +798,104 @@ def skip_prep(bed_id):
                 "UPDATE sessions SET started_at = ? WHERE id = ?",
                 (new_started_at.isoformat(timespec="seconds"), session["id"]),
             )
+    finally:
+        conn.close()
+
+
+def extend_session_with_payment(bed_id, new_total_min, card_id=None, requested_card_amount=0,
+                                chip_amount=0, chip_reader_name=None):
+    """Add tanning minutes to a session that's still in its preparation
+    phase, paid the same way as a new session (barcode card, chip card,
+    cash, or a mix) - new_total_min is the new main time, so only the
+    added minutes are charged. Only allowed while preparing (the customer
+    hasn't started tanning yet) and only when the current main time is
+    actually known (see _session_main_known).
+
+    For a real controller the new main time goes out as a fresh Set-Time
+    handshake, with the prep time set to what's left of it (rounded up, so
+    the countdown never jumps straight into tanning while the customer may
+    not be on the bed yet). Same ordering as start_session_with_payment:
+    nothing is charged unless the controller confirmed.
+
+    Raises sales.PaymentError for anything the operator needs to fix.
+    """
+    use_chip = bool(chip_amount) and float(chip_amount) > 0
+
+    conn = db.get_connection()
+    try:
+        _reap_finished_sessions(conn, bed_id)
+        bed = conn.execute(
+            "SELECT id, controller_address, price_per_min FROM beds WHERE id = ?", (bed_id,)
+        ).fetchone()
+        if bed is None:
+            raise ValueError(f"Unknown bed id {bed_id}")
+        session = _current_session(conn, bed_id)
+        stage = _stage_and_remaining(session)[0] if session is not None else None
+        if stage != "prep":
+            raise sales.PaymentError("Минути могат да се добавят само докато леглото е в подготовка.")
+        if not _session_main_known(conn, session["id"]):
+            raise sales.PaymentError(
+                "Сесията е пусната от контролера - времето ѝ не е известно и не може да се удължи оттук."
+            )
+        new_total_min = min(MAX_SESSION_MINUTES, int(new_total_min))
+        added_min = new_total_min - session["total_min"]
+        if added_min < 1:
+            raise sales.PaymentError("Новото време трябва да е по-дълго от текущото.")
+
+        # Fail on a bad barcode card (returned, unknown) before touching the bed.
+        if not use_chip and card_id and requested_card_amount:
+            sales.quote_session_payment(bed_id, added_min, card_id, requested_card_amount)
+
+        now = datetime.now()
+        elapsed_min = (now - datetime.fromisoformat(session["started_at"])).total_seconds() / 60
+        prep_left_min = max(1, math.ceil(session["prep_min"] - elapsed_min))
+
+        if not is_demo_address(bed["controller_address"]):
+            port = _require_serial_port()
+            controller_link.set_time(
+                port, bed["controller_address"], prep_left_min, new_total_min, session["cool_min"]
+            )
+
+        chip_result = None
+        if use_chip:
+            chip_result = sales.charge_chip_card_for_session(
+                bed_id, added_min, chip_amount, chip_reader_name,
+                this_studio_number=get_chip_studio_identity()["number"],
+                allowed_studio_numbers=get_chip_known_studio_numbers(),
+            )
+
+        with db.transaction(conn):
+            if use_chip:
+                card_amount, cash_amount = chip_result["chip_amount"], chip_result["cash_amount"]
+            else:
+                card_amount, cash_amount = sales.consume_card_lots_for_minutes(
+                    conn, bed_id, added_min, card_id, requested_card_amount
+                )
+            paid_by_card_id = card_id if (not use_chip and card_amount > 0) else None
+            # Shift started_at so the stored prep time ends exactly when the
+            # controller's (rounded-up) prep countdown now does.
+            new_started_at = _started_at_for(
+                "prep", prep_left_min, session["prep_min"], new_total_min, session["cool_min"], now
+            )
+            conn.execute(
+                "UPDATE sessions SET total_min = ?, started_at = ?, cash_amount = cash_amount + ?, "
+                "card_amount = card_amount + ?, card_id = COALESCE(card_id, ?) WHERE id = ?",
+                (new_total_min, new_started_at.isoformat(timespec="seconds"),
+                 cash_amount, card_amount, paid_by_card_id, session["id"]),
+            )
+            description = (
+                f"Добавени {added_min} мин към солариум легло №{bed_id} "
+                f"({session['total_min']} → {new_total_min} мин)"
+            )
+            if use_chip:
+                description += f", чип карта №{chip_result['client_number']}{chip_result['studio_note']}"
+            sales.record_sale(
+                conn, "session_payment", description,
+                cash_amount=cash_amount, card_amount=card_amount,
+                bed_id=bed_id, card_id=paid_by_card_id, session_id=session["id"],
+                chip_client_number=chip_result["client_number"] if use_chip else None,
+                chip_studio_number=chip_result["studio_number"] if use_chip else None,
+            )
+        return added_min
     finally:
         conn.close()

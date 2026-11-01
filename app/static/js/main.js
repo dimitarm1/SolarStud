@@ -289,6 +289,14 @@
       if (stopHint) {
         stopHint.hidden = !(stage === "active" && durations.cooling > 0);
       }
+      // Minutes can only be added while preparing - once tanning starts
+      // (on its own, or via "Старт сега"), take the controls away.
+      if (stage !== "prep" && !el.classList.contains("bed-card")) {
+        ["extend-toggle", "extend-panel", "main-time-line"].forEach((id) => {
+          const node = document.getElementById(id);
+          if (node) node.hidden = true;
+        });
+      }
     }
 
     function render() {
@@ -633,6 +641,36 @@
   // cost), and a cash-due readout updates locally for instant feedback,
   // then refines via a server quote (which accounts for per-recharge-option
   // bed rates the client has no way to compute on its own).
+  // Minutes the payment covers: the whole session when starting, but only
+  // the minutes above what's already paid when adding to a session in
+  // preparation (data-base-min, see _session_form.html).
+  function billableMin(input) {
+    if (!input) return 0;
+    const base = parseFloat(input.dataset.baseMin || "0");
+    return Math.max(0, parseFloat(input.value || "0") - base);
+  }
+
+  const extendToggle = document.getElementById("extend-toggle");
+  const extendPanel = document.getElementById("extend-panel");
+  if (extendToggle && extendPanel) {
+    extendToggle.addEventListener("click", () => {
+      const willOpen = extendPanel.hidden;
+      extendPanel.hidden = !willOpen;
+      extendToggle.setAttribute("aria-expanded", String(willOpen));
+      if (willOpen) {
+        drumResyncFns.forEach((fn) => fn()); // the drum was laid out while hidden
+        drumViewports.get("session-length")?.focus();
+      }
+    });
+  }
+  const extraMinEl = document.getElementById("session-extra-min");
+  const extendLengthInput = document.getElementById("session-length");
+  if (extraMinEl && extendLengthInput) {
+    extendLengthInput.addEventListener("input", () => {
+      extraMinEl.textContent = String(billableMin(extendLengthInput));
+    });
+  }
+
   const paymentCardIdInput = document.getElementById("payment-card-id");
   const paymentCardSearchInput = document.getElementById("payment-card-search");
   const paymentCardResults = document.getElementById("payment-card-results");
@@ -660,7 +698,7 @@
     const paymentCardAmountValue = document.getElementById("card-amount-value");
     const paymentCashDueRow = document.getElementById("payment-cash-due-row");
 
-    const totalMin = () => (sessionLengthInput ? parseFloat(sessionLengthInput.value || "0") : 0);
+    const totalMin = () => billableMin(sessionLengthInput);
 
     function updateCashDueLocally() {
       const flatTotal = totalMin() * pricePerMin;
@@ -856,7 +894,7 @@
     const paymentChipAmountValue = document.getElementById("chip-amount-value");
     const paymentChipCashDueRow = document.getElementById("payment-cash-due-row");
 
-    const chipTotalMin = () => (sessionLengthInput ? parseFloat(sessionLengthInput.value || "0") : 0);
+    const chipTotalMin = () => billableMin(sessionLengthInput);
 
     function clearVirtualCardForChip() {
       if (paymentCardIdInput && paymentCardIdInput.value) {

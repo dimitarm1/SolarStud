@@ -1,0 +1,140 @@
+{#- Session length + payment, shared by "start a session" (bed idle) and
+    "add minutes" (bed in preparation). Expects, from the including template:
+      sf_min, sf_max, sf_default - session-length drum range and start value
+      sf_base   - main minutes already paid for (0 when starting); only the
+                  minutes above it are priced and charged
+      sf_label, sf_submit - the length field's label and the submit text -#}
+{% set sf_span = (sf_max - sf_min) or 1 %}
+<div class="slider-field">
+  <div class="slider-field__header">
+    <span class="slider-field__label">{{ sf_label }}</span>
+    <span class="slider-field__value" id="session-length-value">{{ sf_default }} мин</span>
+  </div>
+  <div class="slider-field__track-wrap">
+    <input
+      class="range-input"
+      type="range"
+      name="total_min"
+      id="session-length"
+      min="{{ sf_min }}"
+      max="{{ sf_max }}"
+      step="1"
+      value="{{ sf_default }}"
+      data-base-min="{{ sf_base }}"
+      data-value-target="session-length-value"
+      data-suffix=" мин"
+      data-drum="true"
+      style="--fill: {{ ((sf_default - sf_min) / sf_span * 100) }}%"
+    >
+    <div class="slider-field__ticks">
+      {% for t in ([sf_min] + [5, 10, 15, 20, 25, 30]|select(">", sf_min)|select("<", sf_max)|list + [sf_max])|unique %}
+      <button type="button" class="slider-field__tick" data-for="session-length" data-value="{{ t }}"
+              style="left: {{ ((t - sf_min) / sf_span * 100) }}%">{{ t }}</button>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% if sf_base %}
+<p class="settings-hint" id="session-extra-info">
+  Текущо време: {{ sf_base }} мин · Добавяте: <strong id="session-extra-min">{{ sf_default - sf_base }}</strong> мин
+</p>
+{% elif bed.prep_min or bed.cool_min %}
+<p class="settings-hint">
+  {% if bed.prep_min %}{{ bed.prep_min }} мин подготовка{% endif %}
+  {% if bed.prep_min and bed.cool_min %} + {% endif %}
+  {% if bed.cool_min %}{{ bed.cool_min }} мин охлаждане{% endif %}
+  се добавят автоматично.
+</p>
+{% endif %}
+
+<div class="payment-section">
+  <p class="payment-section__price-hint">Цена: {{ "%.2f"|format(bed.price_per_min) }} €/мин</p>
+  <label class="field">
+    <span class="field__label">Плащане с баркод карта</span>
+    <input type="hidden" name="card_id" id="payment-card-id" value="">
+    <input
+      class="field__input"
+      type="text"
+      id="payment-card-search"
+      placeholder="Сканирай баркод или търси по име, телефон — остави празно за плащане само в брой"
+      autocomplete="off"
+      data-price-per-min="{{ bed.price_per_min }}"
+      data-bed-id="{{ bed.id }}"
+    >
+    <select class="controller-picker-select payment-card-results" id="payment-card-results" size="6" hidden></select>
+  </label>
+
+  <p class="payment-section__card-balance" id="payment-card-balance-info" hidden>
+    Баланс по картата: <strong id="payment-card-balance-amount">0.00 €</strong>
+    <span id="payment-card-balance-minutes"></span>
+  </p>
+
+  <div class="slider-field" id="payment-card-amount-field" hidden>
+    <div class="slider-field__header">
+      <span class="slider-field__label">Сума с баркод карта</span>
+      <span class="slider-field__value payment-amount-max" id="card-amount-value" title="Двоен клик – цялата сума с баркод карта">0.00 €</span>
+    </div>
+    <div class="slider-field__track-wrap">
+      <input
+        class="range-input"
+        type="range"
+        name="card_amount"
+        id="payment-card-amount"
+        min="0"
+        max="0"
+        step="0.01"
+        value="0"
+        data-value-target="card-amount-value"
+        data-suffix=" €"
+        data-decimals="2"
+      >
+    </div>
+  </div>
+
+  <div class="field" style="margin-top:20px;">
+    <span class="field__label">Плащане с чип карта</span>
+    <button
+      class="action-btn"
+      type="button"
+      id="payment-chip-read-btn"
+      style="width:auto;"
+      data-bed-id="{{ bed.id }}"
+      data-price-per-min="{{ bed.price_per_min }}"
+    >
+      {{ icon('scan', 'action-icon') }}
+      <span>Прочети чип карта</span>
+    </button>
+  </div>
+  <p class="payment-section__card-balance" id="payment-chip-info" hidden></p>
+  <div class="slider-field" id="payment-chip-amount-field" hidden>
+    <div class="slider-field__header">
+      <span class="slider-field__label">Сума от чип картата</span>
+      <span class="slider-field__value payment-amount-max" id="chip-amount-value" title="Двоен клик – цялата сума с чип картата">0.00 €</span>
+    </div>
+    <div class="slider-field__track-wrap">
+      <input
+        class="range-input"
+        type="range"
+        name="chip_amount"
+        id="payment-chip-amount"
+        min="0"
+        max="0"
+        step="0.01"
+        value="0"
+        data-value-target="chip-amount-value"
+        data-suffix=" €"
+        data-decimals="2"
+      >
+    </div>
+  </div>
+
+  <div class="payment-section__cash-due" id="payment-cash-due-row" title="Двоен клик – цялата сума в брой">
+    <span>Дължимо в брой</span>
+    <strong id="payment-cash-due">{{ "%.2f"|format(bed.price_per_min * (sf_default - sf_base)) }} €</strong>
+  </div>
+</div>
+
+<button class="action-btn action-btn--start" type="submit">
+  {{ icon('power', 'action-icon') }}
+  <span>{{ sf_submit }}</span>
+</button>

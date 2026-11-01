@@ -797,6 +797,25 @@ body {
   color: var(--phase-cooling);
 }
 
+/* "+ Добави минути" next to the Подготовка badge - same pill shape, as a button. */
+.status-badge--add {
+  margin-left: 8px;
+  border: 1px solid var(--gold-soft);
+  background: transparent;
+  color: var(--gold);
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.status-badge--add:hover,
+.status-badge--add:focus-visible,
+.status-badge--add[aria-expanded="true"] {
+  background: rgba(232, 179, 78, 0.16);
+}
+
+.extend-panel { margin-top: 16px; }
+
 .status-panel .bed-remaining { margin-top: 4px; }
 .status-panel .progress-track { margin-bottom: 20px; }
 

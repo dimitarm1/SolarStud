@@ -73,7 +73,19 @@
            data-prep-min="{{ bed.prep_min_session }}"
            data-active-min="{{ bed.active_min_session }}"
            data-cool-min="{{ bed.cool_min_session }}">
+        {% set can_extend = bed.stage == 'prep' and bed.main_known and bed.active_min_session < session_max %}
         <span class="status-badge status-badge--{{ bed.stage }}">{{ stage_labels[bed.stage] }}</span>
+        {% if can_extend %}
+        <button class="status-badge status-badge--add" type="button" id="extend-toggle"
+                aria-expanded="false" aria-controls="extend-panel">+ Добави минути</button>
+        {% endif %}
+        <p class="payment-section__paid-line" id="main-time-line" {{ 'hidden' if bed.stage != 'prep' }}>
+          {% if bed.main_known %}
+          Време за сесия: <strong>{{ bed.active_min_session }} мин</strong>
+          {% else %}
+          Време за сесия: неизвестно — пусната е от контролера
+          {% endif %}
+        </p>
         {% if bed.card_amount_session or bed.cash_amount_session %}
         <p class="payment-section__paid-line">
           Платено:
@@ -108,138 +120,25 @@
           време на охлаждане, за да прекратите сесията веднага.
         </p>
       </div>
+      {% if can_extend %}
+      <div class="status-panel extend-panel" id="extend-panel" hidden>
+        <h3 class="settings-panel__title">Добави минути</h3>
+        <form class="action-form" method="post" action="{{ url_for('extend_bed', bed_id=bed.id) }}">
+          {% with sf_min=bed.active_min_session + 1, sf_max=session_max, sf_default=bed.active_min_session + 1,
+                  sf_base=bed.active_min_session, sf_label="Ново време за сесията", sf_submit="Добави минутите" %}
+          {% include "_session_form.html" %}
+          {% endwith %}
+        </form>
+      </div>
+      {% endif %}
       {% else %}
       <div class="status-panel">
         <span class="status-badge status-badge--idle">Свободно</span>
         <form class="action-form" method="post" action="{{ url_for('start_bed', bed_id=bed.id) }}">
-          <div class="slider-field">
-            <div class="slider-field__header">
-              <span class="slider-field__label">Продължителност на сесията</span>
-              <span class="slider-field__value" id="session-length-value">{{ session_default }} мин</span>
-            </div>
-            <div class="slider-field__track-wrap">
-              <input
-                class="range-input"
-                type="range"
-                name="total_min"
-                id="session-length"
-                min="{{ session_min }}"
-                max="{{ session_max }}"
-                step="1"
-                value="{{ session_default }}"
-                data-value-target="session-length-value"
-                data-suffix=" мин"
-                data-drum="true"
-                style="--fill: {{ ((session_default - session_min) / (session_max - session_min) * 100) }}%"
-              >
-              <div class="slider-field__ticks">
-                {% for t in [session_min, 5, 10, 15, 20, 25, 30, session_max] %}
-                <button type="button" class="slider-field__tick" data-for="session-length" data-value="{{ t }}"
-                        style="left: {{ ((t - session_min) / (session_max - session_min) * 100) }}%">{{ t }}</button>
-                {% endfor %}
-              </div>
-            </div>
-          </div>
-          {% if bed.prep_min or bed.cool_min %}
-          <p class="settings-hint">
-            {% if bed.prep_min %}{{ bed.prep_min }} мин подготовка{% endif %}
-            {% if bed.prep_min and bed.cool_min %} + {% endif %}
-            {% if bed.cool_min %}{{ bed.cool_min }} мин охлаждане{% endif %}
-            се добавят автоматично.
-          </p>
-          {% endif %}
-
-          <div class="payment-section">
-            <p class="payment-section__price-hint">Цена: {{ "%.2f"|format(bed.price_per_min) }} €/мин</p>
-            <label class="field">
-              <span class="field__label">Плащане с баркод карта</span>
-              <input type="hidden" name="card_id" id="payment-card-id" value="">
-              <input
-                class="field__input"
-                type="text"
-                id="payment-card-search"
-                placeholder="Сканирай баркод или търси по име, телефон — остави празно за плащане само в брой"
-                autocomplete="off"
-                data-price-per-min="{{ bed.price_per_min }}"
-                data-bed-id="{{ bed.id }}"
-              >
-              <select class="controller-picker-select payment-card-results" id="payment-card-results" size="6" hidden></select>
-            </label>
-
-            <p class="payment-section__card-balance" id="payment-card-balance-info" hidden>
-              Баланс по картата: <strong id="payment-card-balance-amount">0.00 €</strong>
-              <span id="payment-card-balance-minutes"></span>
-            </p>
-
-            <div class="slider-field" id="payment-card-amount-field" hidden>
-              <div class="slider-field__header">
-                <span class="slider-field__label">Сума с баркод карта</span>
-                <span class="slider-field__value payment-amount-max" id="card-amount-value" title="Двоен клик – цялата сума с баркод карта">0.00 €</span>
-              </div>
-              <div class="slider-field__track-wrap">
-                <input
-                  class="range-input"
-                  type="range"
-                  name="card_amount"
-                  id="payment-card-amount"
-                  min="0"
-                  max="0"
-                  step="0.01"
-                  value="0"
-                  data-value-target="card-amount-value"
-                  data-suffix=" €"
-                  data-decimals="2"
-                >
-              </div>
-            </div>
-
-            <div class="field" style="margin-top:20px;">
-              <span class="field__label">Плащане с чип карта</span>
-              <button
-                class="action-btn"
-                type="button"
-                id="payment-chip-read-btn"
-                style="width:auto;"
-                data-bed-id="{{ bed.id }}"
-                data-price-per-min="{{ bed.price_per_min }}"
-              >
-                {{ icon('scan', 'action-icon') }}
-                <span>Прочети чип карта</span>
-              </button>
-            </div>
-            <p class="payment-section__card-balance" id="payment-chip-info" hidden></p>
-            <div class="slider-field" id="payment-chip-amount-field" hidden>
-              <div class="slider-field__header">
-                <span class="slider-field__label">Сума от чип картата</span>
-                <span class="slider-field__value payment-amount-max" id="chip-amount-value" title="Двоен клик – цялата сума с чип картата">0.00 €</span>
-              </div>
-              <div class="slider-field__track-wrap">
-                <input
-                  class="range-input"
-                  type="range"
-                  name="chip_amount"
-                  id="payment-chip-amount"
-                  min="0"
-                  max="0"
-                  step="0.01"
-                  value="0"
-                  data-value-target="chip-amount-value"
-                  data-suffix=" €"
-                  data-decimals="2"
-                >
-              </div>
-            </div>
-
-            <div class="payment-section__cash-due" id="payment-cash-due-row" title="Двоен клик – цялата сума в брой">
-              <span>Дължимо в брой</span>
-              <strong id="payment-cash-due">{{ "%.2f"|format(bed.price_per_min * session_default) }} €</strong>
-            </div>
-          </div>
-
-          <button class="action-btn action-btn--start" type="submit">
-            {{ icon('power', 'action-icon') }}
-            <span>Старт на сесията</span>
-          </button>
+          {% with sf_min=session_min, sf_max=session_max, sf_default=session_default, sf_base=0,
+                  sf_label="Продължителност на сесията", sf_submit="Старт на сесията" %}
+          {% include "_session_form.html" %}
+          {% endwith %}
         </form>
       </div>
       {% endif %}

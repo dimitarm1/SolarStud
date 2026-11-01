@@ -106,6 +106,26 @@ def start_bed(bed_id):
     return redirect(url_for("bed_detail", bed_id=bed_id))
 
 
+@app.route("/bed/<int:bed_id>/extend", methods=["POST"])
+def extend_bed(bed_id):
+    if models.get_bed(bed_id) is None:
+        abort(404)
+    try:
+        models.extend_session_with_payment(
+            bed_id,
+            new_total_min=request.form.get("total_min", type=int, default=0),
+            card_id=request.form.get("card_id", type=int, default=None),
+            requested_card_amount=request.form.get("card_amount", type=float, default=0.0),
+            chip_amount=request.form.get("chip_amount", type=float, default=0.0),
+            chip_reader_name=models.get_chip_reader_name() or None,
+        )
+    except controller_link.ControllerLinkError as exc:
+        return redirect(url_for("bed_detail", bed_id=bed_id, hw_error=str(exc)))
+    except (sales.PaymentError, chipcard.ChipCardError) as exc:
+        return redirect(url_for("bed_detail", bed_id=bed_id, payment_error=str(exc)))
+    return redirect(url_for("bed_detail", bed_id=bed_id))
+
+
 @app.route("/bed/<int:bed_id>/stop", methods=["POST"])
 def stop_bed(bed_id):
     if models.get_bed(bed_id) is None:
