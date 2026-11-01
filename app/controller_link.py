@@ -167,39 +167,55 @@ def scan(port, addresses=None, timeout=DEFAULT_REPLY_TIMEOUT, retries=SCAN_RETRI
 SET_TIME_RETRIES = 10  # a dropped RF packet at the edge of range shouldn't fail a start/stop outright - see set_time_on
 
 
+VERIFY_STATUS_RETRIES = 4  # status reads after a Set-Time, to ride out a dropped RF packet
+
+
 def _set_time_attempt(ser, address, pre_min, main_min, cool_min):
     """One attempt at the checksummed Set-Time handshake (protocol.md §5).
 
-    Raises SetTimeError if the controller didn't reply, or replied with a
-    checksum that doesn't match what we computed locally (in which case we
-    deliberately don't echo it back blindly - nothing is committed on the
-    controller's side unless the echo matches its own computation).
+    The checksum is sent straight after the cool-time byte, without waiting
+    for the controller's own checksum reply first. Older controllers only
+    accept the echo within a short window after the cool-time byte, and the
+    ~240ms RF round trip misses it - the checksum reply arrives correct,
+    but the echo is then silently ignored and nothing is committed
+    (observed on addresses 1 and 11). The old Delphi program does the same
+    for the RF link (SolarStud/main.pas: SendData, "Old controllers has
+    small checksum receive timeout"); newer controllers accept it too.
+
+    Since sending it blind means the checksum reply no longer confirms
+    anything, the result is verified with a Status query instead. Raises
+    SetTimeError if the controller never answered, or is not in the state
+    the new times should have put it in.
     """
     pre_min = pre_min & 0x7F
     cool_min = cool_min & 0x7F
     main_bcd = _to_bcd(main_min) & 0x7F
+    checksum = (pre_min + cool_min - main_bcd - 5) & 0x7F
 
     ser.reset_input_buffer()
-    ser.write(bytes([_command_byte(address, CMD_SET_PRE_TIME), pre_min]))
-    ser.write(bytes([_command_byte(address, CMD_SET_MAIN_TIME), main_bcd]))
-    ser.write(bytes([_command_byte(address, CMD_SET_COOL_TIME), cool_min]))
-
-    reply = ser.read(1)
-    if len(reply) != 1:
-        raise SetTimeError(
-            f"Няма отговор с контролна сума от адрес {address} "
-            f"(очакваше се веднага след байта за време на охлаждане)"
-        )
-
-    expected_checksum = (pre_min + cool_min - main_bcd - 5) & 0x7F
-    if reply[0] != expected_checksum:
-        raise SetTimeError(
-            f"Несъответствие в контролната сума от адрес {address}: "
-            f"контролерът отговори 0x{reply[0]:02x}, очакваше се 0x{expected_checksum:02x}"
-        )
-
-    ser.write(bytes([expected_checksum]))
+    ser.write(bytes([
+        _command_byte(address, CMD_SET_PRE_TIME), pre_min,
+        _command_byte(address, CMD_SET_MAIN_TIME), main_bcd,
+        _command_byte(address, CMD_SET_COOL_TIME), cool_min,
+        checksum,
+    ]))
+    ser.read(1)  # the controller's own checksum reply - drained, not relied on
     time.sleep(COMMIT_SETTLE_SECONDS)
+
+    status = None
+    for _attempt in range(VERIFY_STATUS_RETRIES):
+        status = query_status_on(ser, address)
+        if status is not None:
+            break
+    if status is None:
+        raise SetTimeError(f"Няма отговор от адрес {address} при проверка на състоянието")
+
+    stopping = not (pre_min or main_bcd or cool_min)
+    if (status["status"] == "free") != stopping:
+        raise SetTimeError(
+            f"Адрес {address} не прие новите времена "
+            f"(състояние след командата: {status['status']})"
+        )
 
 
 def set_time_on(ser, address, pre_min, main_min, cool_min, retries=SET_TIME_RETRIES):

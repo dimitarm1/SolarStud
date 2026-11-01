@@ -195,6 +195,16 @@ cool_time = cool_time_sent * 60;
 update_status();
 ```
 
+**Over the HC-12 RF link, don't wait for step 7 before sending step 8.**
+Older controllers only accept the echo within a short window after the
+cool-time byte, and the RF round trip (~240 ms) misses it: they reply with
+the correct checksum, then silently ignore the echo and commit nothing.
+Observed on addresses 1 and 11, while 2 and 14 accept the late echo. The
+working approach, matching the old Delphi program's RF mode
+(`SolarStud/main.pas`, `SendData`), is to compute the checksum on the host
+and send it in the same write as steps 5–6, then confirm the result with a
+Status query (§4.1). Every controller tested accepts it this way.
+
 If the echo doesn't match, nothing is committed and the sequence resets
 silently — there is no explicit error/NACK byte, and no acknowledgment byte
 for a *successful* commit either. The host's only way to confirm the new

@@ -23,14 +23,14 @@ if not defined PYTHON (
     exit /b 1
 )
 
-"%PYTHON%" -c "import flask" >nul 2>nul
+"%PYTHON%" -c "import flask, smartcard, serial; serial.SerialException" >nul 2>nul
 if errorlevel 1 (
     echo Installing dependencies for the first run - this only happens once...
-    "%PYTHON%" -m pip install -r requirements.txt
+    "%PYTHON%" -m pip install --force-reinstall -r requirements.txt
     if errorlevel 1 (
         echo.
         echo Dependency installation failed.
-        echo pyscard (the chip-card reader library) usually installs as a
+        echo pyscard ^(the chip-card reader library^) usually installs as a
         echo ready-made package on Windows with no extra steps. If the error
         echo above mentions it specifically, make sure you're on a recent
         echo Python 3 from https://www.python.org/downloads/ and try again.

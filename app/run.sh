@@ -39,9 +39,9 @@ else
     PYTHON="venv/bin/python"
 fi
 
-if ! "$PYTHON" -c "import flask" >/dev/null 2>&1; then
+if ! "$PYTHON" -c "import flask, smartcard, serial; serial.SerialException" >/dev/null 2>&1; then
     echo "Installing dependencies for the first run - this only happens once..."
-    if ! "$PYTHON" -m pip install -r requirements.txt; then
+    if ! "$PYTHON" -m pip install --force-reinstall -r requirements.txt; then
         echo
         echo "Dependency installation failed."
         echo "If the error above mentions winscard.h, pcsclite.h, or failing to"
