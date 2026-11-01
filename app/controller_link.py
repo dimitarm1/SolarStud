@@ -164,10 +164,11 @@ def scan(port, addresses=None, timeout=DEFAULT_REPLY_TIMEOUT, retries=SCAN_RETRI
     return found
 
 
-def set_time_on(ser, address, pre_min, main_min, cool_min):
-    """Run the checksummed Set-Time handshake on an already-open, settled
-    port (protocol.md §5) - the real start/stop mechanism: non-zero values
-    start a session, all zeros stop one.
+SET_TIME_RETRIES = 10  # a dropped RF packet at the edge of range shouldn't fail a start/stop outright - see set_time_on
+
+
+def _set_time_attempt(ser, address, pre_min, main_min, cool_min):
+    """One attempt at the checksummed Set-Time handshake (protocol.md §5).
 
     Raises SetTimeError if the controller didn't reply, or replied with a
     checksum that doesn't match what we computed locally (in which case we
@@ -201,12 +202,48 @@ def set_time_on(ser, address, pre_min, main_min, cool_min):
     time.sleep(COMMIT_SETTLE_SECONDS)
 
 
-def set_time(port, address, pre_min, main_min, cool_min, timeout=DEFAULT_REPLY_TIMEOUT):
+def set_time_on(ser, address, pre_min, main_min, cool_min, retries=SET_TIME_RETRIES):
+    """Run the checksummed Set-Time handshake on an already-open, settled
+    port (protocol.md §5) - the real start/stop mechanism: non-zero values
+    start a session, all zeros stop one.
+
+    Retries the whole handshake from scratch (fresh reset_input_buffer,
+    fresh write of all three values) up to `retries` times on a dropped or
+    garbled reply before giving up - over the RF link a single missed
+    packet at the edge of range otherwise reads as "the controller can't
+    be reached" even when it's simply a one-off drop. The old Delphi
+    program did the same for the same reason (SolarStud/main.pas:
+    SendData's own retry loop around this exact handshake, also resending
+    the full sequence from scratch on each attempt rather than trying to
+    resume a partial one - a half-completed handshake isn't a state
+    either side can safely continue from).
+
+    Raises SetTimeError if every attempt fails - its message leads with
+    the retry count (so staff reading it on screen know this isn't a
+    single dropped packet - the system already tried repeatedly and the
+    bed genuinely isn't answering) followed by the last attempt's own
+    detail for diagnosis.
+    """
+    last_exc = None
+    for _attempt in range(retries):
+        try:
+            _set_time_attempt(ser, address, pre_min, main_min, cool_min)
+            return
+        except SetTimeError as exc:
+            last_exc = exc
+    raise SetTimeError(
+        f"Леглото на адрес {address} не отговори след {retries} опита. "
+        f"Проверете дали е включено и в обхват. ({last_exc})"
+    ) from last_exc
+
+
+def set_time(port, address, pre_min, main_min, cool_min, timeout=DEFAULT_REPLY_TIMEOUT, retries=SET_TIME_RETRIES):
     """Open a connection, run the Set-Time handshake for one address, and
-    close it again. Raises SetTimeError on any failure - see set_time_on."""
+    close it again. Raises SetTimeError if every attempt fails - see
+    set_time_on."""
     with _lock:
         ser = _open_port(port, timeout)
         try:
-            set_time_on(ser, address, pre_min, main_min, cool_min)
+            set_time_on(ser, address, pre_min, main_min, cool_min, retries=retries)
         finally:
             ser.close()
