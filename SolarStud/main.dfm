@@ -4829,7 +4829,7 @@ object MainForm: TMainForm
     Top = -2
     Width = 798
     Height = 597
-    ActivePage = LogoEkran1
+    ActivePage = OsnovniNastroiki14
     ActiveFont.Charset = RUSSIAN_CHARSET
     ActiveFont.Color = clWindowText
     ActiveFont.Height = -11
@@ -7845,8 +7845,8 @@ object MainForm: TMainForm
           0D544C4D44504E474F626A65637489504E470D0A1A0A0000000D494844520000
           02FD0000021D0806000000AE82C2960000000467414D410000B18F0BFC610500
           0000017352474201D9C92C7F00000006624B4744000000000000F943BB7F0000
-          00097048597300000B1300000B1301009A9C180000000774494D4507E9050D06
-          2618132AD0870000FFFF4944415478DAECBD079C1CD771265E93C3CEE680DD05
+          00097048597300000B1300000B1301009A9C180000000774494D45E907050D06
+          26186CFB773F0000FFFF4944415478DAECBD079C1CD771265E93C3CEE680DD05
           B0C8394702200002CC51A4288AA612458593A5A365D996CEF6D9675B3A5967C9
           51B6EF6FC9540EB4499A41A498C44C308020889CC32E16586073DED9C9E15F5F
           75D76C63B900285281DC7BDFEFD7BF99E9E97EFD52BFF755BDAA7AAEEAAABA3C
@@ -72011,7 +72011,7 @@ object MainForm: TMainForm
       end
       object LMDButton13: TLMDButton
         Left = 464
-        Top = 344
+        Top = 373
         Width = 217
         Height = 33
         Caption = #1080#1079#1090#1088#1080#1080' '#1082#1083#1080#1077#1085#1090#1080#1090#1077
@@ -72029,7 +72029,7 @@ object MainForm: TMainForm
       end
       object LMDButton14: TLMDButton
         Left = 464
-        Top = 384
+        Top = 412
         Width = 217
         Height = 33
         Caption = #1080#1079#1090#1088#1080#1080' '#1087#1088#1086#1090#1086#1082#1086#1083#1080#1090#1077
@@ -72047,7 +72047,7 @@ object MainForm: TMainForm
       end
       object LMDButton15: TLMDButton
         Left = 464
-        Top = 304
+        Top = 334
         Width = 217
         Height = 33
         Caption = #1080#1079#1090#1088#1080#1080' '#1082#1083#1091#1073#1085#1080#1090#1077' '#1082#1072#1088#1090#1080
@@ -72105,6 +72105,24 @@ object MainForm: TMainForm
         Height = 25
         DataSource = personalset
         TabOrder = 9
+      end
+      object LMDButton4: TLMDButton
+        Left = 464
+        Top = 280
+        Width = 217
+        Height = 33
+        Caption = ' '#1045#1082#1089#1087#1086#1088#1090#1080#1088#1072#1081' '#1074#1089#1080#1095#1082#1086
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clRed
+        Font.Height = -16
+        Font.Name = 'Verdana'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 10
+        OnClick = LMDButton4Click
+        ButtonStyle = ubsDelphi
+        Color = 12449017
+        ParentColor = False
       end
     end
     object DrugiNastroiki15: TAdvTabSheet
@@ -285797,7 +285815,7 @@ object MainForm: TMainForm
         Fields = 'KLIENTNOMER'
       end
       item
-        Name = 'TEMPORARY_INDEX_{B58DAB7E-B460-4A1E-8664-4CC3EEC52170}'
+        Name = 'TEMPORARY_INDEX_{32ECE000-E0FF-4298-BB95-3644C98E98AB}'
         DescFields = 'CHIPNOMER'
         Fields = 'CHIPNOMER'
         Options = [ixDescending]

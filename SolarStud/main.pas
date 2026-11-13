@@ -760,6 +760,7 @@ type
     MadExceptionHandler1: TMadExceptionHandler;
     BMinimize: TButton;
     Label_build_num: TLMDLabel;
+    LMDButton4: TLMDButton;
         procedure Label1Click(Sender: TObject);
         procedure FormCreate(Sender: TObject);
         procedure Timer1Timer(Sender: TObject);
@@ -981,6 +982,7 @@ type
     procedure NachalnoUstanoviavane10Show(Sender: TObject);
     procedure OsnovniNastroiki14Show(Sender: TObject);
     procedure BMinimizeClick(Sender: TObject);
+    procedure LMDButton4Click(Sender: TObject);
     private
 
         { Private declarations }
@@ -5786,6 +5788,17 @@ begin
     end;
 end;
 
+procedure TMainForm.LMDButton4Click  (Sender: TObject);
+begin
+   if Application.MessageBox(PChar('≈кспортиране на ц€лата база данни в sql формат?'),PChar('≈кспорт?!'),MB_OKCANCEL		)=IDOK	 then
+    begin
+       // TODO: Implement export function
+       // 1. Open file dialog to choose destination file
+       // 2. Read all signifficant tables and export to SQL with create table and data
+    end;
+end;
+
+
 procedure TMainForm.LMDButton13Click(Sender: TObject);
 var
     q: TABSQuery;
@@ -6279,7 +6292,12 @@ begin
     LMDButton5Click(Sender);
 end;
 
-procedure TMainForm.N4Click(Sender: TObject);
+pprocedure TMainForm.LMDButton4Click(Sender: TObject);
+begin
+
+end;
+
+rocedure TMainForm.N4Click(Sender: TObject);
 begin
     AddStokaButtonClick(2);
 end;
