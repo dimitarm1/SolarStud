@@ -3749,17 +3749,21 @@ begin
         else
         begin
             KeyBuff := KeyBuff + Key;
-            if Timer6.Enabled then
+            // Barcodes may contain letters/symbols - only digits are used
+            if Key in ['0'..'9'] then
             begin
-                Timer6.Enabled := false;
-                Timer6.Enabled := true;
-            end
-            else
-            begin
-                BarCodReaderBuff := '';
-                Timer6.Enabled := true;
+                if Timer6.Enabled then
+                begin
+                    Timer6.Enabled := false;
+                    Timer6.Enabled := true;
+                end
+                else
+                begin
+                    BarCodReaderBuff := '';
+                    Timer6.Enabled := true;
+                end;
+                BarCodReaderBuff := BarCodReaderBuff + Key;
             end;
-            BarCodReaderBuff := BarCodReaderBuff + Key;
         end;
         if (leftstr(KeyBuff, 1) = '%') or (leftstr(KeyBuff, 1) = '+') or
             (leftstr(KeyBuff, 1) = ';') then
