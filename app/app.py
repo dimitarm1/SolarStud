@@ -14,6 +14,7 @@ import auth
 import chipcard
 import controller_link
 import db
+import legacy_import
 import models
 import sales
 import stats
@@ -92,14 +93,14 @@ def login():
         if user is None:
             return render_template(
                 "login.html", version=VERSION, server_time=datetime.now().strftime("%H:%M:%S"),
-                error="Грешно потребителско име или парола.",
+                error="Грешно потребителско име или парола.", message=None,
                 next=request.form.get("next", ""),
             )
         session["user_id"] = user["id"]
         return redirect(request.form.get("next") or url_for("index"))
     return render_template(
         "login.html", version=VERSION, server_time=datetime.now().strftime("%H:%M:%S"),
-        error=None, next=request.args.get("next", ""),
+        error=None, message=request.args.get("message"), next=request.args.get("next", ""),
     )
 
 
@@ -387,6 +388,40 @@ def studio_set_chip_psc():
     except ValueError as exc:
         return redirect(url_for("studio", error=str(exc)))
     return redirect(url_for("studio", message="Защитният код (PSC) на веригата е запазен."))
+
+
+@app.route("/studio/import-legacy", methods=["POST"])
+@auth.admin_required
+def studio_import_legacy():
+    uploaded = request.files.get("legacy_file")
+    if uploaded is None or not uploaded.filename:
+        return redirect(url_for("studio", error="Не е избран файл за внасяне."))
+    try:
+        counts = legacy_import.import_legacy_database(uploaded.read())
+    except legacy_import.LegacyImportError as exc:
+        return redirect(url_for("studio", error=str(exc)))
+
+    message = (
+        f"Данните от старата програма са внесени: {counts['users']} служители, "
+        f"{counts['beds']} легла обновени, {counts['products']} продукта, "
+        f"{counts['chip_cards']} чип клиента, {counts['cards']} виртуални карти с баланс, "
+        f"{counts['sales_log']} реда в дневника (приблизително пренесени). "
+    )
+    if counts["psc_set"]:
+        message += "Защитният код (PSC) също е обновен - проверете дали записът на чип карти работи. "
+    if counts["preserved_admin_username"]:
+        message += (
+            f"Вашият акаунт „{counts['preserved_admin_username']}“ е запазен - "
+            "влезте отново с него, или с някой от служебните акаунти от старата програма."
+        )
+    else:
+        message += "Влезте отново с някой от служебните акаунти от старата програма."
+    # The import above just replaced the whole users table, so this
+    # session's own account may no longer exist - send the operator
+    # straight to a fresh login rather than bouncing them through a page
+    # before_request would redirect away from anyway.
+    session.clear()
+    return redirect(url_for("login", message=message))
 
 
 @app.route("/api/chipcard/read")

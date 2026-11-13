@@ -316,6 +316,30 @@
     {% endfor %}
   </div>
   {% endif %}
+
+  <div class="settings-panel settings-panel--static">
+    <h3 class="settings-panel__title">Внасяне от старата програма</h3>
+    <p class="settings-hint settings-hint--lead">
+      Изберете .sql файла, изнесен от старата програма (SolarStud). Това ще
+      <strong>замени</strong> служителите, продуктите, клиентите (виртуални и чип карти) и
+      дневника с продажби с данните от файла. Настройките на леглата (цена, предварително/охлаждане
+      време) и идентичността на студиото за чип карти ще бъдат обновени, но адресите на
+      контролерите и снимките на леглата няма да бъдат пипнати.
+    </p>
+    <form class="settings-form" method="post" action="{{ url_for('studio_import_legacy') }}"
+          enctype="multipart/form-data"
+          data-confirm="Това ще ЗАМЕНИ служителите, продуктите, клиентите и дневника с продажби с данните от избрания файл. Текущите данни в тези секции ще бъдат изтрити. Продължавате ли?"
+          data-confirm-yes="Да, внеси и замени">
+      <label class="field">
+        <span class="field__label">Файл за внасяне (.sql)</span>
+        <input class="field__input" type="file" name="legacy_file" accept=".sql" required>
+      </label>
+      <button class="action-btn action-btn--stop" type="submit">
+        {{ icon('warning', 'action-icon') }}
+        <span>Внеси и замени</span>
+      </button>
+    </form>
+  </div>
 </section>
 {% endblock %}
 
