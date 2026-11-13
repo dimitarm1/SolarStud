@@ -5788,13 +5788,176 @@ begin
     end;
 end;
 
+function SqlIdent(const AName: string): string;
+var
+    i: Integer;
+    simple: Boolean;
+begin
+    simple := AName <> '';
+    for i := 1 to Length(AName) do
+        if not (AName[i] in ['A'..'Z', 'a'..'z', '0'..'9', '_']) then
+            simple := False;
+    if simple then
+        Result := AName
+    else
+        Result := '[' + AName + ']';
+end;
+
+function SqlColumnType(AField: TFieldDef): string;
+begin
+    case AField.DataType of
+        ftString, ftFixedChar, ftWideString:
+            Result := 'VARCHAR(' + IntToStr(Max(AField.Size, 1)) + ')';
+        ftSmallint: Result := 'SMALLINT';
+        ftInteger: Result := 'INTEGER';
+        ftWord: Result := 'WORD';
+        ftAutoInc: Result := 'AUTOINC';
+        ftLargeint: Result := 'LARGEINT';
+        ftFloat: Result := 'FLOAT';
+        ftCurrency: Result := 'CURRENCY';
+        ftBCD, ftFMTBcd: Result := 'DECIMAL(' + IntToStr(Max(AField.Precision, 1))
+            + ',' + IntToStr(AField.Size) + ')';
+        ftBoolean: Result := 'BOOLEAN';
+        ftDate: Result := 'DATE';
+        ftTime: Result := 'TIME';
+        ftDateTime, ftTimeStamp: Result := 'TIMESTAMP';
+        ftMemo, ftFmtMemo: Result := 'MEMO';
+        ftBlob, ftGraphic, ftTypedBinary, ftOraBlob: Result := 'BLOB';
+    else
+        Result := 'VARCHAR(255)';
+    end;
+end;
+
+function SqlValue(AField: TField): string;
+var
+    s: string;
+    i: Integer;
+    oldSep: Char;
+begin
+    if AField.IsNull then
+    begin
+        Result := 'NULL';
+        Exit;
+    end;
+    case AField.DataType of
+        ftSmallint, ftInteger, ftWord, ftAutoInc, ftLargeint:
+            Result := AField.AsString;
+        ftFloat, ftCurrency, ftBCD, ftFMTBcd:
+            begin
+                oldSep := DecimalSeparator;
+                DecimalSeparator := '.';
+                try
+                    Result := FloatToStr(AField.AsFloat);
+                finally
+                    DecimalSeparator := oldSep;
+                end;
+            end;
+        ftBoolean:
+            if AField.AsBoolean then Result := 'TRUE' else Result := 'FALSE';
+        ftDate:
+            Result := '''' + FormatDateTime('yyyy-mm-dd', AField.AsDateTime) + '''';
+        ftTime:
+            Result := '''' + FormatDateTime('hh:nn:ss', AField.AsDateTime) + '''';
+        ftDateTime, ftTimeStamp:
+            Result := '''' + FormatDateTime('yyyy-mm-dd hh:nn:ss', AField.AsDateTime) + '''';
+        ftBlob, ftGraphic, ftTypedBinary, ftOraBlob:
+            begin
+                s := AField.AsString;
+                Result := 'X''';
+                for i := 1 to Length(s) do
+                    Result := Result + IntToHex(Ord(s[i]), 2);
+                Result := Result + '''';
+            end;
+    else
+        Result := '''' + StringReplace(AField.AsString, '''', '''''', [rfReplaceAll]) + '''';
+    end;
+end;
+
+procedure ExportDatabaseToSql(ADatabase: TABSDatabase; const AFileName: string);
+var
+    Tables: TStringList;
+    Output: TStringList;
+    T: TABSTable;
+    i, j: Integer;
+    cols, vals: string;
+begin
+    Tables := TStringList.Create;
+    Output := TStringList.Create;
+    T := TABSTable.Create(nil);
+    try
+        T.DatabaseName := ADatabase.DatabaseName;
+        ADatabase.GetTablesList(Tables);
+        Output.Add('-- SolarStudio database export ' + FormatDateTime('yyyy-mm-dd hh:nn:ss', Now));
+        for i := 0 to Tables.Count - 1 do
+        begin
+            T.Close;
+            T.TableName := Tables[i];
+            T.Open;
+            Output.Add('');
+            Output.Add('-- Table ' + Tables[i]);
+            cols := '';
+            for j := 0 to T.FieldCount - 1 do
+            begin
+                if j > 0 then
+                    cols := cols + ',' + sLineBreak;
+                cols := cols + '  ' + SqlIdent(T.Fields[j].FieldName) + ' ' +
+                    SqlColumnType(T.FieldDefs[j]);
+            end;
+            Output.Add('CREATE TABLE ' + SqlIdent(Tables[i]) + ' (' + sLineBreak + cols + sLineBreak + ');');
+            cols := '';
+            for j := 0 to T.FieldCount - 1 do
+            begin
+                if j > 0 then
+                    cols := cols + ', ';
+                cols := cols + SqlIdent(T.Fields[j].FieldName);
+            end;
+            T.First;
+            while not T.Eof do
+            begin
+                vals := '';
+                for j := 0 to T.FieldCount - 1 do
+                begin
+                    if j > 0 then
+                        vals := vals + ', ';
+                    vals := vals + SqlValue(T.Fields[j]);
+                end;
+                Output.Add('INSERT INTO ' + SqlIdent(Tables[i]) + ' (' + cols +
+                    ') VALUES (' + vals + ');');
+                T.Next;
+            end;
+            T.Close;
+        end;
+        Output.SaveToFile(AFileName);
+    finally
+        T.Free;
+        Output.Free;
+        Tables.Free;
+    end;
+end;
+
 procedure TMainForm.LMDButton4Click  (Sender: TObject);
 begin
    if Application.MessageBox(PChar('Експортиране на цялата база данни в sql формат?'),PChar('Експорт?!'),MB_OKCANCEL		)=IDOK	 then
     begin
-       // TODO: Implement export function
-       // 1. Open file dialog to choose destination file
-       // 2. Read all signifficant tables and export to SQL with create table and data
+       with TSaveDialog.Create(Self) do
+       try
+          Filter := 'SQL (*.sql)|*.sql';
+          DefaultExt := 'sql';
+          FileName := 'SolarStudio_' + FormatDateTime('yyyymmdd_hhnn', Now) + '.sql';
+          Options := Options + [ofOverwritePrompt];
+          if Execute then
+          begin
+             Screen.Cursor := crHourGlass;
+             try
+                ExportDatabaseToSql(sol1, FileName);
+             finally
+                Screen.Cursor := crDefault;
+             end;
+             Application.MessageBox(PChar('Експортът завърши.'), PChar('Експорт'), MB_OK);
+          end;
+       finally
+          Free;
+       end;
     end;
 end;
 
@@ -6292,12 +6455,7 @@ begin
     LMDButton5Click(Sender);
 end;
 
-pprocedure TMainForm.LMDButton4Click(Sender: TObject);
-begin
-
-end;
-
-rocedure TMainForm.N4Click(Sender: TObject);
+procedure TMainForm.N4Click(Sender: TObject);
 begin
     AddStokaButtonClick(2);
 end;
