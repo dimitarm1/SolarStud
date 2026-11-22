@@ -404,7 +404,8 @@ def studio_import_legacy():
     message = (
         f"Данните от старата програма са внесени: {counts['users']} служители, "
         f"{counts['beds']} легла обновени, {counts['products']} продукта, "
-        f"{counts['chip_cards']} чип клиента, {counts['cards']} виртуални карти с баланс, "
+        f"{counts['chip_cards']} чип клиента, {counts['cards']} виртуални карти с баланс "
+        f"({counts['recharge_options']} опции за презареждане добавени от историята), "
         f"{counts['sales_log']} реда в дневника (приблизително пренесени). "
     )
     if counts["psc_set"]:
