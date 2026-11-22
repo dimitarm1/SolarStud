@@ -85,6 +85,20 @@
       cursor: pointer;
     }
     .print-filter a { color: var(--text-dim); text-decoration: underline; }
+    /* The imported history's descriptions ("Презареждане на баркод
+       карта: Карта 30 евро (внос от стара програма)", ...) are much
+       longer than anything this table was originally sized for - with
+       every cell set to white-space: nowrap (style.css), an unbounded
+       description cell grows the whole table past the printable page
+       width and pushes В брой/С карта off the page. Capped here instead
+       of in style.css so only this printable report is affected, not
+       the on-screen Protocol table - the full text is still on the
+       <td>'s title attribute for an on-screen hover. */
+    .protocol-table td:nth-child(3) {
+      max-width: 260px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
     @media print {
       .no-print { display: none !important; }
       body.print-page { padding: 0; max-width: none; background: #fff; color: #000; }
@@ -146,7 +160,7 @@
         <tr>
           <td>{{ entry.created_at.replace("T", " ") }}</td>
           <td><span class="protocol-kind-badge protocol-kind-badge--{{ entry.kind }}">{{ kind_labels.get(entry.kind, entry.kind) }}</span></td>
-          <td>{{ entry.description }}</td>
+          <td title="{{ entry.description }}">{{ entry.description }}</td>
           <td class="amount--cash">{{ "%.2f"|format(entry.cash_amount) }} €</td>
           <td class="amount--card">{{ "%.2f"|format(entry.card_amount) }} €</td>
         </tr>
