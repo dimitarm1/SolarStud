@@ -12,3 +12,14 @@ pyserial==3.5
 #   sudo apt install libpcsclite-dev pcscd
 # then pip can build pyscard from source.
 pyscard==2.3.1
+
+# Native app window (run.py) instead of opening a regular browser tab -
+# no address bar/tabs, and closing that window shuts the whole program
+# down (see run.py's _on_closed). Windows: works out of the box (pulls in
+# pythonnet automatically, which drives the WebView2 runtime already
+# bundled with Windows 10/11 and Edge). Linux: the plain package needs a
+# system GTK+WebKit binding with no pure-pip install path, so the [qt]
+# extra is used instead here - it pulls in PyQt6/PyQt6-WebEngine from pip,
+# same as every other dependency in this file.
+pywebview==6.2.1; sys_platform != "linux"
+pywebview[qt]==6.2.1; sys_platform == "linux"

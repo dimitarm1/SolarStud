@@ -2,7 +2,7 @@
 setlocal
 cd /d "%~dp0"
 
-rem Double-click this file to start Solar Studio and open it in your browser.
+rem Double-click this file to start Solar Studio in its own app window.
 rem First run installs dependencies automatically - needs an internet connection once.
 
 set "PYTHON="
@@ -23,7 +23,7 @@ if not defined PYTHON (
     exit /b 1
 )
 
-"%PYTHON%" -c "import flask, smartcard, serial; serial.SerialException" >nul 2>nul
+"%PYTHON%" -c "import flask, smartcard, serial, webview; serial.SerialException" >nul 2>nul
 if errorlevel 1 (
     echo Installing dependencies for the first run - this only happens once...
     "%PYTHON%" -m pip install --force-reinstall -r requirements.txt

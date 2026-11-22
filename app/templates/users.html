@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% from "icons.html" import icon, nav_link, bottom_link %}
+
+{% block title %}Solar Studio — Потребители{% endblock %}
+
+{% block sidebar %}
+<nav class="sidebar">
+  {% set page_urls = {'studio': url_for('studio'), 'cosmetics': url_for('cosmetics_page'), 'services': url_for('services_page'),
+                       'cards': url_for('cards_page'), 'tanning': url_for('index')} %}
+  {% for item in nav_items %}
+    {{ nav_link(item, 'studio', page_urls[item.id]) }}
+  {% endfor %}
+</nav>
+{% endblock %}
+
+{% block content %}
+<section class="view view-detail">
+  <a class="back-link" href="{{ url_for('index') }}">
+    {{ icon('back', 'back-icon') }}
+    <span>Назад</span>
+  </a>
+
+  {% if error %}
+  <div class="hw-error-banner">
+    {{ icon('warning', 'hw-error-icon') }}
+    <span>{{ error }}</span>
+    <button class="hw-error-dismiss" type="button" aria-label="Затвори">{{ icon('close', 'hw-error-dismiss-icon') }}</button>
+  </div>
+  {% endif %}
+  {% if message %}
+  <div class="hw-error-banner info-banner">
+    {{ icon('check', 'hw-error-icon') }}
+    <span>{{ message }}</span>
+    <button class="hw-error-dismiss" type="button" aria-label="Затвори">{{ icon('close', 'hw-error-dismiss-icon') }}</button>
+  </div>
+  {% endif %}
+
+  <div class="settings-panel settings-panel--static">
+    <h3 class="settings-panel__title">Потребители</h3>
+    <p class="settings-hint settings-hint--lead">
+      Докато няма регистрирани потребители, програмата не изисква вход и всеки има права на
+      администратор. Щом добавите първия потребител, при стартиране на програмата ще се изисква
+      парола.
+    </p>
+
+    {% if users %}
+    {% for user in users %}
+    <form id="user-form-{{ user.id }}" method="post"
+          action="{{ url_for('users_update', user_id=user.id) }}"></form>
+    {% endfor %}
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Потребителско име</th>
+            <th>Роля</th>
+            <th>Нова парола</th>
+            <th>Статус</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in users %}
+          <tr>
+            <td><input class="field__input" form="user-form-{{ user.id }}" type="text" name="username" value="{{ user.username }}" required></td>
+            <td>
+              <select class="field__input" form="user-form-{{ user.id }}" name="role">
+                <option value="admin" {{ 'selected' if user.role == 'admin' }}>Администратор</option>
+                <option value="user" {{ 'selected' if user.role == 'user' }}>Оператор</option>
+              </select>
+            </td>
+            <td><input class="field__input" form="user-form-{{ user.id }}" type="password" name="new_password" placeholder="(без промяна)" autocomplete="new-password"></td>
+            <td>
+              <label class="field" style="display:flex; align-items:center; gap:6px; flex-direction:row;">
+                <input type="checkbox" form="user-form-{{ user.id }}" name="active" value="1" {{ 'checked' if user.active }}>
+                <span>Активен</span>
+              </label>
+            </td>
+            <td style="white-space:nowrap;">
+              <button class="action-btn" form="user-form-{{ user.id }}" type="submit" style="width:auto;" title="Запази">
+                {{ icon('check', 'action-icon') }}
+              </button>
+              <form method="post" action="{{ url_for('users_delete', user_id=user.id) }}" style="display:inline;"
+                    data-confirm="Да изтрия ли потребител „{{ user.username }}“?" data-confirm-yes="Да, изтрий">
+                <button class="action-btn action-btn--stop" type="submit" style="width:auto;" title="Изтрий">
+                  {{ icon('close', 'action-icon') }}
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+
+    {% if no_admin_yet %}
+    <p class="settings-hint">
+      В момента няма администратор — следващият създаден или редактиран тук потребител ще бъде
+      направен администратор автоматично, независимо от избраната роля, за да не се заключи
+      студиото без администратор.
+    </p>
+    {% endif %}
+    <form class="settings-form" method="post" action="{{ url_for('users_create') }}" style="margin-top:20px;">
+      <div class="settings-grid">
+        <label class="field">
+          <span class="field__label">Потребителско име</span>
+          <input class="field__input" type="text" name="username" required>
+        </label>
+        <label class="field">
+          <span class="field__label">Парола</span>
+          <input class="field__input" type="password" name="password" autocomplete="new-password" required>
+        </label>
+        <label class="field">
+          <span class="field__label">Роля</span>
+          <select class="field__input" name="role">
+            <option value="admin" {{ 'selected' if no_admin_yet }}>Администратор</option>
+            <option value="user" {{ 'selected' if not no_admin_yet }}>Оператор</option>
+          </select>
+        </label>
+      </div>
+      <button class="action-btn action-btn--start" type="submit">
+        {{ icon('plus', 'action-icon') }}
+        <span>Добави потребител</span>
+      </button>
+    </form>
+  </div>
+</section>
+{% endblock %}
+
+{% block bottom_buttons %}
+{% set page_urls = {'studio': url_for('studio'), 'cosmetics': url_for('cosmetics_page'), 'services': url_for('services_page'),
+                     'cards': url_for('cards_page'), 'protocol': url_for('protocol'),
+                     'stats': url_for('stats_page'), 'users': url_for('users_page')} %}
+{% for btn in bottom_buttons %}
+  {{ bottom_link(btn, page_urls[btn.id]) }}
+{% endfor %}
+{% endblock %}

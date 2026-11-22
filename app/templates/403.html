@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% from "icons.html" import icon %}
+
+{% block title %}Solar Studio — Няма права{% endblock %}
+
+{% block content %}
+<section class="view login-view">
+  <div class="login-card">
+    <div class="login-card__brand">
+      {{ icon('warning', 'login-card__icon') }}
+      <h3>Нямате права за това действие</h3>
+    </div>
+    <p class="settings-hint">Това действие изисква администраторски достъп.</p>
+    <a class="action-btn action-btn--start" href="{{ url_for('index') }}">
+      {{ icon('back', 'action-icon') }}
+      <span>Към главния екран</span>
+    </a>
+  </div>
+</section>
+{% endblock %}

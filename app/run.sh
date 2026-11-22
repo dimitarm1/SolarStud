@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Double-click (or run ./run.sh) to start Solar Studio and open it in your
-# browser. First run installs dependencies automatically - needs an
+# Double-click (or run ./run.sh) to start Solar Studio in its own app
+# window. First run installs dependencies automatically - needs an
 # internet connection once.
 set -e
 cd "$(dirname "$0")"
@@ -39,7 +39,7 @@ else
     PYTHON="venv/bin/python"
 fi
 
-if ! "$PYTHON" -c "import flask, smartcard, serial; serial.SerialException" >/dev/null 2>&1; then
+if ! "$PYTHON" -c "import flask, smartcard, serial, webview; serial.SerialException" >/dev/null 2>&1; then
     echo "Installing dependencies for the first run - this only happens once..."
     if ! "$PYTHON" -m pip install --force-reinstall -r requirements.txt; then
         echo

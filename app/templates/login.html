@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% from "icons.html" import icon %}
+
+{% block title %}Solar Studio — Вход{% endblock %}
+
+{% block content %}
+<section class="view login-view">
+  <form class="login-card" method="post" action="{{ url_for('login') }}">
+    <div class="login-card__brand">
+      {{ icon('user', 'login-card__icon') }}
+      <h3>Вход</h3>
+    </div>
+
+    {% if error %}
+    <div class="hw-error-banner">
+      {{ icon('warning', 'hw-error-icon') }}
+      <span>{{ error }}</span>
+    </div>
+    {% endif %}
+    {% if message %}
+    <div class="hw-error-banner info-banner">
+      {{ icon('check', 'hw-error-icon') }}
+      <span>{{ message }}</span>
+    </div>
+    {% endif %}
+
+    <input type="hidden" name="next" value="{{ next }}">
+
+    <label class="field">
+      <span class="field__label">Потребителско име</span>
+      <input class="field__input" type="text" name="username" autocomplete="username" autofocus required>
+    </label>
+    <label class="field">
+      <span class="field__label">Парола</span>
+      <input class="field__input" type="password" name="password" autocomplete="current-password" required>
+    </label>
+
+    <button class="action-btn action-btn--start" type="submit">
+      {{ icon('check', 'action-icon') }}
+      <span>Влез</span>
+    </button>
+  </form>
+</section>
+{% endblock %}

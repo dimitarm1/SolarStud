@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% from "icons.html" import icon, nav_link, bottom_link %}
+
+{% block title %}Solar Studio — Клиенти{% endblock %}
+
+{% block sidebar %}
+<nav class="sidebar">
+  {% set page_urls = {'studio': url_for('studio'), 'cosmetics': url_for('cosmetics_page'), 'services': url_for('services_page'),
+                       'cards': url_for('cards_page'), 'tanning': url_for('index')} %}
+  {% for item in nav_items %}
+    {{ nav_link(item, 'cards', page_urls[item.id]) }}
+  {% endfor %}
+</nav>
+{% endblock %}
+
+{% block content %}
+<section class="view view-detail">
+  <a class="back-link" href="{{ url_for('cards_page') }}">
+    {{ icon('back', 'back-icon') }}
+    <span>Назад към картите</span>
+  </a>
+
+  {% if error %}
+  <div class="hw-error-banner">
+    {{ icon('warning', 'hw-error-icon') }}
+    <span>{{ error }}</span>
+    <button class="hw-error-dismiss" type="button" aria-label="Затвори">{{ icon('close', 'hw-error-dismiss-icon') }}</button>
+  </div>
+  {% endif %}
+  {% if message %}
+  <div class="hw-error-banner info-banner">
+    {{ icon('check', 'hw-error-icon') }}
+    <span>{{ message }}</span>
+    <button class="hw-error-dismiss" type="button" aria-label="Затвори">{{ icon('close', 'hw-error-dismiss-icon') }}</button>
+  </div>
+  {% endif %}
+
+  <div class="settings-panel settings-panel--static">
+    <h3 class="settings-panel__title">Клиенти</h3>
+    <p class="settings-hint settings-hint--lead">
+      Общ списък на клиентите с баркод и чип карти, с имейл, рожден ден и бележка. Последно
+      посещение е датата на последната платена сесия, продажба или презареждане в тази студио.
+    </p>
+
+    <form class="settings-form" method="get" action="{{ url_for('clients_page') }}" style="margin-bottom:16px;">
+      <div class="settings-grid">
+        <label class="field">
+          <span class="field__label">Последно посещение след</span>
+          <input class="field__input" type="date" name="min_last_visit" value="{{ min_last_visit }}">
+        </label>
+      </div>
+      <button class="action-btn" type="submit" style="width:auto;">
+        {{ icon('scan', 'action-icon') }}
+        <span>Филтрирай</span>
+      </button>
+      {% if min_last_visit %}
+      <a class="back-link" href="{{ url_for('clients_page') }}">Изчисти филтъра</a>
+      {% endif %}
+      <a class="action-btn" style="width:auto;"
+         href="{{ url_for('clients_export_ics', min_last_visit=min_last_visit) }}">
+        {{ icon('protocol', 'action-icon') }}
+        <span>Изнеси рождени дни (.ics)</span>
+      </a>
+    </form>
+
+    {% if clients %}
+    {% for client in clients if client.kind == 'chip' %}
+    <form id="client-chip-form-{{ client.id }}" method="post"
+          action="{{ url_for('chip_card_update_details', client_number=client.number) }}">
+      <input type="hidden" name="next" value="{{ url_for('clients_page', min_last_visit=min_last_visit) }}">
+    </form>
+    {% endfor %}
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Име</th><th>Тип</th><th>Номер</th><th>Телефон</th><th>Имейл</th>
+            <th>Рожден ден</th><th>Бележка</th><th>Последно посещение</th><th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for client in clients %}
+          <tr>
+            <td>{{ client.name or "—" }}</td>
+            <td>{{ "Чип карта" if client.kind == 'chip' else "Баркод карта" }}</td>
+            <td>{{ client.number or "—" }}</td>
+            <td>
+              {% if client.kind == 'chip' %}
+              <input class="field__input" form="client-chip-form-{{ client.id }}" type="text"
+                     name="phone" value="{{ client.phone }}">
+              {% else %}{{ client.phone or "—" }}{% endif %}
+            </td>
+            <td>
+              {% if client.kind == 'chip' %}
+              <input class="field__input" form="client-chip-form-{{ client.id }}" type="email"
+                     name="email" value="{{ client.email }}">
+              {% else %}{{ client.email or "—" }}{% endif %}
+            </td>
+            <td>
+              {% if client.kind == 'chip' %}
+              <input class="field__input" form="client-chip-form-{{ client.id }}" type="date"
+                     name="birthdate" value="{{ client.birthdate }}">
+              {% else %}{{ client.birthdate or "—" }}{% endif %}
+            </td>
+            <td>
+              {% if client.kind == 'chip' %}
+              <input class="field__input" form="client-chip-form-{{ client.id }}" type="text"
+                     name="note" value="{{ client.note }}">
+              {% else %}{{ client.note or "—" }}{% endif %}
+            </td>
+            <td>{{ client.last_visit.replace("T", " ") if client.last_visit else "никога" }}</td>
+            <td style="white-space:nowrap;">
+              {% if client.kind == 'chip' %}
+              <input type="hidden" form="client-chip-form-{{ client.id }}" name="name" value="{{ client.name }}">
+              <button class="action-btn" form="client-chip-form-{{ client.id }}" type="submit"
+                      style="width:auto;" title="Запази">
+                {{ icon('check', 'action-icon') }}
+              </button>
+              {% else %}
+              <a class="action-btn" style="width:auto;" href="{{ url_for('card_detail', card_id=client.id) }}" title="Редакция">
+                {{ icon('back', 'action-icon') }}
+              </a>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="placeholder">
+      {{ icon('card', 'placeholder-icon') }}
+      <p>Няма клиенти, отговарящи на филтъра.</p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
+
+{% block bottom_buttons %}
+{% set page_urls = {'studio': url_for('studio'), 'cosmetics': url_for('cosmetics_page'), 'services': url_for('services_page'),
+                     'cards': url_for('cards_page'), 'protocol': url_for('protocol'),
+                     'stats': url_for('stats_page'), 'users': url_for('users_page')} %}
+{% for btn in bottom_buttons %}
+  {{ bottom_link(btn, page_urls[btn.id]) }}
+{% endfor %}
+{% endblock %}
