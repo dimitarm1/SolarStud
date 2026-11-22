@@ -311,7 +311,10 @@ def set_recharge_option_bed_prices(option_id, bed_prices):
 # --- cards & lots ------------------------------------------------------
 
 def list_cards(status=None, search=None, limit=None):
-    """search matches a substring of the card number, phone, or name - with
+    """search matches a substring of the card's own id (the account number
+    shown everywhere as "№..." - for a card from legacy_import.py, this is
+    literally the old program's client number, not a fresh one - see
+    legacy_import._import_clients), the card number, phone, or name - with
     a studio's card list easily running into the hundreds or thousands,
     this is how staff find one instead of scrolling (or, for the session
     payment picker, typing-to-search instead of facing one giant dropdown).
@@ -330,9 +333,12 @@ def list_cards(status=None, search=None, limit=None):
             params.append(status)
         search = (search or "").strip()
         if search:
-            conditions.append("(c.card_number LIKE ? OR c.phone LIKE ? OR c.name LIKE ?)")
+            conditions.append(
+                "(c.card_number LIKE ? OR c.phone LIKE ? OR c.name LIKE ? "
+                "OR CAST(c.id AS TEXT) LIKE ?)"
+            )
             like = f"%{search}%"
-            params.extend([like, like, like])
+            params.extend([like, like, like, like])
         if conditions:
             sql += " WHERE " + " AND ".join(conditions)
         sql += " GROUP BY c.id ORDER BY c.id DESC"
@@ -409,7 +415,16 @@ def _add_card_lot(conn, card_id, recharge_option_id):
 
 
 def issue_card(card_number, deposit_amount, first_recharge_option_id=None, name="", phone=""):
+    """A new signup always has a real physical barcode card in hand (same
+    rule as chip cards - issue_chip_card can't run without one actually
+    in the reader) - this is the normal front-desk flow, not the one-time
+    legacy_import.py path, which deliberately creates historical card
+    rows that may have no card_number at all when the old program's own
+    export never recorded one (update_card_details still fills that in
+    later, once such a client gets a real card)."""
     card_number = (card_number or "").strip() or None
+    if not card_number:
+        raise PaymentError("Сканирайте или въведете номера на физическата карта.")
     deposit_amount = max(0.0, float(deposit_amount or 0))
     name = (name or "").strip()
     phone = (phone or "").strip()
@@ -438,9 +453,12 @@ def issue_card(card_number, deposit_amount, first_recharge_option_id=None, name=
 
 def update_card_details(card_id, card_number, name, phone, note="", email="", birthdate=""):
     """Edit a card's contact details. The barcode can only be filled in here
-    while the card doesn't have one yet (it's optional at issue); changing an
-    existing barcode means a new physical card, which goes through
-    replace_card so the new deposit is charged and logged."""
+    while the card doesn't have one yet - a normal new signup already has
+    one from issue_card itself, so in practice this only matters for a
+    card from legacy_import.py, which can predate ever having a real
+    barcode on file. Changing an existing barcode means a new physical
+    card, which goes through replace_card so the new deposit is charged
+    and logged."""
     card_number = (card_number or "").strip() or None
     name = (name or "").strip()
     phone = (phone or "").strip()
@@ -1372,8 +1390,9 @@ def list_clients(this_studio_number, min_last_visit=None, require_birthdate=Fals
     try:
         rows = conn.execute(
             """
-            SELECT 'card' AS kind, c.id AS id, c.card_number AS number, c.name, c.phone,
-                   c.email, c.birthdate, c.note,
+            SELECT 'card' AS kind, c.id AS id,
+                   COALESCE(c.card_number, CAST(c.id AS TEXT)) AS number,
+                   c.name, c.phone, c.email, c.birthdate, c.note,
                    (SELECT MAX(created_at) FROM sales_log WHERE card_id = c.id) AS last_visit
             FROM cards c WHERE c.status = 'active'
             UNION ALL
