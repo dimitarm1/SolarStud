@@ -583,6 +583,30 @@ def set_chip_psc(text):
     return cleaned
 
 
+def get_default_card_deposit():
+    """Pre-fills the deposit field when issuing or replacing a barcode
+    card (cards.html, card_detail.html) - what a studio actually charges
+    for a new card is a fixed house policy, not something staff should
+    have to remember and re-type by hand every time."""
+    conn = db.get_connection()
+    try:
+        row = conn.execute("SELECT default_card_deposit FROM settings WHERE id = 1").fetchone()
+        return row["default_card_deposit"] if row is not None else 0.0
+    finally:
+        conn.close()
+
+
+def set_default_card_deposit(amount):
+    amount = max(0.0, round(float(amount or 0), 2))
+    conn = db.get_connection()
+    try:
+        with db.transaction(conn):
+            conn.execute("UPDATE settings SET default_card_deposit = ? WHERE id = 1", (amount,))
+    finally:
+        conn.close()
+    return amount
+
+
 # --- sessions ------------------------------------------------------------
 
 def _require_serial_port():

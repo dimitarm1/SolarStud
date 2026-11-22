@@ -82,6 +82,27 @@
   </div>
 
   <div class="settings-panel settings-panel--static">
+    <h3 class="settings-panel__title">Баркод карти</h3>
+    <p class="settings-hint settings-hint--lead">
+      Сумата, с която автоматично се попълва полето за депозит при издаване или замяна на баркод
+      карта — може да се промени ръчно за всеки конкретен случай.
+    </p>
+
+    <form class="settings-form" method="post" action="{{ url_for('studio_set_default_card_deposit') }}">
+      <label class="field">
+        <span class="field__label">Депозит по подразбиране (€)</span>
+        <input class="field__input" type="number" step="0.01" min="0" name="default_card_deposit"
+               value="{{ '%.2f'|format(default_card_deposit) }}">
+      </label>
+
+      <button class="action-btn action-btn--start" type="submit">
+        {{ icon('check', 'action-icon') }}
+        <span>Запази</span>
+      </button>
+    </form>
+  </div>
+
+  <div class="settings-panel settings-panel--static">
     <h3 class="settings-panel__title">Връзка с контролера</h3>
     <p class="settings-hint settings-hint--lead">
       Серийният порт, използван за връзка с контролерите на солариумните легла (кабелно или чрез

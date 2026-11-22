@@ -335,6 +335,7 @@ def studio():
         chip_studio_identity=models.get_chip_studio_identity(),
         chip_known_studio_numbers=models.get_chip_known_studio_numbers_text(),
         chip_psc=models.get_chip_psc(),
+        default_card_deposit=models.get_default_card_deposit(),
         error=request.args.get("error"),
         message=request.args.get("message"),
     )
@@ -353,6 +354,13 @@ def studio_set_bed_count():
 @auth.admin_required
 def studio_set_serial_port():
     models.set_serial_port(request.form.get("serial_port", ""))
+    return redirect(url_for("studio"))
+
+
+@app.route("/studio/default-card-deposit", methods=["POST"])
+@auth.admin_required
+def studio_set_default_card_deposit():
+    models.set_default_card_deposit(request.form.get("default_card_deposit", type=float, default=0.0))
     return redirect(url_for("studio"))
 
 
@@ -655,6 +663,7 @@ def cards_page():
         cards_default_limit=CARDS_DEFAULT_LIMIT,
         search=search,
         recharge_options=sales.list_recharge_options(),
+        default_card_deposit=models.get_default_card_deposit(),
         error=request.args.get("error"),
         message=request.args.get("message"),
         chip_refresh=request.args.get("chip_refresh") == "1",
@@ -764,6 +773,7 @@ def card_detail(card_id):
         server_time=datetime.now().strftime("%H:%M:%S"),
         card=card,
         recharge_options=sales.list_recharge_options(),
+        default_card_deposit=models.get_default_card_deposit(),
         error=request.args.get("error"),
     )
 
