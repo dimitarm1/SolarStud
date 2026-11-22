@@ -66,6 +66,9 @@ if __name__ == "__main__":
     server_thread.start()
     _wait_until_ready(url)
 
-    window = webview.create_window("Solar Studio", url)
+    window = webview.create_window(
+        "Solar Studio", url,
+        width=1400, height=900, min_size=(1000, 650),
+    )
     window.events.closed += _on_closed
     webview.start()
