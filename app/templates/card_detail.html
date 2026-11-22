@@ -91,7 +91,20 @@
           <input class="field__input js-barcode-field" type="text" name="card_number" value="">
           {% endif %}
         </label>
+        <label class="field">
+          <span class="field__label">Имейл</span>
+          <input class="field__input" type="email" name="email" value="{{ card.email }}">
+        </label>
+        <label class="field">
+          <span class="field__label">Рожден ден</span>
+          <input class="field__input" type="date" name="birthdate" value="{{ card.birthdate }}">
+        </label>
       </div>
+      <label class="field">
+        <span class="field__label">Бележка</span>
+        <textarea class="field__input" name="note" rows="2"
+                  placeholder="Напр. специални предпочитания, забравена дреха…">{{ card.note }}</textarea>
+      </label>
       {% if card.card_number and card.status == 'active' %}
       <p class="settings-hint">Баркодът се сменя само при нова физическа карта — с „Замени картата“ по-долу.</p>
       {% endif %}

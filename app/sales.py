@@ -436,7 +436,7 @@ def issue_card(card_number, deposit_amount, first_recharge_option_id=None, name=
         conn.close()
 
 
-def update_card_details(card_id, card_number, name, phone):
+def update_card_details(card_id, card_number, name, phone, note="", email="", birthdate=""):
     """Edit a card's contact details. The barcode can only be filled in here
     while the card doesn't have one yet (it's optional at issue); changing an
     existing barcode means a new physical card, which goes through
@@ -444,6 +444,9 @@ def update_card_details(card_id, card_number, name, phone):
     card_number = (card_number or "").strip() or None
     name = (name or "").strip()
     phone = (phone or "").strip()
+    note = (note or "").strip()
+    email = (email or "").strip()
+    birthdate = (birthdate or "").strip()
     conn = db.get_connection()
     try:
         with db.transaction(conn):
@@ -454,8 +457,9 @@ def update_card_details(card_id, card_number, name, phone):
                 card_number = card["card_number"]
             _check_card_number_unique(conn, card_number, exclude_card_id=card_id)
             conn.execute(
-                "UPDATE cards SET card_number = ?, name = ?, phone = ? WHERE id = ?",
-                (card_number, name, phone, card_id),
+                "UPDATE cards SET card_number = ?, name = ?, phone = ?, note = ?, email = ?, "
+                "birthdate = ? WHERE id = ?",
+                (card_number, name, phone, note, email, birthdate, card_id),
             )
     finally:
         conn.close()
@@ -660,6 +664,36 @@ def find_chip_card_by_client_number(client_number):
         return conn.execute(
             "SELECT * FROM chip_cards WHERE client_number = ?", (client_number,)
         ).fetchone()
+    finally:
+        conn.close()
+
+
+def update_chip_card_details(client_number, name="", phone="", note="", email="", birthdate=""):
+    """Edits the registry-only contact fields for an already-issued chip
+    card - unlike update_card_details, there's no barcode/number to
+    change here (a chip card's client_number never changes; a lost card
+    is handled by clear_chip_card + issue_chip_card instead), and nothing
+    is written to the physical chip - this is purely the local lookup
+    record (name/phone/note/email/birthdate), same as what issue_chip_card
+    already stores alongside the card itself."""
+    name = (name or "").strip()
+    phone = (phone or "").strip()
+    note = (note or "").strip()
+    email = (email or "").strip()
+    birthdate = (birthdate or "").strip()
+    conn = db.get_connection()
+    try:
+        with db.transaction(conn):
+            row = conn.execute(
+                "SELECT id FROM chip_cards WHERE client_number = ?", (client_number,)
+            ).fetchone()
+            if row is None:
+                raise PaymentError(f"Няма регистрирана чип карта с клиент №{client_number}.")
+            conn.execute(
+                "UPDATE chip_cards SET name = ?, phone = ?, note = ?, email = ?, birthdate = ? "
+                "WHERE client_number = ?",
+                (name, phone, note, email, birthdate, client_number),
+            )
     finally:
         conn.close()
 
@@ -957,15 +991,31 @@ def get_product(product_id):
         conn.close()
 
 
-def create_product(name, sale_price, initial_stock=0):
+def _check_barcode_unique(conn, barcode, exclude_product_id=None):
+    if not barcode:
+        return
+    query = "SELECT id, name FROM products WHERE barcode = ?"
+    params = [barcode]
+    if exclude_product_id is not None:
+        query += " AND id != ?"
+        params.append(exclude_product_id)
+    existing = conn.execute(query, params).fetchone()
+    if existing is not None:
+        raise PaymentError(f"Баркод \"{barcode}\" вече е зададен на продукт „{existing['name']}“.")
+
+
+def create_product(name, sale_price, initial_stock=0, barcode=""):
     name = (name or "").strip()
+    barcode = (barcode or "").strip() or None
     conn = db.get_connection()
     try:
         with db.transaction(conn):
+            _check_barcode_unique(conn, barcode)
             conn.execute(
-                "INSERT INTO products (name, sale_price, stock_qty, created_at) VALUES (?, ?, ?, ?)",
+                "INSERT INTO products (name, sale_price, stock_qty, barcode, created_at) "
+                "VALUES (?, ?, ?, ?, ?)",
                 (
-                    name, max(0.0, float(sale_price)), max(0, int(initial_stock)),
+                    name, max(0.0, float(sale_price)), max(0, int(initial_stock)), barcode,
                     datetime.now().isoformat(timespec="seconds"),
                 ),
             )
@@ -973,16 +1023,18 @@ def create_product(name, sale_price, initial_stock=0):
         conn.close()
 
 
-def update_product(product_id, name, sale_price):
+def update_product(product_id, name, sale_price, barcode=""):
     name = (name or "").strip()
     if not name:
         return  # the form requires a name; never blank one out
+    barcode = (barcode or "").strip() or None
     conn = db.get_connection()
     try:
         with db.transaction(conn):
+            _check_barcode_unique(conn, barcode, exclude_product_id=product_id)
             conn.execute(
-                "UPDATE products SET name = ?, sale_price = ? WHERE id = ?",
-                (name, max(0.0, float(sale_price)), product_id),
+                "UPDATE products SET name = ?, sale_price = ?, barcode = ? WHERE id = ?",
+                (name, max(0.0, float(sale_price)), barcode, product_id),
             )
     finally:
         conn.close()
@@ -1259,13 +1311,21 @@ def sales_log_summary(date=None):
         conn.close()
 
 
-def card_history(*, card_id=None, chip_client_number=None, chip_studio_number=None):
-    """Every local sales_log row tied to one card, oldest first - for the
-    printable payment/recharge history. Virtual cards are looked up by
-    card_id; chip cards by the (chip_client_number, chip_studio_number)
-    pair, which is what's actually stable for one physical card's whole
-    life (see migration 0015) - client_number alone isn't unique across
-    a chain, since each studio allocates it independently.
+def card_history(*, card_id=None, chip_client_number=None, chip_studio_number=None,
+                  date_from=None, date_to=None):
+    """Every local sales_log row tied to one card, most recent first (the
+    report's whole point is "what did this client just do", not an
+    accounting ledger that reads top-to-bottom) - for the printable
+    payment/recharge history. Virtual cards are looked up by card_id;
+    chip cards by the (chip_client_number, chip_studio_number) pair,
+    which is what's actually stable for one physical card's whole life
+    (see migration 0015) - client_number alone isn't unique across a
+    chain, since each studio allocates it independently.
+
+    date_from/date_to (plain 'YYYY-MM-DD' strings) narrow the range,
+    inclusive of the whole of date_to's day - created_at is an ISO
+    datetime, so a bare date compares as that day's midnight otherwise
+    and would exclude everything from date_to itself.
 
     This can only ever return what happened at THIS studio's own
     database - a card used at a sibling studio in the same chain has
@@ -1274,15 +1334,64 @@ def card_history(*, card_id=None, chip_client_number=None, chip_studio_number=No
     conn = db.get_connection()
     try:
         if card_id is not None:
-            where, params = "card_id = ?", [card_id]
+            where, params = ["card_id = ?"], [card_id]
         elif chip_client_number is not None and chip_studio_number is not None:
-            where, params = "chip_client_number = ? AND chip_studio_number = ?", [
+            where, params = ["chip_client_number = ? AND chip_studio_number = ?"], [
                 chip_client_number, chip_studio_number,
             ]
         else:
             return []
+        if date_from:
+            where.append("created_at >= ?")
+            params.append(date_from)
+        if date_to:
+            where.append("created_at <= ?")
+            params.append(f"{date_to}T23:59:59")
         return conn.execute(
-            f"SELECT * FROM sales_log WHERE {where} ORDER BY created_at", params
+            f"SELECT * FROM sales_log WHERE {' AND '.join(where)} ORDER BY created_at DESC", params
         ).fetchall()
     finally:
         conn.close()
+
+
+def list_clients(this_studio_number, min_last_visit=None, require_birthdate=False):
+    """A unified client directory across both independent card mechanisms
+    (virtual barcode cards and chip cards), each with its own last-visit
+    date - for the Clients page's filter/export, which is the one place
+    in this app that deliberately treats them as "the same kind of
+    thing" (everywhere else, by design, they stay separate).
+
+    this_studio_number scopes the chip side's last-visit lookup the same
+    way card_history does - chip_client_number alone isn't unique across
+    a chain. min_last_visit ('YYYY-MM-DD') drops anyone who hasn't had a
+    sales_log entry on or after that date, including anyone with none at
+    all (a client who never visited hasn't visited "recently" either).
+    require_birthdate drops anyone without one set, for the birthday
+    export."""
+    conn = db.get_connection()
+    try:
+        rows = conn.execute(
+            """
+            SELECT 'card' AS kind, c.id AS id, c.card_number AS number, c.name, c.phone,
+                   c.email, c.birthdate, c.note,
+                   (SELECT MAX(created_at) FROM sales_log WHERE card_id = c.id) AS last_visit
+            FROM cards c WHERE c.status = 'active'
+            UNION ALL
+            SELECT 'chip' AS kind, cc.id AS id, cc.client_number AS number, cc.name, cc.phone,
+                   cc.email, cc.birthdate, cc.note,
+                   (SELECT MAX(created_at) FROM sales_log
+                    WHERE chip_client_number = cc.client_number AND chip_studio_number = ?) AS last_visit
+            FROM chip_cards cc WHERE cc.status = 'active'
+            """,
+            (this_studio_number,),
+        ).fetchall()
+    finally:
+        conn.close()
+
+    result = [dict(r) for r in rows]
+    if min_last_visit:
+        result = [r for r in result if r["last_visit"] and r["last_visit"] >= min_last_visit]
+    if require_birthdate:
+        result = [r for r in result if r["birthdate"]]
+    result.sort(key=lambda r: (r["name"] or "").lower())
+    return result

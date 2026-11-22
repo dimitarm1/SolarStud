@@ -55,6 +55,36 @@
       font-weight: 700;
       cursor: pointer;
     }
+    .print-filter {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+      padding: 10px 14px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+    .print-filter input[type="date"] {
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--panel-bg);
+      color: var(--text);
+      font-family: inherit;
+    }
+    .print-filter button {
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--gold-soft);
+      background: var(--surface);
+      color: var(--gold);
+      cursor: pointer;
+    }
+    .print-filter a { color: var(--text-dim); text-decoration: underline; }
     @media print {
       .no-print { display: none !important; }
       body.print-page { padding: 0; max-width: none; background: #fff; color: #000; }
@@ -88,6 +118,16 @@
   {% if note %}
   <div class="print-note">{{ note }}</div>
   {% endif %}
+
+  <form class="print-filter no-print" method="get" action="{{ filter_action }}">
+    {% for key, value in filter_hidden.items() %}
+    <input type="hidden" name="{{ key }}" value="{{ value }}">
+    {% endfor %}
+    <label>От <input type="date" name="date_from" value="{{ date_from }}"></label>
+    <label>До <input type="date" name="date_to" value="{{ date_to }}"></label>
+    <button type="submit">Филтрирай</button>
+    {% if date_from or date_to %}<a href="{{ filter_action }}">Изчисти</a>{% endif %}
+  </form>
 
   <div class="protocol-summary">
     <div class="protocol-summary__item"><span>В брой</span><strong>{{ "%.2f"|format(totals.cash_total) }} €</strong></div>

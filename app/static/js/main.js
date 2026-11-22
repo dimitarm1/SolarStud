@@ -1219,8 +1219,32 @@
         const q = productSearchInput.value.trim().toLowerCase();
         productListEl.querySelectorAll(".product-row").forEach((row) => {
           const item = row.closest(".product-item");
-          item.hidden = q.length > 0 && !row.dataset.name.toLowerCase().includes(q);
+          const barcode = (row.dataset.barcode || "").toLowerCase();
+          item.hidden = q.length > 0 && !row.dataset.name.toLowerCase().includes(q)
+            && !(barcode && barcode.includes(q));
         });
+      });
+
+      // A USB barcode scanner just types the digits then an Enter, like
+      // any keyboard - so this is the same "exact barcode match, or the
+      // search narrowed down to one visible row" shortcut as the card
+      // search fields elsewhere: add it straight to the basket and clear
+      // the field, ready for the next scan, instead of leaving staff to
+      // double-click it manually.
+      productSearchInput.addEventListener("keydown", (evt) => {
+        if (evt.key !== "Enter") return;
+        evt.preventDefault();
+        const q = productSearchInput.value.trim().toLowerCase();
+        if (!q) return;
+        const rows = [...productListEl.querySelectorAll(".product-row")];
+        const exact = rows.find((row) => (row.dataset.barcode || "").toLowerCase() === q);
+        const visible = rows.filter((row) => !row.closest(".product-item").hidden);
+        const match = exact || (visible.length === 1 ? visible[0] : null);
+        if (match) {
+          addToBasket(match);
+          productSearchInput.value = "";
+          productSearchInput.dispatchEvent(new Event("input"));
+        }
       });
     }
 
@@ -1434,6 +1458,7 @@
   const chipCardInfoBody = document.getElementById("chip-card-info-body");
   const chipIssueForm = document.getElementById("chip-issue-form");
   const chipRechargeForm = document.getElementById("chip-recharge-form");
+  const chipEditForm = document.getElementById("chip-edit-form");
   const chipClearForm = document.getElementById("chip-clear-form");
   const chipPrintHistoryLink = document.getElementById("chip-print-history-link");
 
@@ -1444,6 +1469,7 @@
       chipCardInfo.hidden = true;
       chipIssueForm.hidden = true;
       chipRechargeForm.hidden = true;
+      if (chipEditForm) chipEditForm.hidden = true;
       chipClearForm.hidden = true;
       if (chipPrintHistoryLink) chipPrintHistoryLink.hidden = true;
       try {
@@ -1462,6 +1488,16 @@
         } else {
           chipRechargeForm.hidden = false;
           chipClearForm.hidden = false;
+          if (chipEditForm) {
+            chipEditForm.action = `/cards/chip/${card.client_number}/update`;
+            const known = data.known || {};
+            chipEditForm.elements.name.value = known.name || card.client_name || "";
+            chipEditForm.elements.phone.value = known.phone || "";
+            chipEditForm.elements.email.value = known.email || "";
+            chipEditForm.elements.birthdate.value = known.birthdate || "";
+            chipEditForm.elements.note.value = known.note || "";
+            chipEditForm.hidden = false;
+          }
           if (chipPrintHistoryLink) {
             const name = (data.known && data.known.name) || card.client_name || "";
             const phone = (data.known && data.known.phone) || "";

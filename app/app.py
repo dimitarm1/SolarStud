@@ -8,7 +8,7 @@ import webbrowser
 from datetime import datetime, timedelta
 from pathlib import Path
 
-from flask import Flask, abort, g, jsonify, redirect, render_template, request, send_file, session, url_for
+from flask import Flask, Response, abort, g, jsonify, redirect, render_template, request, send_file, session, url_for
 
 import auth
 import chipcard
@@ -435,7 +435,10 @@ def chipcard_read():
     return jsonify({
         "ok": True,
         "card": card,
-        "known": {"name": known["name"], "phone": known["phone"]} if known else None,
+        "known": {
+            "name": known["name"], "phone": known["phone"], "email": known["email"],
+            "birthdate": known["birthdate"], "note": known["note"],
+        } if known else None,
     })
 
 
@@ -509,22 +512,30 @@ def cosmetics_page():
 @app.route("/cosmetics/products", methods=["POST"])
 @auth.admin_required
 def cosmetics_create_product():
-    sales.create_product(
-        name=request.form.get("name", ""),
-        sale_price=request.form.get("sale_price", type=float, default=0.0),
-        initial_stock=request.form.get("initial_stock", type=int, default=0),
-    )
+    try:
+        sales.create_product(
+            name=request.form.get("name", ""),
+            sale_price=request.form.get("sale_price", type=float, default=0.0),
+            initial_stock=request.form.get("initial_stock", type=int, default=0),
+            barcode=request.form.get("barcode", ""),
+        )
+    except sales.PaymentError as exc:
+        return redirect(url_for("cosmetics_page", error=str(exc)))
     return redirect(url_for("cosmetics_page"))
 
 
 @app.route("/cosmetics/products/<int:product_id>/update", methods=["POST"])
 @auth.admin_required
 def cosmetics_update_product(product_id):
-    sales.update_product(
-        product_id,
-        name=request.form.get("name", ""),
-        sale_price=request.form.get("sale_price", type=float, default=0.0),
-    )
+    try:
+        sales.update_product(
+            product_id,
+            name=request.form.get("name", ""),
+            sale_price=request.form.get("sale_price", type=float, default=0.0),
+            barcode=request.form.get("barcode", ""),
+        )
+    except sales.PaymentError as exc:
+        return redirect(url_for("cosmetics_page", error=str(exc)))
     return redirect(url_for("cosmetics_page"))
 
 
@@ -717,6 +728,28 @@ def chip_card_clear():
     return redirect(url_for("cards_page", message=message, chip_refresh="1"))
 
 
+@app.route("/cards/chip/<int:client_number>/update", methods=["POST"])
+def chip_card_update_details(client_number):
+    try:
+        sales.update_chip_card_details(
+            client_number,
+            name=request.form.get("name", ""),
+            phone=request.form.get("phone", ""),
+            note=request.form.get("note", ""),
+            email=request.form.get("email", ""),
+            birthdate=request.form.get("birthdate", ""),
+        )
+    except sales.PaymentError as exc:
+        return redirect(url_for("cards_page", error=str(exc)))
+    # Only a same-site relative path is honored (never "//host/..." or an
+    # absolute URL), even though this form field is always rendered by us -
+    # a redirect target taken from request data is exactly the kind of
+    # thing that shouldn't be trusted without that check.
+    next_param = request.form.get("next", "")
+    next_url = next_param if next_param.startswith("/") and not next_param.startswith("//") else url_for("cards_page")
+    return redirect(next_url)
+
+
 @app.route("/cards/<int:card_id>")
 def card_detail(card_id):
     card = sales.get_card(card_id)
@@ -742,6 +775,9 @@ def card_update_details(card_id):
             card_number=request.form.get("card_number", ""),
             name=request.form.get("name", ""),
             phone=request.form.get("phone", ""),
+            note=request.form.get("note", ""),
+            email=request.form.get("email", ""),
+            birthdate=request.form.get("birthdate", ""),
         )
     except sales.PaymentError as exc:
         return redirect(url_for("card_detail", card_id=card_id, error=str(exc)))
@@ -822,7 +858,9 @@ def card_print(card_id):
     card = sales.get_card(card_id)
     if card is None:
         abort(404)
-    history = sales.card_history(card_id=card_id)
+    date_from = request.args.get("date_from") or None
+    date_to = request.args.get("date_to") or None
+    history = sales.card_history(card_id=card_id, date_from=date_from, date_to=date_to)
     header_lines = [f"Баркод карта №{card['id']}"]
     if card["card_number"]:
         header_lines.append(f"Номер: {card['card_number']}")
@@ -837,6 +875,9 @@ def card_print(card_id):
         history=history,
         totals=_history_totals(history),
         generated_at=datetime.now().strftime("%d.%m.%Y %H:%M"),
+        date_from=date_from or "", date_to=date_to or "",
+        filter_action=url_for("card_print", card_id=card_id),
+        filter_hidden={},
     )
 
 
@@ -848,7 +889,12 @@ def chip_card_print():
         abort(400)
     name = request.args.get("name", "")
     phone = request.args.get("phone", "")
-    history = sales.card_history(chip_client_number=client_number, chip_studio_number=studio_number)
+    date_from = request.args.get("date_from") or None
+    date_to = request.args.get("date_to") or None
+    history = sales.card_history(
+        chip_client_number=client_number, chip_studio_number=studio_number,
+        date_from=date_from, date_to=date_to,
+    )
     header_lines = [f"Чип карта №{client_number}", f"Студио №{studio_number}"]
     if phone:
         header_lines.append(f"Телефон: {phone}")
@@ -860,10 +906,78 @@ def chip_card_print():
             "Показана е само историята, записана в тази студио. Ако картата е била "
             "използвана и в други студиа от веригата, тези записи не са налични тук."
         ),
+        date_from=date_from or "", date_to=date_to or "",
+        filter_action=url_for("chip_card_print"),
+        filter_hidden={
+            "client_number": client_number, "studio_number": studio_number, "name": name, "phone": phone,
+        },
         kind_labels=_HISTORY_KIND_LABELS,
         history=history,
         totals=_history_totals(history),
         generated_at=datetime.now().strftime("%d.%m.%Y %H:%M"),
+    )
+
+
+def _ics_escape(text):
+    return text.replace("\\", "\\\\").replace(",", "\\,").replace(";", "\\;").replace("\n", "\\n")
+
+
+def _build_birthdays_ics(clients):
+    """One all-day, yearly-recurring VEVENT per client with a parseable
+    birthdate ('YYYY-MM-DD', from the HTML date inputs - anything else is
+    silently skipped rather than guessed at) - a standard .ics, importable
+    into Google Calendar, Outlook, or Apple Calendar (each has its own
+    "import calendar" option for a file like this). The RRULE is what
+    makes it repeat every year; the specific year in the stored birthdate
+    otherwise doesn't matter for that."""
+    lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Solar Studio//Birthdays//BG"]
+    now_stamp = datetime.now().strftime("%Y%m%dT%H%M%SZ")
+    for client in clients:
+        try:
+            born = datetime.strptime(client["birthdate"], "%Y-%m-%d")
+        except ValueError:
+            continue
+        name = client["name"] or f"Клиент №{client['number']}"
+        lines += [
+            "BEGIN:VEVENT",
+            f"UID:birthday-{client['kind']}-{client['id']}@solarstudio",
+            f"DTSTAMP:{now_stamp}",
+            f"DTSTART;VALUE=DATE:{born.strftime('%Y%m%d')}",
+            f"DTEND;VALUE=DATE:{(born + timedelta(days=1)).strftime('%Y%m%d')}",
+            "RRULE:FREQ=YEARLY",
+            f"SUMMARY:Рожден ден: {_ics_escape(name)}",
+            "END:VEVENT",
+        ]
+    lines.append("END:VCALENDAR")
+    return "\r\n".join(lines) + "\r\n"
+
+
+@app.route("/clients")
+def clients_page():
+    min_last_visit = request.args.get("min_last_visit") or None
+    studio_number = models.get_chip_studio_identity()["number"]
+    return render_template(
+        "clients.html",
+        version=VERSION,
+        nav_items=NAV_ITEMS,
+        bottom_buttons=BOTTOM_BUTTONS,
+        server_time=datetime.now().strftime("%H:%M:%S"),
+        clients=sales.list_clients(studio_number, min_last_visit=min_last_visit),
+        min_last_visit=min_last_visit or "",
+        error=request.args.get("error"),
+        message=request.args.get("message"),
+    )
+
+
+@app.route("/clients/export.ics")
+def clients_export_ics():
+    min_last_visit = request.args.get("min_last_visit") or None
+    studio_number = models.get_chip_studio_identity()["number"]
+    clients = sales.list_clients(studio_number, min_last_visit=min_last_visit, require_birthdate=True)
+    return Response(
+        _build_birthdays_ics(clients),
+        mimetype="text/calendar",
+        headers={"Content-Disposition": "attachment; filename=birthdays.ics"},
     )
 
 

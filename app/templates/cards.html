@@ -15,10 +15,16 @@
 
 {% block content %}
 <section class="view view-detail">
-  <a class="back-link" href="{{ url_for('index') }}">
-    {{ icon('back', 'back-icon') }}
-    <span>Назад</span>
-  </a>
+  <div class="detail-topbar">
+    <a class="back-link" href="{{ url_for('index') }}">
+      {{ icon('back', 'back-icon') }}
+      <span>Назад</span>
+    </a>
+    <a class="settings-toggle" href="{{ url_for('clients_page') }}">
+      {{ icon('protocol', 'settings-toggle-icon') }}
+      <span>Клиенти (имейл, рожден ден, бележки)</span>
+    </a>
+  </div>
 
   {% if error %}
   <div class="hw-error-banner">
@@ -208,6 +214,36 @@
       <button class="action-btn action-btn--start" type="submit">
         {{ icon('card', 'action-icon') }}
         <span>Презареди чип картата</span>
+      </button>
+    </form>
+
+    <form id="chip-edit-form" class="settings-form" method="post" hidden style="margin-top:14px;">
+      <div class="settings-grid">
+        <label class="field">
+          <span class="field__label">Име на клиента</span>
+          <input class="field__input" type="text" name="name">
+        </label>
+        <label class="field">
+          <span class="field__label">Телефон</span>
+          <input class="field__input" type="text" name="phone">
+        </label>
+        <label class="field">
+          <span class="field__label">Имейл</span>
+          <input class="field__input" type="email" name="email">
+        </label>
+        <label class="field">
+          <span class="field__label">Рожден ден</span>
+          <input class="field__input" type="date" name="birthdate">
+        </label>
+      </div>
+      <label class="field">
+        <span class="field__label">Бележка</span>
+        <textarea class="field__input" name="note" rows="2"
+                  placeholder="Напр. специални предпочитания, забравена дреха…"></textarea>
+      </label>
+      <button class="action-btn" type="submit" style="width:auto;">
+        {{ icon('check', 'action-icon') }}
+        <span>Запази данните</span>
       </button>
     </form>
 
