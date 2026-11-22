@@ -105,8 +105,15 @@
         <textarea class="field__input" name="note" rows="2"
                   placeholder="Напр. специални предпочитания, забравена дреха…">{{ card.note }}</textarea>
       </label>
-      {% if card.card_number and card.status == 'active' %}
-      <p class="settings-hint">Баркодът се сменя само при нова физическа карта — с „Замени картата“ по-долу.</p>
+      {% if card.status == 'active' %}
+      <p class="settings-hint">
+        {% if card.card_number %}
+        Баркодът се сменя само при нова физическа карта — с „Замени картата“ по-долу.
+        {% else %}
+        Полето по-горе е само за въвеждане без депозит (напр. корекция на данни). За да издадете
+        физическа карта на клиента с нов депозит, използвайте панела по-долу.
+        {% endif %}
+      </p>
       {% endif %}
       <button class="action-btn action-btn--start" type="submit">
         {{ icon('check', 'action-icon') }}
@@ -134,40 +141,50 @@
     </form>
   </div>
 
-  {% if card.card_number %}
   <div class="settings-panel">
-    <h3 class="settings-panel__title">Замени картата</h3>
+    <h3 class="settings-panel__title">{{ "Замени картата" if card.card_number else "Издай физическа карта" }}</h3>
     <p class="settings-hint settings-hint--lead">
-      При загубена карта: клиентът получава нова физическа карта със същия баланс и история и плаща
-      нов депозит в брой. Досегашният депозит от {{ "%.2f"|format(card.deposit_amount) }} € не се връща.
+      {% if card.card_number %}
+      При загубена или открадната карта: клиентът получава нова физическа карта със същия баланс и
+      история и плаща нов депозит в брой. Досегашният депозит от {{ "%.2f"|format(card.deposit_amount) }} €
+      не се връща.
+      {% else %}
+      Клиентът получава физическа карта за пръв път срещу депозит в брой — балансът и историята остават
+      същите. Ако тази карта по-късно бъде загубена или открадната, ще можете да издадете нова оттук по
+      същия начин.
+      {% endif %}
     </p>
-    {% set confirm_head %}Да заменя ли картата №{{ card.id }}{% if card.name %} ({{ card.name|safe }}){% endif %} с нова?
+    {% set confirm_head %}
+    {%- if card.card_number -%}
+    Да заменя ли картата №{{ card.id }}{% if card.name %} ({{ card.name|safe }}){% endif %} с нова?
+    {%- else -%}
+    Да издам ли физическа карта за №{{ card.id }}{% if card.name %} ({{ card.name|safe }}){% endif %}?
+    {%- endif %}
 
-Клиентът плаща нов депозит от {% endset %}
-    {% set confirm_tail %} € в брой. Досегашният депозит от {{ "%.2f"|format(card.deposit_amount) }} € не се връща.
+Клиентът плаща депозит от {% endset %}
+    {% set confirm_tail %} € в брой.{% if card.card_number %} Досегашният депозит от {{ "%.2f"|format(card.deposit_amount) }} € не се връща.{% endif %}
 
-Замяната се записва в протокола.{% endset %}
+{{ "Замяната" if card.card_number else "Издаването" }} се записва в протокола.{% endset %}
     <form class="settings-form" method="post" action="{{ url_for('card_replace', card_id=card.id) }}"
           onsubmit='return confirm({{ confirm_head|tojson }} + Number(this.deposit_amount.value || 0).toFixed(2) + {{ confirm_tail|tojson }});'>
       <div class="settings-grid">
         <label class="field">
-          <span class="field__label">Баркод на новата карта</span>
+          <span class="field__label">{{ "Баркод на новата карта" if card.card_number else "Баркод на картата" }}</span>
           <input class="field__input js-barcode-field" type="text" name="card_number" required
-                 placeholder="Сканирайте новата карта">
+                 placeholder="Сканирайте картата">
         </label>
         <label class="field">
-          <span class="field__label">Нов депозит</span>
+          <span class="field__label">Депозит</span>
           <input class="field__input" type="number" step="0.01" min="0" name="deposit_amount"
                  value="{{ '%.2f'|format(card.deposit_amount) }}">
         </label>
       </div>
       <button class="action-btn" type="submit" style="width:auto;">
         {{ icon('card', 'action-icon') }}
-        <span>Замени картата</span>
+        <span>{{ "Замени картата" if card.card_number else "Издай картата" }}</span>
       </button>
     </form>
   </div>
-  {% endif %}
 
   <div class="settings-panel">
     <h3 class="settings-panel__title">Върни картата</h3>
